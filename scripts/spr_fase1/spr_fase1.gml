@@ -2,9 +2,10 @@
 // https://help.yoyogames.com/hc/en-us/articles/360005277377 for more information
 // Função para limpar todas as instâncias da room, exceto o player e o controlador
 // Número de salas que queremos gerar
-global.total_rooms = 20; // Ajuste conforme necessário
+global.total_rooms = 10; // Ajuste conforme necessário
 // Gerar salas procedurais
 num_salas = 10;
+global.tamanho_player = 1;
 
 
 // Tamanho da grid para posicionar as salas (baseado em quantas salas você quer)
@@ -27,6 +28,107 @@ ds_grid_set(global.room_grid, start_x, start_y, 0); // 0 indica a primeira sala
 
 // Script assets have changed for v2.3.0 see
 // https://help.yoyogames.com/hc/en-us/articles/360005277377 for more information
+global.salas_com_pontos = ds_map_create(); // Cria um mapa global para armazenar as posições dos pontos nas salas
+
+// No evento de colisão do obj_pontos com o player ou outro trigger
+function coletar_ponto(ponto_x, ponto_y, current_sala) {
+	global.tamanho_player += 0.1;
+    // Gerar o ID único para a sala atual
+    var sala_id = string(current_sala[0]) + "_" + string(current_sala[1]);
+
+    // Verificar se a sala tem pontos salvos
+    if (ds_map_exists(global.salas_com_pontos, sala_id)) {
+        var lista_pontos = ds_map_find_value(global.salas_com_pontos, sala_id);
+
+        // Procurar o ponto coletado na lista e removê-lo
+        for (var i = 0; i < ds_list_size(lista_pontos); i++) {
+            var ponto_pos = ds_list_find_value(lista_pontos, i);
+            if (ponto_pos[0] == ponto_x && ponto_pos[1] == ponto_y) {
+                ds_list_delete(lista_pontos, i); // Remover o ponto da lista
+                break;
+            }
+        }
+    }
+
+    // Destruir o ponto após coleta
+    instance_destroy();
+}
+
+function recriar_pontos_na_sala_atual(current_sala) {
+    // Gerar um ID único para a sala atual
+    var sala_id = string(current_sala[0]) + "_" + string(current_sala[1]);
+
+    // Verificar se a sala atual tem pontos salvos
+    if (ds_map_exists(global.salas_com_pontos, sala_id)) {
+        var lista_pontos = ds_map_find_value(global.salas_com_pontos, sala_id);
+
+        // Recriar os pontos nas posições salvas, se ainda existirem na lista
+        for (var i = 0; i < ds_list_size(lista_pontos); i++) {
+            var ponto_pos = ds_list_find_value(lista_pontos, i);
+            var ponto_x = ponto_pos[0];
+            var ponto_y = ponto_pos[1];
+
+            // Criar o objeto obj_pontos na posição salva
+            instance_create_layer(ponto_x, ponto_y, "instances", obj_pontos);
+        }
+
+        // Mostrar mensagem de depuração (opcional)
+        show_debug_message("Pontos recriados na sala: " + sala_id);
+    } else {
+        // Caso não haja pontos na sala
+        show_debug_message("Nenhum ponto encontrado na sala: " + sala_id);
+    }
+}
+
+function create_pontos_em_salas_aleatorias(salas_geradas, quantidade_salas, quantidade_pontos) {
+    // Criar um array para armazenar as salas que terão pontos
+    var salas_selecionadas = [];
+
+    // Selecionar um número específico de salas aleatórias
+    for (var i = 0; i < quantidade_salas; i++) {
+        var sala_aleatoria;
+
+        // Garantir que a sala selecionada ainda não foi escolhida
+        do {
+            sala_aleatoria = salas_geradas[irandom(array_length_1d(salas_geradas) - 1)];
+        } until (!array_contains(salas_selecionadas, sala_aleatoria));
+
+        array_push(salas_selecionadas, sala_aleatoria); // Adicionar sala selecionada à lista
+    }
+
+    // Para cada sala selecionada, criar pontos
+    for (var i = 0; i < array_length_1d(salas_selecionadas); i++) {
+        var sala = salas_selecionadas[i];
+        var sala_id = string(sala[0]) + "_" + string(sala[1]); // Gerar um ID único baseado nas coordenadas da sala
+        var lista_pontos = ds_list_create(); // Criar uma lista para armazenar as posições dos pontos
+
+        // Criar pontos aleatórios na sala e salvar suas posições
+        for (var j = 0; j < quantidade_pontos; j++) {
+            var ponto_x = irandom_range(128, room_width - 128); // Gera posições aleatórias
+            var ponto_y = irandom_range(128, room_height - 128);
+
+            // Salvar a posição do ponto na lista
+            ds_list_add(lista_pontos, [ponto_x, ponto_y]);
+        }
+
+        // Armazenar a lista de pontos no mapa global para a sala correspondente
+        ds_map_add(global.salas_com_pontos, sala_id, lista_pontos);
+    }
+
+    // Mostrar mensagem de depuração (opcional)
+    show_debug_message("Pontos criados em " + string(quantidade_salas) + " salas aleatórias.");
+}
+
+// Função auxiliar para verificar se uma sala já foi selecionada
+function array_contains(array, sala) {
+    for (var i = 0; i < array_length_1d(array); i++) {
+        if (array[i][0] == sala[0] && array[i][1] == sala[1]) {
+            return true;
+        }
+    }
+    return false;
+}
+
 function Troca_parede_GOTO_TEMPLO(room_middle_x,room_bottom_y) {
     // Definir as coordenadas da posição inferior central
   
@@ -284,7 +386,7 @@ function cria_salas_e_objetos(maze_width, maze_height, maze, cell_size) {
     criar_chao_room_inteira(global.maze_width, global.maze_height, global.maze);
     criar_paredes_borda(global.maze_width, global.maze_height, global.maze);
     criar_paredes_intances(global.maze_width, global.maze_height, global.maze, global.cell_size);
-
+	
     // Verificar se a sala atual é a sala onde o óvulo deve ser criado
     
 }
@@ -398,6 +500,27 @@ function carregar_sala(sala_atual, sala_origem_array) {
 
     
 }
+function criar_random_pontos(quantidade) {
+    for (var i = 0; i < quantidade; i++) {
+        var ponto_x, ponto_y;
+        var tentativas = 0;
+        var max_tentativas = 100;  // Limite de tentativas para evitar loops infinitos
+
+        do {
+            // Gerar posições aleatórias dentro dos limites da room
+            ponto_x = irandom_range(64, room_width - 64); // Gera um valor aleatório dentro dos limites da sala, com uma margem
+            ponto_y = irandom_range(64, room_height - 64);
+            tentativas++;
+        } until (!position_meeting(ponto_x, ponto_y, obj_wall_carne) || tentativas >= max_tentativas);
+
+        // Criar o objeto obj_pontos na posição aleatória
+        instance_create_layer(ponto_x, ponto_y, "instances", obj_pontos);
+    }
+
+    // Exibe uma mensagem de depuração com a quantidade de pontos criados (opcional)
+    show_debug_message("Criados " + string(quantidade) + " pontos aleatórios na sala.");
+}
+
 
 
 

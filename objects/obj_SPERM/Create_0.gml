@@ -1,6 +1,7 @@
 /// @description Insert description here
 // You can write your code in this editor
 
+
 speed_player = global.speed_player;
 
 // Armazena a referência ao objeto obj_lab

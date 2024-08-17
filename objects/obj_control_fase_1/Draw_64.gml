@@ -57,3 +57,14 @@ for (var i = 0; i < array_length_1d(global.salas_geradas); i++) {
         }
     }
 }
+
+draw_set_alpha(1);
+
+draw_set_color(c_white);
+draw_set_font(fnt_menu_op);
+draw_text_transformed(200,100,"Tamanho:"+string(global.pontos),0.5,0.5,0);
+draw_text_transformed(200,150,"Recorde:"+string(global.recorde),0.5,0.5,0);
+
+
+// === Desenhar sprite com efeito de tremor no meio da tela ===
+// Verificar se o jogador está na sala 0,0

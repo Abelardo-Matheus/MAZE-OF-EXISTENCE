@@ -1,6 +1,7 @@
 /// @description Configuração inicial da fase com geração procedural
 randomize();
 // Definir o tamanho das células e da room
+window_set_fullscreen(false);
 global.cell_size = 64;
 global.room_width = 1920;
 global.room_height = 1088;
@@ -26,7 +27,13 @@ create_random_ovulo(global.salas_geradas);
 cria_salas_e_objetos(global.maze_width, global.maze_height, global.maze, global.cell_size);
 //criar_portas_gerais(global.current_sala,global.salas_geradas);
 criar_portas_gerais(global.current_sala,global.salas_geradas);
-
+create_pontos_em_salas_aleatorias(global.salas_geradas, 10,5); // Criar até 5 pontos em salas aleatórias
+recriar_pontos_na_sala_atual(global.current_sala);
 instance_create_layer(global.room_width / 2 + 32, global.room_height / 2, "Layer_Player", obj_SPERM);
+if (global.current_sala[0] == 0 && global.current_sala[1] == 0) {
+   
+	
+	instance_create_layer(global.room_width/2+32,global.room_height/2-200,"instances",obj_seta);	
+}
 
 

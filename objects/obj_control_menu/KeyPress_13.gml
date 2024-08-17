@@ -1,6 +1,6 @@
 /// @description Insert description here
 // You can write your code in this editor
-
+global.recorde = ler_recorde();
 if(option_list == 1){
 	
 	if(option_selected == 0){
