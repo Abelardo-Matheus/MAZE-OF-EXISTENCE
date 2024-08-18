@@ -6,6 +6,7 @@ global.total_rooms = 10; // Ajuste conforme necessário
 // Gerar salas procedurais
 num_salas = 10;
 global.tamanho_player = 1;
+global.tamanho_player_max = 3;
 
 
 // Tamanho da grid para posicionar as salas (baseado em quantas salas você quer)
@@ -103,8 +104,6 @@ function criar_sala_distante_com_templo(player_sala, salas_geradas) {
         // Criar um obj_templo na nova sala
         var room_x = nova_sala[0] * global.room_width;
         var room_y = nova_sala[1] * global.room_height;
-        instance_create_layer( global.room_width / 2, global.room_height / 2, "instances", obj_bomba);
-
         // Destruir a parede na posição do templo (se houver)
         var parede = instance_nearest(room_x + global.room_width / 2, room_y + global.room_height / 2, obj_wall_carne);
         if (parede != noone) {
@@ -705,6 +704,14 @@ function criar_random_pontos(quantidade) {
 }
 
 
+function sala_tuto(){
+		sala_tuto();
+		if (global.current_sala[0] == 0 && global.current_sala[1] == 0) {
+			show_debug_message(global.current_sala);
+	instance_create_layer(global.room_width/2,global.room_height/2,"instances",obj_setas);	
+}
+
+}
 
 
 

@@ -1,14 +1,12 @@
 // Evento de colisão com `obj_next_room` ou `obj_prev_room`
 	
     // Carregar a nova sala
+
     var sala_destino = room_destino;  // Sala que você está indo
-	
+	show_debug_message(global.current_sala);
+
     carregar_sala(sala_destino, room_origem);
 	recriar_pontos_na_sala_atual(global.current_sala);
-	if (global.current_sala[0] == 0 && global.current_sala[1] == 0) {
-
-	instance_create_layer(global.room_width/2,global.room_height/2,"instances",obj_seta);	
-}
 
 	if (direcao == 2) { 
 	

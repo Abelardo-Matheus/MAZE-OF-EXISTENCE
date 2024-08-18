@@ -5,6 +5,8 @@ var cell_size = 15; // Tamanho de cada célula no minimapa
 
 draw_set_alpha(0.7);
 
+
+
 // Posição do canto inferior direito da tela
 var mini_map_x = display_get_width() - mini_map_width - 40;
 var mini_map_y = display_get_height() - mini_map_height - 40;

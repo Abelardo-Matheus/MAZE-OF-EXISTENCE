@@ -31,10 +31,7 @@ create_pontos_em_salas_aleatorias(global.salas_geradas, 10,5); // Criar até 5 p
 recriar_pontos_na_sala_atual(global.current_sala);
 instance_create_layer(global.room_width / 2 + 32, global.room_height / 2, "Layer_Player", obj_SPERM);
 criar_sala_distante_com_templo(global.current_sala,global.salas_geradas);
-if (global.current_sala[0] == 0 && global.current_sala[1] == 0) {
-   
-	
-	instance_create_layer(global.room_width/2+32,global.room_height/2-200,"instances",obj_seta);	
-}
+sala_tuto();
+
 
 

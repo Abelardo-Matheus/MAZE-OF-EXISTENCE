@@ -31,6 +31,8 @@
     {"name":"PLAYERS","order":20,"path":"folders/Sprites/PLAYERS.yy",},
     {"name":"Tile Sets","order":2,"path":"folders/Tile Sets.yy",},
     {"name":"Timelines","order":8,"path":"folders/Timelines.yy",},
+    {"name":"GUI","order":27,"path":"folders/Sprites/GUI.yy",},
+    {"name":"GUI","order":9,"path":"folders/Scripts/GUI.yy",},
   ],
   "ResourceOrderSettings": [
     {"name":"spr_logo_menu","order":13,"path":"sprites/spr_logo_menu/spr_logo_menu.yy",},
@@ -52,6 +54,7 @@
     {"name":"obj_wall_carne_circular","order":4,"path":"objects/obj_wall_carne_circular/obj_wall_carne_circular.yy",},
     {"name":"Sprite16","order":1,"path":"sprites/Sprite16/Sprite16.yy",},
     {"name":"spr_goto_templo","order":14,"path":"sprites/spr_goto_templo/spr_goto_templo.yy",},
+    {"name":"spr_barra_vida","order":2,"path":"sprites/spr_barra_vida/spr_barra_vida.yy",},
     {"name":"spr_carne_cirular2","order":10,"path":"sprites/spr_carne_cirular2/spr_carne_cirular2.yy",},
     {"name":"Linha","order":1,"path":"scripts/Linha/Linha.yy",},
     {"name":"spr_chao","order":2,"path":"sprites/spr_chao/spr_chao.yy",},
