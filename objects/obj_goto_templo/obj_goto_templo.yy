@@ -28,10 +28,7 @@
   "physicsStartAwake": true,
   "properties": [],
   "solid": true,
-  "spriteId": {
-    "name": "spr_goto_templo",
-    "path": "sprites/spr_goto_templo/spr_goto_templo.yy",
-  },
+  "spriteId": null,
   "spriteMaskId": {
     "name": "spr_goto_templo",
     "path": "sprites/spr_goto_templo/spr_goto_templo.yy",

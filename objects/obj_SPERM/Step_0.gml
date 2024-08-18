@@ -1,3 +1,6 @@
+if(global.tamanho_player >3){
+global.tamanho_player = 3;
+}
 image_xscale = global.tamanho_player;
 image_yscale = global.tamanho_player;
 var moving = false;

@@ -41,7 +41,12 @@ for (var i = 0; i < array_length_1d(global.salas_geradas); i++) {
             // Verificar se essa sala contém o óvulo
             if (global.ovulo_sala_pos != undefined && global.ovulo_sala_pos[0] == sala_x && global.ovulo_sala_pos[1] == sala_y) {
                 draw_set_color(c_blue); // Sala com óvulo
-            } else {
+            }
+            // Verificar se essa sala contém o templo
+            else if (global.templo_sala_pos != undefined && global.templo_sala_pos[0] == sala_x && global.templo_sala_pos[1] == sala_y) {
+                draw_set_color(c_yellow); // Sala com templo
+            }
+            else {
                 draw_set_color(c_white); // Sala comum
             }
 
@@ -62,8 +67,8 @@ draw_set_alpha(1);
 
 draw_set_color(c_white);
 draw_set_font(fnt_menu_op);
-draw_text_transformed(200,100,"Tamanho:"+string(global.pontos),0.5,0.5,0);
-draw_text_transformed(200,150,"Recorde:"+string(global.recorde),0.5,0.5,0);
+draw_text_transformed(200, 100, "Tamanho:" + string(global.pontos), 0.5, 0.5, 0);
+draw_text_transformed(200, 150, "Recorde:" + string(global.recorde), 0.5, 0.5, 0);
 
 
 // === Desenhar sprite com efeito de tremor no meio da tela ===
