@@ -101,7 +101,6 @@
     {"id":{"name":"Obj_lab","path":"objects/Obj_lab/Obj_lab.yy",},},
     {"id":{"name":"Menu","path":"rooms/Menu/Menu.yy",},},
     {"id":{"name":"spr_inimigo","path":"scripts/spr_inimigo/spr_inimigo.yy",},},
-    {"id":{"name":"obj_goto_return","path":"objects/obj_goto_return/obj_goto_return.yy",},},
     {"id":{"name":"obj_SPERM","path":"objects/obj_SPERM/obj_SPERM.yy",},},
     {"id":{"name":"spr_explosion","path":"sprites/spr_explosion/spr_explosion.yy",},},
     {"id":{"name":"obj_setas","path":"objects/obj_setas/obj_setas.yy",},},

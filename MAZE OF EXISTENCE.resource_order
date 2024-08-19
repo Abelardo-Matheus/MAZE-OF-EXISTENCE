@@ -70,7 +70,6 @@
     {"name":"Obj_lab","order":3,"path":"objects/Obj_lab/Obj_lab.yy",},
     {"name":"Menu","order":1,"path":"rooms/Menu/Menu.yy",},
     {"name":"spr_inimigo","order":4,"path":"scripts/spr_inimigo/spr_inimigo.yy",},
-    {"name":"obj_goto_return","order":6,"path":"objects/obj_goto_return/obj_goto_return.yy",},
     {"name":"obj_SPERM","order":19,"path":"objects/obj_SPERM/obj_SPERM.yy",},
     {"name":"spr_explosion","order":7,"path":"sprites/spr_explosion/spr_explosion.yy",},
     {"name":"obj_wall_cima","order":1,"path":"objects/obj_wall_cima/obj_wall_cima.yy",},
