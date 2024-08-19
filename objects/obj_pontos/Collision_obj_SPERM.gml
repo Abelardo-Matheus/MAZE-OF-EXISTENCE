@@ -1,9 +1,9 @@
 /// @description Insert description here
 // You can write your code in this editor
 
-global.pontos++;
-if(global.pontos > global.recorde){
-	global.recorde = global.pontos;
+global.xp++;
+if(global.xp > global.recorde){
+	global.recorde = global.xp;
 	salvar_recorde(global.recorde);
 }
 

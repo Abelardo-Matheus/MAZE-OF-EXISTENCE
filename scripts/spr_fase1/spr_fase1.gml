@@ -4,9 +4,11 @@
 // Número de salas que queremos gerar
 global.total_rooms = 10; // Ajuste conforme necessário
 // Gerar salas procedurais
+global.xp = 0;
 num_salas = 10;
 global.tamanho_player = 1;
-global.tamanho_player_max = 3;
+global.tamanho_player_max = 5;
+global.direcao_templo = 0;
 
 
 // Tamanho da grid para posicionar as salas (baseado em quantas salas você quer)
@@ -73,11 +75,21 @@ function criar_sala_distante_com_templo(player_sala, salas_geradas) {
 
     // Verifica direções disponíveis para criar uma nova sala
     var direcoes = [[1, 0], [-1, 0], [0, 1], [0, -1]]; // Direções: Direita, Esquerda, Cima, Baixo
+
+    // Randomizar a ordem das direções
+    for (var i = 0; i < array_length_1d(direcoes); i++) {
+        var random_index = irandom(array_length_1d(direcoes) - 1);
+        var temp = direcoes[i];
+        direcoes[i] = direcoes[random_index];
+        direcoes[random_index] = temp;
+    }
+
     var nova_sala = undefined;
 
     for (var j = 0; j < array_length_1d(direcoes); j++) {
         var nova_posicao = [sala_mais_distante[0] + direcoes[j][0], sala_mais_distante[1] + direcoes[j][1]];
         var direcao_valida = true;
+        var adjacentes = 0;
 
         // Verifica se já existe uma sala na nova posição
         for (var k = 0; k < array_length_1d(salas_geradas); k++) {
@@ -87,8 +99,18 @@ function criar_sala_distante_com_templo(player_sala, salas_geradas) {
             }
         }
 
-        // Se a posição for válida (não existe uma sala adjacente), define a nova sala
-        if (direcao_valida) {
+        // Verificar se a nova sala terá mais de uma adjacente
+        for (var d = 0; d < array_length_1d(direcoes); d++) {
+            var adjacente_posicao = [nova_posicao[0] + direcoes[d][0], nova_posicao[1] + direcoes[d][1]];
+            for (var k = 0; k < array_length_1d(salas_geradas); k++) {
+                if (salas_geradas[k][0] == adjacente_posicao[0] && salas_geradas[k][1] == adjacente_posicao[1]) {
+                    adjacentes++;
+                }
+            }
+        }
+
+        // Se a nova posição é válida e tem no máximo 1 sala adjacente, pode criar a nova sala
+        if (direcao_valida && adjacentes <= 1) {
             nova_sala = nova_posicao;
             break;
         }
@@ -104,15 +126,20 @@ function criar_sala_distante_com_templo(player_sala, salas_geradas) {
         // Criar um obj_templo na nova sala
         var room_x = nova_sala[0] * global.room_width;
         var room_y = nova_sala[1] * global.room_height;
+
         // Destruir a parede na posição do templo (se houver)
         var parede = instance_nearest(room_x + global.room_width / 2, room_y + global.room_height / 2, obj_wall_carne);
         if (parede != noone) {
             instance_destroy(parede);
         }
-		  var next = instance_nearest(room_x + global.room_width / 2, room_y + global.room_height / 2, obj_next_room);
+
+        var next = instance_nearest(room_x + global.room_width / 2, room_y + global.room_height / 2, obj_next_room);
         if (next != noone) {
             instance_destroy(next);
         }
+
+        // Criar o templo
+        instance_create_layer(room_x + global.room_width / 2, room_y + global.room_height / 2, "instances", obj_goto_templo);
 
         // Exibir uma mensagem de depuração
         show_debug_message("Nova sala com templo criada na posição: " + string(nova_sala[0]) + ", " + string(nova_sala[1]));
@@ -198,24 +225,7 @@ function array_contains(array, sala) {
     return false;
 }
 
-function Troca_parede_GOTO_TEMPLO(room_middle_x,room_bottom_y) {
-    // Definir as coordenadas da posição inferior central
-  
 
-    // Encontrar a parede mais próxima dessa posição
-	
-    var middle_wall_instance = instance_nearest(room_middle_x, room_bottom_y, obj_wall_carne);
-    
-    if (middle_wall_instance != noone) {
-        // Destruir a parede do meio inferior
-        with (middle_wall_instance) {
-            instance_destroy();
-        }
-
-        // Criar o objeto obj_goto_templo na mesma posição
-        instance_create_layer(room_middle_x, room_bottom_y, "instances", obj_goto_templo);
-    }
-}
 
 function criar_parede_circular(){
 	
@@ -293,6 +303,44 @@ function criar_paredes_intances(maze_width, maze_height, maze, cell_size) {
                     y = z * cell_size + (cell_size / 2);
                 }
 				var wall_instance2 = instance_create_layer(i * cell_size, z * cell_size, "instances_floor", obj_floor_carne);
+				 with (wall_instance2) {
+                    // Ajustar a origem para centralizar
+                    x = i * cell_size + (cell_size / 2);
+                    y = z * cell_size + (cell_size / 2);
+                }
+				
+            } else {
+				
+				
+                // Se não for uma parede, crie o chão
+                var chao_instance = instance_create_layer(i * cell_size, z * cell_size, "instances_floor", obj_floor_carne);
+                with (chao_instance) {
+                    // Centralizar as instâncias de chão
+                    x = i * cell_size + (cell_size / 2);
+                    y = z * cell_size + (cell_size / 2);
+                    image_angle = choose(0, 90, 180, 270);  // Rotação aleatória do chão
+                }
+			
+            }
+        }
+    }
+	
+}
+
+function criar_paredes_vermelha_intances(maze_width, maze_height, maze, cell_size) {
+    // Iterar por todas as posições da grid
+    for (var i = 0; i <= maze_width; i++) {
+        for (var z = 0; z <= maze_height; z++) {
+            // Se a posição na grid for 0, indica que é uma parede
+            if (ds_grid_get(maze, i, z) == 0) {
+                // Criar a instância da parede com ajuste de posição
+                var wall_instance = instance_create_layer(i * cell_size, z * cell_size, "instances", obj_wall_vermelha);
+                with (wall_instance) {
+                    // Ajustar a origem para centralizar
+                    x = i * cell_size + (cell_size / 2);
+                    y = z * cell_size + (cell_size / 2);
+                }
+				var wall_instance2 = instance_create_layer(i * cell_size, z * cell_size, "instances", obj_wall_vermelha);
 				 with (wall_instance2) {
                     // Ajustar a origem para centralizar
                     x = i * cell_size + (cell_size / 2);
@@ -456,6 +504,7 @@ function cria_salas_e_objetos(maze_width, maze_height, maze, cell_size) {
     criar_paredes_borda(global.maze_width, global.maze_height, global.maze);
     criar_paredes_intances(global.maze_width, global.maze_height, global.maze, global.cell_size);
 	
+	
     // Verificar se a sala atual é a sala onde o óvulo deve ser criado
     
 }
@@ -550,7 +599,7 @@ function criar_portas_gerais(sala_atual, salas_geradas) {
         }
     }
 }
-function criar_portas_templo(sala_atual, salas_geradas) {
+function criar_portas_templo(sala_atual, salas_geradas,vindas) {
     var room_x = sala_atual[0];
     var room_y = sala_atual[1];
 
@@ -573,6 +622,13 @@ function criar_portas_templo(sala_atual, salas_geradas) {
                         instance_destroy(parede_direita);
                     }
                     var porta_templo = instance_create_layer(global.room_width + 32, (global.room_height / 2), "instances", obj_goto_templo);
+					with (porta_templo) {
+
+                    room_destino = sala_vizinha;
+                    room_origem = sala_atual;
+					global.direcao_templo = 2;
+					vinda = vindas;
+                }
                 }
 
                 // Se a sala atual está à esquerda do templo
@@ -582,6 +638,12 @@ function criar_portas_templo(sala_atual, salas_geradas) {
                         instance_destroy(parede_esquerda);
                     }
                     var porta_templo = instance_create_layer(-32, (global.room_height / 2), "instances", obj_goto_templo);
+					with (porta_templo) {
+
+                    room_destino = sala_vizinha;
+                    room_origem = sala_atual;
+					global.direcao_templo = 4;
+					vinda = vindas;
                 }
 
                 // Se a sala atual está abaixo do templo
@@ -591,6 +653,12 @@ function criar_portas_templo(sala_atual, salas_geradas) {
                         instance_destroy(parede_acima);
                     }
                     var porta_templo = instance_create_layer((global.room_width / 2) + 32, -32, "instances", obj_goto_templo);
+					with (porta_templo) {
+
+                    room_destino = sala_vizinha;
+                    room_origem = sala_atual;
+					global.direcao_templo = 1;
+					vinda = vindas;
                 }
 
                 // Se a sala atual está acima do templo
@@ -600,66 +668,21 @@ function criar_portas_templo(sala_atual, salas_geradas) {
                         instance_destroy(parede_abaixo);
                     }
                     var porta_templo = instance_create_layer((global.room_width / 2) + 32, global.room_height + 32, "instances", obj_goto_templo);
-                }
-            } else {
-                // Criar portas normais (obj_next_room) caso a sala atual não seja vizinha ao templo
-                if (x_vizinho == sala_atual[0] + 1 && y_vizinho == sala_atual[1]) {
-                    var parede_direita = instance_position(global.room_width - 32, (global.room_height / 2), obj_wall_carne);
-                    if (parede_direita != noone) {
-                        instance_destroy(parede_direita);
-                    }
-                    var porta_direita = instance_create_layer(global.room_width + 32, (global.room_height / 2), "instances", obj_next_room);
-                    with (porta_direita) {
-                        room_destino = sala_vizinha;
-                        room_origem = sala_atual;
-                        direcao = 2;
-                    }
-                }
+					with (porta_templo) {
 
-                if (x_vizinho == sala_atual[0] - 1 && y_vizinho == sala_atual[1]) {
-                    var parede_esquerda = instance_position(0, (global.room_height / 2), obj_wall_carne);
-                    if (parede_esquerda != noone) {
-                        instance_destroy(parede_esquerda);
-                    }
-                    var porta_esquerda = instance_create_layer(-32, (global.room_height / 2), "instances", obj_next_room);
-                    with (porta_esquerda) {
-                        room_destino = sala_vizinha;
-                        room_origem = sala_atual;
-                        direcao = 4;
-                    }
+                    room_destino = sala_vizinha;
+                    room_origem = sala_atual;
+					global.direcao_templo = 3;
+					vinda = vindas;
                 }
-
-                if (x_vizinho == sala_atual[0] && y_vizinho == sala_atual[1] + 1) {
-                    var parede_acima = instance_position((global.room_width / 2) + 16, 32, obj_wall_carne);
-                    if (parede_acima != noone) {
-                        instance_destroy(parede_acima);
-                    }
-                    var porta_acima = instance_create_layer((global.room_width / 2) + 32, -32, "instances", obj_next_room);
-                    with (porta_acima) {
-                        image_xscale = 1.1;
-                        room_destino = sala_vizinha;
-                        room_origem = sala_atual;
-                        direcao = 1;
-                    }
-                }
-
-                if (x_vizinho == sala_atual[0] && y_vizinho == sala_atual[1] - 1) {
-                    var parede_abaixo = instance_position((global.room_width / 2) + 16, global.room_height - 10, obj_wall_carne);
-                    if (parede_abaixo != noone) {
-                        instance_destroy(parede_abaixo);
-                    }
-                    var porta_abaixo = instance_create_layer((global.room_width / 2) + 32, global.room_height + 32, "instances", obj_next_room);
-                    with (porta_abaixo) {
-                        image_xscale = 1.1;
-                        room_destino = sala_vizinha;
-                        room_origem = sala_atual;
-                        direcao = 3;
-                    }
-                }
-            }
+            } 
         }
     }
+				}
+		}
+	}
 }
+
 
 
 
@@ -678,7 +701,8 @@ function carregar_sala(sala_atual, sala_origem_array) {
 
     // Criar as portas com base nas salas vizinhas
 	 criar_portas_gerais(sala_atual, global.salas_geradas);
-	 criar_portas_templo(sala_atual,global.salas_geradas);
+	 criar_portas_templo(sala_atual,global.salas_geradas,0);
+	 sala_tuto();
 
     
 }
@@ -705,7 +729,6 @@ function criar_random_pontos(quantidade) {
 
 
 function sala_tuto(){
-		sala_tuto();
 		if (global.current_sala[0] == 0 && global.current_sala[1] == 0) {
 			show_debug_message(global.current_sala);
 	instance_create_layer(global.room_width/2,global.room_height/2,"instances",obj_setas);	
@@ -717,11 +740,13 @@ function sala_tuto(){
 
 
 function clear_room() {
+	
     // Limpar todas as instâncias, exceto obj_SPERM, obj_control_fase_1 e as paredes da borda (obj_wall_carne)
     with (all) {
         if (object_index != obj_control_fase_1 ) {
             instance_destroy();
         }
+			
     }
 }
 

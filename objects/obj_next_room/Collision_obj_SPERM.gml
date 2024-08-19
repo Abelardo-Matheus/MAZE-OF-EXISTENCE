@@ -8,7 +8,7 @@
     carregar_sala(sala_destino, room_origem);
 	recriar_pontos_na_sala_atual(global.current_sala);
 
-	if (direcao == 2) { 
+if (direcao == 2) { 
 	
             pos_x = 80;  // Posição à frente do prev_room
             pos_y = (global.room_height / 2);

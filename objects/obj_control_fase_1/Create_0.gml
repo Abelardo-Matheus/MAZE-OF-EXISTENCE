@@ -11,8 +11,8 @@ global.maze_width = (global.room_width div global.cell_size);
 global.maze_height = (global.room_height div global.cell_size);
 
 // Criar grids de controle da room
-global.maze = ds_grid_create(global.maze_width + 2, global.maze_height + 2);
-global.visited = ds_grid_create(global.maze_width + 2, global.maze_height + 2);
+global.maze = ds_grid_create(global.maze_width , global.maze_height );
+global.visited = ds_grid_create(global.maze_width , global.maze_height );
 
 global.salas_geradas = gera_salas_procedurais(global.total_rooms);
 
@@ -24,13 +24,13 @@ for (var i = 0; i < array_length_1d(global.salas_geradas); i++) {
 // Carregar a primeira sala gerada
 
 create_random_ovulo(global.salas_geradas);
-cria_salas_e_objetos(global.maze_width, global.maze_height, global.maze, global.cell_size);
-//criar_portas_gerais(global.current_sala,global.salas_geradas);
-criar_portas_gerais(global.current_sala,global.salas_geradas);
+criar_sala_distante_com_templo(global.current_sala,global.salas_geradas);
 create_pontos_em_salas_aleatorias(global.salas_geradas, 10,5); // Criar até 5 pontos em salas aleatórias
+
+carregar_sala(global.current_sala,global.current_sala);
 recriar_pontos_na_sala_atual(global.current_sala);
 instance_create_layer(global.room_width / 2 + 32, global.room_height / 2, "Layer_Player", obj_SPERM);
-criar_sala_distante_com_templo(global.current_sala,global.salas_geradas);
+
 sala_tuto();
 
 

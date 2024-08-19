@@ -3,7 +3,6 @@ global.speed_player = 7;
 global.dificuldade = 1;
 global.tamanho_lab = 128 / global.dificuldade;
 global.cell_size = 64;
-global.pontos = 0;
 global.recorde = 0;
 
 
