@@ -12,6 +12,7 @@ global.direcao_templo = 0;
 global.vinda_templo = 0;
 global.origem_templo = noone;
 global.destino_templo = noone;
+global.distancia_parede_templo = 4;
 
 
 
@@ -197,20 +198,43 @@ function criar_paredes_borda(maze_width, maze_height, maze) {
     }
 	criar_parede_circular();
 }
-function criar_paredes_borda_sem_circular(maze_width, maze_height, maze) {
-    // Criar paredes na linha superior e inferior
-    for (var i = 0; i <= maze_width-1; i++) {
-        ds_grid_set(maze, i, 0, 0);  // Linha superior
-        ds_grid_set(maze, i, maze_height - 1, 0);  // Linha inferior
+function criar_paredes_borda_sem_circular(maze_width, maze_height, maze, w, h) {
+    // Definir variáveis locais para as coordenadas do meio das paredes
+
+
+    // Criar paredes na linha superior e inferior com base no valor de 'w'
+    for (var i = w; i < maze_width - w; i++) {
+        ds_grid_set(maze, i, w, 0);  // Linha superior
+        ds_grid_set(maze, i, maze_height - w - 1, 0);  // Linha inferior
     }
 
-    // Criar paredes nas colunas esquerda e direita
-    for (var j = 0; j <= maze_height-1; j++) {
-        ds_grid_set(maze, 0, j, 0);  // Coluna esquerda
-        ds_grid_set(maze, maze_width - 1, j, 0);  // Coluna direita
+    // Criar paredes nas colunas esquerda e direita com base no valor de 'h'
+    for (var j = h; j < maze_height - h; j++) {
+        ds_grid_set(maze, h, j, 0);  // Coluna esquerda
+        ds_grid_set(maze, maze_width - h - 1, j, 0);  // Coluna direita
     }
 
+    // Coordenadas da parede do meio superior
+    global.x_meio_superior = maze_width / 2;
+    global.y_meio_superior = w;
+    
+    // Coordenadas da parede do meio inferior
+    global.x_meio_inferior = maze_width / 2;
+	global.y_meio_inferior = maze_height - w - 1;
+
+    // Coordenadas da parede do meio esquerda
+    global.x_meio_esquerda = h;
+    global.y_meio_esquerda = maze_height / 2;
+
+    // Coordenadas da parede do meio direita
+    global.x_meio_direita = maze_width - h - 1;
+    global.y_meio_direita = maze_height / 2;
+
+    // Mostrar mensagens de depuração (opcional)
+   
 }
+
+
 
 
 function criar_chao_room_inteira(maze_width,maze_height,maze) {
