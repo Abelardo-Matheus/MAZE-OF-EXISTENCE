@@ -1,7 +1,5 @@
-// Script assets have changed for v2.3.0 see
-// https://help.yoyogames.com/hc/en-us/articles/360005277377 for more information
-// Função para limpar todas as instâncias da room, exceto o player e o controlador
-// Número de salas que queremos gerar
+
+
 global.total_rooms = 10; // Ajuste conforme necessário
 // Gerar salas procedurais
 global.xp = 0;
@@ -13,6 +11,7 @@ global.vinda_templo = 0;
 global.origem_templo = noone;
 global.destino_templo = noone;
 global.distancia_parede_templo = 4;
+global.speed_sperm = 7;
 
 
 

@@ -1,3 +1,5 @@
+
+
 if(global.tamanho_player >3){
 global.tamanho_player = 3;
 }
@@ -5,12 +7,12 @@ image_xscale = global.tamanho_player;
 image_yscale = global.tamanho_player;
 var moving = false;
 // Variável para controlar a velocidade do player
-var current_speed = global.speed_player;
+var current_speed = global.speed_sperm;
 var current_image_speed = 1; // Velocidade padrão da animação
 
 // Se a tecla Shift estiver pressionada, aumenta a velocidade
 if (keyboard_check(vk_shift)) {
-    current_speed = global.speed_player * 5; // Aumenta a velocidade do player
+    current_speed = global.speed_sperm * 5; // Aumenta a velocidade do player
     current_image_speed = 0.3; // Reduz a velocidade da animação
 } else {
     current_image_speed = 0.6; // Velocidade normal da animação

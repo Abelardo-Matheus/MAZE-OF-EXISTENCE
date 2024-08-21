@@ -1,4 +1,4 @@
-
+randomize();
 window_set_fullscreen(true);
 criar_chao_room_inteira(global.maze_width,global.maze_height,global.maze);
 
@@ -82,8 +82,15 @@ if (global.direcao_templo == 2) {
 	criar_paredes_vermelha_intances(global.maze_width,global.maze_height,global.maze,global.cell_size);
 
 	instance_create_layer(pos_x, pos_y, "Layer_Player", obj_SPERM);
+	// Escolher um poder aleatório da listr
+	poderes();
+	//var poder_escolhido = ds_list_find_value(global.lista_poderes, ds_list_size(global.lista_poderes)-1);
+	//var objeto_escolhido = global.lista_poderes(poder_escolhido);
+	var objeto_escolhido = ds_list_find_value(global.lista_poderes, 0);
+	instance_create_layer(global.room_width/2, global.room_height/2, "Layer_poder", objeto_escolhido);
 
 
+   
 
 
 

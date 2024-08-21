@@ -1,15 +1,13 @@
 {
   "resourceType": "GMObject",
   "resourceVersion": "1.0",
-  "name": "obj_pontos",
-  "eventList": [
-    {"resourceType":"GMEvent","resourceVersion":"1.0","name":"","collisionObjectId":{"name":"obj_SPERM","path":"objects/obj_SPERM/obj_SPERM.yy",},"eventNum":0,"eventType":4,"isDnD":false,},
-  ],
+  "name": "obj_poder_dash",
+  "eventList": [],
   "managed": true,
   "overriddenProperties": [],
   "parent": {
-    "name": "COLETAVEIS",
-    "path": "folders/Objects/COLETAVEIS.yy",
+    "name": "PODERES_FASE_!",
+    "path": "folders/Objects/COLETAVEIS/PODERES_FASE_!.yy",
   },
   "parentObjectId": null,
   "persistent": false,

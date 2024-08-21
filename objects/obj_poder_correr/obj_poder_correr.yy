@@ -1,15 +1,17 @@
 {
   "resourceType": "GMObject",
   "resourceVersion": "1.0",
-  "name": "obj_pontos",
+  "name": "obj_poder_correr",
   "eventList": [
     {"resourceType":"GMEvent","resourceVersion":"1.0","name":"","collisionObjectId":{"name":"obj_SPERM","path":"objects/obj_SPERM/obj_SPERM.yy",},"eventNum":0,"eventType":4,"isDnD":false,},
+    {"resourceType":"GMEvent","resourceVersion":"1.0","name":"","collisionObjectId":null,"eventNum":0,"eventType":8,"isDnD":false,},
+    {"resourceType":"GMEvent","resourceVersion":"1.0","name":"","collisionObjectId":null,"eventNum":0,"eventType":0,"isDnD":false,},
   ],
   "managed": true,
   "overriddenProperties": [],
   "parent": {
-    "name": "COLETAVEIS",
-    "path": "folders/Objects/COLETAVEIS.yy",
+    "name": "PODERES_FASE_!",
+    "path": "folders/Objects/COLETAVEIS/PODERES_FASE_!.yy",
   },
   "parentObjectId": null,
   "persistent": false,
@@ -28,8 +30,8 @@
   "properties": [],
   "solid": false,
   "spriteId": {
-    "name": "spr_ponto",
-    "path": "sprites/spr_ponto/spr_ponto.yy",
+    "name": "spr_poder_correr",
+    "path": "sprites/spr_poder_correr/spr_poder_correr.yy",
   },
   "spriteMaskId": null,
   "visible": true,
