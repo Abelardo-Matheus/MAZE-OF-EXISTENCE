@@ -6,6 +6,8 @@
 	show_debug_message(global.current_sala);
     carregar_sala(sala_destino, room_origem);
 	recriar_pontos_na_sala_atual(global.current_sala);
+	recriar_inimigos_na_sala_atual(global.current_sala);
+	recriar_torretas_na_sala_atual(global.current_sala);
 
 if (direcao == 2) { 
 	

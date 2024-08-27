@@ -1,10 +1,3 @@
-global.full = false;
-global.speed_player = 7;
-global.dificuldade = 1;
-global.tamanho_lab = 128 / global.dificuldade;
-global.cell_size = 64;
-global.recorde = 0;
-
 
 function is_within_bounds(nx, ny) {
     return nx >= 0 && nx < maze_width && ny >= 0 && ny < maze_height;

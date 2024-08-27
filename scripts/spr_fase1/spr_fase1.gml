@@ -1,21 +1,4 @@
 
-
-global.total_rooms = 10; // Ajuste conforme necessário
-// Gerar salas procedurais
-global.xp = 0;
-num_salas = 10;
-global.tamanho_player = 1;
-global.tamanho_player_max = 5;
-global.direcao_templo = 0;
-global.vinda_templo = 0;
-global.origem_templo = noone;
-global.destino_templo = noone;
-global.distancia_parede_templo = 4;
-global.speed_sperm = 7;
-
-
-
-
 // Tamanho da grid para posicionar as salas (baseado em quantas salas você quer)
 var grid_size = global.total_rooms * 2; // Um grid maior que o número de salas
 global.room_grid = ds_grid_create(grid_size, grid_size);
@@ -37,7 +20,8 @@ ds_grid_set(global.room_grid, start_x, start_y, 0); // 0 indica a primeira sala
 // Script assets have changed for v2.3.0 see
 // https://help.yoyogames.com/hc/en-us/articles/360005277377 for more information
 global.salas_com_pontos = ds_map_create(); // Cria um mapa global para armazenar as posições dos pontos nas salas
-
+global.salas_com_inimigos = ds_map_create();
+global.salas_com_torretas = ds_map_create();
 // No evento de colisão do obj_pontos com o player ou outro trigger
 function coletar_ponto(ponto_x, ponto_y, current_sala) {
 	global.tamanho_player += 0.1;
@@ -360,6 +344,121 @@ function create_pontos_em_salas_aleatorias(salas_geradas, quantidade_salas, quan
 
         // Armazenar a lista de pontos no mapa global para a sala correspondente
         ds_map_add(global.salas_com_pontos, sala_id, lista_pontos);
+    }
+
+   
+}
+
+function recriar_inimigos_na_sala_atual(current_sala) {
+    // Gerar um ID único para a sala atual
+    var sala_id = string(current_sala[0]) + "_" + string(current_sala[1]);
+
+    // Verificar se a sala atual tem pontos salvos
+    if (ds_map_exists(global.salas_com_inimigos, sala_id)) {
+        var lista_pontos = ds_map_find_value(global.salas_com_inimigos, sala_id);
+
+        // Recriar os pontos nas posições salvas, se ainda existirem na lista
+        for (var i = 0; i < ds_list_size(lista_pontos); i++) {
+            var ponto_pos = ds_list_find_value(lista_pontos, i);
+            var ponto_x = ponto_pos[0];
+            var ponto_y = ponto_pos[1];
+
+            // Criar o objeto obj_pontos na posição salva
+            instance_create_layer(ponto_x, ponto_y, "instances", obj_inimigo_fase_um);
+        }
+
+    } 
+}
+function create_inimigos_em_salas_aleatorias(salas_geradas, quantidade_salas, quantidade_pontos) {
+    // Criar um array para armazenar as salas que terão pontos
+    var salas_selecionadas = [];
+
+    // Selecionar um número específico de salas aleatórias
+    for (var i = 0; i < quantidade_salas; i++) {
+        var sala_aleatoria;
+
+        // Garantir que a sala selecionada ainda não foi escolhida
+        do {
+            sala_aleatoria = salas_geradas[irandom(array_length_1d(salas_geradas) - 1)];
+        } until (!array_contains(salas_selecionadas, sala_aleatoria));
+
+        array_push(salas_selecionadas, sala_aleatoria); // Adicionar sala selecionada à lista
+    }
+
+    // Para cada sala selecionada, criar pontos
+    for (var i = 0; i < array_length_1d(salas_selecionadas); i++) {
+        var sala = salas_selecionadas[i];
+        var sala_id = string(sala[0]) + "_" + string(sala[1]); // Gerar um ID único baseado nas coordenadas da sala
+        var lista_pontos = ds_list_create(); // Criar uma lista para armazenar as posições dos pontos
+
+        // Criar pontos aleatórios na sala e salvar suas posições
+        for (var j = 0; j < quantidade_pontos; j++) {
+            var ponto_x = irandom_range(128, room_width - 128); // Gera posições aleatórias
+            var ponto_y = irandom_range(128, room_height - 128);
+
+            // Salvar a posição do ponto na lista
+            ds_list_add(lista_pontos, [ponto_x, ponto_y]);
+        }
+
+        // Armazenar a lista de pontos no mapa global para a sala correspondente
+        ds_map_add(global.salas_com_inimigos, sala_id, lista_pontos);
+    }
+
+   
+}
+function recriar_torretas_na_sala_atual(current_sala) {
+    // Gerar um ID único para a sala atual
+    var sala_id = string(current_sala[0]) + "_" + string(current_sala[1]);
+
+    // Verificar se a sala atual tem pontos salvos
+    if (ds_map_exists(global.salas_com_torretas, sala_id)) {
+        var lista_pontos = ds_map_find_value(global.salas_com_torretas, sala_id);
+
+        // Recriar os pontos nas posições salvas, se ainda existirem na lista
+        for (var i = 0; i < ds_list_size(lista_pontos); i++) {
+            var ponto_pos = ds_list_find_value(lista_pontos, i);
+            var ponto_x = ponto_pos[0];
+            var ponto_y = ponto_pos[1];
+
+            // Criar o objeto obj_pontos na posição salva
+            instance_create_layer(ponto_x, ponto_y, "instances", obj_torreta);
+        }
+
+    } 
+}
+function create_torretas_em_salas_aleatorias(salas_geradas, quantidade_salas, quantidade_pontos) {
+    // Criar um array para armazenar as salas que terão pontos
+    var salas_selecionadas = [];
+
+    // Selecionar um número específico de salas aleatórias
+    for (var i = 0; i < quantidade_salas; i++) {
+        var sala_aleatoria;
+
+        // Garantir que a sala selecionada ainda não foi escolhida
+        do {
+            sala_aleatoria = salas_geradas[irandom(array_length_1d(salas_geradas) - 1)];
+        } until (!array_contains(salas_selecionadas, sala_aleatoria));
+
+        array_push(salas_selecionadas, sala_aleatoria); // Adicionar sala selecionada à lista
+    }
+
+    // Para cada sala selecionada, criar pontos
+    for (var i = 0; i < array_length_1d(salas_selecionadas); i++) {
+        var sala = salas_selecionadas[i];
+        var sala_id = string(sala[0]) + "_" + string(sala[1]); // Gerar um ID único baseado nas coordenadas da sala
+        var lista_pontos = ds_list_create(); // Criar uma lista para armazenar as posições dos pontos
+
+        // Criar pontos aleatórios na sala e salvar suas posições
+        for (var j = 0; j < quantidade_pontos; j++) {
+            var ponto_x = irandom_range(128, room_width - 128); // Gera posições aleatórias
+            var ponto_y = irandom_range(128, room_height - 128);
+
+            // Salvar a posição do ponto na lista
+            ds_list_add(lista_pontos, [ponto_x, ponto_y]);
+        }
+
+        // Armazenar a lista de pontos no mapa global para a sala correspondente
+        ds_map_add(global.salas_com_torretas, sala_id, lista_pontos);
     }
 
    

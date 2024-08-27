@@ -2,7 +2,11 @@
   "resourceType": "GMObject",
   "resourceVersion": "1.0",
   "name": "obj_poder_mapa",
-  "eventList": [],
+  "eventList": [
+    {"resourceType":"GMEvent","resourceVersion":"1.0","name":"","collisionObjectId":{"name":"obj_SPERM","path":"objects/obj_SPERM/obj_SPERM.yy",},"eventNum":0,"eventType":4,"isDnD":false,},
+    {"resourceType":"GMEvent","resourceVersion":"1.0","name":"","collisionObjectId":null,"eventNum":0,"eventType":8,"isDnD":false,},
+    {"resourceType":"GMEvent","resourceVersion":"1.0","name":"","collisionObjectId":null,"eventNum":0,"eventType":0,"isDnD":false,},
+  ],
   "managed": true,
   "overriddenProperties": [],
   "parent": {
@@ -26,8 +30,8 @@
   "properties": [],
   "solid": false,
   "spriteId": {
-    "name": "spr_ponto",
-    "path": "sprites/spr_ponto/spr_ponto.yy",
+    "name": "spr_poder_mapa",
+    "path": "sprites/spr_poder_mapa/spr_poder_mapa.yy",
   },
   "spriteMaskId": null,
   "visible": true,

@@ -2,6 +2,7 @@
 // You can write your code in this editor
 
 global.xp++;
+global.speed_sperm+=0.2;
 if(global.xp > global.recorde){
 	global.recorde = global.xp;
 	salvar_recorde(global.recorde);
