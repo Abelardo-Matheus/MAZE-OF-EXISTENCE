@@ -54,8 +54,15 @@ else if (direcao == 3) {
     carregar_sala(sala_destino, global.destino_templo);
 	instance_create_layer(pos_x+32, pos_y, "Layer_Player", obj_SPERM);
 	recriar_pontos_na_sala_atual(global.current_sala);
+	recriar_inimigos_na_sala_atual(global.current_sala);
+	recriar_slow_na_sala_atual(global.current_sala);
+	if (global.current_sala == global.ovulo_sala_pos) {
+        // Criar o óvulo nesta sala
+	
+        instance_create_layer(global.room_width/2, global.room_height/2, "Layer_Player", obj_ovulo);
+    }
 }
-
+	
 
 
 

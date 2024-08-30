@@ -89,7 +89,7 @@ if (global.direcao_templo == 2) {
 	
 	var objeto_escolhido = procurar_poder(global.poder_escolhido);
 	if(!objeto_escolhido.coletado){
-	instance_create_layer(global.room_width/2, global.room_height/2, "Layer_poder", objeto_escolhido.objeto);
+	instance_create_layer(global.room_width/2, global.room_height/2, "Layer_poder", obj_poder_dash);
 	}
 
    

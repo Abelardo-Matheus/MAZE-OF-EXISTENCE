@@ -1,6 +1,6 @@
 function desenha_barra_vida() {
     // Definir as dimensões da barra
-    global.max_xp = 100;
+    global.max_xp = 30;
     var escala_x = 3; // Escala horizontal
     var escala_y = 3; // Escala vertical
     var pos_x = global.room_width / 2 + 40; // Posição X da barra
@@ -12,7 +12,7 @@ function desenha_barra_vida() {
     var progresso = (global.xp - 1) / (global.max_xp - 1);
 
     // Definir o número de pedaços da barra
-    var total_pedacos = 10;
+    var total_pedacos = 5;
 
     // Calcular a largura de cada pedaço da barra de vida
     var largura_pedaco = sprite_get_width(spr_vida) / total_pedacos;

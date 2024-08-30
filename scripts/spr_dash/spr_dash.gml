@@ -8,6 +8,7 @@ function salvar_estado_dash() {
     global.dash_em_recarga = global.dash_em_recarga;
     global.dash_alarm = alarm[0];
     global.frames_restantes = alarm[0] > 0 ? alarm[0] : 0;
+
 }
 /// Função para restaurar o estado do dash após a troca de room
 function restaurar_estado_dash() {

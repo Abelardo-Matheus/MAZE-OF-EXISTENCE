@@ -43,16 +43,32 @@ if (global.map == true) {
                 draw_set_color(c_white);
 
                 // Verificar se o jogador está na sala do templo
-                if (global.templo_sala_pos != undefined && global.current_sala[0] == global.templo_sala_pos[0] && global.current_sala[1] == global.templo_sala_pos[1]) {
-                    draw_set_color(c_red); // Se o jogador está na sala do templo, desenha vermelho
+                var esta_no_templo = false;
+                if (global.templos_salas_pos != undefined) {
+                    for (var j = 0; j < array_length_1d(global.templos_salas_pos); j++) {
+                        var templo_pos = global.templos_salas_pos[j];
+                        if (global.current_sala[0] == templo_pos[0] && global.current_sala[1] == templo_pos[1]) {
+                            draw_set_color(c_red); // Se o jogador está na sala do templo, desenha vermelho
+                            esta_no_templo = true;
+                            break;
+                        }
+                    }
                 }
+
                 // Verificar se essa sala contém o óvulo
-                else if (global.ovulo_sala_pos != undefined && global.ovulo_sala_pos[0] == sala_x && global.ovulo_sala_pos[1] == sala_y) {
+                if (!esta_no_templo && global.ovulo_sala_pos != undefined && global.ovulo_sala_pos[0] == sala_x && global.ovulo_sala_pos[1] == sala_y) {
                     draw_set_color(c_blue); // Sala com óvulo
                 }
-                // Verificar se essa sala contém o templo (quando o jogador não está nela)
-                else if (global.templo_sala_pos != undefined && global.templo_sala_pos[0] == sala_x && global.templo_sala_pos[1] == sala_y) {
-                    draw_set_color(c_yellow); // Sala com templo (quando não é a sala atual do jogador)
+
+                // Verificar se essa sala contém um dos templos (quando o jogador não está nela)
+                if (!esta_no_templo && global.templos_salas_pos != undefined) {
+                    for (var j = 0; j < array_length_1d(global.templos_salas_pos); j++) {
+                        var templo_pos = global.templos_salas_pos[j];
+                        if (templo_pos[0] == sala_x && templo_pos[1] == sala_y) {
+                            draw_set_color(c_yellow); // Sala com templo
+                            break;
+                        }
+                    }
                 }
 
                 // Desenhar a sala como um quadrado
@@ -64,7 +80,6 @@ if (global.map == true) {
                     draw_rectangle(mini_x, mini_y, mini_x + cell_size, mini_y + cell_size, false);
                     draw_set_color(c_white); // Voltar à cor padrão
                 }
-				
             }
         }
     }
@@ -79,8 +94,7 @@ draw_text_transformed(200, 150, "Recorde:" + string(global.recorde), 0.5, 0.5, 0
 
 desenha_barra_vida();
 
-
-for(v = 0;v<=global.vida_sperm;v++){
-	o = 50*v;
-	draw_sprite(spr_vida_cheia,false,o+100,190);
+for (v = 0; v <= global.vida_sperm; v++) {
+    var o = 50 * v;
+    draw_sprite(spr_vida_cheia, false, o + 100, 190);
 }

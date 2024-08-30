@@ -4,7 +4,6 @@ if (player != noone) {
     var player_x = player.x div global.cell_size;
     var player_y = player.y div global.cell_size;
 }
-show_debug_message(player_x);
 // Obter a posição do inimigo
 var enemy_x = x div global.cell_size;
 var enemy_y = y div global.cell_size;

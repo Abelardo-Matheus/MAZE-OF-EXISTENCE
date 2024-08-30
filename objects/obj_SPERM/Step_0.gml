@@ -1,4 +1,6 @@
-
+if(global.vida_sperm == 0){
+	game_restart();
+}
 
 if(global.tamanho_player >3){
 global.tamanho_player = 3;

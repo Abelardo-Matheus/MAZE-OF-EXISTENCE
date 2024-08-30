@@ -7,7 +7,7 @@
     carregar_sala(sala_destino, room_origem);
 	recriar_pontos_na_sala_atual(global.current_sala);
 	recriar_inimigos_na_sala_atual(global.current_sala);
-	recriar_torretas_na_sala_atual(global.current_sala);
+	recriar_slow_na_sala_atual(global.current_sala);
 
 if (direcao == 2) { 
 	

@@ -1,9 +1,10 @@
 {
   "resourceType": "GMObject",
   "resourceVersion": "1.0",
-  "name": "obj_goto_templo",
+  "name": "obj_slow",
   "eventList": [
     {"resourceType":"GMEvent","resourceVersion":"1.0","name":"","collisionObjectId":{"name":"obj_SPERM","path":"objects/obj_SPERM/obj_SPERM.yy",},"eventNum":0,"eventType":4,"isDnD":false,},
+    {"resourceType":"GMEvent","resourceVersion":"1.0","name":"","collisionObjectId":null,"eventNum":0,"eventType":3,"isDnD":false,},
     {"resourceType":"GMEvent","resourceVersion":"1.0","name":"","collisionObjectId":null,"eventNum":0,"eventType":0,"isDnD":false,},
   ],
   "managed": true,
@@ -27,11 +28,11 @@
   "physicsShapePoints": [],
   "physicsStartAwake": true,
   "properties": [],
-  "solid": true,
-  "spriteId": null,
-  "spriteMaskId": {
-    "name": "spr_goto_templo",
-    "path": "sprites/spr_goto_templo/spr_goto_templo.yy",
+  "solid": false,
+  "spriteId": {
+    "name": "spr_slow_fase1",
+    "path": "sprites/spr_slow_fase1/spr_slow_fase1.yy",
   },
+  "spriteMaskId": null,
   "visible": true,
 }
