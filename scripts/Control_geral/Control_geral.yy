@@ -5,7 +5,7 @@
   "isCompatibility": false,
   "isDnD": false,
   "parent": {
-    "name": "Scripts",
-    "path": "folders/Scripts.yy",
+    "name": "LAB_EXCLUIDO",
+    "path": "folders/Scripts/LAB_EXCLUIDO.yy",
   },
 }

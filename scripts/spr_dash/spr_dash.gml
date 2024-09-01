@@ -2,6 +2,11 @@ global.speed_sperm = 7;
 global.dash_habilitado = false;  // Inicialmente, o dash está desabilitado
 global.dash_em_recarga = false;  // Indica se o dash está em recarga
 global.in_dash = false;
+global.speed_dash = 0;  // Velocidade do dash
+global.dash_tempo_recarga = 0; // Tempo de recarga do dash (2 segundos, se o jogo estiver a 60 FPS)
+global.frames = 0;
+global.dash_em_recarga = false;  // Indica se o dash está em recarga
+global.in_dash = false;
 
 function salvar_estado_dash() {
     global.dash_estado_speed = obj_SPERM.current_speed;

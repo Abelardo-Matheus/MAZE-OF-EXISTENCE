@@ -9,8 +9,8 @@
   "managed": true,
   "overriddenProperties": [],
   "parent": {
-    "name": "COLETAVEIS",
-    "path": "folders/Objects/COLETAVEIS.yy",
+    "name": "LAB_EXCUIDO",
+    "path": "folders/Objects/LAB_EXCUIDO.yy",
   },
   "parentObjectId": null,
   "persistent": false,

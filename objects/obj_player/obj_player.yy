@@ -14,8 +14,8 @@
   "managed": true,
   "overriddenProperties": [],
   "parent": {
-    "name": "Objects",
-    "path": "folders/Objects.yy",
+    "name": "LAB_EXCUIDO",
+    "path": "folders/Objects/LAB_EXCUIDO.yy",
   },
   "parentObjectId": null,
   "persistent": false,

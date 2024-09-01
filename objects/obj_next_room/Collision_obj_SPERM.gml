@@ -1,13 +1,14 @@
 // Evento de colisão com `obj_next_room` ou `obj_prev_room`
 	
     // Carregar a nova sala
-
+	
     var sala_destino = room_destino;  // Sala que você está indo
-	show_debug_message(global.current_sala);
+	if(sala_destino == global.templos_salas_pos[0]){
+	carregar_sala_templo(sala_destino, room_origem,direcao);
+	}else{
     carregar_sala(sala_destino, room_origem);
-	recriar_pontos_na_sala_atual(global.current_sala);
-	recriar_inimigos_na_sala_atual(global.current_sala);
-	recriar_slow_na_sala_atual(global.current_sala);
+	}
+
 
 if (direcao == 2) { 
 	
@@ -43,7 +44,9 @@ else if (direcao == 1) {
 			direcao = 0;
 				direction = 270;
 }
-
+	if(global.current_sala == global.templos_salas_pos[0]){
+		pos_x -=32;
+	}
 		instance_create_layer(pos_x+32, pos_y, "Layer_Player", obj_SPERM);
     
 	if (global.current_sala == global.ovulo_sala_pos) {

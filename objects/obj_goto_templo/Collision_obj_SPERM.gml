@@ -5,7 +5,6 @@
 // Evento de colisão com `obj_next_room` ou `obj_prev_room`
 if(global.vinda_templo ==0){
 instance_deactivate_all(true); // Desativa todas as instância
-// Reativar o obj_controle manualmente para que ele não seja destruído
 instance_activate_object(obj_control_fase_1);
 room_goto(TEMPLO)
 global.vinda_templo = 1;
@@ -45,13 +44,12 @@ else if (direcao == 3) {
 				direction = 270;
 }
 
-
-	instance_deactivate_all(true); // Desativa todas as instância
+	
+	instance_deactivate_all(true);
 	instance_activate_object(obj_control_fase_1);
-	//room_goto(Fase_1);
-    var sala_destino = global.origem_templo;  // Sala que você está indo
+	room_goto(Fase_1);
+	carregar_sala(global.origem_templo, global.destino_templo);
 	global.vinda_templo = 0;
-    carregar_sala(sala_destino, global.destino_templo);
 	instance_create_layer(pos_x+32, pos_y, "Layer_Player", obj_SPERM);
 	recriar_pontos_na_sala_atual(global.current_sala);
 	recriar_inimigos_na_sala_atual(global.current_sala);

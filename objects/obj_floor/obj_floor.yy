@@ -8,8 +8,8 @@
   "managed": true,
   "overriddenProperties": [],
   "parent": {
-    "name": "OBJETOS",
-    "path": "folders/Objects/OBJETOS.yy",
+    "name": "LAB_EXCUIDO",
+    "path": "folders/Objects/LAB_EXCUIDO.yy",
   },
   "parentObjectId": null,
   "persistent": false,

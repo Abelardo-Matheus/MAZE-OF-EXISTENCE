@@ -1,11 +1,11 @@
 {
   "resourceType": "GMScript",
   "resourceVersion": "1.0",
-  "name": "spr_caminho",
+  "name": "Templo",
   "isCompatibility": false,
   "isDnD": false,
   "parent": {
-    "name": "Scripts",
-    "path": "folders/Scripts.yy",
+    "name": "FASE_1",
+    "path": "folders/Scripts/FASE_1.yy",
   },
 }

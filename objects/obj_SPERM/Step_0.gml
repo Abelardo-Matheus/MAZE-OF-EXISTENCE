@@ -1,3 +1,5 @@
+show_debug_message(global.destino_templo);
+show_debug_message(global.current_sala);
 if(global.vida_sperm == 0){
 	game_restart();
 }
