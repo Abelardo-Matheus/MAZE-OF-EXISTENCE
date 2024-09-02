@@ -1,9 +1,8 @@
-// Script assets have changed for v2.3.0 see
-// https://help.yoyogames.com/hc/en-us/articles/360005277377 for more information
+
 function carregar_templo(direcao){
 
 criar_chao_room_inteira(global.maze_width,global.maze_height,global.maze);
-criar_paredes_borda_sem_circular(global.maze_width,global.maze_height,global.maze,global.distancia_parede_templo,global.distancia_parede_templo);
+criar_templo_poder(global.maze_width,global.maze_height,global.maze,global.distancia_parede_templo,global.distancia_parede_templo);
 
 if (direcao == 2) { 
 
@@ -57,8 +56,7 @@ if (direcao == 2) {
 
     
 }
-
-	criar_paredes_vermelha_intances(global.maze_width,global.maze_height,global.maze,global.cell_size);
+	criar_paredes_intances(global.maze_width,global.maze_height,global.maze,global.cell_size);
 	global.objeto_escolhido = procurar_poder(global.poder_escolhido);
 	if(!global.objeto_escolhido.coletado){
 	instance_create_layer(global.room_width/2, global.room_height/2, "instances", global.objeto_escolhido.objeto);

@@ -23,7 +23,7 @@ function desenha_barra_vida() {
 
     // Verificar se o player está tocando a área da barra (mesmo parcialmente)
     var alfa = 1; // Alpha normal
-    if (point_in_rectangle(obj_SPERM.x, obj_SPERM.y, pos_x - largura_barra / 2, pos_y - altura_barra / 2, pos_x + largura_barra / 2, pos_y + altura_barra / 2)) {
+    if (point_in_rectangle(global.current_player.x, global.current_player.y, pos_x - largura_barra / 2, pos_y - altura_barra / 2, pos_x + largura_barra / 2, pos_y + altura_barra / 2)) {
         alfa = 0.5; // Player está na posição da barra, reduzir alpha
     }
 
