@@ -1,5 +1,5 @@
 // Para cada instância de obj_SPERM
-with (global.current_player) {
+with (obj_colisao) {
     // Verifica se está colidindo com alguma instância de obj_slow
     if (place_meeting(x, y, obj_slow_bebe)) {
         // Reduz a velocidade

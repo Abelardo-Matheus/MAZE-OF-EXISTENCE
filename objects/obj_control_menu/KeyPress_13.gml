@@ -5,7 +5,7 @@ if(option_list == 1){
 	
 	if(option_selected == 0){
 	
-		room_goto(Fase_1);
+		room_goto(Fase_BEBE);
 	}
 	if(option_selected == 1) game_end();
 }else if(option_list == 2){

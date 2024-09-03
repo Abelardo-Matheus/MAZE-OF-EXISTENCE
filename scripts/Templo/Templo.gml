@@ -7,10 +7,11 @@ criar_templo_poder(global.maze_width,global.maze_height,global.maze,global.dista
 if (direcao == 2) { 
 
     ds_grid_set(global.maze, global.x_meio_esquerda, global.y_meio_esquerda, 1); // Ajustar as coordenadas para o grid
-	
+	ds_grid_set(global.maze, global.x_meio_esquerda, global.y_meio_esquerda-1, 1);
+	ds_grid_set(global.maze, global.x_meio_esquerda, global.y_meio_esquerda+1, 1);
 	for(i = 1;i < 5;i++){
-		ds_grid_set(global.maze, global.x_meio_esquerda-i, global.y_meio_esquerda-1, 0);
-		ds_grid_set(global.maze, global.x_meio_esquerda-i, global.y_meio_esquerda+1, 0);
+		ds_grid_set(global.maze, global.x_meio_esquerda-i, global.y_meio_esquerda-2, 0);
+		ds_grid_set(global.maze, global.x_meio_esquerda-i, global.y_meio_esquerda+2, 0);
 	}
 
   
@@ -19,9 +20,12 @@ if (direcao == 2) {
 
     // Destruir a parede direita
     ds_grid_set(global.maze, global.x_meio_direita, global.y_meio_direita, 1);
+	 ds_grid_set(global.maze, global.x_meio_direita, global.y_meio_direita-1, 1);
+	  ds_grid_set(global.maze, global.x_meio_direita, global.y_meio_direita+1, 1);
+	
 		for(i = 1;i < 5;i++){
-		ds_grid_set(global.maze, global.x_meio_direita+i, global.y_meio_esquerda-1, 0);
-		ds_grid_set(global.maze, global.x_meio_direita+i, global.y_meio_esquerda+1, 0);
+		ds_grid_set(global.maze, global.x_meio_direita+i, global.y_meio_esquerda-2, 0);
+		ds_grid_set(global.maze, global.x_meio_direita+i, global.y_meio_esquerda+2, 0);
 	}
     // Transformar a posição no maze em chão (índice 1)
     ds_grid_set(global.maze, global.x_meio_direita, global.y_meio_direita, 1);
@@ -32,9 +36,12 @@ if (direcao == 2) {
 
     ds_grid_set(global.maze, global.x_meio_superior-1, global.y_meio_superior, 1);
 	ds_grid_set(global.maze, global.x_meio_superior, global.y_meio_superior, 1);
+	
+		ds_grid_set(global.maze, global.x_meio_superior-2, global.y_meio_superior, 1);
+		ds_grid_set(global.maze, global.x_meio_superior+1, global.y_meio_superior, 1);
 	for(i = 1;i < 5;i++){
 		ds_grid_set(global.maze, global.x_meio_superior-2, global.y_meio_superior-i, 0);
-		ds_grid_set(global.maze, global.x_meio_superior+1, global.y_meio_superior-i, 0);
+		ds_grid_set(global.maze, global.x_meio_superior+2, global.y_meio_superior-i, 0);
 	}
 
     // Transformar a posição no maze em chão (índice 1)
@@ -47,10 +54,13 @@ if (direcao == 2) {
     // Destruir a parede abaixo
     ds_grid_set(global.maze, global.x_meio_inferior-1, global.y_meio_inferior, 1);
 	ds_grid_set(global.maze, global.x_meio_inferior, global.y_meio_inferior, 1);
+	
+		ds_grid_set(global.maze, global.x_meio_inferior-2, global.y_meio_inferior, 1);
+		ds_grid_set(global.maze, global.x_meio_inferior+1, global.y_meio_inferior, 1);
     // Transformar a posição no maze em chão (índice 1)
 	for(i = 1;i < 5;i++){
 		ds_grid_set(global.maze, global.x_meio_inferior-2, global.y_meio_inferior+i, 0);
-		ds_grid_set(global.maze, global.x_meio_inferior+1, global.y_meio_inferior+i, 0);
+		ds_grid_set(global.maze, global.x_meio_inferior+2, global.y_meio_inferior+i, 0);
 	}
 
 

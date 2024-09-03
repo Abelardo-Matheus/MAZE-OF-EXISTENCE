@@ -1,5 +1,5 @@
-show_debug_message(global.destino_templo);
-show_debug_message(global.current_sala);
+
+
 if(global.vida_sperm == 0){
 	game_restart();
 }
@@ -49,11 +49,11 @@ if (keyboard_check(vk_up) || keyboard_check(ord("W"))) {
 x += h_move;
 y += v_move;
 
+
 // Atualiza a animação do player se ele estiver se movendo
 if (moving) {
 	
 	image_speed = current_image_speed; // Define a velocidade da animação baseada na velocidade atual
-	show_debug_message(image_speed);
 } else {
     image_speed = 0; // Para a animação do player
     image_index = 0; // Opcional: redefine para o primeiro quadro da animação
@@ -80,4 +80,10 @@ if (global.dash_habilitado && !global.dash_em_recarga) {
 // Verificar quando o dash termina
 if (alarm[0] <= 0 && global.dash_em_recarga) {
     global.dash_em_recarga = false;  // Reseta o estado de recarga
+}
+
+// Manter o bloco de colisão na posição correta
+if (instance_exists(global.bloco_colisao)) {
+    global.bloco_colisao.x = x;
+    global.bloco_colisao.y = y +30; // Ajuste 50 conforme necessário
 }

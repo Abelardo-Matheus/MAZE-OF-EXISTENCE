@@ -1,6 +1,6 @@
 // Define o tamanho do minimapa
 if (global.map == true) {
-    var mini_map_width = 200;
+    var mini_map_width = 220;
     var mini_map_height = 200;
     var cell_size = 15; // Tamanho de cada célula no minimapa
 
@@ -85,12 +85,6 @@ draw_set_alpha(1);
 
 draw_set_color(c_white);
 draw_set_font(fnt_menu_op);
-draw_text_transformed(200, 100, "XP:" + string(global.xp), 0.5, 0.5, 0);
-draw_text_transformed(200, 150, "Recorde:" + string(global.recorde), 0.5, 0.5, 0);
+draw_text_transformed(100, 100, "XP:" + string(global.xp), 0.5, 0.5, 0);
+draw_text_transformed(150, 150, "Recorde:" + string(global.recorde), 0.5, 0.5, 0);
 
-desenha_barra_vida();
-
-for (v = 0; v <= global.vida_sperm; v++) {
-    var o = 50 * v;
-    draw_sprite(spr_vida_cheia, false, o + 100, 190);
-}

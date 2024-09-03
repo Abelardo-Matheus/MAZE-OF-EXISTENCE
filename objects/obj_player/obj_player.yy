@@ -13,8 +13,8 @@
   "managed": true,
   "overriddenProperties": [],
   "parent": {
-    "name": "Objects",
-    "path": "folders/Objects.yy",
+    "name": "PLAYER",
+    "path": "folders/Objects/PLAYER.yy",
   },
   "parentObjectId": null,
   "persistent": false,

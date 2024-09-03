@@ -1,8 +1,8 @@
 // Define o tamanho do minimapa
 if (global.map == true) {
-    var mini_map_width = 200;
-    var mini_map_height = 200;
-    var cell_size = 15; // Tamanho de cada célula no minimapa
+    var mini_map_width = 300;
+    var mini_map_height = 300;
+    var cell_size = 45; // Tamanho de cada célula no minimapa
 
     draw_set_alpha(0.7);
 
