@@ -55,18 +55,19 @@ if (direcao == 2) {
     ds_grid_set(global.maze, global.x_meio_inferior-1, global.y_meio_inferior, 1);
 	ds_grid_set(global.maze, global.x_meio_inferior, global.y_meio_inferior, 1);
 	
-		ds_grid_set(global.maze, global.x_meio_inferior-2, global.y_meio_inferior, 1);
-		ds_grid_set(global.maze, global.x_meio_inferior+1, global.y_meio_inferior, 1);
+	ds_grid_set(global.maze, global.x_meio_inferior-2, global.y_meio_inferior, 1);
+	ds_grid_set(global.maze, global.x_meio_inferior+1, global.y_meio_inferior, 1);
     // Transformar a posição no maze em chão (índice 1)
 	for(i = 1;i < 5;i++){
 		ds_grid_set(global.maze, global.x_meio_inferior-2, global.y_meio_inferior+i, 0);
 		ds_grid_set(global.maze, global.x_meio_inferior+2, global.y_meio_inferior+i, 0);
 	}
-
-
+	
     
-}
-	criar_paredes_intances(global.maze_width,global.maze_height,global.maze,global.cell_size);
+}	
+	randomize();
+	global.poder_escolhido = irandom(ds_list_size(global.lista_poderes_basicos) - 1);
+	criar_paredes_intances(global.maze_width,global.maze_height,global.maze,global.cell_size);	
 	global.objeto_escolhido = procurar_poder(global.poder_escolhido);
 	if(!global.objeto_escolhido.coletado){
 	instance_create_layer(global.room_width/2, global.room_height/2, "instances", global.objeto_escolhido.objeto);

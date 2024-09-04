@@ -1,7 +1,6 @@
 // Evento de colisão com `obj_next_room` ou `obj_prev_room`
 	
-    // Carregar a nova sala
-	
+ 
     var sala_destino = room_destino;  // Sala que você está indo
 	if(sala_destino == global.templos_salas_pos[0]){
 	carregar_sala_templo(sala_destino, room_origem,direcao);

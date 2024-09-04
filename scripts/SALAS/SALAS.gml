@@ -19,7 +19,7 @@ var quarto3 = ds_map_create();
 ds_map_add(quarto3, "nome", "quarto3");
 ds_map_add(quarto3, "chao", obj_chao_tijolo);
 ds_map_add(quarto3, "parede", obj_parede_bebe);
-ds_map_add(quarto3, "objetos", [obj_pontos]);
+ds_map_add(quarto3, "objetos", [obj_pontos,obj_vela]);
 
 var quarto2 = ds_map_create();
 ds_map_add(quarto2, "nome", "quarto2");
@@ -115,4 +115,36 @@ function escrever_informacoes_sala(sala) {
     } else {
         show_debug_message("Sala não encontrada.");
     }
+}
+function resetar_salas() {
+    // Verifica se existe a lista de salas criadas
+    if (global.salas_criadas != undefined) {
+        // Percorre todas as salas na lista
+        for (var i = 0; i < array_length_1d(global.salas_criadas); i++) {
+            var sala = global.salas_criadas[i];
+
+            // Reinicializa as propriedades da sala
+            sala.sala = [0, 0];  // Posição padrão ou redefinir como desejado
+            sala.tag = 0;         // Redefine a tag (pode ser incrementada ou ajustada conforme necessário)
+            sala.tipo = "";       // Remove o tipo ou redefina
+            sala.chao = noone;    // Remove o chão
+            sala.parede = noone;  // Remove a parede
+            sala.objetos = [];    // Limpa a lista de objetos
+        }
+    }
+
+    // Opcional: Redefinir a lista inteira (se preferir limpar completamente)
+    global.salas_criadas = [];
+}
+function verificar_sala_escura(sala_atual) {
+    // Percorre todas as salas escuras armazenadas
+    for (var i = 0; i < array_length_1d(global.salas_escuras); i++) {
+        var sala_escura = global.salas_escuras[i];
+
+        // Verifica se a sala atual corresponde à sala escura
+        if (sala_escura[0] == sala_atual[0] && sala_escura[1] == sala_atual[1]) {
+            return true; // Sala escura encontrada
+        }
+    }
+    return false; // Sala escura não encontrada
 }

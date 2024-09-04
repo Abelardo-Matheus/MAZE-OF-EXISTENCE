@@ -1,6 +1,10 @@
 
-
-if(global.vida_sperm == 0){
+if(verificar_sala_escura(global.current_sala)){
+	global.encontrou_sala_escura = true;
+	}else{
+		global.encontrou_sala_escura = false;
+	}
+if(global.vida == 0){
 	game_restart();
 }
 
@@ -9,8 +13,6 @@ global.tamanho_player = 3;
 }
 
 var moving = false;
-// Variável para controlar a velocidade do player
-
 var current_image_speed = 1; // Velocidade padrão da animação
 
 
@@ -38,7 +40,7 @@ if (keyboard_check(vk_left) || keyboard_check(ord("A"))) {
 if (keyboard_check(vk_up) || keyboard_check(ord("W"))) {
     v_move = -current_speed;
 	 sprite_index = spr_player_cima;
-        moving = true;
+      moving = true;
 } else if (keyboard_check(vk_down) || keyboard_check(ord("S"))) {
     v_move = current_speed;
 	sprite_index = spr_player_baixo;
@@ -70,7 +72,7 @@ if (global.dash_habilitado && !global.dash_em_recarga) {
     } else {
         // Volta à velocidade normal
 		global.in_dash = false;
-        current_speed = global.speed_sperm;
+        current_speed = global.speed_player;
         current_image_speed = 0.6;
     }
 }

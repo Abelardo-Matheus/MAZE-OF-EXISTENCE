@@ -1,6 +1,6 @@
 
-global.xp++;
-global.speed_sperm+=0.2;
+global.vida--;
+global.speed_player+=0.2;
 if(global.xp > global.recorde){
 	global.recorde = global.xp;
 	salvar_recorde(global.recorde);

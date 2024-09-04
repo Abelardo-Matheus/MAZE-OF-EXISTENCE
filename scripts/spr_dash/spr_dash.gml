@@ -1,4 +1,4 @@
-global.speed_sperm = 7;
+
 global.dash_habilitado = false;  // Inicialmente, o dash está desabilitado
 global.dash_em_recarga = false;  // Indica se o dash está em recarga
 global.in_dash = false;
@@ -22,7 +22,7 @@ function restaurar_estado_dash() {
         global.dash_em_recarga = true;
         alarm[0] = global.frames_restantes;  // Restaura o tempo restante da recarga
     } else {
-        global.current_player.current_speed = global.speed_sperm;  // Define a velocidade normal
+        global.current_player.current_speed = global.speed_player;  // Define a velocidade normal
         global.dash_em_recarga = false;
     }
 }

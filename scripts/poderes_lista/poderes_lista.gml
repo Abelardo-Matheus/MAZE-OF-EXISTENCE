@@ -22,12 +22,14 @@ if (!variable_global_exists("lista_poderes_basicos")) {
     var poder_correr = criar_poder("correr", 1, 0, false,0,obj_poder_correr);
     var poder_dash = criar_poder("dash", 1, 0, false,1,obj_poder_dash);
 	var poder_mapa = criar_poder("mapa", 1, 0, false,2,obj_poder_mapa);
+	var poder_lanterna = criar_poder("lanterna", 1, 0, false,3,obj_poder_lanterna);
     
     
     ds_list_add(global.lista_poderes_basicos, poder_correr);
     ds_list_add(global.lista_poderes_basicos, poder_dash);
 	ds_list_add(global.lista_poderes_basicos, poder_mapa);
-	global.poder_escolhido = irandom(ds_list_size(global.lista_poderes_basicos) - 1);
+		ds_list_add(global.lista_poderes_basicos, poder_lanterna);
+
 	
 }
 

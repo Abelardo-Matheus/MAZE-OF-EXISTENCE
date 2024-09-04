@@ -1,7 +1,5 @@
 
-current_speed = global.speed_sperm;
-global.vida_sperm = global.vida_inicial;
-
+current_speed = global.speed_player;
 
 direction_x = 0;
 direction_y = 0;

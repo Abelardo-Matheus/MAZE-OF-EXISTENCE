@@ -44,9 +44,10 @@ if (global.map == true) {
 
                 // Verificar se o jogador está na sala do templo
                 var esta_no_templo = false;
+				var Esta_escura_pos = false;
                 if (global.templos_salas_pos != undefined) {
                     for (var j = 0; j < array_length_1d(global.templos_salas_pos); j++) {
-                        var templo_pos = global.templos_salas_pos[j];
+                        var templo_pos = global.templos_salas_pos[0];
                         if (global.current_sala[0] == templo_pos[0] && global.current_sala[1] == templo_pos[1]) {
                             draw_set_color(c_red); // Se o jogador está na sala do templo, desenha vermelho
                             esta_no_templo = true;
@@ -62,6 +63,25 @@ if (global.map == true) {
                         var templo_pos = global.templos_salas_pos[j];
                         if (templo_pos[0] == sala_x && templo_pos[1] == sala_y) {
                             draw_set_color(c_yellow); // Sala com templo
+                            break;
+                        }
+                    }
+                }
+				if (!Esta_escura_pos && global.salas_escuras != undefined) {
+                    for (var j = 0; j < array_length_1d(global.salas_escuras); j++) {
+                        var escura_pos = global.salas_escuras[j];
+                        if (escura_pos[0] == sala_x && escura_pos[1] == sala_y) {
+                            draw_set_color(c_black); // Sala com templo
+                            break;
+                        }
+                    }
+                }
+				 if (global.salas_escuras != undefined) {
+                    for (var j = 0; j < array_length_1d(global.salas_escuras); j++) {
+                        var escura_pos = global.salas_escuras[j];
+                        if (global.current_sala[0] == escura_pos[0] && global.current_sala[1] == escura_pos[1]) {
+                            draw_set_color(c_black); // Se o jogador está na sala do templo, desenha vermelho
+                            Esta_escura_pos = true;
                             break;
                         }
                     }
@@ -88,3 +108,4 @@ draw_set_font(fnt_menu_op);
 draw_text_transformed(100, 100, "XP:" + string(global.xp), 0.5, 0.5, 0);
 draw_text_transformed(150, 150, "Recorde:" + string(global.recorde), 0.5, 0.5, 0);
 
+desenha_barra_vida();

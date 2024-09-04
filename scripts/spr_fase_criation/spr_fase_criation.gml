@@ -12,6 +12,9 @@ global.destino_templo = noone;
 global.origem_templo = noone;
 // Coloca a primeira sala no centro
 ds_grid_set(global.room_grid, start_x, start_y, 0); // 0 indica a primeira sala
+global.salas_criadas = [];
+global.current_sala = [0, 0];
+global.sala = procurar_sala_por_numero(global.current_sala);
 
 // Script assets have changed for v2.3.0 see
 // https://help.yoyogames.com/hc/en-us/articles/360005277377 for more information
@@ -20,8 +23,11 @@ global.salas_com_inimigos = ds_map_create();
 global.salas_com_torretas = ds_map_create();
 global.salas_com_slow = ds_map_create();
 global.salas_com_paredes = ds_map_create();
+global.salas_com_vela =ds_map_create();
 // No evento de colisão do obj_pontos com o player ou outro trigger
 function resetar_variaveis_globais() {
+	global.current_sala = [0, 0];
+	resetar_salas();
     // Limpar e recriar global.salas_com_pontos
     if (ds_exists(global.salas_com_pontos,ds_type_map)) {
         ds_map_clear(global.salas_com_pontos);
@@ -75,6 +81,13 @@ function resetar_variaveis_globais() {
     } else {
         global.templos_salas_pos = []; // Cria um array vazio
     }
+	if (is_array(global.salas_escuras)) {
+        array_resize(global.salas_escuras, 0); // Limpa o array
+    } else {
+     	global.salas_escuras = [];
+    }
+	
+
 }
 
 function coletar_ponto(ponto_x, ponto_y, current_sala) {
@@ -99,6 +112,28 @@ function coletar_ponto(ponto_x, ponto_y, current_sala) {
     // Destruir o ponto após coleta
     instance_destroy();
 }
+function coletar_vela(ponto_x, ponto_y, current_sala) {
+    // Aumentar o raio da lanterna ao coletar a vela
+    global.raio_lanterna += 150;
+
+    // Gerar o ID da sala atual
+    var sala_id = string(current_sala[0]) + "_" + string(current_sala[1]);
+
+    // Verificar se a sala tem velas salvas
+    if (ds_map_exists(global.salas_com_vela, sala_id)) {
+        var vela_pos = ds_map_find_value(global.salas_com_vela, sala_id);
+
+        // Procurar e remover a vela correspondente na lista de velas
+        if (vela_pos[0] == ponto_x && vela_pos[1] == ponto_y) {
+            ds_map_delete(global.salas_com_vela, sala_id);  // Remove a vela da sala
+        }
+    }
+
+    // Destruir a vela após coleta
+    instance_destroy();
+}
+
+
 function criar_salas_distantes_com_templos(player_sala, salas_geradas, quantidade_salas) {
     // Inicializa a variável global.templos_salas_pos, se ainda não existir
     if (!variable_global_exists("templos_salas_pos")) {
@@ -202,7 +237,112 @@ function criar_salas_distantes_com_templos(player_sala, salas_geradas, quantidad
         }
     }
 }
+function criar_salas_escuras(player_sala, salas_geradas, quantidade_salas) {
+    // Inicializa a variável global.salas_escuras, se ainda não existir
+    if (!variable_global_exists("salas_escuras")) {
+        global.salas_escuras = [];
+    }
 
+    var salas_escuras_criadas = 0;
+
+    while (salas_escuras_criadas < quantidade_salas) {
+        var sala_mais_distante = undefined;
+        var maior_distancia = -1;
+
+        // Encontra a sala mais distante do jogador
+        for (var i = 0; i < array_length_1d(salas_geradas); i++) {
+            var sala_atual = salas_geradas[i];
+            var distancia = point_distance(player_sala[0], player_sala[1], sala_atual[0], sala_atual[1]);
+
+            // Verifica se esta é a sala mais distante até agora e que não está próxima a outro templo
+            if (distancia > maior_distancia) {
+                var distancia_segura = true;
+
+                // Verifica se a sala está a uma distância segura de todos os templos já criados
+                for (var t = 0; t < array_length_1d(global.templos_salas_pos); t++) {
+                    var templo_pos = global.templos_salas_pos[t];
+                    var distancia_templo = point_distance(sala_atual[0], sala_atual[1], templo_pos[0], templo_pos[1]);
+
+                    // Define a distância mínima entre templos como 3 células
+                    if (distancia_templo <= 3) {
+                        distancia_segura = false;
+                        break;
+                    }
+                }
+
+                // Se a sala é a mais distante do jogador e está a uma distância segura de outros templos
+                if (distancia_segura) {
+                    maior_distancia = distancia;
+                    sala_mais_distante = sala_atual;
+                }
+            }
+        }
+
+        // Verifica se encontrou uma sala válida para ser a sala mais distante
+        if (sala_mais_distante == undefined) {
+            break; // Sai do loop se não encontrar uma sala válida
+        }
+
+        // Verifica direções disponíveis para criar uma nova sala
+        var direcoes = [[1, 0], [-1, 0], [0, 1], [0, -1]]; // Direções: Direita, Esquerda, Cima, Baixo
+
+        // Randomizar a ordem das direções
+        for (var i = 0; i < array_length_1d(direcoes); i++) {
+            var random_index = irandom(array_length_1d(direcoes) - 1);
+            var temp = direcoes[i];
+            direcoes[i] = direcoes[random_index];
+            direcoes[random_index] = temp;
+        }
+
+        var nova_sala = undefined;
+
+        for (var j = 0; j < array_length_1d(direcoes); j++) {
+            var nova_posicao = [sala_mais_distante[0] + direcoes[j][0], sala_mais_distante[1] + direcoes[j][1]];
+            var direcao_valida = true;
+            var adjacentes = 0;
+
+            // Verifica se já existe uma sala na nova posição
+            for (var k = 0; k < array_length_1d(salas_geradas); k++) {
+                if (salas_geradas[k][0] == nova_posicao[0] && salas_geradas[k][1] == nova_posicao[1]) {
+                    direcao_valida = false;
+                    break;
+                }
+            }
+
+            // Verificar se a nova sala terá mais de uma adjacente
+            for (var d = 0; d < array_length_1d(direcoes); d++) {
+                var adjacente_posicao = [nova_posicao[0] + direcoes[d][0], nova_posicao[1] + direcoes[d][1]];
+                for (var k = 0; k < array_length_1d(salas_geradas); k++) {
+                    if (salas_geradas[k][0] == adjacente_posicao[0] && salas_geradas[k][1] == adjacente_posicao[1]) {
+                        adjacentes++;
+                    }
+                }
+            }
+
+            // Se a nova posição é válida e tem no máximo 1 sala adjacente, pode criar a nova sala
+            if (direcao_valida && adjacentes <= 1) {
+                nova_sala = nova_posicao;
+                break;
+            }
+        }
+
+        // Adicionar a nova sala ao array de salas geradas e à lista de salas escuras
+        if (nova_sala != undefined) {
+            array_push(salas_geradas, nova_sala);
+
+            // Adicionar a nova sala à lista de salas escuras
+            array_push(global.salas_escuras, nova_sala);
+
+            // Adicionar a nova sala à lista de salas criadas (global.salas_criadas)
+            var nova_sala_info = criar_salas_lista(nova_sala, array_length_1d(global.salas_criadas) + 1); // Cria as informações da sala
+            array_push(global.salas_criadas, nova_sala_info); // Adiciona à lista de salas criadas
+
+            salas_escuras_criadas++;
+        } else {
+            break; // Se não foi possível criar mais salas, sai do loop
+        }
+    }
+}
 
 
 
@@ -322,26 +462,7 @@ function criar_chao_room_inteira(maze_width,maze_height,maze) {
 }
 	
 
-function recriar_pontos_na_sala_atual(current_sala) {
-    // Gerar um ID único para a sala atual
-    var sala_id = string(current_sala[0]) + "_" + string(current_sala[1]);
-	var sala = procurar_sala_por_numero(global.current_sala);
-    // Verificar se a sala atual tem pontos salvos
-    if (ds_map_exists(global.salas_com_pontos, sala_id)) {
-        var lista_pontos = ds_map_find_value(global.salas_com_pontos, sala_id);
 
-        // Recriar os pontos nas posições salvas, se ainda existirem na lista
-        for (var i = 0; i < ds_list_size(lista_pontos); i++) {
-            var ponto_pos = ds_list_find_value(lista_pontos, i);
-            var ponto_x = ponto_pos[0];
-            var ponto_y = ponto_pos[1];
-
-            // Criar o objeto obj_pontos na posição salva
-            instance_create_layer(ponto_x, ponto_y, "instances",sala.objetos[0]);
-        }
-
-    } 
-}
 function recriar_paredes_na_sala_atual(current_sala) {
     // Gerar um ID único para a sala atual
     var sala_id = string(current_sala[0]) + "_" + string(current_sala[1]);
@@ -363,6 +484,49 @@ function recriar_paredes_na_sala_atual(current_sala) {
 
         // Mostrar mensagem de depuração (opcional)
        
+    } 
+}
+
+
+
+function recriar_slow_na_sala_atual(current_sala) {
+    // Gerar um ID único para a sala atual
+    var sala_id = string(current_sala[0]) + "_" + string(current_sala[1]);
+
+    // Verificar se a sala atual tem pontos salvos
+    if (ds_map_exists(global.salas_com_slow, sala_id)) {
+        var lista_pontos = ds_map_find_value(global.salas_com_slow, sala_id);
+
+        // Recriar os pontos nas posições salvas, se ainda existirem na lista
+        for (var i = 0; i < ds_list_size(lista_pontos); i++) {
+            var ponto_pos = ds_list_find_value(lista_pontos, i);
+            var ponto_x = ponto_pos[0];
+            var ponto_y = ponto_pos[1];
+
+            // Criar o objeto obj_pontos na posição salva
+            instance_create_layer(ponto_x, ponto_y, "instances", global.slow);
+        }
+
+    } 
+}
+function recriar_pontos_na_sala_atual(current_sala) {
+    // Gerar um ID único para a sala atual
+    var sala_id = string(current_sala[0]) + "_" + string(current_sala[1]);
+
+    // Verificar se a sala atual tem pontos salvos
+    if (ds_map_exists(global.salas_com_pontos, sala_id)) {
+        var lista_pontos = ds_map_find_value(global.salas_com_pontos, sala_id);
+
+        // Recriar os pontos nas posições salvas, se ainda existirem na lista
+        for (var i = 0; i < ds_list_size(lista_pontos); i++) {
+            var ponto_pos = ds_list_find_value(lista_pontos, i);
+            var ponto_x = ponto_pos[0];
+            var ponto_y = ponto_pos[1];
+
+            // Criar o objeto obj_pontos na posição salva
+            instance_create_layer(ponto_x, ponto_y, "instances", obj_pontos);
+        }
+
     } 
 }
 function create_pontos_em_salas_aleatorias(salas_geradas, quantidade_salas, quantidade_pontos) {
@@ -402,27 +566,44 @@ function create_pontos_em_salas_aleatorias(salas_geradas, quantidade_salas, quan
 
    
 }
-
-function recriar_slow_na_sala_atual(current_sala) {
+function recriar_vela_na_sala_atual(current_sala) {
     // Gerar um ID único para a sala atual
     var sala_id = string(current_sala[0]) + "_" + string(current_sala[1]);
 
-    // Verificar se a sala atual tem pontos salvos
-    if (ds_map_exists(global.salas_com_slow, sala_id)) {
-        var lista_pontos = ds_map_find_value(global.salas_com_slow, sala_id);
+    // Verificar se há uma vela salva na sala
+    if (ds_map_exists(global.salas_com_vela, sala_id)) {
+        var vela_pos = ds_map_find_value(global.salas_com_vela, sala_id);
+        var vela_x = vela_pos[0];
+        var vela_y = vela_pos[1];
 
-        // Recriar os pontos nas posições salvas, se ainda existirem na lista
-        for (var i = 0; i < ds_list_size(lista_pontos); i++) {
-            var ponto_pos = ds_list_find_value(lista_pontos, i);
-            var ponto_x = ponto_pos[0];
-            var ponto_y = ponto_pos[1];
-
-            // Criar o objeto obj_pontos na posição salva
-            instance_create_layer(ponto_x, ponto_y, "instances", global.slow);
-        }
-
-    } 
+        // Recriar a vela na posição salva
+        instance_create_layer(vela_x, vela_y, "instances", obj_vela);
+    }
 }
+
+function create_vela_em_quarto3(salas_geradas) {
+    for (var i = 0; i < array_length_1d(salas_geradas); i++) {
+        var sala = salas_geradas[i];
+        var sala_detalhes = procurar_sala_por_numero(sala);
+        
+        // Verificar se a sala é "quarto3"
+        if (sala_detalhes.tipo == "quarto3") {
+            var vela_x = irandom_range(128, room_width - 128);
+            var vela_y = irandom_range(128, room_height - 128);
+            var sala_id = string(sala[0]) + "_" + string(sala[1]);
+
+            // Armazenar a posição da vela
+            ds_map_add(global.salas_com_vela, sala_id, [vela_x, vela_y]);
+
+            // Criar a vela na sala
+            instance_create_layer(vela_x, vela_y, "instances", obj_vela);
+        }
+    }
+}
+
+
+
+
 function create_slow_em_salas_aleatorias(salas_geradas, quantidade_salas, quantidade_slow) {
     // Criar um array para armazenar as salas que terão pontos
     var salas_selecionadas = [];
@@ -618,14 +799,13 @@ function criar_paredes_na_sala(sala_especifica, quantidade_paredes) {
 function criar_paredes_intances(maze_width, maze_height, maze, cell_size) {
  
 	var sala = procurar_sala_por_numero(global.current_sala); // Procura a sala com tag 2
-
-
+	
 	var direcao = 0;
-	
-	
     for (var i = 0; i <= maze_width; i++) {
         for (var z = 0; z <= maze_height; z++) {
             // Se a posição na grid for 0, indica que é uma parede
+				
+			   
             if (ds_grid_get(maze, i, z) == 0) {
 				var adjacente_cima = (z > 0 && ds_grid_get(maze, i, z - 1) == 0);
                 var adjacente_baixo = (z < maze_height - 1 && ds_grid_get(maze, i, z + 1) == 0);
@@ -640,6 +820,10 @@ function criar_paredes_intances(maze_width, maze_height, maze, cell_size) {
                     image_index_in = 6;
                 } else if (adjacente_direita && adjacente_baixo && !adjacente_cima && !adjacente_esquerda) {
                     image_index_in = 7;
+                }else if (!adjacente_direita && adjacente_baixo && adjacente_cima && adjacente_esquerda) {
+                    image_index_in = 11;
+                }else if (adjacente_direita && adjacente_baixo && adjacente_cima && !adjacente_esquerda) {
+                    image_index_in = 12;
                 } else if (adjacente_direita && !adjacente_baixo && adjacente_cima && !adjacente_esquerda) {
                     image_index_in = 5;
                 } else if (!adjacente_direita && !adjacente_baixo && adjacente_cima && adjacente_esquerda) {
@@ -899,7 +1083,7 @@ function cria_salas_e_objetos(maze_width, maze_height, maze, cell_size) {
 function criar_portas_gerais_templo(sala_atual, salas_geradas) {
     var room_x = sala_atual[0];
     var room_y = sala_atual[1];
-	var sala = procurar_sala_por_numero(global.current_sala);
+	var sala = procurar_sala_por_numero([0,0]);
     // Verifica cada sala vizinha em torno da sala atual e cria as portas correspondentes
     for (var i = 0; i < array_length_1d(salas_geradas); i++) {
         var sala_vizinha = salas_geradas[i];
@@ -1102,6 +1286,7 @@ function carregar_sala(sala_atual, sala_origem_array) {
     
 	criar_portas_gerais(sala_atual, global.salas_geradas);
 	recriar_pontos_na_sala_atual(global.current_sala);
+	recriar_vela_na_sala_atual(global.current_sala);
 	sala_tuto(); 
 }
 function carregar_sala_templo(sala_atual, sala_origem_array,direcao) {
@@ -1145,13 +1330,13 @@ function clear_room() {
 	
 	if(global.fase == 0){
 		with (all) {
-        if (object_index != ojb_control_fase_bebe) {
+        if (object_index != ojb_control_fase_bebe && object_index != obj_iluminacao) {
             instance_destroy();
         }	
     }
 	}if(global.fase == 1){
 		with (all) {
-        if (object_index != obj_control_fase_1 ) {
+        if (object_index != obj_control_fase_1 && object_index != obj_iluminacao) {
             instance_destroy();
         }	
     }
