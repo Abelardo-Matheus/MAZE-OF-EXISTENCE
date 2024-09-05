@@ -8,7 +8,6 @@
 	carregar_sala_templo(sala_destino, room_origem,direcao);
 	}else{
     carregar_sala(sala_destino, room_origem);
-	recriar_slow_na_sala_atual(global.current_sala);
 	}
 
 

@@ -1,13 +1,19 @@
-// Exemplo de estrutura para armazenar tipos de salas
+// Exemplo de estrutura para ar_mazenar tipos de salas
 global.tipos_de_salas = ds_map_create();
 
 
 function salas(){
-	var banheiro2 = ds_map_create();
+var banheiro2 = ds_map_create();
 ds_map_add(banheiro2, "nome", "banheiro2");
 ds_map_add(banheiro2, "chao", obj_chao_tijolo);
 ds_map_add(banheiro2, "parede", obj_parede_bebe);
 ds_map_add(banheiro2, "objetos", [obj_pontos]);
+
+var fundos = ds_map_create();
+ds_map_add(fundos, "nome", "fundos");
+ds_map_add(fundos, "chao", obj_chao_tijolo);
+ds_map_add(fundos, "parede", obj_parede_bebe);
+ds_map_add(fundos, "objetos", [obj_pontos]);
 
 var porao = ds_map_create();
 ds_map_add(porao, "nome", "porao");
@@ -53,6 +59,7 @@ ds_map_add(sala_estar, "objetos", [obj_pontos]);
 
 
 ds_map_add(global.tipos_de_salas, "sala_estar", sala_estar);
+ds_map_add(global.tipos_de_salas, "fundos", fundos);
 ds_map_add(global.tipos_de_salas, "cozinha", cozinha);
 ds_map_add(global.tipos_de_salas, "banheiro", banheiro);
 ds_map_add(global.tipos_de_salas, "quarto", quarto);
@@ -62,10 +69,31 @@ ds_map_add(global.tipos_de_salas, "porao", porao);
 ds_map_add(global.tipos_de_salas, "banheiro2", banheiro2);
 }
 
-function criar_salas_lista(sala_atual, numero) {
-      var tipos_disponiveis = get_ds_map_keys(global.tipos_de_salas);
-    var tipo_sala = tipos_disponiveis[irandom(array_length_1d(tipos_disponiveis) - 1)];
 
+
+function criar_salas_lista(sala_atual, numero) {
+    // Variável global para rastrear quais tipos de sala já foram atribuídos
+    if (!variable_global_exists("tipos_salas_usadas")) {
+        global.tipos_salas_usadas = [];
+        global.tipo_sala_index = 0; // Índice para rastrear o tipo de sala atual
+    }
+
+    var tipo_sala;
+	
+    // Verificar se ainda existem tipos de salas disponíveis não usados
+    var tipos_disponiveis = get_ds_map_keys(global.tipos_de_salas);
+
+    if (numero < array_length_1d(tipos_disponiveis)) {
+        // Pega o tipo de sala na sequência do índice
+        tipo_sala = tipos_disponiveis[numero];
+		var detalhes_sala = ds_map_find_value(global.tipos_de_salas, tipo_sala);
+        global.tipo_sala_index++; // Incrementar o índice para a próxima sala
+    } else {
+        // Se todos os tipos de sala já foram usados, definir como "quarto"
+        tipo_sala = "quarto";
+    }
+
+    // Obter detalhes do tipo de sala
     var detalhes_sala = ds_map_find_value(global.tipos_de_salas, tipo_sala);
 
     return {
@@ -77,6 +105,8 @@ function criar_salas_lista(sala_atual, numero) {
         objetos: ds_map_find_value(detalhes_sala, "objetos")
     };
 }
+
+
 // Função para procurar uma sala específica pelo número (tag)
 function procurar_sala_por_numero(sala_current) {
     for (var i = 0; i < array_length_1d(global.salas_criadas); i++) {
@@ -137,7 +167,7 @@ function resetar_salas() {
     global.salas_criadas = [];
 }
 function verificar_sala_escura(sala_atual) {
-    // Percorre todas as salas escuras armazenadas
+    // Percorre todas as salas escuras ar_mazenadas
     for (var i = 0; i < array_length_1d(global.salas_escuras); i++) {
         var sala_escura = global.salas_escuras[i];
 

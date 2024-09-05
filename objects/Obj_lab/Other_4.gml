@@ -10,51 +10,51 @@ if(global.dificuldade >= 7){
 global.dificuldade = 1;	
 global.tamanho_lab = 128 / global.dificuldade;
 }
-cell_size = global.cell_size;
+_cell_size = global._cell_size;
 tamanho_lab = global.tamanho_lab;
 room_width = 1920;
 room_height = 1088;
 
 
-// Verifica se a largura e a altura são múltiplos de cell_size
+// Verifica se a largura e a altura são múltiplos de _cell_size
 switch (global.dificuldade) {
     case 1:
-        room_width = (room_width div tamanho_lab) * cell_size;
-        room_height = (room_height div tamanho_lab - 1) * cell_size;
+        room_width = (room_width div tamanho_lab) * _cell_size;
+        room_height = (room_height div tamanho_lab - 1) * _cell_size;
         break;
     case 2:
-        room_width = (room_width div tamanho_lab - 1) * cell_size;
-        room_height = (room_height div tamanho_lab ) * cell_size;
+        room_width = (room_width div tamanho_lab - 1) * _cell_size;
+        room_height = (room_height div tamanho_lab ) * _cell_size;
         break;
     case 3:
-        room_width = (room_width div tamanho_lab) * cell_size;
-        room_height = (room_height div tamanho_lab) * cell_size;
+        room_width = (room_width div tamanho_lab) * _cell_size;
+        room_height = (room_height div tamanho_lab) * _cell_size;
         break;
     case 4:
-        room_width = (room_width div tamanho_lab - 1) * cell_size;
-        room_height = (room_height div tamanho_lab - 1) * cell_size;
+        room_width = (room_width div tamanho_lab - 1) * _cell_size;
+        room_height = (room_height div tamanho_lab - 1) * _cell_size;
         break;
     case 5:
-        room_width = (room_width div tamanho_lab - 1) * cell_size;
-        room_height = (room_height div tamanho_lab) * cell_size;
+        room_width = (room_width div tamanho_lab - 1) * _cell_size;
+        room_height = (room_height div tamanho_lab) * _cell_size;
         break;
 	case 6:
-        room_width = (room_width div tamanho_lab ) * cell_size;
-        room_height = (room_height div tamanho_lab) * cell_size;
+        room_width = (room_width div tamanho_lab ) * _cell_size;
+        room_height = (room_height div tamanho_lab) * _cell_size;
         break;
 	case 10:
-        room_width = (room_width div tamanho_lab - 1) * cell_size;
-        room_height = (room_height div tamanho_lab-1) * cell_size;
+        room_width = (room_width div tamanho_lab - 1) * _cell_size;
+        room_height = (room_height div tamanho_lab-1) * _cell_size;
         break;
 	case 20:
-        room_width = (room_width div tamanho_lab - 1) * cell_size;
-        room_height = (room_height div tamanho_lab) * cell_size;
+        room_width = (room_width div tamanho_lab - 1) * _cell_size;
+        room_height = (room_height div tamanho_lab) * _cell_size;
         break;
 }
 
 
-global.maze_width = (room_width div cell_size) -1;
-global.maze_height = (room_height div cell_size) -1;
+global.maze_width = (room_width div _cell_size) -1;
+global.maze_height = (room_height div _cell_size) -1;
 maze_width = global.maze_width;
 maze_height = global.maze_height;
 global.maze = ds_grid_create(maze_width + 2, maze_height + 2);
@@ -69,7 +69,7 @@ draw_paths = false; // Variável para controlar se devemos desenhar os caminhos
 path_points = ds_list_create(); // Lista para armazenar os pontos do caminho
 
 difficulty = 1000; // Exemplo: nível de dificuldade 5
-instance_create_layer(start_x * cell_size + 32, start_y * cell_size + 32, "Layer_Player", obj_player);
+instance_create_layer(start_x * _cell_size + 32, start_y * _cell_size + 32, "Layer_Player", obj_player);
 
 
 // Inicializar o labirinto com paredes
@@ -178,30 +178,30 @@ function draw_maze_obj_lab() {
                 var has_top = (z > 0 && ds_grid_get(global.maze, i, z - 1) == 0);
                 var has_bottom = (z < maze_height && ds_grid_get(global.maze, i, z + 1) == 0);
 
-                var scale_x = cell_size / sprite_get_width(spr_parede);
-                var scale_y = cell_size / sprite_get_height(spr_parede);
+                var scale_x = _cell_size / sprite_get_width(spr_parede);
+                var scale_y = _cell_size / sprite_get_height(spr_parede);
 
                 if (has_bottom) {
-                    draw_sprite_ext(spr_parede_cima, 0, i * cell_size, z * cell_size, scale_x, scale_y, 0, c_white, 1);
+                    draw_sprite_ext(spr_parede_cima, 0, i * _cell_size, z * _cell_size, scale_x, scale_y, 0, c_white, 1);
                 } else if (has_top && has_bottom) {
-                    draw_sprite_ext(spr_parede_cima, 0, i * cell_size, z * cell_size, scale_x, scale_y, 0, c_white, 1);
+                    draw_sprite_ext(spr_parede_cima, 0, i * _cell_size, z * _cell_size, scale_x, scale_y, 0, c_white, 1);
                 } else {
-                    draw_sprite_ext(spr_parede, 0, i * cell_size, z * cell_size, scale_x, scale_y, 0, c_white, 1);
+                    draw_sprite_ext(spr_parede, 0, i * _cell_size, z * _cell_size, scale_x, scale_y, 0, c_white, 1);
                 }
             } else {
-                var scale_x = cell_size / sprite_get_width(spr_chao);
-                var scale_y = cell_size / sprite_get_height(spr_chao);
-                draw_sprite_ext(spr_chao, 0, i * cell_size, z * cell_size, scale_x, scale_y, 0, c_white, 1);
+                var scale_x = _cell_size / sprite_get_width(spr_chao);
+                var scale_y = _cell_size / sprite_get_height(spr_chao);
+                draw_sprite_ext(spr_chao, 0, i * _cell_size, z * _cell_size, scale_x, scale_y, 0, c_white, 1);
             }
         }
     }
-    var scale_x = cell_size / sprite_get_width(spr_start);
-    var scale_y = cell_size / sprite_get_height(spr_start);
-    draw_sprite_ext(spr_start, 0, start_x * cell_size, start_y * cell_size, scale_x, scale_y, 0, c_white, 1);
+    var scale_x = _cell_size / sprite_get_width(spr_start);
+    var scale_y = _cell_size / sprite_get_height(spr_start);
+    draw_sprite_ext(spr_start, 0, start_x * _cell_size, start_y * _cell_size, scale_x, scale_y, 0, c_white, 1);
 
-    scale_x = cell_size / sprite_get_width(spr_end);
-    scale_y = cell_size / sprite_get_height(spr_end);
-    draw_sprite_ext(spr_end, 0, end_x * cell_size -64 , end_y * cell_size -64  , scale_x, scale_y, 0, c_white, 1);
+    scale_x = _cell_size / sprite_get_width(spr_end);
+    scale_y = _cell_size / sprite_get_height(spr_end);
+    draw_sprite_ext(spr_end, 0, end_x * _cell_size -64 , end_y * _cell_size -64  , scale_x, scale_y, 0, c_white, 1);
 }
 
 // Função para criar bombas em locais aleatórios de chão
@@ -217,22 +217,22 @@ function create_wall_instances() {
 
                
 				 if (has_bottom) {
-                    var wall_instance = instance_create_layer(i * cell_size, z * cell_size, "instances", obj_wall);
+                    var wall_instance = instance_create_layer(i * _cell_size, z * _cell_size, "instances", obj_wall);
                     wall_instance.sprite_index = spr_parede_cima;
                 } else if (has_top && has_bottom) {
-                   var wall_instance = instance_create_layer(i * cell_size, z * cell_size, "instances", obj_wall);
+                   var wall_instance = instance_create_layer(i * _cell_size, z * _cell_size, "instances", obj_wall);
                     wall_instance.sprite_index = spr_parede_cima;
                 }else {
-                    instance_create_layer(i * cell_size, z * cell_size, "instances", obj_wall);
+                    instance_create_layer(i * _cell_size, z * _cell_size, "instances", obj_wall);
                 }
             } else {
-               instance_create_layer(i * cell_size, z * cell_size, "instances", obj_floor);
+               instance_create_layer(i * _cell_size, z * _cell_size, "instances", obj_floor);
             }
         }
     }
 
-    instance_create_layer(start_x * cell_size, start_y * cell_size, "Top_Layer", obj_start);
-    instance_create_layer(end_x * cell_size -64  , end_y * cell_size  -64 , "Top_Layer", obj_end);
+    instance_create_layer(start_x * _cell_size, start_y * _cell_size, "Top_Layer", obj_start);
+    instance_create_layer(end_x * _cell_size -64  , end_y * _cell_size  -64 , "Top_Layer", obj_end);
 }
 
 

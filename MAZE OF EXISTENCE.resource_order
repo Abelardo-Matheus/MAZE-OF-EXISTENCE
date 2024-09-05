@@ -50,6 +50,7 @@
   "ResourceOrderSettings": [
     {"name":"obj_torreta","order":5,"path":"objects/obj_torreta/obj_torreta.yy",},
     {"name":"spr_logo_menu","order":13,"path":"sprites/spr_logo_menu/spr_logo_menu.yy",},
+    {"name":"Restart","order":4,"path":"scripts/Restart/Restart.yy",},
     {"name":"spr_carne_cirular","order":9,"path":"sprites/spr_carne_cirular/spr_carne_cirular.yy",},
     {"name":"Sprite55","order":17,"path":"sprites/Sprite55/Sprite55.yy",},
     {"name":"spr_carne_cirular4","order":12,"path":"sprites/spr_carne_cirular4/spr_carne_cirular4.yy",},
@@ -59,6 +60,7 @@
     {"name":"spr_end","order":3,"path":"sprites/spr_end/spr_end.yy",},
     {"name":"Control_geral","order":1,"path":"scripts/Control_geral/Control_geral.yy",},
     {"name":"spr_poder_mapa36","order":3,"path":"sprites/spr_poder_mapa36/spr_poder_mapa36.yy",},
+    {"name":"spr_escada_porao","order":9,"path":"sprites/spr_escada_porao/spr_escada_porao.yy",},
     {"name":"spr_tapete","order":3,"path":"sprites/spr_tapete/spr_tapete.yy",},
     {"name":"spr_chao_bebe_cozinha","order":5,"path":"sprites/spr_chao_bebe_cozinha/spr_chao_bebe_cozinha.yy",},
     {"name":"obj_traco","order":3,"path":"objects/obj_traco/obj_traco.yy",},
@@ -136,6 +138,7 @@
     {"name":"obj_vela","order":4,"path":"objects/obj_vela/obj_vela.yy",},
     {"name":"spr_interios_moveis","order":7,"path":"sprites/spr_interios_moveis/spr_interios_moveis.yy",},
     {"name":"spr_chao_bebe_2","order":2,"path":"sprites/spr_chao_bebe_2/spr_chao_bebe_2.yy",},
+    {"name":"obj_escada_porao","order":8,"path":"objects/obj_escada_porao/obj_escada_porao.yy",},
     {"name":"obj_enemy_folow","order":1,"path":"objects/obj_enemy_folow/obj_enemy_folow.yy",},
     {"name":"spr_traco","order":8,"path":"sprites/spr_traco/spr_traco.yy",},
     {"name":"obj_poder_dash","order":3,"path":"objects/obj_poder_dash/obj_poder_dash.yy",},

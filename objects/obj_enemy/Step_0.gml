@@ -14,7 +14,7 @@ var directions = [0, 90, 180, 270]; // Todas as direções possíveis
 var valid_directions = [];
 
 // Verificar se o inimigo está centralizado na grid (no meio do tile de 64x64)
-if ((x mod global.cell_size == global.cell_size / 2) && (y mod global.cell_size == global.cell_size / 2)) {
+if ((x mod global._cell_size == global._cell_size / 2) && (y mod global._cell_size == global._cell_size / 2)) {
     
     // Verificar as direções disponíveis
     for (var i = 0; i < 4; i++) {

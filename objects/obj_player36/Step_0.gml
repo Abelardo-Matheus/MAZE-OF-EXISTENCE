@@ -56,8 +56,8 @@ if (moving) {
 if (keyboard_check_pressed(vk_space) && bombs > 0) {
     bombs -= 1;
 
-    var player_x = floor(x / global.cell_size);
-    var player_y = floor(y / global.cell_size);
+    var player_x = floor(x / global._cell_size);
+    var player_y = floor(y / global._cell_size);
 
     var directions = [[0, -1], [0, 1], [-1, 0], [1, 0]]; // Direções de cima, baixo, esquerda e direita
 
@@ -75,7 +75,7 @@ if (keyboard_check_pressed(vk_space) && bombs > 0) {
                 show_debug_message("Wall detected at NX: " + string(nx) + ", NY: " + string(ny) + ". Attempting to destroy.");
                 ds_grid_set(global.maze, nx, ny, 1);
 
-                var wall_instance = instance_position(nx * global.cell_size + global.cell_size / 2, ny * global.cell_size + global.cell_size / 2, obj_wall);
+                var wall_instance = instance_position(nx * global._cell_size + global._cell_size / 2, ny * global._cell_size + global._cell_size / 2, obj_wall);
                 
                 if (wall_instance != noone) {
                     show_debug_message("Wall destroyed at NX: " + string(nx) + ", NY: " + string(ny));
@@ -84,8 +84,8 @@ if (keyboard_check_pressed(vk_space) && bombs > 0) {
                         instance_destroy();
                     }
 
-                    instance_create_layer(nx * global.cell_size, ny * global.cell_size, "Instances", obj_floor);
-                    instance_create_layer(nx * global.cell_size + global.cell_size / 2, ny * global.cell_size + global.cell_size / 2, "Layer_Player", obj_explosion);
+                    instance_create_layer(nx * global._cell_size, ny * global._cell_size, "Instances", obj_floor);
+                    instance_create_layer(nx * global._cell_size + global._cell_size / 2, ny * global._cell_size + global._cell_size / 2, "Layer_Player", obj_explosion);
 
                     // Verifica as paredes ao redor da parede destruída
                     var adj_directions = [[0, -1], [0, 1], [-1, 0], [1, 0]]; // Cima, baixo, esquerda, direita
@@ -98,13 +98,13 @@ if (keyboard_check_pressed(vk_space) && bombs > 0) {
 
                         // Verifica se a parede adjacente está dentro dos limites
                         if (adj_nx > 0 && adj_nx < global.maze_width && adj_ny > 0 && adj_ny < global.maze_height) {
-                            var adj_wall_instance = instance_position(adj_nx * global.cell_size + global.cell_size / 2, adj_ny * global.cell_size + global.cell_size / 2, obj_wall);
+                            var adj_wall_instance = instance_position(adj_nx * global._cell_size + global._cell_size / 2, adj_ny * global._cell_size + global._cell_size / 2, obj_wall);
                             if (adj_wall_instance != noone) {
                                 
                                 // Verificar se não há paredes coladas embaixo (verifica a posição imediatamente abaixo)
                                 var below_adj_ny = adj_ny + 1; // Verificar a parede imediatamente abaixo
                                 if (below_adj_ny < global.maze_height) {
-                                    var below_adj_wall_instance = instance_position(adj_nx * global.cell_size + global.cell_size / 2, below_adj_ny * global.cell_size + global.cell_size / 2, obj_wall);
+                                    var below_adj_wall_instance = instance_position(adj_nx * global._cell_size + global._cell_size / 2, below_adj_ny * global._cell_size + global._cell_size / 2, obj_wall);
 
                                     // Se não houver parede embaixo, troca a sprite para spr_parede_cima
                                     if (below_adj_wall_instance == noone) {

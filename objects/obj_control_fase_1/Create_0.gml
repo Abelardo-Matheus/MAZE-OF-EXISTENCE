@@ -1,7 +1,7 @@
 salas();
 randomize();
-global.maze = ds_grid_create(global.maze_width+2 , global.maze_height+2);
-global.visited = ds_grid_create(global.maze_width+2 , global.maze_height+2 );
+global._maze = ds_grid_create(global._maze_width+2 , global._maze_height+2);
+global.visited = ds_grid_create(global._maze_width+2 , global._maze_height+2 );
 global.salas_geradas = gera_salas_procedurais(global.total_rooms);
 
 window_set_fullscreen(true);

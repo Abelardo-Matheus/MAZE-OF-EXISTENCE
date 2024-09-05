@@ -1,17 +1,17 @@
 // Obter a instância do player e sua posição
 player = instance_find(obj_player, 0);
 if (player != noone) {
-    var player_x = player.x div global.cell_size;
-    var player_y = player.y div global.cell_size;
+    var player_x = player.x div global._cell_size;
+    var player_y = player.y div global._cell_size;
 }
 // Obter a posição do inimigo
-var enemy_x = x div global.cell_size;
-var enemy_y = y div global.cell_size;
+var enemy_x = x div global._cell_size;
+var enemy_y = y div global._cell_size;
 
 if (path != undefined && ds_list_size(path) > 0) {
     var next_step = ds_list_find_value(path, 0); // Obtenha o próximo passo
-    var next_x = next_step[0] * global.cell_size + global.cell_size / 2;
-    var next_y = next_step[1] * global.cell_size + global.cell_size / 2;
+    var next_x = next_step[0] * global._cell_size + global._cell_size / 2;
+    var next_y = next_step[1] * global._cell_size + global._cell_size / 2;
 
     // Mover o inimigo para o próximo passo
     var move_speed = 4; // Ajuste a velocidade conforme necessário

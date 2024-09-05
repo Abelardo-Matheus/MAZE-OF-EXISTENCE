@@ -3,10 +3,10 @@ function desenha_linha(path) {
 
     // Loop através do caminho
     for (var i = 0; i < path_length - 1; i++) {
-        var start_x = path[i][0] * cell_size + cell_size / 2;
-        var start_y = path[i][1] * cell_size + cell_size / 2;
-        var end_x = path[i + 1][0] * cell_size + cell_size / 2;
-        var end_y = path[i + 1][1] * cell_size + cell_size / 2;
+        var start_x = path[i][0] * _cell_size + _cell_size / 2;
+        var start_y = path[i][1] * _cell_size + _cell_size / 2;
+        var end_x = path[i + 1][0] * _cell_size + _cell_size / 2;
+        var end_y = path[i + 1][1] * _cell_size + _cell_size / 2;
 
         // Calcular o ângulo da linha
         var angle = point_direction(start_x, start_y, end_x, end_y);

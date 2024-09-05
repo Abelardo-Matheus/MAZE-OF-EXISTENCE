@@ -2,7 +2,7 @@
 if (global.map == true) {
     var mini_map_width = 300;
     var mini_map_height = 300;
-    var cell_size = 45; // Tamanho de cada célula no minimapa
+    var _cell_size = 45; // Tamanho de cada célula no minimapa
 
     draw_set_alpha(0.7);
 
@@ -19,8 +19,8 @@ if (global.map == true) {
     var center_y = mini_map_y + mini_map_height / 2;
 
     // Limites do minimapa para o número de células que podem ser mostradas
-    var max_cells_x = mini_map_width div cell_size; // Quantidade máxima de células visíveis no eixo X
-    var max_cells_y = mini_map_height div cell_size; // Quantidade máxima de células visíveis no eixo Y
+    var max_cells_x = mini_map_width div _cell_size; // Quantidade máxima de células visíveis no eixo X
+    var max_cells_y = mini_map_height div _cell_size; // Quantidade máxima de células visíveis no eixo Y
 
     // Desenhar cada sala no minimapa
     for (var i = 0; i < array_length_1d(global.salas_geradas); i++) {
@@ -34,8 +34,8 @@ if (global.map == true) {
             var delta_y = sala_y - global.current_sala[1];
 
             // Calcula a posição no minimapa com base na distância da sala atual
-            var mini_x = center_x + (delta_x * cell_size);
-            var mini_y = center_y - (delta_y * cell_size);
+            var mini_x = center_x + (delta_x * _cell_size);
+            var mini_y = center_y - (delta_y * _cell_size);
 
             // Verificar se a sala está dentro dos limites do minimapa
             if (abs(delta_x) <= max_cells_x / 2 && abs(delta_y) <= max_cells_y / 2) {
@@ -72,12 +72,12 @@ if (global.map == true) {
                 }
 
                 // Desenhar a sala como um quadrado
-                draw_rectangle(mini_x, mini_y, mini_x + cell_size, mini_y + cell_size, false);
+                draw_rectangle(mini_x, mini_y, mini_x + _cell_size, mini_y + _cell_size, false);
 
                 // Se for a sala atual, desenhar de uma cor diferente
                 if (global.current_sala[0] == sala_x && global.current_sala[1] == sala_y) {
                     draw_set_color(c_red); // Sempre vermelha para a sala atual
-                    draw_rectangle(mini_x, mini_y, mini_x + cell_size, mini_y + cell_size, false);
+                    draw_rectangle(mini_x, mini_y, mini_x + _cell_size, mini_y + _cell_size, false);
                     draw_set_color(c_white); // Voltar à cor padrão
                 }
             }

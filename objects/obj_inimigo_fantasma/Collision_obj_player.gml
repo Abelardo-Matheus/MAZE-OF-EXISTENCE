@@ -1,2 +1,2 @@
 
-global.vida--;
+//global.vida--;

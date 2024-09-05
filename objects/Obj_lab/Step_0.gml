@@ -1,6 +1,6 @@
 show_debug_message(global.dificuldade);
 if(global.dificuldade == 20 || global.dificuldade == 10){
-var extra_space =  global.cell_size; // Dois blocos extras em cada direção
+var extra_space =  global._cell_size; // Dois blocos extras em cada direção
 
 // Defina a posição da viewport para seguir o jogador, com extra_space em todas as direções
 view_xview[0] = clamp(obj_player.x - view_wview[0] / 2 - extra_space, 0, room_width - view_wview[0] - extra_space * 2);
