@@ -576,8 +576,7 @@ function recriar_vela_na_sala_atual(current_sala) {
         var vela_x = vela_pos[0];
         var vela_y = vela_pos[1];
 
-        // Recriar a vela na posição salva
-        instance_create_layer(vela_x, vela_y, "instances", obj_vela);
+        instance_create_layer(vela_x, vela_y, "Instances_moveis", obj_mesa_1);
     }
 }
 
@@ -595,8 +594,7 @@ function create_vela_em_quarto3(salas_geradas) {
             // Armazenar a posição da vela
             ds_map_add(global.salas_com_vela, sala_id, [vela_x, vela_y]);
 
-            // Criar a vela na sala
-            instance_create_layer(vela_x, vela_y, "instances", obj_vela);
+
         }
     }
 }
@@ -675,7 +673,7 @@ function recriar_inimigos_na_sala_atual(current_sala) {
             var ponto_y = ponto_pos[1];
 
             // Criar o objeto obj_pontos na posição salva
-            instance_create_layer(ponto_x, ponto_y, "instances", obj_inimigo_fase_um);
+            instance_create_layer(ponto_x, ponto_y, "instances", obj_inimigo_fantasma);
         }
 
     } 
@@ -1287,6 +1285,7 @@ function carregar_sala(sala_atual, sala_origem_array) {
 	criar_portas_gerais(sala_atual, global.salas_geradas);
 	recriar_pontos_na_sala_atual(global.current_sala);
 	recriar_vela_na_sala_atual(global.current_sala);
+	recriar_inimigos_na_sala_atual(global.current_sala);
 	sala_tuto(); 
 }
 function carregar_sala_templo(sala_atual, sala_origem_array,direcao) {

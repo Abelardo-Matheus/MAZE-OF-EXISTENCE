@@ -1,6 +1,10 @@
 
+if(keyboard_check(ord("E"))){
+	 coletar_vela(x, y, global.current_sala); 
+	 global.vela_coletada = true;
+}
+ 
 
-  coletar_vela(x, y, global.current_sala); // Passa as coordenadas e a sala atual para a função de coleta
 
 
 

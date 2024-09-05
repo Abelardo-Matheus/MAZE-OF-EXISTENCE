@@ -16,10 +16,13 @@ recriar_vela_na_sala_atual(global.current_sala);
 create_slow_em_salas_aleatorias(global.salas_geradas, 10,2);
 criar_salas_distantes_com_templos(global.current_sala,global.salas_geradas,1);
 criar_salas_escuras(global.current_sala,global.salas_geradas,1);
+
 create_pontos_em_salas_aleatorias(global.salas_geradas, 10,5); // Criar até 5 pontos em salas aleatórias
 carregar_sala(global.current_sala,global.current_sala);
+create_inimigos_em_salas_aleatorias(global.salas_geradas,10,2);
 instance_create_layer(global.room_width / 2 + 32, global.room_height / 2, "Layer_Player", obj_player);
 recriar_pontos_na_sala_atual(global.current_sala);
+recriar_inimigos_na_sala_atual(global.current_sala);
 recriar_slow_na_sala_atual(global.current_sala);
 
 sala_tuto();

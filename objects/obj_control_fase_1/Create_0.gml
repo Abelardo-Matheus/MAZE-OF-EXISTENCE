@@ -1,4 +1,4 @@
-
+salas();
 randomize();
 global.maze = ds_grid_create(global.maze_width+2 , global.maze_height+2);
 global.visited = ds_grid_create(global.maze_width+2 , global.maze_height+2 );

@@ -21,4 +21,4 @@ global.dificuldade = 1;
 global.tamanho_lab = 64 / global.dificuldade;
 global.cell_size = 64;
 global.recorde = 0;
-
+global.vela_coletada = false;
