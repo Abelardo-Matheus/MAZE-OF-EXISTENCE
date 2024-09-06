@@ -1,4 +1,3 @@
-randomize();
 
 
 function criar_poder(nome, nivel, dano, coletado,ID,objeto) {
@@ -28,7 +27,7 @@ if (!variable_global_exists("lista_poderes_basicos")) {
     ds_list_add(global.lista_poderes_basicos, poder_correr);
     ds_list_add(global.lista_poderes_basicos, poder_dash);
 	ds_list_add(global.lista_poderes_basicos, poder_mapa);
-		ds_list_add(global.lista_poderes_basicos, poder_lanterna);
+	ds_list_add(global.lista_poderes_basicos, poder_lanterna);
 
 	
 }

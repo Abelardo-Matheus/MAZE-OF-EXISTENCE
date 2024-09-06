@@ -11,7 +11,7 @@ for (var i = 0; i < array_length_1d(global.salas_geradas); i++) {
     var sala_info = criar_salas_lista(global.salas_geradas[i], i + 1);
     array_push(global.salas_criadas, sala_info);
 }
-create_vela_em_quarto3(global.salas_geradas);
+create_escrivaninha(global.salas_geradas, 3,1);
 create_escada_porao_em_fundos(global.salas_geradas);
 recriar_vela_na_sala_atual(global.current_sala);
 create_slow_em_salas_aleatorias(global.salas_geradas, 10,2);

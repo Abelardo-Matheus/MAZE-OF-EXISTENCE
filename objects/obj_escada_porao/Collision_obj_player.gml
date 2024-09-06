@@ -14,41 +14,43 @@ if(global.entrou && alarm[0] <= 0){
 	carregar_sala(sala_ida,global.sala_entrada);
 	if (direcao == 2) { 
 	
-            pos_x = 80; 
+            pos_x = 70; 
             pos_y = (global.room_height / 2);
 			direcao = 0;
-			direction = 0;
+			angulo = 90;
+
 			
 			
 			}
 
-else if (direcao == 4) {  
+else if (direcao == 1) {  
 
-            pos_x = global.room_width-150;  
+            pos_x = global.room_width-70;  
             pos_y = (global.room_height / 2);
 			direcao = 0;
-			direction = 180;
+			angulo = 0;
 	}
 // Veio de baixo
 else if (direcao == 3) {  
 
-      
+			
             pos_x =(global.room_width / 2);
-            pos_y = 80;  
+            pos_y = 105;  
 			direcao = 0;
-				direction = 90;
+			angulo = 180;
  }
 // Veio de cima
 
-else if (direcao == 1) {  
+else if (direcao == 4) {  
 	
   
             pos_x = (global.room_width / 2);
-            pos_y = global.room_height-80;  
+            pos_y = global.room_height-100;  
 			direcao = 0;
-				direction = 270;
+			angulo =0;
 }
 		var escada = instance_create_layer(pos_x, pos_y, "instances", obj_escada_porao);
+		
 	
 		instance_create_layer(pos_x, pos_y, "Layer_Player", global.current_player);
 

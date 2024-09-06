@@ -48,6 +48,8 @@ else if (direcao == 1) {
 	if(global.current_sala == global.templos_salas_pos[0]){
 		pos_x -=32;
 	}
-		instance_create_layer(pos_x+32, pos_y, "Layer_Player", global.current_player);
+		obj_player.x = pos_x +32;
+		obj_player.y = pos_y;
+	
 
 	

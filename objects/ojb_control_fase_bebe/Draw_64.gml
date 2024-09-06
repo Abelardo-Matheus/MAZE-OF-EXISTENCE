@@ -2,7 +2,7 @@
 if (global.map == true) {
     var mini_map_width = 220;
     var mini_map_height = 200;
-    var _cell_size = 15; // Tamanho de cada célula no minimapa
+    var _cell_size = 25; // Tamanho de cada célula no minimapa
 
     draw_set_alpha(0.7);
 

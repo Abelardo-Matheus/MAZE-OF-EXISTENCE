@@ -1,4 +1,6 @@
 
+restaurar_estado_dash();
+
 current_speed = global.speed_player;
 
 direction_x = 0;

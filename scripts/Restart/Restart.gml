@@ -74,6 +74,8 @@ function resetar_variaveis_globais() {
     } else {
      	global.salas_escuras = [];
     }
+
+
 	
 
 }

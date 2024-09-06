@@ -14,7 +14,7 @@ global.tamanho_player = 3;
 
 var moving = false;
 var current_image_speed = 1; // Velocidade padrão da animação
-
+var diagonal_angle = 0;
 
 
 
@@ -22,29 +22,48 @@ var current_image_speed = 1; // Velocidade padrão da animação
 var h_move = 0;
 var v_move = 0;
 
-
+var alvo_angle;
 // Controle de movimento
 var h_move = 0;
 var v_move = 0;
 
 if (keyboard_check(vk_left) || keyboard_check(ord("A"))) {
     h_move = -current_speed;
+	
 	sprite_index = spr_player_esquerda;
-        moving = true;
+       moving = true;
+	
 } else if (keyboard_check(vk_right) || keyboard_check(ord("D"))) {
     h_move = current_speed;
 	sprite_index = spr_player_direita;
         moving = true;
+		
+
 }
 
 if (keyboard_check(vk_up) || keyboard_check(ord("W"))) {
     v_move = -current_speed;
 	 sprite_index = spr_player_cima;
       moving = true;
+	  
 } else if (keyboard_check(vk_down) || keyboard_check(ord("S"))) {
     v_move = current_speed;
 	sprite_index = spr_player_baixo;
         moving = true;
+		
+}
+
+// Verificar se está pressionando duas teclas simultaneamente para movimentação diagonal
+if (h_move != 0 && v_move != 0) {
+    if (h_move > 0 && v_move < 0) {
+        diagonal_angle = 315; // Direção para cima e direita
+    } else if (h_move > 0 && v_move > 0) {
+        diagonal_angle = 45; // Direção para baixo e direita
+    } else if (h_move < 0 && v_move < 0) {
+        diagonal_angle = 45; // Direção para cima e esquerda
+    } else if (h_move < 0 && v_move > 0) {
+        diagonal_angle = 315; // Direção para baixo e esquerda
+    }
 }
 
 // Atualiza a posição do player
@@ -52,14 +71,33 @@ x += h_move;
 y += v_move;
 
 
-// Atualiza a animação do player se ele estiver se movendo
+// Atualiza o ângulo de rotação de maneira suave e direta
 if (moving) {
-	
-	image_speed = current_image_speed; // Define a velocidade da animação baseada na velocidade atual
+    var diff_angle = diagonal_angle - image_angle;
+    
+    // Verifica a diferença de ângulo para garantir que ele não faça uma rotação completa
+    if (diff_angle > 180) {
+        diff_angle -= 360;
+    } else if (diff_angle < -180) {
+        diff_angle += 360;
+    }
+    
+    // Interpolação suave para mudar o ângulo gradualmente
+    image_angle += diff_angle * 0.1;
+    
+    // Simular o balanço ao andar usando uma função de seno
+    var tempo = current_time / 100;  // Ajusta a frequência do balanço
+    var amplitude = 2;  // Define a amplitude do balanço
+    image_yscale = 1.5 + sin(tempo) * 0.05;  // Balanço no eixo Y
+    
+    image_speed = 0.6;
 } else {
-    image_speed = 0; // Para a animação do player
-    image_index = 0; // Opcional: redefine para o primeiro quadro da animação
+    image_speed = 0;
+    image_index = 0;
+    image_yscale = 1.5;  // Restaurar o valor padrão de escala
 }
+
+
 
 
 if (global.dash_habilitado && !global.dash_em_recarga) {

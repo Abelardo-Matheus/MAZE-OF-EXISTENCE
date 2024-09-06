@@ -65,7 +65,7 @@ if (direcao == 2) {
 	
     
 }	
-	randomize();
+
 	global.poder_escolhido = irandom(ds_list_size(global.lista_poderes_basicos) - 1);
 	criar_paredes_intances(global._maze_width,global._maze_height,global._maze,global._cell_size);	
 	global.objeto_escolhido = procurar_poder(global.poder_escolhido);

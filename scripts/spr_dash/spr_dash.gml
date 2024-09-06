@@ -8,6 +8,8 @@ global.frames = 0;
 global.dash_em_recarga = false;  // Indica se o dash está em recarga
 global.in_dash = false;
 
+
+
 function salvar_estado_dash() {
     global.dash_estado_speed = global.current_player.current_speed;
     global.dash_em_recarga = global.dash_em_recarga;
