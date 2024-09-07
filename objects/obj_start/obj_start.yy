@@ -7,7 +7,7 @@
   "overriddenProperties": [],
   "parent": {
     "name": "LAB_EXCUIDO",
-    "path": "folders/Objects/LAB_EXCUIDO.yy",
+    "path": "folders/Objects/FASE_UT/LAB_EXCUIDO.yy",
   },
   "parentObjectId": null,
   "persistent": false,

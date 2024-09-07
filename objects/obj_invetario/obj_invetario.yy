@@ -11,7 +11,7 @@
   "overriddenProperties": [],
   "parent": {
     "name": "GUI",
-    "path": "folders/Objects/FASE_BEBE_ALL/GUI.yy",
+    "path": "folders/Objects/FASE_BEBE_ALL/CONTROLES/GUI.yy",
   },
   "parentObjectId": null,
   "persistent": true,

@@ -9,7 +9,7 @@
   "overriddenProperties": [],
   "parent": {
     "name": "PAREDES",
-    "path": "folders/Objects/PAREDES.yy",
+    "path": "folders/Objects/FASE_UT/PAREDES.yy",
   },
   "parentObjectId": null,
   "persistent": false,

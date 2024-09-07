@@ -8,21 +8,6 @@ surface_set_target(sombra_surface);
 	draw_set_color(c_white);
 	draw_set_alpha(1);
 
-	
-	if instance_exists(obj_vela){
-		var _num = instance_number(obj_vela);
-		
-		for( var i = 0; i < _num; i++){
-			var _vela = instance_find(obj_vela, i);
-			
-		draw_set_alpha(0.7);
-		draw_circle(_vela.x, _vela.y, raio_visao+30+irandom(2),false);
-		
-		draw_set_alpha(0.8);
-		draw_circle(_vela.x, _vela.y, raio_visao+60+irandom(2),false);
-		}
-		
-	}
   // Definir o raio da visão ao redor do jogador
     var raio_visao = global.raio_lanterna;
 

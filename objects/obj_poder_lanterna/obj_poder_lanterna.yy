@@ -11,7 +11,7 @@
   "overriddenProperties": [],
   "parent": {
     "name": "PODERES_FASE_!",
-    "path": "folders/Objects/COLETAVEIS/PODERES_FASE_!.yy",
+    "path": "folders/Objects/FASE_BEBE_ALL/PODERES_FASE_!.yy",
   },
   "parentObjectId": null,
   "persistent": false,

@@ -12,7 +12,7 @@
   "overriddenProperties": [],
   "parent": {
     "name": "CONTROLES",
-    "path": "folders/Objects/CONTROLES.yy",
+    "path": "folders/Objects/FASE_BEBE_ALL/CONTROLES.yy",
   },
   "parentObjectId": null,
   "persistent": true,

@@ -9,6 +9,15 @@ function resetar_variaveis_globais() {
     } else {
         global.salas_com_vela = ds_map_create();
     }
+	
+	 if (ds_exists(global.salas_com_escrivaninha,ds_type_map)) {
+        ds_map_clear(global.salas_com_escrivaninha);
+    } else {
+        global.salas_com_escrivaninha = ds_map_create();
+    }
+	
+	
+	
 
 	
 	 if (ds_exists(global.salas_com_escada_porao,ds_type_map)) {

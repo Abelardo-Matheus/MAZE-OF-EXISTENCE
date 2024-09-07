@@ -12,8 +12,8 @@
   "managed": true,
   "overriddenProperties": [],
   "parent": {
-    "name": "FASE_BEBE",
-    "path": "folders/Objects/OBJETOS/FASE_BEBE.yy",
+    "name": "OBJETOS",
+    "path": "folders/Objects/FASE_BEBE_ALL/OBJETOS.yy",
   },
   "parentObjectId": null,
   "persistent": false,

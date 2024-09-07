@@ -11,7 +11,7 @@
   "overriddenProperties": [],
   "parent": {
     "name": "INIMIGOS",
-    "path": "folders/Objects/INIMIGOS.yy",
+    "path": "folders/Objects/FASE_UT/INIMIGOS.yy",
   },
   "parentObjectId": null,
   "persistent": false,

@@ -1,4 +1,4 @@
-// Exemplo de estrutura para ar_mazenar tipos de salas
+
 global.tipos_de_salas = ds_map_create();
 
 

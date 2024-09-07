@@ -127,3 +127,13 @@ if (instance_exists(global.bloco_colisao)) {
     global.bloco_colisao.x = x;
     global.bloco_colisao.y = y +30; // Ajuste 50 conforme necessário
 }
+
+if(instance_exists(obj_item)and obj_invetario.inventario = false){
+	var _inst = instance_nearest(x,y,obj_item);
+	if(distance_to_point(_inst.x,_inst.y)<= 20){
+		if(keyboard_check_pressed(ord("F"))){
+			adicionar_item_invent(_inst.image_index,_inst.quantidade,_inst.sprite_index,_inst.nome,_inst.descricao);
+			instance_destroy(_inst);
+		}
+	}
+}

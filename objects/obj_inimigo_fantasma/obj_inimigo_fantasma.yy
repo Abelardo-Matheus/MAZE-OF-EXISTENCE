@@ -10,8 +10,8 @@
   "managed": true,
   "overriddenProperties": [],
   "parent": {
-    "name": "Fase_bebe",
-    "path": "folders/Objects/INIMIGOS/Fase_bebe.yy",
+    "name": "INIMIGOS",
+    "path": "folders/Objects/FASE_BEBE_ALL/INIMIGOS.yy",
   },
   "parentObjectId": null,
   "persistent": false,

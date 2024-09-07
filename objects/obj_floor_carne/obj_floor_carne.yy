@@ -9,7 +9,7 @@
   "overriddenProperties": [],
   "parent": {
     "name": "FASE_1",
-    "path": "folders/Objects/OBJETOS/FASE_1.yy",
+    "path": "folders/Objects/FASE_UT/OBJETOS/FASE_1.yy",
   },
   "parentObjectId": null,
   "persistent": false,

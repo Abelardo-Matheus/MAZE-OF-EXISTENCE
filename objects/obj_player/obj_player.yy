@@ -14,7 +14,7 @@
   "overriddenProperties": [],
   "parent": {
     "name": "PLAYER",
-    "path": "folders/Objects/PLAYER.yy",
+    "path": "folders/Objects/FASE_BEBE_ALL/PLAYER.yy",
   },
   "parentObjectId": null,
   "persistent": true,

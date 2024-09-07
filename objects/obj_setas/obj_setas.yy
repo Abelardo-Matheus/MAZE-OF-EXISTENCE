@@ -10,7 +10,7 @@
   "overriddenProperties": [],
   "parent": {
     "name": "IMAGENS",
-    "path": "folders/Objects/IMAGENS.yy",
+    "path": "folders/Objects/FASE_BEBE_ALL/IMAGENS.yy",
   },
   "parentObjectId": null,
   "persistent": false,

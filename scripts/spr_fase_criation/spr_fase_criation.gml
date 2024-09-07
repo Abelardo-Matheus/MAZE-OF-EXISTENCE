@@ -25,7 +25,8 @@ global.salas_com_slow = ds_map_create();
 global.salas_com_paredes = ds_map_create();
 global.salas_com_vela =ds_map_create();
 global.salas_com_escrivaninha =ds_map_create();
-global.salas_com_escada_porao =ds_map_create();
+global.salas_com_escada_porao =  ds_map_create();
+global.sala_com_item_drop  = ds_map_create();
 
 // No evento de colisão do obj_pontos com o player ou outro trigger
 
@@ -707,26 +708,57 @@ function create_inimigos_em_salas_escuras(quantidade_inimigos) {
     }
 }
 
-function recriar_torretas_na_sala_atual(current_sala) {
-    // Gerar um ID único para a sala atual
-    var sala_id = string(current_sala[0]) + "_" + string(current_sala[1]);
 
-    // Verificar se a sala atual tem pontos salvos
-    if (ds_map_exists(global.salas_com_torretas, sala_id)) {
-        var lista_pontos = ds_map_find_value(global.salas_com_torretas, sala_id);
-
-        // Recriar os pontos nas posições salvas, se ainda existirem na lista
-        for (var i = 0; i < ds_list_size(lista_pontos); i++) {
-            var ponto_pos = ds_list_find_value(lista_pontos, i);
-            var ponto_x = ponto_pos[0];
-            var ponto_y = ponto_pos[1];
-
-            // Criar o objeto obj_pontos na posição salva
-            instance_create_layer(ponto_x, ponto_y, "instances", obj_torreta);
-        }
-
-    } 
+function salvar_item(sala_atual_x, sala_atual_y, _item_x, _item_y, item) {
+    var sala_id = string(sala_atual_x) + "_" + string(sala_atual_y); 
+    var lista_itens;
+    
+    // Verificar se já existe uma lista de itens para esta sala
+    if (ds_map_exists(global.sala_com_item_drop, sala_id)) {
+        lista_itens = ds_map_find_value(global.sala_com_item_drop, sala_id);
+    } else {
+        lista_itens = ds_list_create(); 
+    }
+    
+    // Adicionar o item à lista
+    ds_list_add(lista_itens, [_item_x, _item_y, item.sprite_index, item.image_index, item.quantidade, item.nome, item.descricao]);
+    
+    // Armazenar a lista atualizada no mapa global
+    ds_map_replace(global.sala_com_item_drop, sala_id, lista_itens);
 }
+
+
+
+
+function recriar_item_dropado(current_sala_x, current_sala_y) {
+    var sala_id = string(current_sala_x) + "_" + string(current_sala_y);
+
+    // Verificar se a sala atual tem itens salvos
+    if (ds_map_exists(global.sala_com_item_drop, sala_id)) {
+        var lista_itens = ds_map_find_value(global.sala_com_item_drop, sala_id);
+
+        // Recriar os itens nas posições salvas
+        for (var i = 0; i < ds_list_size(lista_itens); i++) {
+            var item_info = ds_list_find_value(lista_itens, i);
+            var ponto_x = item_info[0];
+            var ponto_y = item_info[1];
+            var sprite_index_ = item_info[2];
+            var image_index_ = item_info[3];
+            var quantidade = item_info[4];
+            var nome = item_info[5];
+            var descricao = item_info[6];
+
+            // Criar a instância do item na sala
+            var _inst = instance_create_layer(ponto_x, ponto_y, "instances", obj_item);
+            _inst.sprite_index = sprite_index_;
+            _inst.image_index = image_index_;
+            _inst.quantidade = quantidade;
+            _inst.nome = nome;
+            _inst.descricao = descricao;
+        }
+    }
+}
+
 function create_torretas_em_salas_aleatorias(salas_geradas, quantidade_salas, quantidade_pontos) {
     // Criar um array para ar_mazenar as salas que terão pontos
     var salas_selecionadas = [];
@@ -1264,7 +1296,6 @@ function criar_portas_gerais(sala_atual, salas_geradas) {
 
 function carregar_sala(sala_atual, sala_origem_array) {
     clear_room(); 
-	
 	global.current_sala = sala_atual;
 	global.sala_passada = sala_origem_array;
     cria_salas_e_objetos(global._maze_width, global._maze_height, global._maze, global._cell_size);
@@ -1274,6 +1305,7 @@ function carregar_sala(sala_atual, sala_origem_array) {
 	recriar_inimigos_na_sala_atual(global.current_sala);
 	recriar_slow_na_sala_atual(global.current_sala);
 	recriar_escada_na_sala_atual(global.current_sala);
+	recriar_item_dropado(global.current_sala[0],global.current_sala[1]);
 	sala_tuto(); 
 }
 function carregar_sala_templo(sala_atual, sala_origem_array,direcao) {

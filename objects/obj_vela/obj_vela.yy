@@ -12,7 +12,7 @@
   "overriddenProperties": [],
   "parent": {
     "name": "COLETAVEIS",
-    "path": "folders/Objects/COLETAVEIS.yy",
+    "path": "folders/Objects/FASE_BEBE_ALL/COLETAVEIS.yy",
   },
   "parentObjectId": null,
   "persistent": false,

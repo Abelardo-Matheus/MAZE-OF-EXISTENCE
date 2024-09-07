@@ -1,4 +1,4 @@
-// Define o tamanho do minimapa
+
 if (global.map == true) {
     var mini_map_width = 220;
     var mini_map_height = 200;
