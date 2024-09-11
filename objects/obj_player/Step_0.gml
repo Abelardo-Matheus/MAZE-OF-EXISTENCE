@@ -16,86 +16,71 @@ var moving = false;
 var current_image_speed = 1; // Velocidade padrão da animação
 var diagonal_angle = 0;
 
+esquerda = keyboard_check(ord("A"));
+direita = keyboard_check(ord("D"));
+cima = keyboard_check(ord("W"));
+baixo = keyboard_check(ord("S"));
 
-
-// Controle de movimento
-var h_move = 0;
-var v_move = 0;
-
-var alvo_angle;
-// Controle de movimento
-var h_move = 0;
-var v_move = 0;
-
-if (keyboard_check(vk_left) || keyboard_check(ord("A"))) {
-    h_move = -current_speed;
-	
+if (esquerda) {
 	sprite_index = spr_player_esquerda;
-       moving = true;
+     moving = true;
 	
-} else if (keyboard_check(vk_right) || keyboard_check(ord("D"))) {
-    h_move = current_speed;
+} else if (direita) {
 	sprite_index = spr_player_direita;
         moving = true;
-		
-
 }
 
-if (keyboard_check(vk_up) || keyboard_check(ord("W"))) {
-    v_move = -current_speed;
+else if (cima) { 
 	 sprite_index = spr_player_cima;
       moving = true;
 	  
-} else if (keyboard_check(vk_down) || keyboard_check(ord("S"))) {
-    v_move = current_speed;
+} else if (baixo) { 
 	sprite_index = spr_player_baixo;
         moving = true;
 		
 }
 
-// Verificar se está pressionando duas teclas simultaneamente para movimentação diagonal
-if (h_move != 0 && v_move != 0) {
-    if (h_move > 0 && v_move < 0) {
-        diagonal_angle = 315; // Direção para cima e direita
-    } else if (h_move > 0 && v_move > 0) {
-        diagonal_angle = 45; // Direção para baixo e direita
-    } else if (h_move < 0 && v_move < 0) {
-        diagonal_angle = 45; // Direção para cima e esquerda
-    } else if (h_move < 0 && v_move > 0) {
-        diagonal_angle = 315; // Direção para baixo e esquerda
-    }
-}
 
+
+hveloc = (direita - esquerda) * current_speed;
+if(place_meeting(x + hveloc, y, global.sala.parede)){
+	while !place_meeting(x + sign(hveloc),y,global.sala.parede){
+		x += sign(hveloc);
+	}
+	hveloc = 0;
+}
+x += hveloc;
+vveloc = (baixo - cima) * current_speed;
+if(place_meeting(x , y + vveloc, global.sala.parede)){
+	while !place_meeting(x ,y + sign(vveloc),global.sala.parede){
+		y += sign(vveloc);
+	}
+	vveloc = 0;
+}
 // Atualiza a posição do player
-x += h_move;
-y += v_move;
 
+y += vveloc;
 
-// Atualiza o ângulo de rotação de maneira suave e direta
-if (moving) {
-    var diff_angle = diagonal_angle - image_angle;
-    
-    // Verifica a diferença de ângulo para garantir que ele não faça uma rotação completa
-    if (diff_angle > 180) {
-        diff_angle -= 360;
-    } else if (diff_angle < -180) {
-        diff_angle += 360;
-    }
-    
-    // Interpolação suave para mudar o ângulo gradualmente
-    image_angle += diff_angle * 0.1;
-    
-    // Simular o balanço ao andar usando uma função de seno
-    var tempo = current_time / 100;  // Ajusta a frequência do balanço
-    var amplitude = 2;  // Define a amplitude do balanço
-    image_yscale = 1.5 + sin(tempo) * 0.05;  // Balanço no eixo Y
-    
-    image_speed = 0.6;
-} else {
-    image_speed = 0;
-    image_index = 0;
-    image_yscale = 1.5;  // Restaurar o valor padrão de escala
+dir = floor((point_direction(x,y,mouse_x,mouse_y)+ 45)/90);
+
+if(hveloc == 0 and vveloc == 0){
+ switch dir{
+	 default:
+	 sprite_index = spr_player_direita_parado
+	 break;
+	 case 1:
+	 sprite_index = spr_player_cima_parado
+	 break;
+	 case 2:
+	 sprite_index = spr_player_esquerda_parado
+	 break;
+	 case 3:
+	 sprite_index = spr_player_baixo_parado
+	 break;
+ }	
 }
+
+
 
 
 
@@ -122,18 +107,20 @@ if (alarm[0] <= 0 && global.dash_em_recarga) {
     global.dash_em_recarga = false;  // Reseta o estado de recarga
 }
 
-// Manter o bloco de colisão na posição correta
-if (instance_exists(global.bloco_colisao)) {
-    global.bloco_colisao.x = x;
-    global.bloco_colisao.y = y +30; // Ajuste 50 conforme necessário
-}
 
 if(instance_exists(obj_item)and obj_invetario.inventario = false){
 	var _inst = instance_nearest(x,y,obj_item);
-	if(distance_to_point(_inst.x,_inst.y)<= 20){
+	if(distance_to_point(_inst.x,_inst.y)<= 50){
 		if(keyboard_check_pressed(ord("F"))){
 			adicionar_item_invent(_inst.image_index,_inst.quantidade,_inst.sprite_index,_inst.nome,_inst.descricao);
 			instance_destroy(_inst);
 		}
 	}
 }
+
+// Manter o bloco de colisão na posição correta
+if (instance_exists(global.bloco_colisao)) {
+    global.bloco_colisao.x = x;
+    global.bloco_colisao.y = y +30; // Ajuste 50 conforme necessário
+}
+

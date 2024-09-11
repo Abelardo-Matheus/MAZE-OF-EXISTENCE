@@ -72,3 +72,72 @@ function create_escrivaninha(salas_geradas, quantidade_salas, quantidade_escriv)
         ds_map_add(global.salas_com_escrivaninha, sala_id, lista_escrivaninha);
     }
 }
+
+function criar_item_aleatorio_passivo(pos_x,pos_y) {
+    // Escolher entre itens passivos e ativos
+    var tipo_item = irandom(1); // 0 para passivo, 1 para ativo
+
+    var item_nome, item_descricao, item_sprite, item_quantidade,sprite_ind;
+
+        // Escolher item ativo aleatório
+        var item_index = irandom(itens_ativos.Altura - 1);
+		show_debug_message(item_index)
+        switch (item_index) {
+            case 2:
+                item_nome = "Banana";
+                item_descricao = "Uma banana fresca, carregada de potássio. Perfeita para recarregar suas energias!";
+                item_sprite = spr_itens_invent_consumiveis;
+                item_quantidade = irandom_range(1, 3);
+				sprite_ind = 2;
+                break;
+            case 1:
+                item_nome = "Maçã";
+                item_descricao = "Uma maçã suculenta, deliciosa e crocante. Ideal para um lanche rápido e saudável.";
+                item_sprite = spr_itens_invent_consumiveis;
+                item_quantidade = irandom_range(1, 3);
+				sprite_ind = 1;
+                break;
+			case 0:
+                item_nome = "Batata";
+                item_descricao = "Uma batata robusta, pronta para ser cozida ou assada. A fonte perfeita de energia natural.";
+                item_sprite = spr_itens_invent_consumiveis;
+                item_quantidade = irandom_range(1, 3);
+				sprite_ind = 0;
+                break;
+			case 3:
+                item_nome = "Uva";
+                item_descricao = "Um cacho de uvas doces, pequenas e cheias de sabor. Uma explosão de doçura a cada mordida.";
+                item_sprite = spr_itens_invent_consumiveis;
+                item_quantidade = irandom_range(1, 3 );
+				sprite_ind = 3;
+                break;
+			case 4:
+                item_nome = "Vitamina";
+                item_descricao = "Uma dose poderosa de vitaminas, embalada em uma pequena pílula. Essencial para manter sua vitalidade.";
+                item_sprite = spr_itens_invent_consumiveis;
+                item_quantidade = irandom_range(1, 3);
+				sprite_ind = 4;
+                break;
+			case 5:
+                item_nome = "Leite";
+                item_descricao = "Um copo de leite fresco e nutritivo, perfeito para fortalecer seus ossos e garantir um dia saudável."
+                item_sprite = spr_itens_invent_consumiveis;
+				sprite_ind = 5;
+                item_quantidade = irandom_range(1, 3);
+                break;
+		}
+
+    var _inst = instance_create_layer(pos_x, pos_y, "instances", obj_item);
+    _inst.sprite_index = item_sprite;
+    _inst.quantidade = item_quantidade;
+    _inst.nome = item_nome;
+    _inst.descricao = item_descricao;
+    _inst.sala_x = global.current_sala[0];
+    _inst.sala_y = global.current_sala[1];
+    _inst.pos_x = pos_x;
+    _inst.pos_y = pos_y;
+	_inst.image_index = sprite_ind;
+
+
+} 
+

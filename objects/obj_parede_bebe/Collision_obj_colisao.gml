@@ -1,4 +1,0 @@
-with (obj_player) {
-
-}
-

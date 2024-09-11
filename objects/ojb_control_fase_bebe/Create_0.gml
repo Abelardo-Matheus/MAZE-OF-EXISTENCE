@@ -4,7 +4,7 @@ salas();
 global._maze = ds_grid_create(global._maze_width+2 , global._maze_height+2);
 global.visited = ds_grid_create(global._maze_width+2 , global._maze_height+2 );
 global.salas_geradas = gera_salas_procedurais(global.total_rooms);
-
+criar_salas_distantes_com_templos(global.current_sala,global.salas_geradas,1);
 
 // Para cada sala gerada, criar a sala na lista global e ar_mazenar
 for (var i = 0; i < array_length_1d(global.salas_geradas); i++) {
@@ -15,7 +15,7 @@ create_escrivaninha(global.salas_geradas, 3,1);
 create_escada_porao_em_fundos(global.salas_geradas);
 recriar_vela_na_sala_atual(global.current_sala);
 create_slow_em_salas_aleatorias(global.salas_geradas, 10,2);
-criar_salas_distantes_com_templos(global.current_sala,global.salas_geradas,1);
+
 criar_salas_escuras(global.current_sala,global.salas_geradas,1);
 
 

@@ -15,6 +15,7 @@ ds_grid_set(global.room_grid, start_x, start_y, 0); // 0 indica a primeira sala
 global.salas_criadas = [];
 global.current_sala = [0, 0];
 global.sala = procurar_sala_por_numero(global.current_sala);
+global.templo_criado = false;
 
 // Script assets have changed for v2.3.0 see
 // https://help.yoyogames.com/hc/en-us/articles/360005277377 for more information
@@ -168,15 +169,19 @@ function criar_salas_distantes_com_templos(player_sala, salas_geradas, quantidad
         // Adicionar a nova sala ao array de salas geradas
         if (nova_sala != undefined) {
             array_push(salas_geradas, nova_sala);
-
             // Ar_mazenar a posição da nova sala como uma sala de templo
             array_push(global.templos_salas_pos, nova_sala);
-
+			global.templo_criado = true;
+			var nova_sala_info = criar_salas_lista(nova_sala, array_length_1d(global.salas_criadas) + 1); // Cria as informações da sala
+            array_push(global.salas_criadas, nova_sala_info); // Adiciona à lista de salas criadas
+			
             templos_criados++;
         } else {
             break; // Se não foi possível criar mais salas, sai do loop
         }
+		
     }
+	
 }
 function criar_salas_escuras(player_sala, salas_geradas, quantidade_salas) {
     // Inicializa a variável global.salas_escuras, se ainda não existir
@@ -200,8 +205,8 @@ function criar_salas_escuras(player_sala, salas_geradas, quantidade_salas) {
                 var distancia_segura = true;
 
                 // Verifica se a sala está a uma distância segura de todos os templos já criados
-                for (var t = 0; t < array_length_1d(global.templos_salas_pos); t++) {
-                    var templo_pos = global.templos_salas_pos[t];
+                for (var t = 0; t < array_length_1d(global.salas_escuras); t++) {
+                    var templo_pos = global.salas_escuras[t];
                     var distancia_templo = point_distance(sala_atual[0], sala_atual[1], templo_pos[0], templo_pos[1]);
 
                     // Define a distância mínima entre templos como 3 células
@@ -569,32 +574,49 @@ function create_escada_porao_em_fundos(salas_geradas) {
             var lado = irandom(3);
             var escada_x, escada_y;
 
-            switch (lado) {
-                case 0: // Parede esquerda
-                    escada_x = margem-5;
-                    escada_y = irandom_range(margem, room_height - margem);
-					global.direcao_escada_porao = 1;
-					global.direcao_escada = 1;
-                    break;
-                case 1: // Parede direita
-                    escada_x = room_width - margem+5;
-                    escada_y = irandom_range(margem, room_height - margem);
-					global.direcao_escada_porao = 0;
-					global.direcao_escada = 2;
-                    break;
-                case 2: // Parede superior
-                    escada_x = irandom_range(margem, room_width - margem);
-                    escada_y = margem+37;
-					global.direcao_escada_porao = 2;
-					global.direcao_escada = 4;
-                    break;
-                case 3: // Parede inferior
-                    escada_x = irandom_range(margem, room_width - margem);
-                    escada_y = room_height - margem-37;
-					global.direcao_escada_porao = 3;
-					global.direcao_escada = 3;
-                    break;
-            }
+           switch (lado) {
+    case 0: // Parede esquerda
+        escada_x = margem - 5;
+        if (irandom(1) == 0) {
+            escada_y = irandom_range(margem, (room_height / 2) - 100); // Parte superior
+        } else {
+            escada_y = irandom_range((room_height / 2) + 100, room_height - margem); // Parte inferior
+        }
+        global.direcao_escada_porao = 1;
+        global.direcao_escada = 1;
+        break;
+    case 1: // Parede direita
+        escada_x = room_width - margem + 5;
+        if (irandom(1) == 0) {
+            escada_y = irandom_range(margem, (room_height / 2) - 100); // Parte superior
+        } else {
+            escada_y = irandom_range((room_height / 2) + 100, room_height - margem); // Parte inferior
+        }
+        global.direcao_escada_porao = 0;
+        global.direcao_escada = 2;
+        break;
+    case 2: // Parede superior
+        escada_y = margem + 37;
+        if (irandom(1) == 0) {
+            escada_x = irandom_range(margem, (room_width / 2) - 100); // Parte esquerda
+        } else {
+            escada_x = irandom_range((room_width / 2) + 100, room_width - margem); // Parte direita
+        }
+        global.direcao_escada_porao = 2;
+        global.direcao_escada = 4;
+        break;
+    case 3: // Parede inferior
+        escada_y = room_height - margem - 37;
+        if (irandom(1) == 0) {
+            escada_x = irandom_range(margem, (room_width / 2) - 100); // Parte esquerda
+        } else {
+            escada_x = irandom_range((room_width / 2) + 100, room_width - margem); // Parte direita
+        }
+        global.direcao_escada_porao = 3;
+        global.direcao_escada = 3;
+        break;
+}
+
 
             // Armazenar a posição da escada
             ds_map_add(global.salas_com_escada_porao, sala_id, [escada_x, escada_y]);
@@ -821,7 +843,14 @@ function criar_paredes_na_sala(sala_especifica, quantidade_paredes) {
 function criar_paredes_intances(_maze_width, _maze_height, _maze, _cell_size) {
  
 	var sala = procurar_sala_por_numero(global.current_sala); // Procura a sala com tag 2
+	escrever_informacoes_sala(sala)
 	
+	
+	show_debug_message(global.current_sala)
+	show_debug_message(global.templos_salas_pos)
+	
+		show_debug_message(global.salas_criadas)
+
 	var direcao = 0;
     for (var i = 0; i <= _maze_width; i++) {
         for (var z = 0; z <= _maze_height; z++) {
@@ -1110,7 +1139,7 @@ function cria_salas_e_objetos(_maze_width, _maze_height, _maze, _cell_size) {
 function criar_portas_gerais_templo(sala_atual, salas_geradas) {
     var room_x = sala_atual[0];
     var room_y = sala_atual[1];
-	var sala = procurar_sala_por_numero([0,0]);
+
     // Verifica cada sala vizinha em torno da sala atual e cria as portas correspondentes
     for (var i = 0; i < array_length_1d(salas_geradas); i++) {
         var sala_vizinha = salas_geradas[i];
@@ -1121,12 +1150,12 @@ function criar_portas_gerais_templo(sala_atual, salas_geradas) {
 
             // Criar porta na direita
             if (x_vizinho == sala_atual[0] + 1 && y_vizinho == sala_atual[1]) {
-                var parede_direita = instance_position(global.room_width - 32, (global.room_height / 2), sala.parede);
+                var parede_direita = instance_position(global.room_width - 32, (global.room_height / 2), global.sala.parede);
 
                 if (parede_direita != noone) {
                     instance_destroy(parede_direita);
                 }
-				var parede_direita2 = instance_position(global.room_width +32 , (global.room_height / 2), sala.parede);
+				var parede_direita2 = instance_position(global.room_width +32 , (global.room_height / 2), global.sala.parede);
 
                 if (parede_direita2 != noone) {
                     instance_destroy(parede_direita2);
@@ -1143,7 +1172,7 @@ function criar_portas_gerais_templo(sala_atual, salas_geradas) {
 		
             // Criar porta na esquerda
             if (x_vizinho == sala_atual[0] - 1 && y_vizinho == sala_atual[1]) {
-                var parede_esquerda = instance_position(0,(global.room_height / 2), sala.parede);
+                var parede_esquerda = instance_position(0,(global.room_height / 2), global.sala.parede);
                 if (parede_esquerda != noone) {
                     instance_destroy(parede_esquerda);
                 }
@@ -1159,7 +1188,7 @@ function criar_portas_gerais_templo(sala_atual, salas_geradas) {
 
             // Criar porta acima
             if (x_vizinho == sala_atual[0] && y_vizinho == sala_atual[1] + 1) {
-                var parede_acima = instance_position((global.room_width / 2)+16,  32, sala.parede);
+                var parede_acima = instance_position((global.room_width / 2)+16,  32, global.sala.parede);
                 if (parede_acima != noone) {
 					
 					instance_destroy(parede_acima);
@@ -1176,13 +1205,13 @@ function criar_portas_gerais_templo(sala_atual, salas_geradas) {
 
             // Criar porta abaixo
             if (x_vizinho == sala_atual[0] && y_vizinho == sala_atual[1] - 1) {
-                var parede_abaixo = instance_position((global.room_width / 2)+16,global.room_height - 10, sala.parede);
+                var parede_abaixo = instance_position((global.room_width / 2)+16,global.room_height - 10, global.sala.parede);
                 if (parede_abaixo != noone) {
                    
 					instance_destroy(parede_abaixo);
 					
                 }
-				var parede_abaixo2 = instance_position((global.room_width / 2)+16,global.room_height + 32, sala.parede);
+				var parede_abaixo2 = instance_position((global.room_width / 2)+16,global.room_height + 32, global.sala.parede);
                 if (parede_abaixo2 != noone) {
                    
 					instance_destroy(parede_abaixo2);
@@ -1314,6 +1343,7 @@ function carregar_sala_templo(sala_atual, sala_origem_array,direcao) {
 	global.sala_passada = sala_origem_array;
     global.current_sala = sala_atual;
 	criar_portas_gerais_templo(sala_atual, global.salas_geradas);
+
 	
 }
 function criar_random_pontos(quantidade) {

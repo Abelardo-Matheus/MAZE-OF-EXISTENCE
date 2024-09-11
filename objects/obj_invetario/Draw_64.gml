@@ -32,7 +32,6 @@ if(inventario == true){
 			if (keyboard_check_pressed(ord("F"))and global.grid_itens[# Infos.item, i] != -1){
 				var _inst = instance_create_layer(obj_player.x,obj_player.y,"instances",obj_item);
 
-					
 				_inst.sprite_index = global.grid_itens[# Infos.sprite, i];
 				_inst.image_index = global.grid_itens[# Infos.item, i];
 				_inst.quantidade = global.grid_itens[# Infos.quantidade, i];
@@ -141,11 +140,17 @@ if(inventario == true){
 				
 			}
 			
-			draw_set_font(fnt_numeros);
+			draw_set_font(fnt_descricao);
 			draw_set_halign(fa_center);
+			draw_set_valign(fa_middle);
 			if(global.grid_itens[# Infos.item, i] != -1){
+			descricao = global.grid_itens[# Infos.descricao, i];
+			draw_text_outlined_wrapped_block(_invx +(238*escala),_invy+(277*escala),_invx +(408*escala+30),_invy+(331*escala+50), c_black, c_white,descricao,30);
+			
+			draw_set_font(fnt_nomes_itens);
+			
 			nome = global.grid_itens[# Infos.nome, i];
-			draw_text_outlined(_invx + (comeco_x_nome*escala), _invy+(comeco_y_nome*escala), c_black, c_white,nome);
+			draw_text_outlined(_invx + (comeco_x_nome*escala)+110, _invy+(comeco_y_nome*escala)+23, c_black, c_white,nome);
 			}
 	
 			

@@ -40,3 +40,4 @@ function adicionar_item_invent(){
 	_grid[# 7, _check] = argument[7];
 	_grid[# 8, _check] = argument[8];
 }
+

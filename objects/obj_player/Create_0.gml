@@ -14,9 +14,12 @@ image_speed = 1;
 // Criar o bloco de colisão logo acima do personagem
 global.bloco_colisao = instance_create_layer(x, y+30, "instances", obj_colisao);
 
-// Evento Create do obj_player
-hsp = 0; // Velocidade horizontal
-vsp = 0; // Velocidade vertical
+hveloc = 0;
+vveloc = 0;
+direita = -1;
+esquerda = -1;
+cima = -1;
+baixo = -1;
 
 
 
