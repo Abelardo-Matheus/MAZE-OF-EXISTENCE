@@ -21,7 +21,7 @@ buffer = 1.9 *escala;
 
 inventario_w = sprite_get_width(spr_iinventario)*escala;
 inventario_h = sprite_get_height(spr_iinventario)*escala;
-
+global.inventario_cheio = false; 
 item_selecionado = -1;
 pos_selecionada = -1;
 

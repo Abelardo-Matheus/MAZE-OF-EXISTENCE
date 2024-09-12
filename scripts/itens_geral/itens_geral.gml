@@ -19,16 +19,14 @@ function adicionar_item_invent(){
 }
 	
 	if (_empty_slots > 0) {
-
-	
 	var _grid = global.grid_itens;
 	var _check = 0;
 	while _grid[# Infos.item, _check] != -1{
 	_check++;	
 	}
 	}else {
-    // exibe uma mensagem de erro informando que o inventário está cheio
 	 global.inventario_cheio = true; // esse variavel aqui ativa uma mensagem que indica q o inventario está cheio.
+	 return;
 }
 	_grid[# 0, _check] = argument[0];
 	_grid[# 1, _check] = argument[1];

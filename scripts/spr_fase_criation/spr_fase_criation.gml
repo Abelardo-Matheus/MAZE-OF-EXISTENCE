@@ -54,6 +54,30 @@ function coletar_ponto(ponto_x, ponto_y, current_sala) {
     // Destruir o ponto após coleta
     instance_destroy();
 }
+function coletar_item(item_x, item_y, current_sala) {
+    // Gerar o ID único para a sala atual
+    var sala_id = string(current_sala[0]) + "_" + string(current_sala[1]);
+
+    // Verificar se a sala tem itens salvos
+    if (ds_map_exists(global.sala_com_item_drop, sala_id)) {
+        var lista_itens = ds_map_find_value(global.sala_com_item_drop, sala_id);
+
+        // Procurar o item coletado na lista e removê-lo
+        for (var i = 0; i < ds_list_size(lista_itens); i++) {
+            var item_info = ds_list_find_value(lista_itens, i);
+            if (item_info[0] == item_x && item_info[1] == item_y) {
+                ds_list_delete(lista_itens, i); // Remover o item da lista
+                break;
+            }
+        }
+        
+        // Atualizar o mapa global com a lista modificada
+        ds_map_replace(global.sala_com_item_drop, sala_id, lista_itens);
+    }
+
+
+}
+
 function coletar_vela(ponto_x, ponto_y, current_sala) {
     // Aumentar o raio da lanterna ao coletar a vela
     global.raio_lanterna += 150;

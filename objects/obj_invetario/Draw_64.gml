@@ -29,7 +29,7 @@ if(inventario == true){
 		if point_in_rectangle(_mx, _my, _slot_x, _slot_y, _slot_x + tamanho_slot_x, _slot_y +tamanho_slot_y){
 			draw_sprite_ext(spr_selecionado,0,_slot_x,_slot_y,escala,escala,0,c_white,1);
 			
-			if (keyboard_check_pressed(ord("F"))and global.grid_itens[# Infos.item, i] != -1){
+			if (keyboard_check_pressed(ord("F"))and global.grid_itens[# Infos.item, i] != -1 ){
 				var _inst = instance_create_layer(obj_player.x,obj_player.y,"instances",obj_item);
 
 				_inst.sprite_index = global.grid_itens[# Infos.sprite, i];

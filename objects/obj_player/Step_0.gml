@@ -100,19 +100,18 @@ if (global.dash_habilitado && !global.dash_em_recarga) {
     }
 }
 
-
-
 // Verificar quando o dash termina
 if (alarm[0] <= 0 && global.dash_em_recarga) {
     global.dash_em_recarga = false;  // Reseta o estado de recarga
 }
 
 
-if(instance_exists(obj_item)and obj_invetario.inventario = false){
+if(instance_exists(obj_item)and obj_invetario.inventario = false and !global.inventario_cheio){
 	var _inst = instance_nearest(x,y,obj_item);
 	if(distance_to_point(_inst.x,_inst.y)<= 50){
 		if(keyboard_check_pressed(ord("F"))){
 			adicionar_item_invent(_inst.image_index,_inst.quantidade,_inst.sprite_index,_inst.nome,_inst.descricao);
+			coletar_item(_inst.x,_inst.y,global.current_sala);
 			instance_destroy(_inst);
 		}
 	}

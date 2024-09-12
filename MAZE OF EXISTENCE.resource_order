@@ -110,6 +110,7 @@
     {"name":"spr_player_esquerda_parado","order":5,"path":"sprites/spr_player_esquerda_parado/spr_player_esquerda_parado.yy",},
     {"name":"spr_carne_cirular2","order":10,"path":"sprites/spr_carne_cirular2/spr_carne_cirular2.yy",},
     {"name":"spr_player_direita_parado","order":4,"path":"sprites/spr_player_direita_parado/spr_player_direita_parado.yy",},
+    {"name":"obj_poderes","order":3,"path":"objects/obj_poderes/obj_poderes.yy",},
     {"name":"spr_chao","order":2,"path":"sprites/spr_chao/spr_chao.yy",},
     {"name":"fnt_menu_op","order":1,"path":"fonts/fnt_menu_op/fnt_menu_op.yy",},
     {"name":"spr_carne_cirular3","order":11,"path":"sprites/spr_carne_cirular3/spr_carne_cirular3.yy",},

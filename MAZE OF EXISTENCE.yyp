@@ -143,6 +143,7 @@
     {"id":{"name":"spr_ponto","path":"sprites/spr_ponto/spr_ponto.yy",},},
     {"id":{"name":"spr_player_direita_parado","path":"sprites/spr_player_direita_parado/spr_player_direita_parado.yy",},},
     {"id":{"name":"Linha","path":"scripts/Linha/Linha.yy",},},
+    {"id":{"name":"obj_poderes","path":"objects/obj_poderes/obj_poderes.yy",},},
     {"id":{"name":"spr_chao","path":"sprites/spr_chao/spr_chao.yy",},},
     {"id":{"name":"spr_vida","path":"sprites/spr_vida/spr_vida.yy",},},
     {"id":{"name":"fnt_menu_op","path":"fonts/fnt_menu_op/fnt_menu_op.yy",},},
