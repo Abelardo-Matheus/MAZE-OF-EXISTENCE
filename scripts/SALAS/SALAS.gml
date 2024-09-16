@@ -108,12 +108,11 @@ function criar_salas_lista(sala_atual, numero) {
     }
 	 var detalhes_sala = ds_map_find_value(global.tipos_de_salas, tipo_sala);
 	if (global.templo_criado){
-		
 		var tipos_disponiveis_templo = get_ds_map_keys(global.tipos_de_salas_templo);
 		if (sala_atual == global.templos_salas_pos[0]){
 		tipo_sala = "templo";
 		tipos_disponiveis_templo = "templo";
-		 var detalhes_sala = ds_map_find_value(global.tipos_de_salas_templo, tipos_disponiveis_templo);
+		var detalhes_sala = ds_map_find_value(global.tipos_de_salas_templo, tipos_disponiveis_templo);
 	}}
 
     // Obter detalhes do tipo de sala

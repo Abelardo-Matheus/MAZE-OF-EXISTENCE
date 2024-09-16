@@ -1,5 +1,4 @@
 
-randomize();
 salas();
 global._maze = ds_grid_create(global._maze_width+2 , global._maze_height+2);
 global.visited = ds_grid_create(global._maze_width+2 , global._maze_height+2 );
@@ -13,12 +12,10 @@ for (var i = 0; i < array_length_1d(global.salas_geradas); i++) {
 }
 create_escrivaninha(global.salas_geradas, 3,1);
 create_escada_porao_em_fundos(global.salas_geradas);
-recriar_vela_na_sala_atual(global.current_sala);
+create_geladeira(global.salas_geradas, 1,1);
 create_slow_em_salas_aleatorias(global.salas_geradas, 10,2);
-
+recriar__geladeira_na_sala_atual(global.current_sala);
 criar_salas_escuras(global.current_sala,global.salas_geradas,1);
-
-
 create_pontos_em_salas_aleatorias(global.salas_geradas, 10,5); // Criar até 5 pontos em salas aleatórias
 carregar_sala(global.current_sala,global.current_sala);
 create_inimigos_em_salas_escuras(2);

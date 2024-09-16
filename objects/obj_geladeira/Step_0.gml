@@ -8,8 +8,8 @@ var _inst = instance_nearest(x,y,obj_player);
 			var _index_h = sprite_get_height(spr_itens_invent_consumiveis)/2;
 			var item_x = self.x; // Posição X do jogador
 			var item_y = self.y; // Posição Y do jogador
-		criar_item_aleatorio_passivos(item_x-_index_w,item_y-_index_h);
-		definir_escrivaninha_aberta(self.x,self.y,global.current_sala);
+		criar_item_aleatorio_ativos(item_x-_index_w,item_y-_index_h);
+		definir_geladeira_aberta(self.x,self.y,global.current_sala);
 		}
 	}
 

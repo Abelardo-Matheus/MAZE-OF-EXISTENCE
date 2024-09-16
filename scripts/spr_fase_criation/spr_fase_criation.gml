@@ -28,6 +28,7 @@ global.salas_com_vela =ds_map_create();
 global.salas_com_escrivaninha =ds_map_create();
 global.salas_com_escada_porao =  ds_map_create();
 global.sala_com_item_drop  = ds_map_create();
+global.salas_com_geladeira = ds_map_create();
 
 // No evento de colisão do obj_pontos com o player ou outro trigger
 
@@ -536,38 +537,6 @@ function create_pontos_em_salas_aleatorias(salas_geradas, quantidade_salas, quan
 
    
 }
-function recriar_vela_na_sala_atual(current_sala) {
-    // Gerar um ID único para a sala atual
-    var sala_id = string(current_sala[0]) + "_" + string(current_sala[1]);
-
-    // Verificar se há uma vela salva na sala
-    if (ds_map_exists(global.salas_com_vela, sala_id)) {
-        var vela_pos = ds_map_find_value(global.salas_com_vela, sala_id);
-        var vela_x = vela_pos[0];
-        var vela_y = vela_pos[1];
-
-        instance_create_layer(vela_x, vela_y, "Instances_moveis", obj_mesa_1);
-    }
-}
-
-function create_vela_em_quarto3(salas_geradas) {
-    for (var i = 0; i < array_length_1d(salas_geradas); i++) {
-        var sala = salas_geradas[i];
-        var sala_detalhes = procurar_sala_por_numero(sala);
-        
-        // Verificar se a sala é "quarto3"
-        if (sala_detalhes.tipo == "quarto3") {
-            var vela_x = irandom_range(128, room_width - 128);
-            var vela_y = irandom_range(128, room_height - 128);
-            var sala_id = string(sala[0]) + "_" + string(sala[1]);
-
-            // Ar_mazenar a posição da vela
-            ds_map_add(global.salas_com_vela, sala_id, [vela_x, vela_y]);
-
-
-        }
-    }
-}
 
 
 function recriar_escada_na_sala_atual(current_sala) {
@@ -868,12 +837,6 @@ function criar_paredes_intances(_maze_width, _maze_height, _maze, _cell_size) {
  
 	var sala = procurar_sala_por_numero(global.current_sala); // Procura a sala com tag 2
 	escrever_informacoes_sala(sala)
-	
-	
-	show_debug_message(global.current_sala)
-	show_debug_message(global.templos_salas_pos)
-	
-		show_debug_message(global.salas_criadas)
 
 	var direcao = 0;
     for (var i = 0; i <= _maze_width; i++) {
@@ -1217,7 +1180,7 @@ function criar_portas_gerais_templo(sala_atual, salas_geradas) {
 					
 					instance_destroy(parede_acima);
                 }
-                var porta_acima = instance_create_layer((global.room_width / 2), -32, "instances", obj_next_room);
+                var porta_acima = instance_create_layer((global.room_width / 2), -16, "instances", obj_next_room);
                 with (porta_acima) {
 					image_xscale = 3;
                     room_destino = sala_vizinha;
@@ -1229,7 +1192,7 @@ function criar_portas_gerais_templo(sala_atual, salas_geradas) {
 
             // Criar porta abaixo
             if (x_vizinho == sala_atual[0] && y_vizinho == sala_atual[1] - 1) {
-                var parede_abaixo = instance_position((global.room_width / 2)+16,global.room_height - 10, global.sala.parede);
+                var parede_abaixo = instance_position((global.room_width / 2)+16,global.room_height + 32, global.sala.parede);
                 if (parede_abaixo != noone) {
                    
 					instance_destroy(parede_abaixo);
@@ -1241,7 +1204,7 @@ function criar_portas_gerais_templo(sala_atual, salas_geradas) {
 					instance_destroy(parede_abaixo2);
 					
                 }
-                var porta_abaixo = instance_create_layer((global.room_width / 2),  global.room_height +32 , "instances", obj_next_room);
+                var porta_abaixo = instance_create_layer((global.room_width / 2),  global.room_height +16 , "instances", obj_next_room);
                 with (porta_abaixo) {
 					
 					image_xscale = 3;
@@ -1359,6 +1322,7 @@ function carregar_sala(sala_atual, sala_origem_array) {
 	recriar_slow_na_sala_atual(global.current_sala);
 	recriar_escada_na_sala_atual(global.current_sala);
 	recriar_item_dropado(global.current_sala[0],global.current_sala[1]);
+	recriar__geladeira_na_sala_atual(global.current_sala);
 	sala_tuto(); 
 }
 function carregar_sala_templo(sala_atual, sala_origem_array,direcao) {

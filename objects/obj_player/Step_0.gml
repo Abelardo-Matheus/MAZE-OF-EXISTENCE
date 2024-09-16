@@ -80,35 +80,30 @@ if(hveloc == 0 and vveloc == 0){
  }	
 }
 
-
-
-
-
-
-if (global.dash_habilitado && !global.dash_em_recarga) {
-    if (keyboard_check_pressed(vk_shift)) {
-		global.in_dash =true;
-        // Inicia o dash
-        current_speed = global.speed_dash;
-        global.dash_em_recarga = true;  // Ativa a recarga do dash
-        alarm[0] = global.frames;  // Define a duração do dash
-    } else {
-        // Volta à velocidade normal
-		global.in_dash = false;
-        current_speed = global.speed_player;
-        current_image_speed = 0.6;
-    }
+if(global.in_dash == true){
+	var rastro = instance_create_layer(x,y,"instances",obj_rastro_player);
+		with(rastro){
+		if (obj_player.esquerda) {
+    sprite_index = spr_player_esquerda;
+		} else if (obj_player.direita) {
+    sprite_index = spr_player_direita;
+		} else if (obj_player.cima) {
+    sprite_index = spr_player_cima;
+		} else if (obj_player.baixo) {
+     sprite_index = spr_player_baixo;
+}
+		
+		}
 }
 
-// Verificar quando o dash termina
-if (alarm[0] <= 0 && global.dash_em_recarga) {
-    global.dash_em_recarga = false;  // Reseta o estado de recarga
-}
+
+
+
 
 
 if(instance_exists(obj_item)and obj_invetario.inventario = false and !global.inventario_cheio){
 	var _inst = instance_nearest(x,y,obj_item);
-	if(distance_to_point(_inst.x,_inst.y)<= 50){
+	if(distance_to_point(_inst.x,_inst.y)<= 100){
 		if(keyboard_check_pressed(ord("F"))){
 			adicionar_item_invent(_inst.image_index,_inst.quantidade,_inst.sprite_index,_inst.nome,_inst.descricao);
 			coletar_item(_inst.x,_inst.y,global.current_sala);

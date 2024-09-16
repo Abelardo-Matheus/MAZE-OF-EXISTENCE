@@ -85,6 +85,6 @@ function resetar_variaveis_globais() {
     }
 
 
-	
+	global.templo_criado = false;
 
 }
