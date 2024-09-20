@@ -1,9 +1,12 @@
 function resetar_variaveis_globais() {
 	global.current_sala = [0, 0];
 	resetar_salas();
-    // Limpar e recriar global.salas_com_pontos
 
-	
+	 if (ds_exists(global.sala_com_item_drop,ds_type_map)) {
+        ds_map_clear(global.sala_com_item_drop);
+    } else {
+        global.sala_com_item_drop = ds_map_create();
+    }
 	 if (ds_exists(global.salas_com_vela,ds_type_map)) {
         ds_map_clear(global.salas_com_vela);
     } else {

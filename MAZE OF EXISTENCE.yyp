@@ -126,6 +126,7 @@
     {"id":{"name":"obj_item","path":"objects/obj_item/obj_item.yy",},},
     {"id":{"name":"Sprite16","path":"sprites/Sprite16/Sprite16.yy",},},
     {"id":{"name":"ALL_GLOBAL","path":"scripts/ALL_GLOBAL/ALL_GLOBAL.yy",},},
+    {"id":{"name":"fnt_status","path":"fonts/fnt_status/fnt_status.yy",},},
     {"id":{"name":"obj_slow","path":"objects/obj_slow/obj_slow.yy",},},
     {"id":{"name":"spr_goto_templo","path":"sprites/spr_goto_templo/spr_goto_templo.yy",},},
     {"id":{"name":"spr_chao_tijolo","path":"sprites/spr_chao_tijolo/spr_chao_tijolo.yy",},},
@@ -221,9 +222,9 @@
     {"id":{"name":"spr_player_direita","path":"sprites/spr_player_direita/spr_player_direita.yy",},},
   ],
   "RoomOrderNodes": [
+    {"roomId":{"name":"Menu","path":"rooms/Menu/Menu.yy",},},
     {"roomId":{"name":"Fase_BEBE","path":"rooms/Fase_BEBE/Fase_BEBE.yy",},},
     {"roomId":{"name":"Fase_1","path":"rooms/Fase_1/Fase_1.yy",},},
-    {"roomId":{"name":"Menu","path":"rooms/Menu/Menu.yy",},},
   ],
   "templateType": "game",
   "TextureGroups": [

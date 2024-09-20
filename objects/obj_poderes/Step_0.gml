@@ -31,7 +31,7 @@ if (alarm[0] <= 0 && global.dash_em_recarga) {
 
 }
 if(poder_lanterna){
-	
+	global.raio_lanterna = 260;
 	
 }
 

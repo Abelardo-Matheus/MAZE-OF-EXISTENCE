@@ -1,4 +1,5 @@
 global.fase = 0;
+global.ataque = 2;
 global.sala = noone;
 global.ovulo_sala_pos = noone;
 global.in_slow = false;

@@ -1,4 +1,4 @@
-
+ 
  
 var _inst = instance_nearest(x,y,obj_player);
 	if(distance_to_point(_inst.x,_inst.y)<= 60){
