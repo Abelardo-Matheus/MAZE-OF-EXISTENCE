@@ -4,8 +4,8 @@
 
 
     // Obtém a posição do obj_sperm
-    var alvo_x = obj_SPERM.x;
-    var alvo_y = obj_SPERM.y;
+    var alvo_x = obj_player.x;
+    var alvo_y = obj_player.y;
     
     // Direção do inimigo para o obj_sperm
     var direcao = point_direction(x, y, alvo_x, alvo_y);

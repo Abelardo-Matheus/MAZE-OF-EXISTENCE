@@ -9,17 +9,17 @@ global.speed_dash = 20;  // Velocidade do dash
 global.frames = 20;
 
 if (global.dash_habilitado && !global.dash_em_recarga) {
-    if (keyboard_check_pressed(vk_shift)) {
+    if (keyboard_check_pressed(mb_right)) {
 		global.in_dash =true;
         // Inicia o dash
-        obj_player.current_speed = global.speed_dash;
+        global.speed_player= global.speed_dash;
         global.dash_em_recarga = true;  // Ativa a recarga do dash
         alarm[0] = global.frames;  // Define a duração do dash
 	
     } else {
         // Volta à velocidade normal
 		global.in_dash = false;
-        obj_player.current_speed = global.speed_player;
+        global.speed_player = global.speed_player_base;
         obj_player.current_image_speed = 0.6;
     }
 }

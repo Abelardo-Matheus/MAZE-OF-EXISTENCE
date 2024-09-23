@@ -13,7 +13,10 @@ for (var i = 0; i < array_length_1d(global.salas_geradas); i++) {
 create_escrivaninha(global.salas_geradas, 3,1);
 create_escada_porao_em_fundos(global.salas_geradas);
 create_geladeira(global.salas_geradas, 1,1);
+create_guarda_roupa(global.salas_geradas, 1,1);
 create_slow_em_salas_aleatorias(global.salas_geradas, 10,2);
+create_amoeba_em_salas_aleatorias(global.salas_geradas, 3,2);
+create_torretas_em_salas_aleatorias(global.salas_geradas, 3,1);
 recriar__geladeira_na_sala_atual(global.current_sala);
 criar_salas_escuras(global.current_sala,global.salas_geradas,1);
 create_pontos_em_salas_aleatorias(global.salas_geradas, 10,5); // Criar até 5 pontos em salas aleatórias

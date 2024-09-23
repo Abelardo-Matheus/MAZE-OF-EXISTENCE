@@ -239,7 +239,7 @@
 	    global.grid_itens[# Infos.velocidade, slot_arma] = global.grid_itens[# Infos.velocidade, pos_selecionada];
 	    global.grid_itens[# Infos.cura, slot_arma] = global.grid_itens[# Infos.cura, pos_selecionada];
 	    global.grid_itens[# Infos.tipo, slot_arma] = global.grid_itens[# Infos.tipo, pos_selecionada];
-		
+		global.ataque += global.grid_itens[# Infos.dano, slot_arma];
 	    // Esvaziar o slot do inventário
 	    global.grid_itens[# Infos.item, pos_selecionada] = -1;
 	    global.grid_itens[# Infos.quantidade, pos_selecionada] = -1;
@@ -274,7 +274,7 @@
 	    global.grid_itens[# Infos.velocidade, slot_armadura] = global.grid_itens[# Infos.velocidade, pos_selecionada];
 	    global.grid_itens[# Infos.cura, slot_armadura] = global.grid_itens[# Infos.cura, pos_selecionada];
 	    global.grid_itens[# Infos.tipo, slot_armadura] = global.grid_itens[# Infos.tipo, pos_selecionada];
-
+		global.armadura_bebe += global.grid_itens[# Infos.armadura, slot_armadura];
 	    // Esvaziar o slot do inventário
 	    global.grid_itens[# Infos.item, pos_selecionada] = -1;
 	    global.grid_itens[# Infos.quantidade, pos_selecionada] = -1;
@@ -295,7 +295,7 @@
 	    pos_selecionada = -1;
 	} else if (i == total_slots + 2 && item_tipo == "bota" && slot_bota == -1) {
 	    slot_bota = i;
-    
+		
 	    // Transferir o image_index corretamente para o slot de status
 		global.grid_itens[# Infos.item, slot_bota] = global.grid_itens[# Infos.sprite, pos_selecionada];
 		global.grid_itens[# Infos.quantidade, slot_bota] = global.grid_itens[# Infos.quantidade, pos_selecionada];
@@ -308,7 +308,7 @@
 	    global.grid_itens[# Infos.velocidade, slot_bota] = global.grid_itens[# Infos.velocidade, pos_selecionada];
 	    global.grid_itens[# Infos.cura, slot_bota] = global.grid_itens[# Infos.cura, pos_selecionada];
 	    global.grid_itens[# Infos.tipo, slot_bota] = global.grid_itens[# Infos.tipo, pos_selecionada];
-
+		global.speed_player += global.grid_itens[# Infos.velocidade, slot_bota];
 	    // Esvaziar o slot do inventário
 	    global.grid_itens[# Infos.item, pos_selecionada] = -1;
 	    global.grid_itens[# Infos.quantidade, pos_selecionada] = -1;
@@ -385,10 +385,13 @@
 		slot_item = -1;
         if (i == total_slots && slot_arma != -1) {
             slot_item = slot_arma;
+			global.ataque -= global.grid_itens[# Infos.dano, slot_arma];
         }else if (i == total_slots + 1 && slot_armadura != -1) {
             slot_item = slot_armadura;
+			global.armadura_bebe -= global.grid_itens[# Infos.armadura, slot_armadura];
         }else if (i == total_slots + 2 && slot_bota != -1) {
             slot_item = slot_bota;
+			global.speed_player -= global.grid_itens[# Infos.velocidade, slot_bota];
         }
 
         if (slot_item != -1) {
@@ -408,19 +411,7 @@
                     global.grid_itens[# Infos.armadura, j] = global.grid_itens[# Infos.armadura, slot_item];
                     global.grid_itens[# Infos.velocidade, j] = global.grid_itens[# Infos.velocidade, slot_item];
                     global.grid_itens[# Infos.cura, j] = global.grid_itens[# Infos.cura, slot_item];
-                    show_debug_message("Item moved to inventory slot: " + string(j));
-show_debug_message("Item: " + string(global.grid_itens[# Infos.item, slot_item]));
-show_debug_message("Quantidade: " + string(global.grid_itens[# Infos.quantidade, slot_item]));
-show_debug_message("Sprite: " + string(global.grid_itens[# Infos.sprite, j]));
-show_debug_message("Nome: " + global.grid_itens[# Infos.nome, j]);
-show_debug_message("Descricao: " + global.grid_itens[# Infos.descricao, j]);
-show_debug_message("Image Index: " + string(global.grid_itens[# Infos.image_ind, j]));
-show_debug_message("Tipo: " + global.grid_itens[# Infos.tipo, j]);
-show_debug_message("Dano: " + string(global.grid_itens[# Infos.dano, j]));
-show_debug_message("Armadura: " + string(global.grid_itens[# Infos.armadura, j]));
-show_debug_message("Velocidade: " + string(global.grid_itens[# Infos.velocidade, j]));
-show_debug_message("Cura: " + string(global.grid_itens[# Infos.cura, j]));
-                    // Clear the status slot
+
                     global.grid_itens[# Infos.item, slot_item] = -1;
                     global.grid_itens[# Infos.sprite, slot_item] = -1;
 					global.grid_itens[# Infos.quantidade, slot_item] = -1;
