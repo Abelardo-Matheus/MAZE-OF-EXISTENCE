@@ -33,8 +33,8 @@
   "properties": [],
   "solid": false,
   "spriteId": {
-    "name": "spr_amoeba_parada",
-    "path": "sprites/spr_amoeba_parada/spr_amoeba_parada.yy",
+    "name": "spr_amoeba74",
+    "path": "sprites/spr_amoeba74/spr_amoeba74.yy",
   },
   "spriteMaskId": null,
   "visible": true,

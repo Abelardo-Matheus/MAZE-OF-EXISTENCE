@@ -51,7 +51,7 @@ function adicionar_item_invent(){
 	_grid[# 14, _check] = argument[14];
 }
 
-function criar_item_aleatorio_ativos(pos_x,pos_y) {
+function criar_item_aleatorio_ativos(pos_x,pos_y,prof) {
     // Escolher entre itens passivos e ativos
 	randomize();
     var tipo_item = irandom(1); // 0 para passivo, 1 para ativo
@@ -145,11 +145,11 @@ function criar_item_aleatorio_ativos(pos_x,pos_y) {
 	_inst.velocidade = velocidade;
 	_inst.armadura = armadura;
 	_inst.tipo = tipo;
-	
+	_inst.depth = prof -1;
 	salvar_item(_inst.sala_x,_inst.sala_y,pos_x,pos_y,_inst);
 
 } 
-function criar_item_aleatorio_passivos(pos_x,pos_y) {
+function criar_item_aleatorio_passivos(pos_x,pos_y,prof) {
 	randomize();
     // Escolher entre itens passivos e ativos
     var tipo_item = irandom(1); // 0 para passivo, 1 para ativo
@@ -212,13 +212,13 @@ function criar_item_aleatorio_passivos(pos_x,pos_y) {
 	_inst.armadura = armadura;
 	_inst.ind = ind;
 	_inst.tipo = tipo;
-	
+	_inst.depth = prof -1;
 	
 	salvar_item(_inst.sala_x,_inst.sala_y,pos_x,pos_y,_inst);
 
 } 
 
-function criar_item_aleatorio_passivos_arma(pos_x,pos_y) {
+function criar_item_aleatorio_passivos_arma(pos_x,pos_y,prof) {
 	randomize();
     // Escolher entre itens passivos e ativos
     var tipo_item = irandom(1); // 0 para passivo, 1 para ativo
@@ -301,7 +301,7 @@ function criar_item_aleatorio_passivos_arma(pos_x,pos_y) {
 	_inst.armadura = armadura;
 	_inst.ind = ind;
 	_inst.tipo = tipo;
-
+	_inst.depth = prof -1;
 	
 	
 	salvar_item(_inst.sala_x,_inst.sala_y,pos_x,pos_y,_inst);
@@ -309,7 +309,7 @@ function criar_item_aleatorio_passivos_arma(pos_x,pos_y) {
 } 
 
 
-function criar_item_aleatorio_passivos_pe(pos_x,pos_y) {
+function criar_item_aleatorio_passivos_pe(pos_x,pos_y,prof) {
 	randomize();
     // Escolher entre itens passivos e ativos
     var tipo_item = irandom(1); // 0 para passivo, 1 para ativo
@@ -421,7 +421,7 @@ function criar_item_aleatorio_passivos_pe(pos_x,pos_y) {
 	_inst.armadura = armadura;
 	_inst.ind = ind;
 	_inst.tipo = tipo;
-	
+	_inst.depth = prof -1;
 	
 	salvar_item(_inst.sala_x,_inst.sala_y,pos_x,pos_y,_inst);
 

@@ -52,3 +52,23 @@ function draw_text_outlined_wrapped_block(x1, y1, x2, y2, cor, cor2, string, lin
     }
 }
 
+function draw_text_colour_outline(){
+
+var dto_dcol = draw_get_color();
+
+	draw_set_color(argument4);
+	
+	for(var dto_i=45; dto_i<405; dto_i+=360/argument5)
+	{
+	
+	draw_text_ext(argument0+round(lengthdir_x(argument3,dto_i)),argument1+round(lengthdir_y(argument3,dto_i)),argument2,argument6,argument7);
+	
+	}
+	
+	draw_set_color(dto_dcol);
+	
+	draw_text_ext(argument0,argument1,argument2,argument6,argument7);
+
+}
+
+

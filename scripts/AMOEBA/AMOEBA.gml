@@ -69,7 +69,6 @@ function scr_amoeba_andar(){
 	
 	
 	if(distance_to_point(dest_x,dest_y) > veloc){
-
 	var _dir = point_direction(x,y, dest_x, dest_y);
 	hveloc = lengthdir_x(veloc, _dir);
 	vveloc = lengthdir_y(veloc, _dir);

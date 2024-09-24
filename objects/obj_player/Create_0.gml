@@ -23,5 +23,8 @@ dano = global.ataque;
 atacando = false;
 andar = false;
 
+tomar_dano = true;
+empurrar_dir = 0;
 
+dano_alfa = -1;
 

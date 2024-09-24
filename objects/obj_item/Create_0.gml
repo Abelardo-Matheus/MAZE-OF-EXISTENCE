@@ -11,7 +11,7 @@ velocidade = -1;
 cura = -1;
 tipo = -1;
 ind = -1;
-
+profundidade =-1;
 
 
 

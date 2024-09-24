@@ -152,7 +152,7 @@ function salvar_item(sala_atual_x, sala_atual_y, _item_x, _item_y, item) {
     }
     
     // Adicionar o item à lista
-    ds_list_add(lista_itens, [_item_x, _item_y, item.sprite_index, item.image_index, item.quantidade, item.nome, item.descricao]);
+    ds_list_add(lista_itens, [_item_x, _item_y, item.sprite_index, item.ind, item.quantidade, item.nome, item.descricao]);
     
     // Armazenar a lista atualizada no mapa global
     ds_map_replace(global.sala_com_item_drop, sala_id, lista_itens);

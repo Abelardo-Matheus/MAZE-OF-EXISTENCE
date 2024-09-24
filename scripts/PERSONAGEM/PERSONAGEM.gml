@@ -75,24 +75,7 @@ if(keyboard_check(vk_shift) && global.estamina > 0){
 	}
 	
 
-if(place_meeting(x + hveloc, y, global.sala.parede)){
-	while !place_meeting(x + sign(hveloc),y,global.sala.parede){
-		x += sign(hveloc);
-	}
-	hveloc = 0;
-}
-x += hveloc;
-
-if(place_meeting(x , y + vveloc, global.sala.parede)){
-	while !place_meeting(x ,y + sign(vveloc),global.sala.parede){
-		y += sign(vveloc);
-	}
-	vveloc = 0;
-}
-// Atualiza a posição do player
-
-y += vveloc;
-
+scr_player_colisao();
 dir = floor((point_direction(x,y,mouse_x,mouse_y)+ 45)/90);
 
 if(hveloc == 0 and vveloc == 0){
@@ -172,6 +155,27 @@ if(mouse_check_button(mb_left)){
 
 }
 
+function scr_player_colisao(){
+if(place_meeting(x + hveloc, y, global.sala.parede)){
+	while !place_meeting(x + sign(hveloc),y,global.sala.parede){
+		x += sign(hveloc);
+	}
+	hveloc = 0;
+}
+x += hveloc;
+
+if(place_meeting(x , y + vveloc, global.sala.parede)){
+	while !place_meeting(x ,y + sign(vveloc),global.sala.parede){
+		y += sign(vveloc);
+	}
+	vveloc = 0;
+}
+// Atualiza a posição do player
+
+y += vveloc;
+
+
+}
 function scr_ataque_player(){
 	if(image_index >= 1){
 	if(atacando = false){
@@ -196,5 +200,19 @@ function scr_ataque_player(){
 		state = scr_andando;
 		atacando = false;
 	}
+	
+}
+	
+function scr_personagem_hit(){
+	if(alarm[2] > 0 ){
+	
+	hveloc = lengthdir_x(8,empurrar_dir);
+	vveloc = lengthdir_y(8,empurrar_dir);
+
+	scr_player_colisao();
+	}else{
+		state = scr_andando;
+	}
+	
 	
 }

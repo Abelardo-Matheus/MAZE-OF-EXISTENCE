@@ -7,6 +7,10 @@ other.state = scr_amoeba_hit;
 other.alarm[1] = 5;
 other.hit = true;
 
+var _inst = instance_create_layer(x,y,"instances",obj_dano);
+_inst.alvo = other;
+_inst.dano = global.ataque;
+
 
 
 

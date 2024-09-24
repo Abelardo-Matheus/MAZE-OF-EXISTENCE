@@ -4,8 +4,6 @@ script_execute(state);
 depth = -y;
 
 
-
-
 if(vida_amoeba <= 0){
 	instance_destroy();
 }

@@ -23,12 +23,13 @@ function desenha_barra_vida() {
     if (point_in_rectangle(global.current_player.x, global.current_player.y, pos_x - largura_barra , pos_y - altura_barra+120, pos_x + largura_barra , pos_y + altura_barra-50)) {
         alfa = 0.5; // Player está na posição da barra, reduzir alpha
     }
+	  draw_sprite_ext(spr_vida, 0, 0 ,pos_y,(_vida/_max_vida)*_scala,_scala, 0 ,c_white,alfa);
+   
+   draw_sprite_ext(spr_stamina, 0, 0 ,pos_stamina, (_stamina/_max_estamina)*_scala,_scala, 0 ,c_white,alfa);
 	
    draw_sprite_ext(spr_barra_vida, 0, 0 ,pos_y, _scala,_scala, 0 ,c_white,alfa);
    
-   draw_sprite_ext(spr_vida, 0, 0 ,pos_y,(_vida/_max_vida)*_scala,_scala, 0 ,c_white,alfa);
-   
-   draw_sprite_ext(spr_stamina, 0, 0 ,pos_stamina, (_stamina/_max_estamina)*_scala,_scala, 0 ,c_white,alfa);
+ 
 	
 	draw_set_alpha(1);
    

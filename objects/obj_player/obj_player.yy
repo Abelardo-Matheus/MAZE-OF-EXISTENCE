@@ -7,6 +7,8 @@
     {"resourceType":"GMEvent","resourceVersion":"1.0","name":"","collisionObjectId":null,"eventNum":0,"eventType":3,"isDnD":false,},
     {"resourceType":"GMEvent","resourceVersion":"1.0","name":"","collisionObjectId":null,"eventNum":0,"eventType":8,"isDnD":false,},
     {"resourceType":"GMEvent","resourceVersion":"1.0","name":"","collisionObjectId":null,"eventNum":0,"eventType":2,"isDnD":false,},
+    {"resourceType":"GMEvent","resourceVersion":"1.0","name":"","collisionObjectId":null,"eventNum":2,"eventType":2,"isDnD":false,},
+    {"resourceType":"GMEvent","resourceVersion":"1.0","name":"","collisionObjectId":null,"eventNum":3,"eventType":2,"isDnD":false,},
   ],
   "managed": true,
   "overriddenProperties": [],
@@ -34,6 +36,9 @@
     "name": "spr_player_direita",
     "path": "sprites/spr_player_direita/spr_player_direita.yy",
   },
-  "spriteMaskId": null,
+  "spriteMaskId": {
+    "name": "spr_player_baixo_parado",
+    "path": "sprites/spr_player_baixo_parado/spr_player_baixo_parado.yy",
+  },
   "visible": true,
 }

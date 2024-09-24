@@ -29,10 +29,13 @@
   "physicsStartAwake": true,
   "properties": [],
   "solid": false,
-  "spriteId": null,
+  "spriteId": {
+    "name": "spr_hitbox_ataque",
+    "path": "sprites/spr_hitbox_ataque/spr_hitbox_ataque.yy",
+  },
   "spriteMaskId": {
     "name": "spr_hitbox_ataque",
     "path": "sprites/spr_hitbox_ataque/spr_hitbox_ataque.yy",
   },
-  "visible": true,
+  "visible": false,
 }
