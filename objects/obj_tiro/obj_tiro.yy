@@ -4,14 +4,14 @@
   "name": "obj_tiro",
   "eventList": [
     {"resourceType":"GMEvent","resourceVersion":"1.0","name":"","collisionObjectId":null,"eventNum":0,"eventType":3,"isDnD":false,},
-    {"resourceType":"GMEvent","resourceVersion":"1.0","name":"","collisionObjectId":{"name":"obj_SPERM","path":"objects/obj_SPERM/obj_SPERM.yy",},"eventNum":0,"eventType":4,"isDnD":false,},
     {"resourceType":"GMEvent","resourceVersion":"1.0","name":"","collisionObjectId":null,"eventNum":0,"eventType":7,"isDnD":false,},
+    {"resourceType":"GMEvent","resourceVersion":"1.0","name":"","collisionObjectId":{"name":"obj_player","path":"objects/obj_player/obj_player.yy",},"eventNum":0,"eventType":4,"isDnD":false,},
   ],
   "managed": true,
   "overriddenProperties": [],
   "parent": {
-    "name": "TIROWS",
-    "path": "folders/Objects/FASE_UT/INIMIGOS/TIROWS.yy",
+    "name": "INIMIGOS",
+    "path": "folders/Objects/FASE_BEBE_ALL/INIMIGOS.yy",
   },
   "parentObjectId": null,
   "persistent": false,

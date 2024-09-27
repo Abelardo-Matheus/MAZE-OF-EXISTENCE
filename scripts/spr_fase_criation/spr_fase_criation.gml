@@ -13,12 +13,9 @@ global.origem_templo = noone;
 // Coloca a primeira sala no centro
 ds_grid_set(global.room_grid, start_x, start_y, 0); // 0 indica a primeira sala
 global.salas_criadas = [];
-global.current_sala = [0, 0];
+global.current_sala = [0,0];
 global.sala = procurar_sala_por_numero(global.current_sala);
 global.templo_criado = false;
-
-// Script assets have changed for v2.3.0 see
-// https://help.yoyogames.com/hc/en-us/articles/360005277377 for more information
 global.salas_com_pontos = ds_map_create(); // Cria um mapa global para ar_mazenar as posições dos pontos nas salas
 global.salas_com_inimigos = ds_map_create();
 global.salas_com_torretas = ds_map_create();
@@ -32,7 +29,17 @@ global.sala_com_item_drop  = ds_map_create();
 global.salas_com_geladeira = ds_map_create();
 global.salas_com_guarda_roupa = ds_map_create();
 
-// No evento de colisão do obj_pontos com o player ou outro trigger
+function gerar_inimigos_e_itens_para_o_nivel(salas_geradas, level) {
+    // Definir a quantidade de inimigos e itens com base no nível
+    var quantidade_inimigos = 1 + (level * 2); // Exemplo: começa com 5 inimigos e aumenta 2 por nível
+    var quantidade_itens = 2 + level;          // Exemplo: começa com 3 itens e aumenta 1 por nível
+    
+    // Gerar inimigos e itens nas salas aleatórias
+    create_slow_em_salas_aleatorias(salas_geradas, 5, quantidade_itens+1);
+    create_amoeba_em_salas_aleatorias(salas_geradas, 5, quantidade_inimigos);
+    create_torretas_em_salas_aleatorias(salas_geradas, 5, quantidade_inimigos);  // Exemplo: Torretas aumentam conforme o nível
+}
+
 
 #region ponto
 function coletar_ponto(ponto_x, ponto_y, current_sala) {
@@ -116,80 +123,7 @@ function create_pontos_em_salas_aleatorias(salas_geradas, quantidade_salas, quan
 }
 #endregion
 
-#region item
-function coletar_item(item_x, item_y, current_sala) {
-    // Gerar o ID único para a sala atual
-    var sala_id = string(current_sala[0]) + "_" + string(current_sala[1]);
 
-    // Verificar se a sala tem itens salvos
-    if (ds_map_exists(global.sala_com_item_drop, sala_id)) {
-        var lista_itens = ds_map_find_value(global.sala_com_item_drop, sala_id);
-
-        // Procurar o item coletado na lista e removê-lo
-        for (var i = 0; i < ds_list_size(lista_itens); i++) {
-            var item_info = ds_list_find_value(lista_itens, i);
-            if (item_info[0] == item_x && item_info[1] == item_y) {
-                ds_list_delete(lista_itens, i); // Remover o item da lista
-                break;
-            }
-        }
-        
-        // Atualizar o mapa global com a lista modificada
-        ds_map_replace(global.sala_com_item_drop, sala_id, lista_itens);
-    }
-
-
-}
-function salvar_item(sala_atual_x, sala_atual_y, _item_x, _item_y, item) {
-    var sala_id = string(sala_atual_x) + "_" + string(sala_atual_y); 
-    var lista_itens;
-    
-    // Verificar se já existe uma lista de itens para esta sala
-    if (ds_map_exists(global.sala_com_item_drop, sala_id)) {
-        lista_itens = ds_map_find_value(global.sala_com_item_drop, sala_id);
-    } else {
-        lista_itens = ds_list_create(); 
-    }
-    
-    // Adicionar o item à lista
-    ds_list_add(lista_itens, [_item_x, _item_y, item.sprite_index, item.ind, item.quantidade, item.nome, item.descricao]);
-    
-    // Armazenar a lista atualizada no mapa global
-    ds_map_replace(global.sala_com_item_drop, sala_id, lista_itens);
-}
-
-
-
-
-function recriar_item_dropado(current_sala_x, current_sala_y) {
-    var sala_id = string(current_sala_x) + "_" + string(current_sala_y);
-
-    // Verificar se a sala atual tem itens salvos
-    if (ds_map_exists(global.sala_com_item_drop, sala_id)) {
-        var lista_itens = ds_map_find_value(global.sala_com_item_drop, sala_id);
-
-        // Recriar os itens nas posições salvas
-        for (var i = 0; i < ds_list_size(lista_itens); i++) {
-            var item_info = ds_list_find_value(lista_itens, i);
-            var ponto_x = item_info[0];
-            var ponto_y = item_info[1];
-            var sprite_index_ = item_info[2];
-            var image_index_ = item_info[3];
-            var quantidade = item_info[4];
-            var nome = item_info[5];
-            var descricao = item_info[6];
-
-            // Criar a instância do item na sala
-            var _inst = instance_create_layer(ponto_x, ponto_y, "instances", obj_item);
-            _inst.sprite_index = sprite_index_;
-            _inst.image_index = image_index_;
-            _inst.quantidade = quantidade;
-            _inst.nome = nome;
-            _inst.descricao = descricao;
-        }
-    }
-}
-#endregion
 
 #region vela
 function coletar_vela(ponto_x, ponto_y, current_sala) {
@@ -760,6 +694,8 @@ function criar_chao_room_inteira(_maze_width,_maze_height,_maze) {
         }
     }
 }
+
+
 #endregion
 
 #region SLOW_TAPETE
@@ -1164,12 +1100,41 @@ function gera_salas_procedurais(num_salas) {
 }
 
 
+
 function cria_salas_e_objetos(_maze_width, _maze_height, _maze, _cell_size) {
 
     criar_chao_room_inteira(global._maze_width, global._maze_height, global._maze);
     criar_paredes_borda(global._maze_width, global._maze_height, global._maze);
     criar_paredes_intances(global._maze_width, global._maze_height, global._maze, global._cell_size);
 }
+
+
+function criar_instancias_paredes_e_chao_v2(_maze_width, _maze_height, _maze, obj_parede, obj_chao, layer) {
+    var i, j;
+
+    // Percorrer a grid e criar instâncias baseadas no valor de cada célula
+    for (i = 0; i < _maze_width; i++) {
+        for (j = 0; j < _maze_height; j++) {
+            var valor_celula = ds_grid_get(_maze, i, j);
+
+            // Converter as coordenadas da grid para coordenadas de pixels
+            var x_pos = i * global._block_size;
+            var y_pos = j * global._block_size;
+
+            // Criar a instância de chão (0) ou parede (1)
+            if (valor_celula == 0) {
+                // Criar instância de chão
+                instance_create_layer(x_pos, y_pos, layer, obj_chao);
+            } else if (valor_celula == 1) {
+                // Criar instância de parede
+                instance_create_layer(x_pos, y_pos, layer, obj_parede);
+            }
+        }
+    }
+}
+
+
+
 
 
 function criar_portas_gerais_templo(sala_atual, salas_geradas) {

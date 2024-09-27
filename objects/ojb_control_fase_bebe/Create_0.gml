@@ -1,39 +1,13 @@
+// Evento Create do obj_control_fase_bebe
 
-salas();
-global._maze = ds_grid_create(global._maze_width+2 , global._maze_height+2);
-global.visited = ds_grid_create(global._maze_width+2 , global._maze_height+2 );
-global.salas_geradas = gera_salas_procedurais(global.total_rooms);
-criar_salas_distantes_com_templos(global.current_sala,global.salas_geradas,1);
+// Inicializar variáveis globais
+global.current_level = 1;
 
-// Para cada sala gerada, criar a sala na lista global e ar_mazenar
-for (var i = 0; i < array_length_1d(global.salas_geradas); i++) {
-    var sala_info = criar_salas_lista(global.salas_geradas[i], i + 1);
-    array_push(global.salas_criadas, sala_info);
-}
-create_escrivaninha(global.salas_geradas, 3,1);
-create_escada_porao_em_fundos(global.salas_geradas);
-create_geladeira(global.salas_geradas, 1,1);
-create_guarda_roupa(global.salas_geradas, 1,1);
-create_slow_em_salas_aleatorias(global.salas_geradas, 10,2);
-create_amoeba_em_salas_aleatorias(global.salas_geradas, 3,2);
-create_torretas_em_salas_aleatorias(global.salas_geradas, 3,1);
-recriar__geladeira_na_sala_atual(global.current_sala);
-criar_salas_escuras(global.current_sala,global.salas_geradas,1);
-create_pontos_em_salas_aleatorias(global.salas_geradas, 10,5); // Criar até 5 pontos em salas aleatórias
-carregar_sala(global.current_sala,global.current_sala);
-create_inimigos_em_salas_escuras(2);
+
+// Inicializar grids
+global._maze = ds_grid_create(global._maze_width + 2, global._maze_height + 2);
+global.visited = ds_grid_create(global._maze_width + 2, global._maze_height + 2);
+
+// Criar e gerar salas pela primeira vez
+resetar_fase_por_level();
 instance_create_layer(global.room_width / 2 + 32, global.room_height / 2, "Layer_Player", obj_player);
-
-
-sala_tuto();
-
-
-global.minimap = [];
-for (var i = 0; i < array_length_1d(global.salas_geradas); i++) {
-    global.minimap[i] = c_white;  // Todas as salas começam com cor branca
-}
-
-
-
-
-

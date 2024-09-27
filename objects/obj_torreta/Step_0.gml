@@ -1,32 +1,14 @@
-/// @description Insert description here
-// You can write your code in this editor
+script_execute(state);
+depth = -y;
 
 
-
-    // Obtém a posição do obj_sperm
-    var alvo_x = obj_player.x;
-    var alvo_y = obj_player.y;
-    
-    // Direção do inimigo para o obj_sperm
-    var direcao = point_direction(x, y, alvo_x, alvo_y);
-    
-    // Ajustar a rotação do inimigo para a direção calculada
-    image_angle = direcao -180;  // Subtrai 90 graus para alinhar o "frente" do retângulo corretamente
-
-
-
-
-if(tiro == true){
-var tiros = instance_create_layer(x,y,"instances",obj_tiro);
-with(tiros){
-	direction =  direcao ;
-}
-tiro = false;
+if(vida <= 0){
+	instance_destroy();
 }
 
-
-
-
+if(alarm[3] == 0){
+	state = atirar_torreta;
+}
 
 
 

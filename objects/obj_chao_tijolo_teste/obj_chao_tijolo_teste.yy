@@ -1,21 +1,18 @@
 {
   "resourceType": "GMObject",
   "resourceVersion": "1.0",
-  "name": "obj_control_fase_1",
+  "name": "obj_chao_tijolo_teste",
   "eventList": [
     {"resourceType":"GMEvent","resourceVersion":"1.0","name":"","collisionObjectId":null,"eventNum":0,"eventType":0,"isDnD":false,},
-    {"resourceType":"GMEvent","resourceVersion":"1.0","name":"","collisionObjectId":null,"eventNum":64,"eventType":8,"isDnD":false,},
-    {"resourceType":"GMEvent","resourceVersion":"1.0","name":"","collisionObjectId":null,"eventNum":48,"eventType":9,"isDnD":false,},
-    {"resourceType":"GMEvent","resourceVersion":"1.0","name":"","collisionObjectId":null,"eventNum":82,"eventType":9,"isDnD":false,},
   ],
   "managed": true,
   "overriddenProperties": [],
   "parent": {
-    "name": "CONTROLES",
-    "path": "folders/Objects/FASE_BEBE_ALL/CONTROLES.yy",
+    "name": "OBJETOS",
+    "path": "folders/Objects/FASE_BEBE_ALL/OBJETOS.yy",
   },
   "parentObjectId": null,
-  "persistent": true,
+  "persistent": false,
   "physicsAngularDamping": 0.1,
   "physicsDensity": 0.5,
   "physicsFriction": 0.2,
@@ -30,7 +27,10 @@
   "physicsStartAwake": true,
   "properties": [],
   "solid": false,
-  "spriteId": null,
+  "spriteId": {
+    "name": "spr_chao_bebe_2",
+    "path": "sprites/spr_chao_bebe_2/spr_chao_bebe_2.yy",
+  },
   "spriteMaskId": null,
   "visible": true,
 }

@@ -12,8 +12,8 @@ surface_set_target(sombra_surface);
     var raio_visao = global.raio_lanterna;
 
     // Pegar as coordenadas do jogador na tela (ajustar de acordo com a câmera)
-    var x_jogador_gui = global.current_player.x - camera_get_view_x(view_camera[0]);
-    var y_jogador_gui = global.current_player.y - camera_get_view_y(view_camera[0]);
+    var x_jogador_gui = obj_player.x ;
+    var y_jogador_gui = obj_player.y ;
 
     // Desenhar o círculo de visão, removendo a escuridão ao redor do jogador
 	gpu_set_blendmode(bm_subtract);

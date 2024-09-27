@@ -3,9 +3,9 @@
   "resourceVersion": "1.0",
   "name": "obj_inimigo_fantasma",
   "eventList": [
-    {"resourceType":"GMEvent","resourceVersion":"1.0","name":"","collisionObjectId":null,"eventNum":0,"eventType":0,"isDnD":false,},
-    {"resourceType":"GMEvent","resourceVersion":"1.0","name":"","collisionObjectId":null,"eventNum":0,"eventType":3,"isDnD":false,},
     {"resourceType":"GMEvent","resourceVersion":"1.0","name":"","collisionObjectId":{"name":"obj_player","path":"objects/obj_player/obj_player.yy",},"eventNum":0,"eventType":4,"isDnD":false,},
+    {"resourceType":"GMEvent","resourceVersion":"1.0","name":"","collisionObjectId":null,"eventNum":0,"eventType":0,"isDnD":false,},
+    {"resourceType":"GMEvent","resourceVersion":"1.0","name":"","collisionObjectId":null,"eventNum":0,"eventType":8,"isDnD":false,},
   ],
   "managed": true,
   "overriddenProperties": [],
@@ -13,7 +13,10 @@
     "name": "INIMIGOS",
     "path": "folders/Objects/FASE_BEBE_ALL/INIMIGOS.yy",
   },
-  "parentObjectId": null,
+  "parentObjectId": {
+    "name": "par_inimigos_fantasmas",
+    "path": "objects/par_inimigos_fantasmas/par_inimigos_fantasmas.yy",
+  },
   "persistent": false,
   "physicsAngularDamping": 0.1,
   "physicsDensity": 0.5,

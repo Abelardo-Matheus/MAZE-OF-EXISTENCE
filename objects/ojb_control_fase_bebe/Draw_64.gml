@@ -105,7 +105,6 @@ draw_set_alpha(1);
 
 draw_set_color(c_white);
 draw_set_font(fnt_menu_op);
-draw_text_transformed(100, 100, "XP:" + string(global.xp), 0.5, 0.5, 0);
-draw_text_transformed(150, 150, "Recorde:" + string(global.recorde), 0.5, 0.5, 0);
+
 
 desenha_barra_vida();

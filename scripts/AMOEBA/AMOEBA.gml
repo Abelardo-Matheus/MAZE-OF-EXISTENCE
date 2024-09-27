@@ -4,7 +4,7 @@ function scr_amoeba_check_player(){
 	}
 }
 function scr_amoeba_hit(){
-	
+	alarm[2] = 180;
 	empurrar_veloc = lerp(empurrar_veloc,0,0.05);
 	hveloc = lengthdir_x(empurrar_veloc,empurrar_dir);
 	vveloc = lengthdir_y(empurrar_veloc,empurrar_dir);

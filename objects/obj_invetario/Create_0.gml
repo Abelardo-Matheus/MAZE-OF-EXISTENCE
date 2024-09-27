@@ -66,6 +66,7 @@ enum itens_armas{
 	espada_madeira,
 	espada_plastico,
 	espada_ouro,
+	espada_mata_fantasma,
 	Altura
 	
 }
@@ -77,6 +78,8 @@ enum itens_pe{
 	skate,
 	tenis_novo,
 	sapato_novo,
+	meia_vermelha,
+	meia_amarela,
 	Altura
 	
 }

@@ -44,7 +44,24 @@
 		
 			if (i < total_slots && point_in_rectangle(_mx, _my, _slot_x, _slot_y, _slot_x + tamanho_slot_x, _slot_y + tamanho_slot_y)) {
 				draw_sprite_ext(spr_selecionado,0,_slot_x,_slot_y,escala,escala,0,c_white,1);
-			
+				
+				if(global.grid_itens[# Infos.quantidade, i] == 0 and global.grid_itens[# Infos.tipo, i] == "uso"){
+					global.grid_itens[# Infos.item, i] = -1;
+					global.grid_itens[# Infos.quantidade, i] = -1;
+					global.grid_itens[# Infos.sprite, i] = -1;
+					global.grid_itens[# Infos.nome, i] = -1;
+					global.grid_itens[# Infos.descricao, i] = -1;
+					global.grid_itens[# Infos.image_ind, i] = -1;
+					global.grid_itens[# Infos.sala_x, i] = -1;
+					global.grid_itens[# Infos.sala_y, i] = -1;
+					global.grid_itens[# Infos.pos_x, i] = -1;
+					global.grid_itens[# Infos.pos_y, i] = -1;
+					global.grid_itens[# Infos.tipo, i] = -1;
+					global.grid_itens[# Infos.dano, i] = -1;
+					global.grid_itens[# Infos.velocidade, i] = -1;
+					global.grid_itens[# Infos.cura, i] = -1;
+					global.grid_itens[# Infos.armadura, i] = -1;
+				}
 				if (keyboard_check_pressed(ord("F"))and global.grid_itens[# Infos.item, i] != -1 ){
 					var _inst = instance_create_layer(obj_player.x,obj_player.y,"instances",obj_item);
 
@@ -208,7 +225,15 @@
 				nome = global.grid_itens[# Infos.nome, i];
 				draw_text_outlined(_invx + (comeco_x_nome*escala)+110, _invy+(comeco_y_nome*escala)+23, c_black, c_white,nome);
 				}
-				
+					 if (i < total_slots and keyboard_check_pressed(ord("E")) and global.grid_itens[# Infos.tipo, i] == "uso" and  global.grid_itens[# Infos.item, i] != -1){
+				global.vida += global.grid_itens[# Infos.cura, i];
+				if (global.vida >= global.vida_max){
+				global.vida = global.vida_max;
+				}
+				if(global.grid_itens[# Infos.quantidade, i] > 0){
+					global.grid_itens[# Infos.quantidade, i]--;
+				}
+			 }
 			
 				}
 			
@@ -435,11 +460,24 @@
         
     }
 
-    // Continue with your existing drawing and interaction logic here...
+  
 }
 
             
 	        }
+			
+			  if (i == total_slots && slot_arma != -1) {
+				  if(global.grid_itens[# Infos.nome, slot_arma] == "Espada mata Fantasma"){
+					  global.mata_fantasma = true;
+				  }else{
+					   global.mata_fantasma = false;
+				  }
+				  
+			  }else if (i == total_slots + 1 && slot_armadura != -1) {
+				  
+			  } else if (i == total_slots + 2 && slot_bota != -1) {
+				  
+			  }
 	     // Desenhar os itens equipados nos slots de status corretamente com seus image_index
 	        if (i == total_slots && slot_arma != -1) {
 	            // Desenhar o sprite da arma no slot de status
@@ -463,18 +501,21 @@
 	                draw_sprite_ext(sprite_bota, image_index_bota, _slot_x, _slot_y, escala, escala, 0, c_white, 1);
 	            }
 	        }
-
+			
+			
+       
 			var _sprit = global.grid_itens[# Infos.sprite, i];
 			if(global.grid_itens[# Infos.item, i] != -1){
 				draw_sprite_ext(_sprit,global.grid_itens[# Infos.image_ind, i], _slot_x, _slot_y, escala,escala,0,c_white,1);
 				draw_set_font(fnt_numeros);
 				draw_set_halign(fa_center);
+				if(global.grid_itens[# Infos.quantidade, i] != 0){
 				draw_text_outlined(_slot_x+tamanho_slot_x-15, _slot_y+tamanho_slot_y- 30, c_black, c_white, global.grid_itens[# Infos.quantidade, i]);
+				}
 			}
 			
      
 			
-       
 		
 			ix++;
 		if( ix >= slots_h){
