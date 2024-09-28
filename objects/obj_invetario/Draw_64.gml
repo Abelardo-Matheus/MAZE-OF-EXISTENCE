@@ -264,7 +264,8 @@
 	    global.grid_itens[# Infos.velocidade, slot_arma] = global.grid_itens[# Infos.velocidade, pos_selecionada];
 	    global.grid_itens[# Infos.cura, slot_arma] = global.grid_itens[# Infos.cura, pos_selecionada];
 	    global.grid_itens[# Infos.tipo, slot_arma] = global.grid_itens[# Infos.tipo, pos_selecionada];
-		global.ataque += global.grid_itens[# Infos.dano, slot_arma];
+		global.dano_base[global.level_player] += global.grid_itens[# Infos.dano, slot_arma];
+		global.ataque += global.grid_itens[# Infos.dano, slot_arma]
 	    // Esvaziar o slot do inventário
 	    global.grid_itens[# Infos.item, pos_selecionada] = -1;
 	    global.grid_itens[# Infos.quantidade, pos_selecionada] = -1;
@@ -410,7 +411,8 @@
 		slot_item = -1;
         if (i == total_slots && slot_arma != -1) {
             slot_item = slot_arma;
-			global.ataque -= global.grid_itens[# Infos.dano, slot_arma];
+			global.ataque -= global.grid_itens[# Infos.dano, slot_arma]
+			global.dano_base[global.level_player] -= global.grid_itens[# Infos.dano, slot_arma];
         }else if (i == total_slots + 1 && slot_armadura != -1) {
             slot_item = slot_armadura;
 			global.armadura_bebe -= global.grid_itens[# Infos.armadura, slot_armadura];
@@ -548,10 +550,14 @@
 		draw_set_halign(fa_left);
 		draw_set_valign(fa_middle);
 		draw_set_color(c_black);
-		var vida_string = "LIFE: " + string(global.vida) + "/" + string(global.vida_max);
-		var ataque = "ATK: " +  string(global.ataque);
+		var vida_string = "LIFE: " + string(round(global.vida)) + "/" + string(round(global.vida_max));
+		var ataque = "ATK: " +  string(round(global.ataque));
 		var velo = "SPD: " + string( global.speed_player);
 		var armadura = "DEF: " +  string(global.armadura_bebe);
+		var level = "LVL: " +  string(global.level_player);
+		
+		draw_text(_invx +(370 * escala), _invy +(183 * escala - 35),level)
+		
 		draw_text(_invx +(370 * escala), _invy +(183 * escala),ataque)
 	
 		draw_text(_invx +(370 * escala), _invy +(183 * escala + 35),velo);

@@ -1,3 +1,4 @@
+ganhar_xp(10);
 script_execute(state);
 depth = -y;
 if(global.estamina <= global.max_estamina && !andar){

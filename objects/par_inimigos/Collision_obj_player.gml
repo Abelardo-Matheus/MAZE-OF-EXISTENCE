@@ -10,7 +10,7 @@ global.vida -= 5;
 var _inst = instance_create_layer(x,y,"instances",obj_dano);
 _inst.alvo = other;
 _inst.dano = 5;
-_inst.cor = c_red;
+global.cor_dano = c_red;
 
 
 }

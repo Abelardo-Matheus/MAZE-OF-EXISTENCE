@@ -339,7 +339,16 @@ function criar_item_aleatorio_passivos_arma(pos_x, pos_y, prof) {
         dano = 9;
         tipo = "arma";
         ind = 4;
-    } else if (item_index > 1100 && item_index <= 2000) { 
+    } else if (item_index > 1100 && item_index <= 1200) { 
+        item_nome = "Arco de brinquedo";
+        item_descricao = "Um arco simples para atirar de longe.";
+        item_sprite = spr_itens_invent_passivo_armas;
+        item_quantidade = 0;
+        sprite_ind = 4;
+        dano = 9;
+        tipo = "arco";
+        ind = 4;
+    } else if (item_index > 1200 && item_index <= 2000) { 
 		drop = false;
 	}
 

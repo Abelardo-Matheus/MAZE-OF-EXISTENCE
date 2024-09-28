@@ -1,17 +1,16 @@
 global.fase = 0;
 global.dist_aggro_amoeba =  200;
 global.dist_desaggro_amoeba = 400;
-global.ataque = 2;
+
 global.sala = noone;
 global.ovulo_sala_pos = noone;
 global.in_slow = false;
 global.current_player = obj_player;
 global.slow = obj_slow_bebe;
-global.vida = 100;
+global.cor_dano = c_white;
+
 global.mata_fantasma = false;
-global.estamina = 100;
 global.current_level = 1;
-global.max_estamina = 100;
 global.armadura_bebe = 0;
 global.speed_player_base = 10;
 global.speed_player = 10;
@@ -28,9 +27,6 @@ global.dash_tempo_recarga = 60*6;
 global.map = true;
 global.full = false;
 global.raio_lanterna = 20;
-global.dificuldade = 1;
-global.tamanho_lab = 64 / global.dificuldade;
-global._cell_size = 64;
 global.recorde = 0;
 global.vela_coletada = false;
 global.direcao_escada_porao = 0;

@@ -12,6 +12,7 @@ yy = alvo.y;
 
 alpha = 1;
 cor = c_white;
+fonte =fnt_dano;
 
 
 
