@@ -1,14 +1,14 @@
 global.fase = 0;
 global.dist_aggro_amoeba =  200;
 global.dist_desaggro_amoeba = 400;
-
+global.level_fase = 1;
 global.sala = noone;
 global.ovulo_sala_pos = noone;
 global.in_slow = false;
 global.current_player = obj_player;
 global.slow = obj_slow_bebe;
 global.cor_dano = c_white;
-
+global.inimigo_id_count = 0;
 global.mata_fantasma = false;
 global.current_level = 1;
 global.armadura_bebe = 0;

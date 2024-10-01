@@ -1,7 +1,7 @@
 function desenha_barra_vida() {
       
    
-   var _scala = 4;
+   var _scala = 6;
    var _guia = display_get_gui_height();
    var _spra = sprite_get_height(spr_barra_vida) * _scala;
    var _hud = _guia - _spra;   

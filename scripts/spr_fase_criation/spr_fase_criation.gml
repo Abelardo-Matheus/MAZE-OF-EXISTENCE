@@ -18,6 +18,7 @@ global.sala = procurar_sala_por_numero(global.current_sala);
 global.templo_criado = false;
 global.salas_com_pontos = ds_map_create(); // Cria um mapa global para ar_mazenar as posições dos pontos nas salas
 global.salas_com_inimigos = ds_map_create();
+global.salas_com_fantasma = ds_map_create();
 global.salas_com_torretas = ds_map_create();
 global.salas_com_amoeba = ds_map_create();
 global.salas_com_slow = ds_map_create();
@@ -33,11 +34,8 @@ function gerar_inimigos_e_itens_para_o_nivel(salas_geradas, level) {
     // Definir a quantidade de inimigos e itens com base no nível
     var quantidade_inimigos = 1 + (level * 2); // Exemplo: começa com 5 inimigos e aumenta 2 por nível
     var quantidade_itens = 2 + level;          // Exemplo: começa com 3 itens e aumenta 1 por nível
-    
-    // Gerar inimigos e itens nas salas aleatórias
-    create_slow_em_salas_aleatorias(salas_geradas, 5, quantidade_itens+1);
-    create_amoeba_em_salas_aleatorias(salas_geradas, 5, quantidade_inimigos);
-    create_torretas_em_salas_aleatorias(salas_geradas, 5, quantidade_inimigos);  // Exemplo: Torretas aumentam conforme o nível
+    criar_inimigos_em_salas_aleatorias_alet(salas_geradas);
+    create_slow_em_salas_aleatorias(salas_geradas, 5, quantidade_itens);
 }
 
 
@@ -863,8 +861,8 @@ function recriar_inimigos_na_sala_atual(current_sala) {
     var sala_id = string(current_sala[0]) + "_" + string(current_sala[1]);
 
     // Verificar se a sala atual tem pontos salvos
-    if (ds_map_exists(global.salas_com_inimigos, sala_id)) {
-        var lista_pontos = ds_map_find_value(global.salas_com_inimigos, sala_id);
+    if (ds_map_exists(global.salas_com_fantasma, sala_id)) {
+        var lista_pontos = ds_map_find_value(global.salas_com_fantasma, sala_id);
 
         // Recriar os pontos nas posições salvas, se ainda existirem na lista
         for (var i = 0; i < ds_list_size(lista_pontos); i++) {
@@ -883,7 +881,7 @@ function create_inimigos_em_salas_escuras(quantidade_inimigos) {
     for (var i = 0; i < array_length_1d(global.salas_escuras); i++) {
         var sala = global.salas_escuras[i];
         var sala_id = string(sala[0]) + "_" + string(sala[1]); // Gerar um ID único baseado nas coordenadas da sala
-        var lista_inimigos = ds_list_create(); // Criar uma lista para armazenar as posições dos inimigos
+        var lista_inimigo = ds_list_create(); // Criar uma lista para armazenar as posições dos inimigos
 
         // Criar inimigos aleatórios na sala e salvar suas posições
         for (var j = 0; j < quantidade_inimigos; j++) {
@@ -891,13 +889,13 @@ function create_inimigos_em_salas_escuras(quantidade_inimigos) {
             var inimigo_y = irandom_range(128, room_height - 128);
 
             // Salvar a posição do inimigo na lista
-            ds_list_add(lista_inimigos, [inimigo_x, inimigo_y]);
+            ds_list_add(lista_inimigo, [inimigo_x, inimigo_y]);
 
    
         }
 
         // Armazenar a lista de inimigos no mapa global para a sala correspondente
-        ds_map_add(global.salas_com_inimigos, sala_id, lista_inimigos);
+        ds_map_add(global.salas_com_fantasma, sala_id, lista_inimigo);
     }
 }
 function recriar_amoebas_na_sala_atual(current_sala) {
@@ -957,6 +955,191 @@ function create_amoeba_em_salas_aleatorias(salas_geradas, quantidade_salas, quan
 
    
 }
+function recriar_inimigos_na_sala_atual_alet(current_sala) {
+    // Gerar um ID único para a sala atual baseado nas coordenadas da sala
+    var sala_id = string(current_sala[0]) + "_" + string(current_sala[1]);
+
+    // Verificar se a sala atual tem inimigos salvos no ds_map
+    if (ds_map_exists(global.salas_com_inimigos, sala_id)) {
+        var lista_inimigos = ds_map_find_value(global.salas_com_inimigos, sala_id);
+
+        // Recriar os inimigos nas posições salvas
+        for (var i = 0; i < ds_list_size(lista_inimigos); i++) {
+            var inimigo_info = ds_list_find_value(lista_inimigos, i);
+            var inimigo_id = inimigo_info[0];   // ID do inimigo
+            var inimigo_tipo = inimigo_info[1]; // Tipo do inimigo
+            var inimigo_x = inimigo_info[2];    // Posição X
+            var inimigo_y = inimigo_info[3];    // Posição Y
+            var inimigo_vida = inimigo_info[4]; // Vida do inimigo
+            var inimigo_dano = inimigo_info[5]; // Dano do inimigo
+            var inimigo_veloc_perse = inimigo_info[6]; // Velocidade de perseguição
+            var inimigo_dist_aggro = inimigo_info[7];  // Distância de aggro
+            var inimigo_dist_desaggro = inimigo_info[8]; // Distância de desaggro
+            var inimigo_escala = inimigo_info[9]; // Escala do inimigo
+            var inimigo_veloc = inimigo_info[10]; // Velocidade de movimento
+			var max_vida = inimigo_info[11];
+
+            // Criar o inimigo na posição salva
+            var inimigo = instance_create_layer(inimigo_x, inimigo_y, "instances", inimigo_tipo);
+
+            // Configurar os parâmetros do inimigo com base nos valores salvos
+            inimigo.inimigo_id = inimigo_id; // Atribuir o ID ao inimigo recriado
+            inimigo.vida = inimigo_vida;
+            inimigo.dano = inimigo_dano;
+            inimigo.veloc_perse = inimigo_veloc_perse;
+            inimigo.dist_aggro = inimigo_dist_aggro;
+            inimigo.dist_desaggro = inimigo_dist_desaggro;
+            inimigo.escala = inimigo_escala;
+            inimigo.veloc = inimigo_veloc; // Ajustar velocidade de movimento
+			inimigo.max_vida = max_vida;
+        }
+    }
+}
+// Função para embaralhar o array de salas
+function shuffle_array(array) {
+    for (var i = array_length_1d(array) - 1; i > 0; i--) {
+        var j = irandom(i);
+        var temp = array[i];
+        array[i] = array[j];
+        array[j] = temp;
+    }
+    return array;
+}
+
+
+function criar_inimigos_em_salas_aleatorias_alet(salas_geradas) {
+    randomize();
+    // Listas de inimigos com base no tipo
+    var inimigos_faceis = [obj_amoeba]; // Exemplo de inimigos fáceis
+    var inimigos_medios = [obj_amoeba_azul,obj_amoeba_laranja]; // Exemplo de inimigos médios
+    var inimigos_dificeis = [obj_amoeba_vermelha,obj_amoeba_rosa,obj_torreta]; // Exemplo de inimigos difíceis
+    var lvl = global.level_fase;
+    // Definir a quantidade de inimigos com base no nível do jogador
+    var quantidade_inimigos = lvl * 2; // Exemplo: mais inimigos à medida que o nível sobe
+	var quantidade_salas = lvl + 3;
+    // Criar arrays para armazenar salas que terão inimigos
+    var salas_selecionadas = [];
+	var inimigo_id = 0;
+    // Garantir que temos salas suficientes para selecionar
+    if (array_length_1d(salas_geradas) < quantidade_salas) {
+        quantidade_salas = array_length_1d(salas_geradas);
+    }
+	
+	// Embaralhar as salas e selecionar as primeiras 'quantidade_salas'
+    salas_geradas = shuffle_array(salas_geradas); 
+    var salas_selecionadas = salas_geradas;
+    // Distribuir os inimigos pelas salas selecionadas
+    for (var i = 0; i < array_length_1d(salas_selecionadas); i++) {
+        var sala = salas_selecionadas[i];
+        var sala_id = string(sala[0]) + "_" + string(sala[1]); // ID único da sala
+        lista_inimigos = ds_list_create(); // Lista para armazenar inimigos na sala
+		
+
+        // Determinar a quantidade de inimigos por dificuldade baseada no nível
+        // Determinar a quantidade de inimigos por dificuldade baseada no nível
+		var inimigos_facil_qtd = quantidade_inimigos * (max(5 - lvl, 1) / 5);  // Mais inimigos fáceis nos níveis iniciais
+		var inimigos_medio_qtd = quantidade_inimigos * (lvl > 2 ? min((lvl - 2) / 6, 0.3) : 0);  // Menos inimigos médios até lvl 3
+		var inimigos_dificil_qtd = quantidade_inimigos * (lvl > 5 ? min((lvl - 5) / 10, 0.2) : 0);  // Inimigos difíceis começam a aparecer mais no lvl 6
+
+		
+        // Função auxiliar para adicionar parâmetros e salvar informações do inimigo
+        function salvar_inimigo(inimigo_id, inimigo_tipo, inimigo_x, inimigo_y, vida, dano, veloc_perse, dist_aggro, dist_desaggro, escala, veloc, max_vida) {
+            ds_list_add(lista_inimigos, [inimigo_id, inimigo_tipo, inimigo_x, inimigo_y, vida, dano, veloc_perse, dist_aggro, dist_desaggro, escala, veloc, max_vida]);
+        }
+
+        // Criar inimigos fáceis
+        for (var j = 0; j < inimigos_facil_qtd; j++) {
+            var inimigo_x = irandom_range(128, room_width - 128);
+            var inimigo_y = irandom_range(128, room_height - 128);
+
+            // Escolher inimigo fácil aleatório
+            var inimigo_tipo = inimigos_faceis[irandom(array_length_1d(inimigos_faceis) - 1)];
+			inimigo_id += 1;
+            // Criar o inimigo fácil na posição aleatória e ajustar os parâmetros
+            var inimigo = instance_create_layer(inimigo_x, inimigo_y, "instances", inimigo_tipo);
+            inimigo.vida = 10 + (lvl * 2); // Vida proporcional ao nível
+            inimigo.dano = 5 + lvl; // Dano proporcional ao nível
+            inimigo.veloc_perse = 1; // Velocidade de perseguição para fácil
+            inimigo.dist_aggro = 200; // Distância de aggro
+            inimigo.dist_desaggro = 300; // Distância de desaggro
+            inimigo.escala = 3; // Escala para fácil
+            inimigo.veloc = 0.8; // Velocidade de movimento padrão
+			inimigo.inimigo_id = inimigo_id;
+			inimigo.max_vida = 10 + (lvl * 2);
+            // Salvar as informações do inimigo
+            salvar_inimigo(inimigo_id,inimigo_tipo, inimigo_x, inimigo_y, inimigo.vida, inimigo.dano, inimigo.veloc_perse, inimigo.dist_aggro, inimigo.dist_desaggro, inimigo.escala, inimigo.veloc, inimigo.max_vida);
+        }
+
+        // Criar inimigos médios
+        for (var j = 0; j < inimigos_medio_qtd; j++) {
+            var inimigo_x = irandom_range(128, room_width - 128);
+            var inimigo_y = irandom_range(128, room_height - 128);
+
+            var inimigo_tipo = inimigos_medios[irandom(array_length_1d(inimigos_medios) - 1)];
+			inimigo_id += 1;
+            var inimigo = instance_create_layer(inimigo_x, inimigo_y, "instances", inimigo_tipo);
+            inimigo.vida = 20 + (lvl * 3);
+            inimigo.dano = 10 + (lvl * 1.5);
+            inimigo.veloc_perse = 3; // Velocidade de perseguição para médio
+            inimigo.dist_aggro = 400; // Distância de aggro aumentada
+            inimigo.dist_desaggro = 500; // Distância de desaggro aumentada
+            inimigo.escala = 4; // Escala para médio
+            inimigo.veloc = 3; // Velocidade de movimento aumentada
+			inimigo.inimigo_id = inimigo_id;
+			inimigo.max_vida = 20 + (lvl * 3);
+             salvar_inimigo(inimigo_id,inimigo_tipo, inimigo_x, inimigo_y, inimigo.vida, inimigo.dano, inimigo.veloc_perse, inimigo.dist_aggro, inimigo.dist_desaggro, inimigo.escala, inimigo.veloc, inimigo.max_vida);
+        }
+
+        // Criar inimigos difíceis
+        for (var j = 0; j < inimigos_dificil_qtd; j++) {
+            var inimigo_x = irandom_range(128, room_width - 128);
+            var inimigo_y = irandom_range(128, room_height - 128);
+
+            var inimigo_tipo = inimigos_dificeis[irandom(array_length_1d(inimigos_dificeis) - 1)];
+			inimigo_id += 1;
+            var inimigo = instance_create_layer(inimigo_x, inimigo_y, "instances", inimigo_tipo);
+            inimigo.vida = 30 + (lvl * 5);
+            inimigo.dano = 15 + (lvl * 2);
+            inimigo.veloc_perse = 5; // Velocidade de perseguição para difícil
+            inimigo.dist_aggro = 700; // Distância de aggro aumentada
+            inimigo.dist_desaggro = 800; // Distância de desaggro aumentada
+            inimigo.escala = 5; // Escala para difícil
+            inimigo.veloc = 5; // Velocidade de movimento aumentada
+			inimigo.inimigo_id = inimigo_id;
+			inimigo.max_vida = 30 + (lvl * 5);
+             salvar_inimigo(inimigo_id,inimigo_tipo, inimigo_x, inimigo_y, inimigo.vida, inimigo.dano, inimigo.veloc_perse, inimigo.dist_aggro, inimigo.dist_desaggro, inimigo.escala, inimigo.veloc, inimigo.max_vida);
+        }
+
+        // Armazenar a lista de inimigos no mapa global para essa sala
+        ds_map_add(global.salas_com_inimigos, sala_id, lista_inimigos);
+    }	
+	
+
+}
+
+function remover_inimigo_por_id(sala, inimigo_id) {
+    var sala_id = string(sala[0]) + "_" + string(sala[1]);
+	
+
+    if (ds_map_exists(global.salas_com_inimigos, sala_id)) {
+        var lista_inimigos = ds_map_find_value(global.salas_com_inimigos, sala_id);
+		
+        for (var i = 0; i < ds_list_size(lista_inimigos); i++) {
+            var inimigo_info = ds_list_find_value(lista_inimigos, i);
+	
+            if (inimigo_info[0] == inimigo_id) {
+                ds_list_delete(lista_inimigos, i); 
+                show_debug_message("Inimigo com ID " + string(inimigo_id) + " removido da sala " + sala_id);
+                break;
+            }
+        }
+    } else {
+        show_debug_message("Nenhum inimigo encontrado na sala " + sala_id);
+    }
+}
+
+
+
 #endregion
 
 #region TORRETA
@@ -995,6 +1178,8 @@ function create_torretas_em_salas_aleatorias(salas_geradas, quantidade_salas, qu
         // Ar_mazenar a lista de pontos no mapa global para a sala correspondente
         ds_map_add(global.salas_com_torretas, sala_id, lista_pontos);
     }
+	
+	
 
    
 }
@@ -1330,8 +1515,6 @@ function carregar_sala(sala_atual, sala_origem_array) {
 	global.sala_passada = sala_origem_array;
     cria_salas_e_objetos(global._maze_width, global._maze_height, global._maze, global._cell_size);
 	criar_portas_gerais(sala_atual, global.salas_geradas);
-	recriar_torreta_na_sala_atual(global.current_sala);
-	recriar_amoebas_na_sala_atual(global.current_sala);
 	recriar_pontos_na_sala_atual(global.current_sala);
 	recriar__escrivaninha_na_sala_atual(global.current_sala);
 	recriar_inimigos_na_sala_atual(global.current_sala);
@@ -1340,6 +1523,7 @@ function carregar_sala(sala_atual, sala_origem_array) {
 	recriar_escada_na_sala_atual(global.current_sala);
 	recriar_item_dropado(global.current_sala[0],global.current_sala[1]);
 	recriar__geladeira_na_sala_atual(global.current_sala);
+	recriar_inimigos_na_sala_atual_alet(global.current_sala);
 	sala_tuto(); 
 }
 function carregar_sala_templo(sala_atual, sala_origem_array,direcao) {

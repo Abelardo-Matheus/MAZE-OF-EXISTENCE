@@ -12,7 +12,7 @@ function scr_amoeba_hit(){
 	scr_amoeba_colisao();
 }
 function scr_amoeba_perseguir(){
-	sprite_index = spr_amoeba74;
+	sprite_index = sprite_normal;
 	image_speed = 1.5;
 	dest_x = obj_player.x;
 	dest_y = obj_player.y;
@@ -65,7 +65,7 @@ function scr_escolher_state_amoeba(){
 
 function scr_amoeba_andar(){
 	scr_amoeba_check_player();
-	sprite_index = spr_amoeba74;
+	sprite_index = sprite_normal;
 	
 	
 	if(distance_to_point(dest_x,dest_y) > veloc){
@@ -83,5 +83,5 @@ function scr_amoeba_andar(){
 
 function scr_amoeba_parada(){
 	scr_amoeba_check_player();
-	sprite_index = spr_amoeba_parada;
+	sprite_index = sprite_parado;
 }

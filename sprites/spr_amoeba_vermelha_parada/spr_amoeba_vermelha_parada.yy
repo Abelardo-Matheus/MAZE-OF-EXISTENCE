@@ -1,7 +1,7 @@
 {
   "resourceType": "GMSprite",
   "resourceVersion": "1.0",
-  "name": "spr_amoeba_parada",
+  "name": "spr_amoeba_vermelha_parada",
   "bbox_bottom": 21,
   "bbox_left": 4,
   "bbox_right": 22,
@@ -13,16 +13,16 @@
   "edgeFiltering": false,
   "For3D": false,
   "frames": [
-    {"resourceType":"GMSpriteFrame","resourceVersion":"1.1","name":"a8e5b40f-a279-4d3c-9674-091d95a20903",},
-    {"resourceType":"GMSpriteFrame","resourceVersion":"1.1","name":"6d3a0f25-fb5a-4e95-83fe-3ecd312f98cd",},
-    {"resourceType":"GMSpriteFrame","resourceVersion":"1.1","name":"203df342-fe64-4f2b-8254-a99eacd10848",},
+    {"resourceType":"GMSpriteFrame","resourceVersion":"1.1","name":"f185cf20-dc58-4f35-b031-797a936ebebb",},
+    {"resourceType":"GMSpriteFrame","resourceVersion":"1.1","name":"2cea6692-43f2-4241-8044-f1d3ffe6c3ab",},
+    {"resourceType":"GMSpriteFrame","resourceVersion":"1.1","name":"efaf4f94-76ad-4d7a-b1fe-a1b6d51e865e",},
   ],
   "gridX": 0,
   "gridY": 0,
   "height": 22,
   "HTile": false,
   "layers": [
-    {"resourceType":"GMImageLayer","resourceVersion":"1.0","name":"1735c3b7-ddb8-413c-b28d-edfe514730d8","blendMode":0,"displayName":"default","isLocked":false,"opacity":100.0,"visible":true,},
+    {"resourceType":"GMImageLayer","resourceVersion":"1.0","name":"b4d9e8df-72e3-4627-b1f1-634cb274d54f","blendMode":0,"displayName":"default","isLocked":false,"opacity":100.0,"visible":true,},
   ],
   "nineSlice": null,
   "origin": 9,
@@ -34,7 +34,7 @@
   "sequence": {
     "resourceType": "GMSequence",
     "resourceVersion": "1.4",
-    "name": "spr_amoeba_parada",
+    "name": "spr_amoeba_vermelha_parada",
     "autoRecord": true,
     "backdropHeight": 768,
     "backdropImageOpacity": 0.5,
@@ -56,9 +56,9 @@
     "timeUnits": 1,
     "tracks": [
       {"resourceType":"GMSpriteFramesTrack","resourceVersion":"1.0","name":"frames","builtinName":0,"events":[],"inheritsTrackColour":true,"interpolation":1,"isCreationTrack":false,"keyframes":{"resourceType":"KeyframeStore<SpriteFrameKeyframe>","resourceVersion":"1.0","Keyframes":[
-            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"a8e5b40f-a279-4d3c-9674-091d95a20903","path":"sprites/spr_amoeba_parada/spr_amoeba_parada.yy",},},},"Disabled":false,"id":"58073881-c1ad-4778-8c85-6a21d01de4b4","IsCreationKey":false,"Key":0.0,"Length":1.0,"Stretch":false,},
-            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"6d3a0f25-fb5a-4e95-83fe-3ecd312f98cd","path":"sprites/spr_amoeba_parada/spr_amoeba_parada.yy",},},},"Disabled":false,"id":"76088fe6-beeb-4e0d-9770-bc9c7b9a906d","IsCreationKey":false,"Key":1.0,"Length":1.0,"Stretch":false,},
-            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"203df342-fe64-4f2b-8254-a99eacd10848","path":"sprites/spr_amoeba_parada/spr_amoeba_parada.yy",},},},"Disabled":false,"id":"801cd75f-4488-4be8-bc5c-00534b5e26a3","IsCreationKey":false,"Key":2.0,"Length":1.0,"Stretch":false,},
+            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"f185cf20-dc58-4f35-b031-797a936ebebb","path":"sprites/spr_amoeba_vermelha_parada/spr_amoeba_vermelha_parada.yy",},},},"Disabled":false,"id":"39139b69-2061-4948-b703-10e461877cea","IsCreationKey":false,"Key":0.0,"Length":1.0,"Stretch":false,},
+            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"2cea6692-43f2-4241-8044-f1d3ffe6c3ab","path":"sprites/spr_amoeba_vermelha_parada/spr_amoeba_vermelha_parada.yy",},},},"Disabled":false,"id":"3aeea417-6422-43aa-a242-663e5852d41b","IsCreationKey":false,"Key":1.0,"Length":1.0,"Stretch":false,},
+            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"efaf4f94-76ad-4d7a-b1fe-a1b6d51e865e","path":"sprites/spr_amoeba_vermelha_parada/spr_amoeba_vermelha_parada.yy",},},},"Disabled":false,"id":"e6ae6ab6-300d-461a-bb99-5f8777ed8509","IsCreationKey":false,"Key":2.0,"Length":1.0,"Stretch":false,},
           ],},"modifiers":[],"spriteId":null,"trackColour":0,"tracks":[],"traits":0,},
     ],
     "visibleRange": null,

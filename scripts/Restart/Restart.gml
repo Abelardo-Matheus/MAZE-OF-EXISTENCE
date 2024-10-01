@@ -1,6 +1,7 @@
 // Função para resetar todas as fases e recriar de acordo com o nível
 function resetar_fase_por_level() {
 	randomize();
+	global.level_fase ++;
     // Destruir as grids antigas, se existirem
     if (ds_exists(global._maze, ds_type_grid)) {
         ds_grid_destroy(global._maze);
@@ -17,7 +18,7 @@ function resetar_fase_por_level() {
     // Limpar arrays de salas e criar novas salas
     global.salas_geradas = gera_salas_procedurais(global.total_rooms);
     global.salas_criadas = [];
-
+	
     // Criar salas distantes com templos
     criar_salas_distantes_com_templos(global.current_sala, global.salas_geradas, 1);
 
@@ -28,8 +29,8 @@ function resetar_fase_por_level() {
     }
 
     // Gerar inimigos e itens com base no nível atual
-    gerar_inimigos_e_itens_para_o_nivel(global.salas_geradas, global.current_level);
-
+    gerar_inimigos_e_itens_para_o_nivel(global.salas_geradas, global.level_fase);
+	
     // Criar os objetos específicos nas salas
     create_escrivaninha(global.salas_geradas, 3, 1);
     create_geladeira(global.salas_geradas, 1, 1);
@@ -65,12 +66,13 @@ function resetar_variaveis_globais() {
         global.salas_com_amoeba = ds_map_create();
     }
 	
-	
-	if (ds_exists(global.salas_com_amoeba,ds_type_map)) {
-        ds_map_clear(global.salas_com_amoeba);
+	if (ds_exists(global.salas_com_inimigos,ds_type_map)) {
+        ds_map_clear(global.salas_com_inimigos);
     } else {
-        global.salas_com_amoeba = ds_map_create();
+        global.salas_com_inimigos = ds_map_create();
     }
+	
+	
 	
 	if (ds_exists(global.salas_com_geladeira,ds_type_map)) {
         ds_map_clear(global.salas_com_geladeira);
@@ -102,8 +104,7 @@ function resetar_variaveis_globais() {
         global.salas_com_escrivaninha = ds_map_create();
     }
 	
-	
-	
+
 
 	
 	 if (ds_exists(global.salas_com_escada_porao,ds_type_map)) {
@@ -169,8 +170,17 @@ function resetar_variaveis_globais() {
     } else {
      	global.salas_escuras = [];
     }
+	
+	
+	 if (ds_exists(global.salas_com_fantasma,ds_type_map)) {
+        ds_map_clear(global.salas_com_fantasma);
+    } else {
+        global.salas_com_fantasma = ds_map_create();
+    }
+	
+	
 
 
 	global.templo_criado = false;
-
+    global.inimigo_id_count = 0; // Reiniciar o contador de IDs de inimigos
 }

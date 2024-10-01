@@ -1,3 +1,4 @@
+escala = 1;
 script_execute(state);
 depth = -y;
 
