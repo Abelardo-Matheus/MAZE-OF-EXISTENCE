@@ -14,7 +14,7 @@ correspondente a uma etapa da vida.
 
 ## Como instalar a demo
 
-1. Baixe o arquivo do Space Sprint [aqui](https://drive.google.com/file/d/1E-URzmx8W5Db2cD3MRT1_hOjUp8DEEMj/view?usp=sharin)
+1. Baixe o arquivo do Space Sprint [aqui](https://drive.google.com/file/d/13MptVvlLx8gzgrO_MtDW82ynJM82T_KS/view?usp=sharing)
 2. Execute o arquivo MAZE OF EXISTENCE.exe.
 3. Siga os passos do instalador.
 
