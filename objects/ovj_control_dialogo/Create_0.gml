@@ -1,0 +1,16 @@
+global.dialogo = false;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

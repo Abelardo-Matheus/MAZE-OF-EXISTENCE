@@ -225,6 +225,28 @@
 				nome = global.grid_itens[# Infos.nome, i];
 				draw_text_outlined(_invx + (comeco_x_nome*escala)+110, _invy+(comeco_y_nome*escala)+23, c_black, c_white,nome);
 				}
+				 if (i < total_slots and global.grid_itens[# Infos.tipo, i] == "uso"){
+				 draw_set_font(fnt_status);
+				 draw_set_color(c_white)
+				 draw_sprite_ext(spr_botoes,0,_invx+366*escala,_invy+268*escala,1,1,0,c_white,1);
+				 draw_text(_invx+405*escala,_invy+268*escala,"USAR");
+				 
+				 draw_set_halign(fa_left);
+				 
+				 draw_sprite_ext(spr_botoes,1,_invx+366*escala,_invy+298*escala,1,1,0,c_white,1);
+				 draw_text(_invx+380*escala,_invy+298*escala,"JOGAR FORA");
+				 }else if (i < total_slots and global.grid_itens[# Infos.tipo, i] == "arma" || global.grid_itens[# Infos.tipo, i] == "escudo" || global.grid_itens[# Infos.tipo, i] == "bota"){
+				 draw_set_font(fnt_status);
+				 draw_set_color(c_white)
+				  draw_set_halign(fa_left);
+				 draw_sprite_ext(spr_botoes,3,_invx+366*escala,_invy+268*escala,1,1,0,c_white,1);
+				 draw_text(_invx+380*escala,_invy+268*escala,"ARRASTE E EQUIPE");
+				 
+				
+				 
+				 draw_sprite_ext(spr_botoes,1,_invx+366*escala,_invy+298*escala,1,1,0,c_white,1);
+				 draw_text(_invx+380*escala,_invy+298*escala,"JOGAR FORA");
+				 }
 					 if (i < total_slots and keyboard_check_pressed(ord("E")) and global.grid_itens[# Infos.tipo, i] == "uso" and  global.grid_itens[# Infos.item, i] != -1){
 				global.vida += global.grid_itens[# Infos.cura, i];
 				if (global.vida >= global.vida_max){
@@ -244,9 +266,15 @@
 	            if (i >= total_slots && point_in_rectangle(_mx, _my, _slot_x, _slot_y, _slot_x + tamanho_slot_x, _slot_y + tamanho_slot_y)) {
 	                draw_sprite_ext(spr_selecionado, 0, _slot_x, _slot_y, escala, escala, 0, c_white, 1);
 			   
-                 
+					 if (global.grid_itens[# Infos.item, i] != -1){
+				 draw_set_font(fnt_status);
+				 draw_set_color(c_white);
+				 draw_set_halign(fa_left);
+				 draw_sprite_ext(spr_botoes,0,_invx+366*escala,_invy+268*escala,1,1,0,c_white,1);
+				 draw_text(_invx+380*escala,_invy+268*escala,"DESEQUIPAR");
+				 }
 	                // Verificar se o item pode ser equipado nos slots de status
-	                if (mouse_check_button_released(mb_left) && item_esta_sendo_arrastado) {
+	                if (mouse_check_button_released(mb_left) && item_esta_sendo_arrastado || keyboard_check(ord("E"))) {
 						var item_tipo = global.grid_itens[# Infos.tipo, pos_selecionada];
 						show_debug_message(item_tipo)
 	                    if (i == total_slots && item_tipo == "arma" && slot_arma == -1) {
@@ -407,7 +435,7 @@
    
 
     // Detect right-click on status slot
-    if (i >= total_slots && mouse_check_button_pressed(mb_right) && !item_esta_sendo_arrastado ) {
+    if (i >= total_slots && keyboard_check(ord("E")) && !item_esta_sendo_arrastado ) { 
 		slot_item = -1;
         if (i == total_slots && slot_arma != -1) {
             slot_item = slot_arma;

@@ -1,5 +1,5 @@
 // obj_rastro: Evento Step
-image_alpha -= 0.1; // Fading
+image_alpha -= 0.2; // Fading
 if (image_alpha <= 0) {
     instance_destroy();
 }

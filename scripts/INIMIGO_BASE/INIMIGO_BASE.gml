@@ -8,7 +8,6 @@ function scr_inimigo_hit(){
 	empurrar_veloc = lerp(empurrar_veloc,0,0.05);
 	hveloc = lengthdir_x(empurrar_veloc,empurrar_dir);
 	vveloc = lengthdir_y(empurrar_veloc,empurrar_dir);
-	
 	scr_inimigo_colisao();
 }
 function scr_inimigo_perseguir(){

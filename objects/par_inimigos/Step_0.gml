@@ -8,7 +8,7 @@ if (vida <= 0) {
 	remover_inimigo_por_id(global.current_sala, inimigo_id);
 
     // Definir uma base de XP e um multiplicador baseado na vida máxima do inimigo
-    var base_xp = 10; // Valor fixo de XP
+    var base_xp = 20; // Valor fixo de XP
     var xp_multiplicador = 0.1; // Multiplicador para balancear o ganho de XP (ajustável conforme desejado)
 
     // Ganhar XP com base na vida do inimigo derrotado

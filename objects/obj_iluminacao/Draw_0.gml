@@ -1,4 +1,9 @@
 /// @description Insert description here
+if(verificar_sala_escura(global.current_sala)){
+	global.encontrou_sala_escura = true;
+	}else{
+		global.encontrou_sala_escura = false;
+	}
 if(global.encontrou_sala_escura) {
  if(surface_exists(sombra_surface)){
 surface_set_target(sombra_surface);

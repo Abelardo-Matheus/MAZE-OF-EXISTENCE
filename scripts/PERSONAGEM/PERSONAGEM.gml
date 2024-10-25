@@ -1,13 +1,12 @@
-
 global.xp = 0;
 global.level_player = 1;
-global.vida_max_calc[global.level_player] = 20;
+global.vida_max_calc[global.level_player] = 30;
 global.vida_max = global.vida_max_calc[global.level_player];
 global.vida = global.vida_max_calc[global.level_player];
 global.max_estamina_calc[global.level_player] = 50;
 global.max_estamina = global.max_estamina_calc[global.level_player];
 global.estamina = global.max_estamina_calc[global.level_player];
-global.dano_base[global.level_player] = 2;
+global.dano_base[global.level_player] = 6;
 global.ataque = global.dano_base[global.level_player];
 global.critico = 0;
 global.max_xp = global.level_player * 100;
@@ -79,15 +78,6 @@ function ganhar_xp(xp_ganho) {
 function scr_andando(){
 	
 if (global.estamina > 0 ){
-	
-
-	
-
-if(verificar_sala_escura(global.current_sala)){
-	global.encontrou_sala_escura = true;
-	}else{
-		global.encontrou_sala_escura = false;
-	}
 if(global.vida == 0){
 	game_restart();
 }
@@ -100,10 +90,11 @@ var moving = false;
 var current_image_speed = 1; // Velocidade padrão da animação
 var diagonal_angle = 0;
 
-esquerda = keyboard_check(ord("A"));
-direita = keyboard_check(ord("D"));
-cima = keyboard_check(ord("W"));
-baixo = keyboard_check(ord("S"));
+esquerda = keyboard_check(ord("A")) || keyboard_check(vk_left);
+direita = keyboard_check(ord("D")) || keyboard_check(vk_right);
+cima = keyboard_check(ord("W")) || keyboard_check(vk_up);
+baixo = keyboard_check(ord("S")) || keyboard_check(vk_down);
+
 
 if (esquerda) {
 	sprite_index = spr_player_esquerda;
@@ -140,7 +131,6 @@ hveloc = lengthdir_x(current_speed, veloc_dir);
 vveloc = lengthdir_y(current_speed, veloc_dir);
 
 if(keyboard_check(vk_shift) && global.estamina > 0){
-		show_debug_message("FDSAFA")
 		hveloc = lengthdir_x(current_speed+10, veloc_dir);
 		vveloc = lengthdir_y(current_speed+10, veloc_dir);
 		global.estamina-=2;
@@ -192,11 +182,14 @@ if(global.in_dash == true){
 
 if(instance_exists(obj_item)and obj_invetario.inventario = false and !global.inventario_cheio){
 	var _inst = instance_nearest(x,y,obj_item);
-	if(distance_to_point(_inst.x,_inst.y)<= 100){
-		if(keyboard_check_pressed(ord("F"))){
+	if(distance_to_point(_inst.x,_inst.y)<= 180){
+		desenha_botao = true;
+		if(keyboard_check_pressed(ord("F"))&& pegar = true){
 			adicionar_item_invent(_inst.image_index,_inst.quantidade,_inst.sprite_index,_inst.nome,_inst.descricao,0,0,0,0,_inst.dano,_inst.armadura,_inst.velocidade,_inst.cura,_inst.tipo,_inst.ind);
 			coletar_item(_inst.x,_inst.y,global.current_sala);
 			instance_destroy(_inst);
+			desenha_botao = false;
+			pegar = false;
 		}
 	}
 }
@@ -207,7 +200,10 @@ if (instance_exists(global.bloco_colisao)) {
     global.bloco_colisao.y = y +30; // Ajuste 50 conforme necessário
 }
 }
+
+
 if(mouse_check_button(mb_left)){
+	if(global.armamento == Armamentos.espada){
 	image_index = 0;
 	switch dir{
 	 default:
@@ -222,13 +218,36 @@ if(mouse_check_button(mb_left)){
 	 case 3:
 	 sprite_index = spr_player_baixo_parado_atacando;
 	 break;
- }	
- 
- state = scr_ataque_player;
-	
+	}
+	 state = scr_ataque_player;
+ }else if (global.armamento == Armamentos.arco){
+	 
+	image_index = 0;
+	state = scr_personagem_arco;
+	}
 }
 
+if(mouse_check_button_pressed(mb_right)){
+	
+	alarm[11] = 10;
+	dash_dir = point_direction(x, y, mouse_x, mouse_y);
+	state = scr_personagem_dash;
+}
+}
 
+function scr_personagem_dash(){
+	global.estamina -= 3;
+	andar = true;
+	alarm[0] = 50;
+	tomar_dano = false;
+	hveloc = lengthdir_x(dash_veloc, dash_dir);
+	vveloc = lengthdir_y(dash_veloc, dash_dir);
+	
+	x += hveloc;
+	y += vveloc;
+	
+	var _inst = instance_create_layer(x, y, "instances", obj_rastro_player);
+	_inst.sprite_index = sprite_index;
 }
 
 function scr_player_colisao(){
@@ -252,6 +271,88 @@ y += vveloc;
 
 
 }
+
+function scr_personagem_arco() {
+    // Calcula a direção do mouse em relação ao jogador
+    var direction_to_mouse = point_direction(x, y, mouse_x, mouse_y);
+	var xx,yy;
+	dir = floor((point_direction(x,y,mouse_x,mouse_y)+ 45)/90);
+	switch dir{
+	 default:
+	 sprite_index = spr_player_direita_parado;
+	 break;
+	 case 1:
+	 sprite_index = spr_player_cima_parado;
+	 break;
+	 case 2:
+	 sprite_index = spr_player_esquerda_parado;
+	 break;
+	 case 3:
+	 sprite_index = spr_player_baixo_parado;
+	 break;
+	}
+    // Define o raio do círculo ao redor do jogador onde o arco será criado e posicionado
+    var raio = 30; // Ajuste o valor conforme necessário
+
+    // Verifica se o arco já foi criado
+    if (!instance_exists(obj_arco)) {
+        // Converte a direção para coordenadas polares (posição no círculo)
+        var arco_x = x + lengthdir_x(raio, direction_to_mouse);
+        var arco_y = y + lengthdir_y(raio, direction_to_mouse);
+
+        // Cria o obj_arco na posição calculada
+        var arco_inst = instance_create_layer(arco_x, arco_y, "Instances_itens", obj_arco);
+        arco_inst.direction = direction_to_mouse;
+        arco_inst.image_angle = direction_to_mouse;
+    } else {
+        // Se o arco já existe, atualiza sua posição e direção
+        with (obj_arco) {
+            // Atualiza a posição do arco para que ele se mova ao redor do jogador
+            x = other.x + lengthdir_x(raio, direction_to_mouse);
+            y = other.y+10 + lengthdir_y(raio, direction_to_mouse);
+			xx = x;
+			yy = y;
+            // Atualiza a direção e o ângulo do arco para apontar para o mouse
+            direction = point_direction(x, y, mouse_x, mouse_y);
+            image_angle = direction+90;
+			
+			 // Verifica se a animação do arco terminou
+            if (fim_animation(sprite_index, image_index, image_speed)) {
+                image_index = 4;  // Define um frame específico da animação, se aplicável
+            }
+        }
+    }
+
+    // Permite que o jogador ande enquanto usa o arco
+    scr_andando();  // Chama a função de movimento do jogador
+
+    if (mouse_check_button_released(mb_left)) {
+        if (obj_arco.image_index >= 4) {
+            var _flecha = instance_create_layer(obj_arco.x, obj_arco.y, "Instances_itens", obj_flecha);
+            with (_flecha) {
+                direction = point_direction(x, y, mouse_x, mouse_y);
+                speed = 15;
+                image_angle = direction;
+            }
+
+            with (obj_arco) {
+                instance_destroy();
+            }
+
+            empurrar_dir = point_direction(mouse_x, mouse_y, x, y);
+            alarm[2] = 5;
+            state = scr_personagem_hit;
+        } else {
+            with (obj_arco) {
+                instance_destroy();
+            }
+            state = scr_andando;
+        }
+    }
+}
+
+
+
 function scr_ataque_player(){
 	if(image_index >= 1){
 	if(atacando = false){

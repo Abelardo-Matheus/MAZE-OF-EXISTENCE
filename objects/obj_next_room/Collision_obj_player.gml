@@ -1,7 +1,5 @@
-// Evento de colisão com `obj_next_room` ou `obj_prev_room`
-	
-    // Carregar a nova sala
-	
+
+if(global.permitido == true){
     var sala_destino = room_destino;  // Sala que você está indo
 	if(sala_destino == global.templos_salas_pos[0]){
 		global.current_sala = global.templos_salas_pos[0];
@@ -51,5 +49,5 @@ else if (direcao == 1) {
 		obj_player.x = pos_x +32;
 		obj_player.y = pos_y;
 	
-
+}
 	

@@ -1,6 +1,7 @@
 
 global.tipos_de_salas = ds_map_create();
 global.tipos_de_salas_templo = ds_map_create();
+global.tipos_de_salas_jardim = ds_map_create();
 
 
 function salas(){
@@ -65,6 +66,12 @@ ds_map_add(templo, "chao", obj_chao_templo);
 ds_map_add(templo, "parede", obj_parede_templo);
 ds_map_add(templo, "objetos", noone);
 
+var jardim = ds_map_create();
+ds_map_add(jardim, "nome", "jardim");
+ds_map_add(jardim, "chao", obj_chao_grama);
+ds_map_add(jardim, "parede", obj_cerca);
+ds_map_add(jardim, "objetos", noone);
+
 
 
 ds_map_add(global.tipos_de_salas, "sala_estar", sala_estar);
@@ -81,6 +88,9 @@ ds_map_add(global.tipos_de_salas, "banheiro2", banheiro2);
 
 
 ds_map_add(global.tipos_de_salas_templo, "templo", templo);
+
+
+ds_map_add(global.tipos_de_salas_jardim, "jardim", jardim);
 }
 
 
@@ -107,14 +117,33 @@ function criar_salas_lista(sala_atual, numero) {
         tipo_sala = "quarto";
     }
 	 var detalhes_sala = ds_map_find_value(global.tipos_de_salas, tipo_sala);
-	if (global.templo_criado){
-		var tipos_disponiveis_templo = get_ds_map_keys(global.tipos_de_salas_templo);
-		if (sala_atual == global.templos_salas_pos[0]){
-		tipo_sala = "templo";
-		tipos_disponiveis_templo = "templo";
-		var detalhes_sala = ds_map_find_value(global.tipos_de_salas_templo, tipos_disponiveis_templo);
-	}}
+	if (global.templo_criado) {
+		
+    // Verificar se a sala atual é um templo
+    if (sala_atual == global.templos_salas_pos[0]) {
+        tipo_sala = "templo";
+       
+        // Pegar a lista de tipos de salas disponíveis para templos
+        var tipos_disponiveis_templo = get_ds_map_keys(global.tipos_de_salas_templo);
+        
+        // Definir os detalhes da sala com base no tipo selecionado
+        var detalhes_sala = ds_map_find_value(global.tipos_de_salas_templo, tipos_disponiveis_templo[0]);
+    }
+    
+    // Verificar se a sala atual é um jardim
+    if (sala_atual == global.sala_jardim) {
+        tipo_sala = "jardim";
+        
+        // Pegar a lista de tipos de salas disponíveis para jardim
+        var tipos_disponiveis_jardim = get_ds_map_keys(global.tipos_de_salas_jardim);
+        
+        // Definir os detalhes da sala com base no tipo selecionado
+        var detalhes_sala = ds_map_find_value(global.tipos_de_salas_jardim, tipos_disponiveis_jardim[0]);
+    }
+}
 
+	
+		
     // Obter detalhes do tipo de sala
    
 
@@ -140,6 +169,8 @@ function procurar_sala_por_numero(sala_current) {
 
 		
     }
+	
+	
     return noone; // Retorna noone se nenhuma sala for encontrada com a posição dada
 }
 

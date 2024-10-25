@@ -2,7 +2,7 @@
   "resourceType": "GMSprite",
   "resourceVersion": "1.0",
   "name": "spr_iinventario",
-  "bbox_bottom": 347,
+  "bbox_bottom": 378,
   "bbox_left": 0,
   "bbox_right": 578,
   "bbox_top": 2,
@@ -17,7 +17,7 @@
   ],
   "gridX": 0,
   "gridY": 0,
-  "height": 359,
+  "height": 379,
   "HTile": false,
   "layers": [
     {"resourceType":"GMImageLayer","resourceVersion":"1.0","name":"08f32a26-9317-4bd7-84b1-c533b30d4220","blendMode":0,"displayName":"default","isLocked":false,"opacity":100.0,"visible":true,},

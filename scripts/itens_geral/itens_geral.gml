@@ -81,8 +81,8 @@ function criar_item_aleatorio_ativos(pos_x, pos_y, prof) {
 
     // Definir item com base na cura e probabilidade
     if (item_index <= 300) { // 30% de chance - cura baixa
-        item_nome = "Maçã";
-        item_descricao = "Uma maçã suculenta, deliciosa e crocante. Ideal para um lanche rápido e saudável.";
+        item_nome = "Maca";
+        item_descricao = "Uma maca suculenta, deliciosa e crocante. Ideal para um lanche rápido e saudável. Recupera 10 de vida!";
         item_sprite = spr_itens_invent_consumiveis;
         item_quantidade = irandom_range(1, 3);
         sprite_ind = 1;
@@ -91,7 +91,7 @@ function criar_item_aleatorio_ativos(pos_x, pos_y, prof) {
         tipo = "uso";
     } else if (item_index > 300 && item_index <= 550) { // 25% de chance - cura baixa
         item_nome = "Uva";
-        item_descricao = "Um cacho de uvas doces, pequenas e cheias de sabor. Uma explosão de doçura a cada mordida.";
+        item_descricao = "Um cacho de uvas doces, pequenas e cheias de sabor. Uma explosao de docura a cada mordida. Recupera 10 de vida!";
         item_sprite = spr_itens_invent_consumiveis;
         item_quantidade = irandom_range(1, 3);
         sprite_ind = 3;
@@ -100,16 +100,16 @@ function criar_item_aleatorio_ativos(pos_x, pos_y, prof) {
         tipo = "uso";
     } else if (item_index > 550 && item_index <= 750) { // 20% de chance - cura média
         item_nome = "Banana";
-        item_descricao = "Uma banana fresca, carregada de potássio. Perfeita para recarregar suas energias!";
+        item_descricao = "Uma banana fresca, carregada de potassio. Perfeita para recarregar suas energias! Recupera 13 de vida!";
         item_sprite = spr_itens_invent_consumiveis;
         item_quantidade = irandom_range(1, 3);
         sprite_ind = 2;
-        cura = 10;
+        cura = 13;
         ind = 2;
         tipo = "uso";
     } else if (item_index > 750 && item_index <= 900) { // 15% de chance - cura média
         item_nome = "Batata";
-        item_descricao = "Uma batata robusta, pronta para ser cozida ou assada. A fonte perfeita de energia natural.";
+        item_descricao = "Uma batata robusta, pronta para ser cozida ou assada. A fonte perfeita de energia natural. Recupera 20 de vida!";
         item_sprite = spr_itens_invent_consumiveis;
         item_quantidade = irandom_range(1, 3);
         sprite_ind = 0;
@@ -118,7 +118,7 @@ function criar_item_aleatorio_ativos(pos_x, pos_y, prof) {
         tipo = "uso";
     } else if (item_index > 900 && item_index <= 970) { // 7% de chance - cura alta
         item_nome = "Leite";
-        item_descricao = "Um copo de leite fresco e nutritivo, perfeito para fortalecer seus ossos e garantir um dia saudável.";
+        item_descricao = "Um copo de leite fresco e nutritivo, perfeito para fortalecer seus ossos e garantir um dia saudavel. Recupera 30 de vida!";
         item_sprite = spr_itens_invent_consumiveis;
         item_quantidade = irandom_range(1, 3);
         sprite_ind = 5;
@@ -127,7 +127,7 @@ function criar_item_aleatorio_ativos(pos_x, pos_y, prof) {
         tipo = "uso";
     } else if (item_index > 970 && item_index <= 1000) { // 3% de chance - cura muito alta
         item_nome = "Vitamina";
-        item_descricao = "Uma dose poderosa de vitaminas, embalada em uma pequena pílula. Essencial para manter sua vitalidade.";
+        item_descricao = "Uma dose poderosa de vitamina. Essencial para manter sua vitalidade. Recupera 50 de vida!";
         item_sprite = spr_itens_invent_consumiveis;
         item_quantidade = irandom_range(1, 3);
         sprite_ind = 4;
@@ -279,6 +279,7 @@ function criar_item_aleatorio_passivos_arma(pos_x, pos_y, prof) {
     armadura = 0;
     tipo = "";
 	drop = true;
+	
 
     // Gera um número aleatório entre 0 e 1000
     var item_index = irandom_range(0, 2000);
@@ -286,7 +287,7 @@ function criar_item_aleatorio_passivos_arma(pos_x, pos_y, prof) {
     // Definir item com base no índice e probabilidades
     if (item_index <= 500) { // 50% de chance
         item_nome = "Graveto";
-        item_descricao = "Um pequeno graveto.";
+        item_descricao = "Um pequeno graveto. Aumenta em 2 o seu dano!";
         item_sprite = spr_itens_invent_passivo_armas;
         item_quantidade = 0;
         sprite_ind = 0;
@@ -295,7 +296,7 @@ function criar_item_aleatorio_passivos_arma(pos_x, pos_y, prof) {
         ind = 0;
     } else if (item_index > 500 && item_index <= 800) { // 30% de chance
         item_nome = "Vassoura";
-        item_descricao = "Uma vassoura velha.";
+        item_descricao = "Uma vassoura velha. Aumenta em 4 o seu dano!";
         item_sprite = spr_itens_invent_passivo_armas;
         item_quantidade = 0;
         sprite_ind = 1;
@@ -303,8 +304,8 @@ function criar_item_aleatorio_passivos_arma(pos_x, pos_y, prof) {
         tipo = "arma";
         ind = 1;
     } else if (item_index > 800 && item_index <= 950) { // 15% de chance
-        item_nome = "Espada de plástico";
-        item_descricao = "Uma espada de plástico.";
+        item_nome = "Espada de plastico";
+        item_descricao = "Uma espada de plastico. Aumenta em 5 o seu dano!";
         item_sprite = spr_itens_invent_passivo_armas;
         item_quantidade = 0;
         sprite_ind = 2;
@@ -313,7 +314,7 @@ function criar_item_aleatorio_passivos_arma(pos_x, pos_y, prof) {
         ind = 2;
     } else if (item_index > 950 && item_index <= 990) { // 4% de chance
         item_nome = "Espada de madeira";
-        item_descricao = "Uma espada de madeira.";
+        item_descricao = "Uma espada de madeira. Aumenta em 7 o seu dano!";
         item_sprite = spr_itens_invent_passivo_armas;
         item_quantidade = 0;
         sprite_ind = 3;
@@ -322,7 +323,7 @@ function criar_item_aleatorio_passivos_arma(pos_x, pos_y, prof) {
         ind = 3;
     } else if (item_index > 990 && item_index <= 1000) { // 1% de chance
         item_nome = "Espada de ouro";
-        item_descricao = "Uma espada de ouro brilhante.";
+        item_descricao = "Uma espada de ouro brilhante. Aumenta em 9 o seu dano!";
         item_sprite = spr_itens_invent_passivo_armas;
         item_quantidade = 0;
         sprite_ind = 4;
@@ -332,23 +333,14 @@ function criar_item_aleatorio_passivos_arma(pos_x, pos_y, prof) {
     }
 	 else if (item_index > 1000 && item_index <= 1100) { 
         item_nome = "Espada mata Fantasma";
-        item_descricao = "Uma espada que lhe da o poder de matar fantasmas.";
+        item_descricao = "Uma espada que lhe da o poder de matar fantasmas e aumenta em 9 o seu dano!";
         item_sprite = spr_itens_invent_passivo_armas;
         item_quantidade = 0;
-        sprite_ind = 4;
+        sprite_ind = 5;
         dano = 9;
         tipo = "arma";
-        ind = 4;
-    } else if (item_index > 1100 && item_index <= 1200) { 
-        item_nome = "Arco de brinquedo";
-        item_descricao = "Um arco simples para atirar de longe.";
-        item_sprite = spr_itens_invent_passivo_armas;
-        item_quantidade = 0;
-        sprite_ind = 4;
-        dano = 9;
-        tipo = "arco";
-        ind = 4;
-    } else if (item_index > 1200 && item_index <= 2000) { 
+        ind = 5;
+    }else if (item_index > 1100 && item_index <= 2000) { 
 		drop = false;
 	}
 
@@ -392,7 +384,7 @@ function criar_item_aleatorio_passivos_pe(pos_x, pos_y, prof) {
     // Itens baseados na probabilidade de velocidade
     if (item_index <= 300) { // 30% de chance - baixa velocidade
         item_nome = "Sapato Velho";
-        item_descricao = "Sapatos desgastados, porém ainda úteis. Oferece uma pequena melhoria de velocidade.";
+        item_descricao = "Sapatos desgastados, porem ainda uteis. Oferece uma pequena melhoria de velocidade. Aumenta sua velocidade em 1 !";
         item_sprite = spr_itens_invent_passivo_pe;
         item_quantidade = 0;
         sprite_ind = 0;
@@ -400,8 +392,8 @@ function criar_item_aleatorio_passivos_pe(pos_x, pos_y, prof) {
         tipo = "bota";
         ind = 0;
     } else if (item_index > 300 && item_index <= 550) { // 25% de chance
-        item_nome = "Tênis Velho";
-        item_descricao = "Tênis antigos, mas confortáveis o suficiente para dar um leve impulso.";
+        item_nome = "Tenis Velho";
+        item_descricao = "Tenis antigos, mas confortaveis o suficiente para dar um leve impulso. Aumenta sua velocidade em 2 !";
         item_sprite = spr_itens_invent_passivo_pe;
         item_quantidade = 0;
         sprite_ind = 1;
@@ -410,47 +402,47 @@ function criar_item_aleatorio_passivos_pe(pos_x, pos_y, prof) {
         ind = 1;
     } else if (item_index > 550 && item_index <= 750) { // 20% de chance
         item_nome = "Meia Vermelha Nova";
-        item_descricao = "Meias novas que oferecem proteção e velocidade moderada.";
+        item_descricao = "Meias novas que oferecem proteção e velocidade moderada.  Aumenta sua velocidade em 3 !";
         item_sprite = spr_itens_invent_passivo_pe;
         item_quantidade = 0;
         sprite_ind = 6;
-        velocidade = 2;
+        velocidade = 3;
         tipo = "bota";
         ind = 6;
     } else if (item_index > 750 && item_index <= 900) { // 15% de chance
         item_nome = "Sapato Novo";
-        item_descricao = "Sapatos elegantes que oferecem um bom equilíbrio entre estilo e desempenho.";
+        item_descricao = "Sapatos elegantes que oferecem um bom equilibrio entre estilo e desempenho.  Aumenta sua velocidade em 4 !";
         item_sprite = spr_itens_invent_passivo_pe;
         item_quantidade = 0;
         sprite_ind = 5;
-        velocidade = 3;
+        velocidade = 4;
         tipo = "bota";
         ind = 5;
     } else if (item_index > 900 && item_index <= 970) { // 7% de chance
-        item_nome = "Tênis Novo";
-        item_descricao = "Tênis brilhantes que garantem um aumento considerável na velocidade.";
+        item_nome = "Tenis Novo";
+        item_descricao = "Tenis brilhantes que garantem um aumento consideravel na velocidade. Aumenta sua velocidade em 5 !";
         item_sprite = spr_itens_invent_passivo_pe;
         item_quantidade = 0;
         sprite_ind = 4;
-        velocidade = 4;
+        velocidade = 5;
         tipo = "bota";
         ind = 4;
     } else if (item_index > 970 && item_index <= 990) { // 2% de chance
         item_nome = "Skate";
-        item_descricao = "Aumenta a adrenalina com seu skate, deslizando rapidamente pelas ruas.";
+        item_descricao = "Aumenta a adrenalina com seu skate, deslizando rapidamente pelas ruas.  Aumenta sua velocidade em 6 !";
         item_sprite = spr_itens_invent_passivo_pe;
         item_quantidade = 0;
         sprite_ind = 3;
-        velocidade = 5;
+        velocidade = 6;
         tipo = "bota";
         ind = 3;
-    } else if (item_index > 990) { // 1% de chance
+    } else if (item_index > 990 && item_index <= 1100) { // 1% de chance
         item_nome = "Patins";
-        item_descricao = "Rápidos e ágeis, esses patins oferecem a maior velocidade possível.";
+        item_descricao = "Rapidos e ageis, esses patins oferecem a maior velocidade possível.  Aumenta sua velocidade em 7 !";
         item_sprite = spr_itens_invent_passivo_pe;
         item_quantidade = 0;
         sprite_ind = 2;
-        velocidade = 5;
+        velocidade = 7;
         tipo = "bota";
         ind = 2;
     }else if (item_index > 1100 && item_index <= 2000) { // 1% de chance

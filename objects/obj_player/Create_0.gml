@@ -1,4 +1,8 @@
-
+enum Armamentos{
+	espada,
+	arco,
+	Altura
+}
 
 
 direction_x = 0;
@@ -25,6 +29,15 @@ andar = false;
 
 tomar_dano = true;
 empurrar_dir = 0;
-
+pegar = false;
 dano_alfa = -1;
+dir_alfa = 0;  // Começa com alfa cheio (1.0)
+desenha_arma = false;  // Variável de controle para desenhar o sprite
+desenha_botao = false;
 
+// Inicialize as variáveis (essas variáveis devem ser inicializadas uma vez, como no evento Create)
+piscando_alpha = 1;  // Opacidade inicial do botão
+piscando_timer = 30;  // Intervalo de piscada (30 frames, ajustável)
+
+dash_dir = -1;
+dash_veloc = 20;

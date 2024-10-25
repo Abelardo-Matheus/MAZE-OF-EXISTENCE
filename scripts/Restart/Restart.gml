@@ -17,12 +17,13 @@ function resetar_fase_por_level() {
 
     // Limpar arrays de salas e criar novas salas
     global.salas_geradas = gera_salas_procedurais(global.total_rooms);
-    global.salas_criadas = [];
+
 	
     // Criar salas distantes com templos
-    criar_salas_distantes_com_templos(global.current_sala, global.salas_geradas, 1);
-
+    //criar_salas_distantes_com_templos(global.current_sala, global.salas_geradas, 1);
+	
     // Para cada sala gerada, criar a sala e armazená-la
+	
     for (var i = 0; i < array_length_1d(global.salas_geradas); i++) {
         var sala_info = criar_salas_lista(global.salas_geradas[i], i + 1);
         array_push(global.salas_criadas, sala_info);
@@ -37,17 +38,19 @@ function resetar_fase_por_level() {
     create_guarda_roupa(global.salas_geradas, 1, 1);
     recriar__geladeira_na_sala_atual(global.current_sala);
 	create_escada_porao_em_fundos(global.salas_geradas);
-    criar_salas_escuras(global.current_sala, global.salas_geradas, 3);
+   
     create_pontos_em_salas_aleatorias(global.salas_geradas, 10, 5);  // Criar até 5 pontos em salas aleatórias
-
-    // Recarregar a sala atual
+	
+    criar_templo_e_jardim(global.current_sala, global.salas_geradas);
+	criar_salas_escuras(global.current_sala, global.salas_geradas, 3);
     carregar_sala(global.current_sala, global.current_sala);
     
     // Criar inimigos em salas escuras
     create_inimigos_em_salas_escuras(2);
 	
+	
 	sala_tuto();
-    
+   
     global.minimap = [];
     for (var i = 0; i < array_length_1d(global.salas_geradas); i++) {
         global.minimap[i] = c_white;  // Todas as salas começam com cor branca

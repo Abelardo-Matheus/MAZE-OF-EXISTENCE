@@ -5,11 +5,13 @@ var start_x = grid_size div 2;
 var start_y = grid_size div 2;
 // Inicializa a grid com -1 (indicando que não há sala naquele espaço)
 ds_grid_clear(global.room_grid, -1);
+global.armamento = 0;
 // Lista para ar_mazenar as posições das salas
 global.room_positions = ds_list_create();
 ds_list_add(global.room_positions, [start_x, start_y]);
 global.destino_templo = noone;
 global.origem_templo = noone;
+global.sala_boss_brocolis = [];
 // Coloca a primeira sala no centro
 ds_grid_set(global.room_grid, start_x, start_y, 0); // 0 indica a primeira sala
 global.salas_criadas = [];
@@ -32,10 +34,10 @@ global.salas_com_guarda_roupa = ds_map_create();
 
 function gerar_inimigos_e_itens_para_o_nivel(salas_geradas, level) {
     // Definir a quantidade de inimigos e itens com base no nível
-    var quantidade_inimigos = 1 + (level * 2); // Exemplo: começa com 5 inimigos e aumenta 2 por nível
+    var quantidade_inimigos = 1 + (level); // Exemplo: começa com 5 inimigos e aumenta 2 por nível
     var quantidade_itens = 2 + level;          // Exemplo: começa com 3 itens e aumenta 1 por nível
     criar_inimigos_em_salas_aleatorias_alet(salas_geradas);
-    create_slow_em_salas_aleatorias(salas_geradas, 5, quantidade_itens);
+    create_slow_em_salas_aleatorias(salas_geradas, 3, quantidade_itens);
 }
 
 
@@ -124,6 +126,7 @@ function create_pontos_em_salas_aleatorias(salas_geradas, quantidade_salas, quan
 
 
 #region vela
+
 function coletar_vela(ponto_x, ponto_y, current_sala) {
     // Aumentar o raio da lanterna ao coletar a vela
     global.raio_lanterna += 150;
@@ -146,114 +149,150 @@ function coletar_vela(ponto_x, ponto_y, current_sala) {
 }
 #endregion
 
-#region Templo
-function criar_salas_distantes_com_templos(player_sala, salas_geradas, quantidade_salas) {
-    // Inicializa a variável global.templos_salas_pos, se ainda não existir
+#region jardim
+
+
+// Função para criar o templo e o jardim
+function criar_templo_e_jardim(player_sala, salas_geradas) {
+    // Inicializa as variáveis globais se ainda não existirem
+    if (!variable_global_exists("sala_jardim")) {
+        global.sala_jardim = [];
+    }
     if (!variable_global_exists("templos_salas_pos")) {
         global.templos_salas_pos = [];
     }
 
-    var templos_criados = 0;
+    // Passo 1: Criar o templo
 
-    while (templos_criados < quantidade_salas) {
-        var sala_mais_distante = undefined;
-        var maior_distancia = -1;
+    var sala_mais_distante_templo = undefined;
+    var maior_distancia_templo = -1;
 
-        // Encontra a sala mais distante do jogador
-        for (var i = 0; i < array_length_1d(salas_geradas); i++) {
-            var sala_atual = salas_geradas[i];
-            var distancia = point_distance(player_sala[0], player_sala[1], sala_atual[0], sala_atual[1]);
+    // Encontra a sala mais distante do jogador para criar o templo
+    for (var i = 0; i < array_length_1d(salas_geradas); i++) {
+        var sala_atual = salas_geradas[i];
+        var distancia = point_distance(player_sala[0], player_sala[1], sala_atual[0], sala_atual[1]);
 
-            // Verifica se esta é a sala mais distante até agora e que não está próxima a outro templo
-            if (distancia > maior_distancia) {
-                var distancia_segura = true;
-
-                // Verifica se a sala está a uma distância segura de todos os templos já criados
-                for (var t = 0; t < array_length_1d(global.templos_salas_pos); t++) {
-                    var templo_pos = global.templos_salas_pos[t];
-                    var distancia_templo = point_distance(sala_atual[0], sala_atual[1], templo_pos[0], templo_pos[1]);
-
-                    // Define a distância mínima entre templos como 3 células
-                    if (distancia_templo <= 3) {
-                        distancia_segura = false;
-                        break;
-                    }
-                }
-
-                // Se a sala é a mais distante do jogador e está a uma distância segura de outros templos
-                if (distancia_segura) {
-                    maior_distancia = distancia;
-                    sala_mais_distante = sala_atual;
-                }
-            }
+        // Verifica se é a sala mais distante até agora
+        if (distancia > maior_distancia_templo) {
+            maior_distancia_templo = distancia;
+            sala_mais_distante_templo = sala_atual;
         }
+    }
 
-        // Verifica se encontrou uma sala válida para ser a sala mais distante
-        if (sala_mais_distante == undefined) {
-          
-            break; // Sai do loop se não encontrar uma sala válida
-        }
+    // Verifica se encontrou uma sala válida para o templo
+    if (sala_mais_distante_templo == undefined) {
+        return; // Sai da função se não encontrar uma sala válida
+    }
 
-        // Verifica direções disponíveis para criar uma nova sala
-        var direcoes = [[1, 0], [-1, 0], [0, 1], [0, -1]]; // Direções: Direita, Esquerda, Cima, Baixo
+    // Verifica direções disponíveis para criar o templo
+    var direcoes = [[1, 0], [-1, 0], [0, 1], [0, -1]];
 
-        // Randomizar a ordem das direções
-        for (var i = 0; i < array_length_1d(direcoes); i++) {
-            var random_index = irandom(array_length_1d(direcoes) - 1);
-            var temp = direcoes[i];
-            direcoes[i] = direcoes[random_index];
-            direcoes[random_index] = temp;
-        }
+    // Randomizar as direções
+    for (var i = 0; i < array_length_1d(direcoes); i++) {
+        var random_index = irandom(array_length_1d(direcoes) - 1);
+        var temp = direcoes[i];
+        direcoes[i] = direcoes[random_index];
+        direcoes[random_index] = temp;
+    }
 
-        var nova_sala = undefined;
+    var nova_sala_templo = undefined;
 
-        for (var j = 0; j < array_length_1d(direcoes); j++) {
-            var nova_posicao = [sala_mais_distante[0] + direcoes[j][0], sala_mais_distante[1] + direcoes[j][1]];
-            var direcao_valida = true;
-            var adjacentes = 0;
+    // Tenta criar uma nova sala válida para o templo
+    for (var j = 0; j < array_length_1d(direcoes); j++) {
+        var nova_posicao = [sala_mais_distante_templo[0] + direcoes[j][0], sala_mais_distante_templo[1] + direcoes[j][1]];
+        var direcao_valida = true;
 
-            // Verifica se já existe uma sala na nova posição
-            for (var k = 0; k < array_length_1d(salas_geradas); k++) {
-                if (salas_geradas[k][0] == nova_posicao[0] && salas_geradas[k][1] == nova_posicao[1]) {
-                    direcao_valida = false;
-                    break;
-                }
-            }
-
-            // Verificar se a nova sala terá mais de uma adjacente
-            for (var d = 0; d < array_length_1d(direcoes); d++) {
-                var adjacente_posicao = [nova_posicao[0] + direcoes[d][0], nova_posicao[1] + direcoes[d][1]];
-                for (var k = 0; k < array_length_1d(salas_geradas); k++) {
-                    if (salas_geradas[k][0] == adjacente_posicao[0] && salas_geradas[k][1] == adjacente_posicao[1]) {
-                        adjacentes++;
-                    }
-                }
-            }
-
-            // Se a nova posição é válida e tem no máximo 1 sala adjacente, pode criar a nova sala
-            if (direcao_valida && adjacentes <= 1) {
-                nova_sala = nova_posicao;
+        // Verifica se já existe uma sala na nova posição
+        for (var k = 0; k < array_length_1d(salas_geradas); k++) {
+            if (salas_geradas[k][0] == nova_posicao[0] && salas_geradas[k][1] == nova_posicao[1]) {
+                direcao_valida = false;
                 break;
             }
         }
 
-        // Adicionar a nova sala ao array de salas geradas
-        if (nova_sala != undefined) {
-            array_push(salas_geradas, nova_sala);
-            // Ar_mazenar a posição da nova sala como uma sala de templo
-            array_push(global.templos_salas_pos, nova_sala);
-			global.templo_criado = true;
-			var nova_sala_info = criar_salas_lista(nova_sala, array_length_1d(global.salas_criadas) + 1); // Cria as informações da sala
-            array_push(global.salas_criadas, nova_sala_info); // Adiciona à lista de salas criadas
-			
-            templos_criados++;
-        } else {
-            break; // Se não foi possível criar mais salas, sai do loop
+        if (direcao_valida) {
+            nova_sala_templo = nova_posicao;
+            break;
         }
-		
     }
-	
+
+    // Adicionar a nova sala ao array de salas geradas como o templo
+    if (nova_sala_templo != undefined) {
+        array_push(salas_geradas, nova_sala_templo);
+        array_push(global.templos_salas_pos, nova_sala_templo);
+        global.templo_criado = true;
+
+        // Criar a sala do templo e adicionar à lista
+        var nova_sala_info = criar_salas_lista(nova_sala_templo, array_length_1d(global.salas_criadas) + 1);
+        array_push(global.salas_criadas, nova_sala_info);
+    }
+
+    // Passo 2: Criar o jardim
+
+    var sala_mais_distante_jardim = undefined;
+    var maior_distancia_jardim = -1;
+
+    // Encontra uma sala distante do jogador e do templo para criar o jardim
+    for (var i = 0; i < array_length_1d(salas_geradas); i++) {
+        var sala_atual = salas_geradas[i];
+        var distancia_player = point_distance(player_sala[0], player_sala[1], sala_atual[0], sala_atual[1]);
+        var distancia_templo = point_distance(nova_sala_templo[0], nova_sala_templo[1], sala_atual[0], sala_atual[1]);
+
+        // Verifica se é a sala mais distante tanto do jogador quanto do templo
+        if (distancia_player > maior_distancia_jardim && distancia_templo > 3) {
+            maior_distancia_jardim = distancia_player;
+            sala_mais_distante_jardim = sala_atual;
+        }
+    }
+
+    // Verifica se encontrou uma sala válida para o jardim
+    if (sala_mais_distante_jardim == undefined) {
+        return; // Sai da função se não encontrar uma sala válida
+    }
+
+    // Verifica direções disponíveis para criar o jardim
+    for (var i = 0; i < array_length_1d(direcoes); i++) {
+        var random_index = irandom(array_length_1d(direcoes) - 1);
+        var temp = direcoes[i];
+        direcoes[i] = direcoes[random_index];
+        direcoes[random_index] = temp;
+    }
+
+    var nova_sala_jardim = undefined;
+
+    // Tenta criar uma nova sala válida para o jardim
+    for (var j = 0; j < array_length_1d(direcoes); j++) {
+        var nova_posicao = [sala_mais_distante_jardim[0] + direcoes[j][0], sala_mais_distante_jardim[1] + direcoes[j][1]];
+        var direcao_valida = true;
+
+        // Verifica se já existe uma sala na nova posição
+        for (var k = 0; k < array_length_1d(salas_geradas); k++) {
+            if (salas_geradas[k][0] == nova_posicao[0] && salas_geradas[k][1] == nova_posicao[1]) {
+                direcao_valida = false;
+                break;
+            }
+        }
+
+        if (direcao_valida) {
+            nova_sala_jardim = nova_posicao;
+            break;
+        }
+    }
+
+    // Adicionar a nova sala ao array de salas geradas como o jardim
+    if (nova_sala_jardim != undefined) {
+        array_push(salas_geradas, nova_sala_jardim);
+        global.sala_jardim = nova_sala_jardim;
+
+        // Criar a sala do jardim e adicionar à lista
+        var nova_sala_info = criar_salas_lista(nova_sala_jardim, array_length_1d(global.salas_criadas) + 1);
+        array_push(global.salas_criadas, nova_sala_info);
+    }
 }
+
+
+#endregion
+
 function criar_templo_poder(_maze_width, _maze_height, _maze, w, h) {
     // Definir variáveis locais para as coordenadas do meio das paredes
 
@@ -524,7 +563,7 @@ function criar_paredes_intances(_maze_width, _maze_height, _maze, _cell_size) {
                     // Centralizar as instâncias de chão
                     x = i * _cell_size + (_cell_size / 2);
                     y = z * _cell_size + (_cell_size / 2);
-                   //image_angle = choose(0, 90, 180, 270);  // Rotação aleatória do chão
+                   image_angle = choose(0, 90, 180, 270);  // Rotação aleatória do chão
                 }
 			
             }
@@ -598,7 +637,7 @@ function criar_paredes_vermelha_intances(_maze_width, _maze_height, _maze, _cell
                 with (chao_instance) {
                     x = i * _cell_size + (_cell_size / 2);
                     y = z * _cell_size + (_cell_size / 2);
-                    image_angle = choose(0, 90, 180, 270); // Rotação aleatória do chão
+                    //image_angle = choose(0, 90, 180, 270); // Rotação aleatória do chão
                 }
             }
         }
@@ -1015,8 +1054,8 @@ function criar_inimigos_em_salas_aleatorias_alet(salas_geradas) {
     var inimigos_dificeis = [obj_amoeba_vermelha,obj_amoeba_rosa,obj_torreta]; // Exemplo de inimigos difíceis
     var lvl = global.level_fase;
     // Definir a quantidade de inimigos com base no nível do jogador
-    var quantidade_inimigos = lvl * 2; // Exemplo: mais inimigos à medida que o nível sobe
-	var quantidade_salas = lvl + 3;
+    var quantidade_inimigos = lvl + 2; // Exemplo: mais inimigos à medida que o nível sobe
+	var quantidade_salas = lvl + 2;
     // Criar arrays para armazenar salas que terão inimigos
     var salas_selecionadas = [];
 	var inimigo_id = 0;
@@ -1347,12 +1386,13 @@ function criar_portas_gerais_templo(sala_atual, salas_geradas) {
                     instance_destroy(parede_direita2);
                 }
 				
-                var porta_direita = instance_create_layer(global.room_width+16 , (global.room_height / 2), "instances", obj_next_room);
+                var porta_direita = instance_create_layer(global.room_width-10 , (global.room_height / 2), "instances", obj_next_room);
                 with (porta_direita) {
                     room_destino = sala_vizinha;
                     room_origem = sala_atual;
 					direcao = 2;
-					image_yscale = 2
+					image_yscale = 4
+					visible = false;
                 }
             }
 		
@@ -1362,12 +1402,14 @@ function criar_portas_gerais_templo(sala_atual, salas_geradas) {
                 if (parede_esquerda != noone) {
                     instance_destroy(parede_esquerda);
                 }
-                var porta_esquerda = instance_create_layer(-32, (global.room_height / 2), "instances", obj_next_room);
+                var porta_esquerda = instance_create_layer(+10, (global.room_height / 2), "instances", obj_next_room);
                 with (porta_esquerda) {
+					image_yscale = 4
+					visible = false;
                     room_destino = sala_vizinha;
                     room_origem = sala_atual;
 					direcao = 4;
-					image_yscale = 2
+					
                 }
             }
 	
@@ -1379,12 +1421,13 @@ function criar_portas_gerais_templo(sala_atual, salas_geradas) {
 					
 					instance_destroy(parede_acima);
                 }
-                var porta_acima = instance_create_layer((global.room_width / 2), -16, "instances", obj_next_room);
+                var porta_acima = instance_create_layer((global.room_width / 2), 10, "instances", obj_next_room);
                 with (porta_acima) {
 					image_xscale = 3;
                     room_destino = sala_vizinha;
                     room_origem = sala_atual;
 					direcao = 1;
+					visible = false;
                 }
             }
 			
@@ -1403,13 +1446,14 @@ function criar_portas_gerais_templo(sala_atual, salas_geradas) {
 					instance_destroy(parede_abaixo2);
 					
                 }
-                var porta_abaixo = instance_create_layer((global.room_width / 2),  global.room_height +16 , "instances", obj_next_room);
+                var porta_abaixo = instance_create_layer((global.room_width / 2),  global.room_height -10 , "instances", obj_next_room);
                 with (porta_abaixo) {
-					
+					visible = false;
 					image_xscale = 3;
                     room_destino = sala_vizinha;
                     room_origem = sala_atual;
 					direcao = 3;
+					visible = false;
                 }
 				
             }
@@ -1442,8 +1486,10 @@ function criar_portas_gerais(sala_atual, salas_geradas) {
                 if (parede_direita2 != noone) {
                     instance_destroy(parede_direita2);
                 }
-                var porta_direita = instance_create_layer(global.room_width , (global.room_height / 2), "instances", obj_next_room);
+                var porta_direita = instance_create_layer(global.room_width-5 , (global.room_height / 2), "instances", obj_next_room);
                 with (porta_direita) {
+					image_angle -= 90;
+					image_yscale = -1;
                     room_destino = sala_vizinha;
                     room_origem = sala_atual;
 					direcao = 2;
@@ -1456,8 +1502,10 @@ function criar_portas_gerais(sala_atual, salas_geradas) {
                 if (parede_esquerda != noone) {
                     instance_destroy(parede_esquerda);
                 }
-                var porta_esquerda = instance_create_layer(0, (global.room_height / 2), "instances", obj_next_room);
+                var porta_esquerda = instance_create_layer(5, (global.room_height / 2), "instances", obj_next_room);
                 with (porta_esquerda) {
+					image_angle += 90;
+					image_yscale = -1;
                     room_destino = sala_vizinha;
                     room_origem = sala_atual;
 					direcao = 4;
@@ -1471,9 +1519,9 @@ function criar_portas_gerais(sala_atual, salas_geradas) {
 					
 					instance_destroy(parede_acima);
                 }
-                var porta_acima = instance_create_layer((global.room_width / 2)+32, -32, "instances", obj_next_room);
+                var porta_acima = instance_create_layer((global.room_width / 2)+32, +10, "instances", obj_next_room);
                 with (porta_acima) {
-					image_xscale = 1.1;
+					image_yscale = -1;
                     room_destino = sala_vizinha;
                     room_origem = sala_atual;
 					direcao = 1;
@@ -1494,10 +1542,10 @@ function criar_portas_gerais(sala_atual, salas_geradas) {
 					instance_destroy(parede_abaixo2);
 					
                 }
-                var porta_abaixo = instance_create_layer((global.room_width / 2)+32,  global.room_height +32 , "instances", obj_next_room);
+                var porta_abaixo = instance_create_layer((global.room_width / 2)+32,  global.room_height -10, "instances", obj_next_room);
                 with (porta_abaixo) {
 					
-					image_xscale = 1.1;
+					image_xscale = 1;
                     room_destino = sala_vizinha;
                     room_origem = sala_atual;
 					direcao = 3;
@@ -1505,6 +1553,15 @@ function criar_portas_gerais(sala_atual, salas_geradas) {
             }
         }
     }
+}
+
+function recriar_booses(){
+	global.sala = procurar_sala_por_numero(global.current_sala);
+	
+	if(global.sala.tipo == "jardim" && global.brocolis_vivo){
+	global.sala_boss_brocolis = global.sala;
+	instance_create_layer(global.room_width / 2 + 32, global.room_height / 2, "Layer_Player", obj_boss_brocolis);
+	}
 }
 
 
@@ -1524,6 +1581,7 @@ function carregar_sala(sala_atual, sala_origem_array) {
 	recriar_item_dropado(global.current_sala[0],global.current_sala[1]);
 	recriar__geladeira_na_sala_atual(global.current_sala);
 	recriar_inimigos_na_sala_atual_alet(global.current_sala);
+	recriar_booses();
 	sala_tuto(); 
 }
 function carregar_sala_templo(sala_atual, sala_origem_array,direcao) {

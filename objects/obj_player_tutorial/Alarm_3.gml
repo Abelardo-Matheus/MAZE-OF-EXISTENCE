@@ -1,0 +1,12 @@
+
+tomar_dano = true;
+
+
+
+
+
+
+
+
+
+

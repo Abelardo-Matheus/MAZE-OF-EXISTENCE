@@ -27,8 +27,8 @@
   "nineSlice": null,
   "origin": 9,
   "parent": {
-    "name": "INIMIGOS",
-    "path": "folders/Sprites/INIMIGOS.yy",
+    "name": "SLIME",
+    "path": "folders/Sprites/INIMIGOS/SLIME.yy",
   },
   "preMultiplyAlpha": false,
   "sequence": {
