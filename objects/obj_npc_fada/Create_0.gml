@@ -1,6 +1,5 @@
-nome = "BV";
-
-
+dig = 0;
+nome = 0;
 
 
 

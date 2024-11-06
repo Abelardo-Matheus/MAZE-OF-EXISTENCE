@@ -16,6 +16,12 @@ global.sala_boss_brocolis = [];
 ds_grid_set(global.room_grid, start_x, start_y, 0); // 0 indica a primeira sala
 global.salas_criadas = [];
 global.current_sala = [0,0];
+global.templo_criado = false;
+global.tipos_de_salas = ds_map_create();
+global.tipos_de_salas_templo = ds_map_create();
+global.tipos_de_salas_jardim = ds_map_create();
+
+salas();
 global.sala = procurar_sala_por_numero(global.current_sala);
 global.templo_criado = false;
 global.salas_com_pontos = ds_map_create(); // Cria um mapa global para ar_mazenar as posições dos pontos nas salas

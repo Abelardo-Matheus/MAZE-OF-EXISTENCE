@@ -1,4 +1,4 @@
-
+ 
 function level_up_tuto() {
     global.level_player += 1;
     
@@ -79,6 +79,7 @@ var moving = false;
 var current_image_speed = 1; // Velocidade padrão da animação
 var diagonal_angle = 0;
 
+if(andar = false){
 esquerda = keyboard_check(ord("A")) || keyboard_check(vk_left);
 direita = keyboard_check(ord("D")) || keyboard_check(vk_right);
 cima = keyboard_check(ord("W")) || keyboard_check(vk_up);
@@ -148,6 +149,7 @@ if(hveloc == 0 and vveloc == 0){
 	 sprite_index = spr_player_baixo_parado
 	 break;
  }	
+}
 }
 
 if(global.in_dash == true){
@@ -240,20 +242,22 @@ function scr_personagem_dash_tuto(){
 }
 
 function scr_player_colisao_tuto(){
-if(place_meeting(x + hveloc, y, obj_parede_bebe)){
-	while !place_meeting(x + sign(hveloc),y,obj_parede_bebe){
-		x += sign(hveloc);
-	}
-	hveloc = 0;
+if (place_meeting(x + hveloc, y, obj_parede_invi) or place_meeting(x + hveloc, y, obj_par_cenario)) {
+    while (!place_meeting(x + sign(hveloc), y, obj_parede_invi) && !place_meeting(x + sign(hveloc), y, obj_par_cenario)) {
+        x += sign(hveloc);
+    }
+    hveloc = 0;
 }
+
 x += hveloc;
 
-if(place_meeting(x , y + vveloc, obj_parede_bebe)){
-	while !place_meeting(x ,y + sign(vveloc),obj_parede_bebe){
-		y += sign(vveloc);
-	}
-	vveloc = 0;
+if (place_meeting(x, y + vveloc, obj_parede_invi) or place_meeting(x, y + vveloc, obj_par_cenario)) {
+    while (!place_meeting(x, y + sign(vveloc), obj_parede_invi) && !place_meeting(x, y + sign(vveloc), obj_par_cenario)) {
+        y += sign(vveloc);
+    }
+    vveloc = 0;
 }
+
 // Atualiza a posição do player
 
 y += vveloc;

@@ -268,8 +268,6 @@ if(place_meeting(x , y + vveloc, global.sala.parede)){
 // Atualiza a posição do player
 
 y += vveloc;
-
-
 }
 
 function scr_personagem_arco() {

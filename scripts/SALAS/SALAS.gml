@@ -1,8 +1,4 @@
 
-global.tipos_de_salas = ds_map_create();
-global.tipos_de_salas_templo = ds_map_create();
-global.tipos_de_salas_jardim = ds_map_create();
-
 
 function salas(){
 var banheiro2 = ds_map_create();
@@ -142,11 +138,6 @@ function criar_salas_lista(sala_atual, numero) {
     }
 }
 
-	
-		
-    // Obter detalhes do tipo de sala
-   
-
     return {
         sala: sala_atual,
         tag: numero,
@@ -169,9 +160,7 @@ function procurar_sala_por_numero(sala_current) {
 
 		
     }
-	
-	
-    return noone; // Retorna noone se nenhuma sala for encontrada com a posição dada
+    return criar_salas_lista([0.0],0); // Retorna noone se nenhuma sala for encontrada com a posição dada
 }
 
 function get_ds_map_keys(map) {
