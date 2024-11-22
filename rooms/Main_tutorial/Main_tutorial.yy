@@ -740,6 +740,7 @@
     {"name":"inst_3D6426C1","path":"rooms/Main_tutorial/Main_tutorial.yy",},
     {"name":"inst_63C38676","path":"rooms/Main_tutorial/Main_tutorial.yy",},
     {"name":"inst_7968BE4B","path":"rooms/Main_tutorial/Main_tutorial.yy",},
+    {"name":"obj_parede_tutorial_um","path":"rooms/Main_tutorial/Main_tutorial.yy",},
   ],
   "isDnd": false,
   "layers": [
@@ -760,6 +761,7 @@
         {"resourceType":"GMRInstance","resourceVersion":"1.0","name":"inst_3D6426C1","colour":4294967295,"frozen":false,"hasCreationCode":false,"ignore":false,"imageIndex":0,"imageSpeed":1.0,"inheritCode":false,"inheritedItemId":null,"inheritItemSettings":false,"isDnd":false,"objectId":{"name":"obj_parede_invi","path":"objects/obj_parede_invi/obj_parede_invi.yy",},"properties":[],"rotation":0.018500656,"scaleX":10.903717,"scaleY":0.75485677,"x":691.5173,"y":2065.977,},
         {"resourceType":"GMRInstance","resourceVersion":"1.0","name":"inst_63C38676","colour":4294967295,"frozen":false,"hasCreationCode":false,"ignore":false,"imageIndex":0,"imageSpeed":1.0,"inheritCode":false,"inheritedItemId":null,"inheritItemSettings":false,"isDnd":false,"objectId":{"name":"obj_parede_invi","path":"objects/obj_parede_invi/obj_parede_invi.yy",},"properties":[],"rotation":0.16432452,"scaleX":0.23413087,"scaleY":9.35223,"x":665.0,"y":1515.6597,},
         {"resourceType":"GMRInstance","resourceVersion":"1.0","name":"inst_7968BE4B","colour":4294967295,"frozen":false,"hasCreationCode":false,"ignore":false,"imageIndex":0,"imageSpeed":1.0,"inheritCode":false,"inheritedItemId":null,"inheritItemSettings":false,"isDnd":false,"objectId":{"name":"obj_parede_invi","path":"objects/obj_parede_invi/obj_parede_invi.yy",},"properties":[],"rotation":0.018500656,"scaleX":5.299015,"scaleY":0.75485677,"x":339.351,"y":1520.6395,},
+        {"resourceType":"GMRInstance","resourceVersion":"1.0","name":"obj_parede_tutorial_um","colour":4294967295,"frozen":false,"hasCreationCode":true,"ignore":false,"imageIndex":0,"imageSpeed":1.0,"inheritCode":false,"inheritedItemId":null,"inheritItemSettings":false,"isDnd":false,"objectId":{"name":"obj_parede_invi","path":"objects/obj_parede_invi/obj_parede_invi.yy",},"properties":[],"rotation":0.16432452,"scaleX":0.24975587,"scaleY":7.617855,"x":1472.0,"y":1056.0,},
       ],"layers":[],"properties":[],"userdefinedDepth":false,"visible":true,},
     {"resourceType":"GMRInstanceLayer","resourceVersion":"1.0","name":"Instances_dialogo","depth":100,"effectEnabled":true,"effectType":null,"gridX":32,"gridY":32,"hierarchyFrozen":false,"inheritLayerDepth":false,"inheritLayerSettings":false,"inheritSubLayers":true,"inheritVisibility":true,"instances":[
         {"resourceType":"GMRInstance","resourceVersion":"1.0","name":"inst_100105B9","colour":4294967295,"frozen":false,"hasCreationCode":false,"ignore":false,"imageIndex":0,"imageSpeed":1.0,"inheritCode":false,"inheritedItemId":null,"inheritItemSettings":false,"isDnd":false,"objectId":{"name":"obj_npc_fada","path":"objects/obj_npc_fada/obj_npc_fada.yy",},"properties":[],"rotation":0.0,"scaleX":3.0,"scaleY":3.0,"x":672.0,"y":960.0,},

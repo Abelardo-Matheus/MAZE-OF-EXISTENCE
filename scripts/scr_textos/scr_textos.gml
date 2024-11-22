@@ -124,7 +124,7 @@ function scr_textos(){
         break;
 		
 	case "C1":
-		texto = "....";
+		texto = "Espere oque é aquilo?";
         ds_grid_add_text(texto, spr_retrato1_fada, 1, "Fada", false);
 	break
 

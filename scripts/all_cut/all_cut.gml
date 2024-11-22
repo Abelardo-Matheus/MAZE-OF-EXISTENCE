@@ -3,7 +3,7 @@
 function cutscene_fada1() {
     return [
 		[scr_cutscene_change_variable, obj_npc_fada, "dig", 3],
-        [scr_cutscenes_move_obj, obj_npc_fada, 0, 500, true, 3],
+        [scr_cutscenes_move_obj, obj_npc_fada, 0, 200, true, 3],
         [scr_play_sound_cutscene, snd_fala, false],
         [scr_xscale_cutescene, obj_npc_fada],
         [scr_cutscenes_wait, 1, obj_npc_fada],

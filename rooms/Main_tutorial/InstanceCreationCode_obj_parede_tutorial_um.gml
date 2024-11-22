@@ -1,0 +1,1 @@
+global.id_parede_um = id;

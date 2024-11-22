@@ -64,7 +64,10 @@ function scr_create_instance_cutescene(_x, _y, _layer, _obj){
 }
 
 function scr_destroy_instance_cutescene(_obj){
-	instance_destroy(_obj)
+	with (_obj) {
+    instance_destroy();
+}
+
 	action_end();
 }
 
