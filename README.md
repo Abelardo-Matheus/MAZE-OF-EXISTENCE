@@ -18,6 +18,8 @@ correspondente a uma etapa da vida.
 2. Execute o arquivo MAZE OF EXISTENCE.exe.
 3. Siga os passos do instalador.
 
+4. https://www.youtube.com/watch?v=3z6gc9FB7dg&t=28s Video do beta 1.0
+
 
 
 
