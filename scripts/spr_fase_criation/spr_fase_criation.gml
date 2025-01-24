@@ -1058,7 +1058,7 @@ function criar_inimigos_em_salas_aleatorias_alet(salas_geradas) {
     var inimigos_faceis = [obj_amoeba]; // Exemplo de inimigos fáceis
     var inimigos_medios = [obj_amoeba_azul,obj_amoeba_laranja]; // Exemplo de inimigos médios
     var inimigos_dificeis = [obj_amoeba_vermelha,obj_amoeba_rosa,obj_torreta]; // Exemplo de inimigos difíceis
-    var lvl = global.level_fase;
+    var lvl = global.level_fase - 1;
     // Definir a quantidade de inimigos com base no nível do jogador
     var quantidade_inimigos = lvl + 2; // Exemplo: mais inimigos à medida que o nível sobe
 	var quantidade_salas = lvl + 2;

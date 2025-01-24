@@ -10,7 +10,7 @@ vvloc = 0;
 sprite_normal = -1;
 sprite_parado = -1;
 veloc = 0.8;
-dano = -1;
+dano = 1;
 dest_x = 0;
 dest_y = 0;
 
