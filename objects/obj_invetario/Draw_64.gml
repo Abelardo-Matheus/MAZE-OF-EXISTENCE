@@ -605,4 +605,4 @@
 	}
 	
 	
-	desenha_barra_vida();
+	

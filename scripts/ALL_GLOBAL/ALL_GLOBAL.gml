@@ -35,3 +35,6 @@ global.direcao_escada = 0;
 global.sala_entrada = noone;
 global.entrou = false;
 global.passada = noone;
+
+global.coleta = 50;
+global.moving_towards_player = true;
