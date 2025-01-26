@@ -4,7 +4,7 @@ escala = 3;
 state = -1;
 prox_state = 0;
 inimigo_id = -1;
-
+lvl_inimigo = -1
 hvloc = 0;
 vvloc = 0;
 sprite_normal = -1;

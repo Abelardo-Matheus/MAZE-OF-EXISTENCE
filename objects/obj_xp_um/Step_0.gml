@@ -1,4 +1,8 @@
 /// @description Move o objeto para trás antes de ir em direção ao jogador
+if(global.level_up == true){
+	alarm[0]++;
+	exit;	
+}
 
 if (distance_to_object(obj_player) <= global.coleta) {
 

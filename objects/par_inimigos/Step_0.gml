@@ -1,3 +1,11 @@
+if(global.level_up == true){
+	alarm[0]++;
+	image_speed = 0;
+	exit;	
+}else{
+	image_speed = 1;
+}
+
 image_xscale = escala;
 image_yscale = escala;
 script_execute(state);
@@ -5,7 +13,8 @@ depth = -y;
 
 if (vida <= 0) {
 	remover_inimigo_por_id(global.current_sala, inimigo_id);
-	instance_create_layer(x, y, "instances", obj_xp_um);
+	var _xp = instance_create_layer(x, y, "instances", obj_xp_um);
+	_xp.xp_multiplicador = lvl_inimigo*10 + (vida/100);
     instance_destroy();
 }
 

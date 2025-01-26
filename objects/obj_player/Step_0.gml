@@ -1,4 +1,12 @@
-
+if(global.level_up == true){
+	alarm[0]++;
+	alarm[2]++;
+	alarm[3]++;
+	alarm[6]++;
+	alarm[11]++;
+	image_speed = 0;
+	exit;		
+}
 script_execute(state);
 depth = -y;
 if(global.estamina <= global.max_estamina && !andar){

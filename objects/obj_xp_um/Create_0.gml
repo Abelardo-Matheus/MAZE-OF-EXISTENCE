@@ -1,8 +1,8 @@
 image_xscale = 3;
 image_yscale = 3;
-base_xp = 20; // Valor fixo de XP
-xp_multiplicador = 0.1; // Multiplicador para balancear o ganho de XP (ajustável conforme desejado)
-xp_ganho = base_xp + (global.level_player * xp_multiplicador);
+base_xp = 20; 
+xp_multiplicador = -1; 
+xp_ganho = base_xp +  xp_multiplicador;
 
 
 hspd = -1;
