@@ -11,11 +11,23 @@ global.ataque = global.dano_base[global.level_player];
 global.critico = 0;
 global.max_xp = global.level_player * 100;
 global.level_up = false
+global.upgrades_list = ds_list_create();
 
 
 function level_up() {
 	global.level_up = true;
     global.level_player += 1;
+
+	repeat(global.upgrade_num){
+		var _upgrade = irandom(ds_grid_height(global.upgrades_grid) - 1);
+		
+		while(ds_list_find_index(global.upgrades_list, _upgrade) != -1){
+			_upgrade = irandom(ds_grid_height(global.upgrades_grid) - 1);
+		}
+		
+		ds_list_add(global.upgrades_list, _upgrade);
+	}
+	
     global.vida_max_calc[global.level_player] = global.vida_max_calc[global.level_player - 1] + global.level_player*0.8; // Aumenta 10 de vida a cada level
     global.max_estamina_calc[global.level_player] = global.max_estamina_calc[global.level_player - 1] + 5; // Aumenta 5 de estamina
     global.dano_base[global.level_player] = global.dano_base[global.level_player - 1] + global.level_player*0.5; // Aumenta 1 de ataque base
@@ -25,8 +37,6 @@ function level_up() {
     global.ataque = global.dano_base[global.level_player];
     global.max_estamina = global.max_estamina_calc[global.level_player];
 
-   
-  
 }
 
 // Função para calcular o crítico

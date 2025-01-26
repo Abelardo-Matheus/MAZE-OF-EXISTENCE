@@ -38,3 +38,4 @@ global.passada = noone;
 
 global.coleta = 50;
 global.moving_towards_player = true;
+global.upgrade_num = 4;

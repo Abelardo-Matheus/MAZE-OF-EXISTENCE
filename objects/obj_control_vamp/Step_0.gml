@@ -28,3 +28,7 @@ if(alarm[0] <= 0){
 	alarm[0] = spaw_timer;
 }
 
+
+if(keyboard_check_pressed(vk_enter)){
+ganhar_xp(20);
+}

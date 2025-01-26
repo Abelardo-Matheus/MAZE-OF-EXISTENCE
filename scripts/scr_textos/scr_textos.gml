@@ -140,26 +140,3 @@ function add_op(_texto, _resposta){
 	op_num ++;
 }
 
-function ds_grid_add_text(){
-	///@arg texto
-	///@arg retrato
-	///@arg lado
-	///@arg nome
-	///@arg op
-	
-	var _grid = texto_grid;
-	var _y = ds_grid_add_row(_grid);
-
-	// Verifica se o texto é vazio e se há opções disponíveis
-	if (argument[0] == "" && op_num > 0) {
-		// Ativa a exibição das opções diretamente
-		op_draw = true;
-	} else {
-		// Caso contrário, adiciona o texto normalmente ao grid
-		_grid[# 0, _y] = argument[0];
-		_grid[# 1, _y] = argument[1];
-		_grid[# 2, _y] = argument[2];
-		_grid[# 3, _y] = argument[3];
-		_grid[# 4, _y] = argument[4];
-	}
-}

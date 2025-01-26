@@ -67,6 +67,7 @@
     {"name":"TILES","order":31,"path":"folders/Sprites/TILES.yy",},
     {"name":"Tile Sets","order":2,"path":"folders/Tile Sets.yy",},
     {"name":"Timelines","order":8,"path":"folders/Timelines.yy",},
+    {"name":"PODERES","order":33,"path":"folders/Sprites/PODERES.yy",},
   ],
   "ResourceOrderSettings": [
     {"name":"obj_GUI","order":5,"path":"objects/obj_GUI/obj_GUI.yy",},
@@ -81,6 +82,7 @@
     {"name":"Sprite55","order":17,"path":"sprites/Sprite55/Sprite55.yy",},
     {"name":"spr_carne_cirular4","order":12,"path":"sprites/spr_carne_cirular4/spr_carne_cirular4.yy",},
     {"name":"obj_armario_pequeno","order":1,"path":"objects/obj_armario_pequeno/obj_armario_pequeno.yy",},
+    {"name":"fnt_nomes_up","order":11,"path":"fonts/fnt_nomes_up/fnt_nomes_up.yy",},
     {"name":"spr_amoeba_vermelha","order":7,"path":"sprites/spr_amoeba_vermelha/spr_amoeba_vermelha.yy",},
     {"name":"spr_sheet","order":12,"path":"sprites/spr_sheet/spr_sheet.yy",},
     {"name":"spr_sombra","order":8,"path":"sprites/spr_sombra/spr_sombra.yy",},
