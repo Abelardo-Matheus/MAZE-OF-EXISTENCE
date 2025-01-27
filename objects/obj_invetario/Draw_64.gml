@@ -276,7 +276,6 @@
 	                // Verificar se o item pode ser equipado nos slots de status
 	                if (mouse_check_button_released(mb_left) && item_esta_sendo_arrastado || keyboard_check(ord("E"))) {
 						var item_tipo = global.grid_itens[# Infos.tipo, pos_selecionada];
-						show_debug_message(item_tipo)
 	                    if (i == total_slots && item_tipo == "arma" && slot_arma == -1) {
 	    slot_arma = i;
 
@@ -382,7 +381,7 @@
 	    item_selecionado = -1;
 	    pos_selecionada = -1;
 	}else {
-	                        show_debug_message("Este item não pode ser equipado nesse slot!");
+	                      
                         
 	                        // Voltar o item para o slot de origem
 	                        global.grid_itens[# Infos.item, pos_selecionada] = item_selecionado;

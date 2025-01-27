@@ -28,8 +28,7 @@ function desenha_barra_vida() {
 	draw_set_halign(fa_left);
 	draw_set_valign(fa_middle);
 	draw_set_color(c_black);
-	draw_text(200, pos_stamina+200, string(_xp) + "/" + string(_max_xp));
-	  draw_sprite_ext(spr_hud_barra_xp, 0, 0 ,pos_stamina+35, (_xp/_max_xp)*0.8,2, 0 ,c_white,alfa);
+	 draw_sprite_ext(spr_hud_barra_xp, 0, 0 ,pos_stamina+35, (_xp/_max_xp)*0.8,2, 0 ,c_white,alfa);
 	  
 	draw_sprite_ext(spr_hud_xp, 0, 0 ,pos_stamina+35, 0.8,2, 0 ,c_white,alfa);
 	 draw_sprite_ext(spr_vida, 0, 0 ,pos_y,(_vida/_max_vida)*_scala,_scala, 0 ,c_white,alfa);

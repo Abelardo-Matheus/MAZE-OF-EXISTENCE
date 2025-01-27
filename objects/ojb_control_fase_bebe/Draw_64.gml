@@ -60,7 +60,6 @@ if (global.map == true) {
 
                 // Verificar se a sala contém o boss
                 var sala_boss = false;
-				show_debug_message(global.sala_jardim)
                 if (global.sala_jardim != undefined) {
                     for (var k = 0; k < array_length_1d(global.sala_jardim); k++) {
                         var boss_pos = global.sala_jardim;

@@ -1,4 +1,3 @@
-global.fase = 0;
 global.dist_aggro_amoeba =  200;
 global.dist_desaggro_amoeba = 400;
 global.level_fase = 1;
@@ -39,3 +38,4 @@ global.passada = noone;
 global.coleta = 50;
 global.moving_towards_player = true;
 global.upgrade_num = 4;
+global.active_upgrades = ds_list_create();

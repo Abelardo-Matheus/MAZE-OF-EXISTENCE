@@ -6,9 +6,10 @@ if(global.level_up == true){
 	alarm[11]++;
 	image_speed = 0;
 	exit;		
-}
+}else{
+	image_speed = 1;
 script_execute(state);
-depth = -y;
+
 if(global.estamina <= global.max_estamina && !andar){
 global.estamina += 0.5;
 }
@@ -55,6 +56,14 @@ if (desenha_arma) {
         dir_alfa = 0;  // Garante que o alfa não fique menor que 0
         desenha_arma = false;  // Para de desenhar quando o alfa chegar a 0
     }
+}
+
+
+// Itera sobre a lista de scripts ativos e os executa
+for (var i = 0; i < ds_list_size(global.active_upgrades); i++) {
+    var _script = global.active_upgrades[| i];
+    script_execute(_script); // Executa o script
+}
 }
 
 

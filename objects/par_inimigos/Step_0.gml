@@ -9,7 +9,7 @@ if(global.level_up == true){
 image_xscale = escala;
 image_yscale = escala;
 script_execute(state);
-depth = -y;
+
 
 if (vida <= 0) {
 	remover_inimigo_por_id(global.current_sala, inimigo_id);

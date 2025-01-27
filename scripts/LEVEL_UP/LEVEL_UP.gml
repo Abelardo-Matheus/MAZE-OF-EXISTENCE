@@ -17,14 +17,13 @@ global.upgrades_list = ds_list_create();
 function level_up() {
 	global.level_up = true;
     global.level_player += 1;
-
+	ds_list_clear(global.upgrades_list);
 	repeat(global.upgrade_num){
+		randomize();
 		var _upgrade = irandom(ds_grid_height(global.upgrades_grid) - 1);
-		
 		while(ds_list_find_index(global.upgrades_list, _upgrade) != -1){
 			_upgrade = irandom(ds_grid_height(global.upgrades_grid) - 1);
 		}
-		
 		ds_list_add(global.upgrades_list, _upgrade);
 	}
 	
@@ -37,6 +36,14 @@ function level_up() {
     global.ataque = global.dano_base[global.level_player];
     global.max_estamina = global.max_estamina_calc[global.level_player];
 
+}
+
+function level_up_upgrade(_selected_upgrade) {
+    // Verifica se o índice do poder selecionado é válido
+    if (_selected_upgrade >= 0 && _selected_upgrade < ds_grid_height(global.upgrades_grid)) {
+        // Incrementa o nível do poder na grid
+        global.upgrades_grid[# Upgrades.level, _selected_upgrade] += 1;
+    } 
 }
 
 // Função para calcular o crítico

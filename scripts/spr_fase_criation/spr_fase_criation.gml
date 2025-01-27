@@ -1174,13 +1174,11 @@ function remover_inimigo_por_id(sala, inimigo_id) {
 	
             if (inimigo_info[0] == inimigo_id) {
                 ds_list_delete(lista_inimigos, i); 
-                show_debug_message("Inimigo com ID " + string(inimigo_id) + " removido da sala " + sala_id);
+        
                 break;
             }
         }
-    } else {
-        show_debug_message("Nenhum inimigo encontrado na sala " + sala_id);
-    }
+    } 
 }
 
 
