@@ -21,7 +21,7 @@ function scr_bola_config(_level) {
 				global.upgrades_grid[# Upgrades.description, 0] = "VELOCIDADE DE DISPARO MAIS RAPIDO";
                 break;
             case 3: // Level 3, 9, 15, ... (Aumenta frequência de tiro em 5%)
-                config.timer *= 0.95;
+                config.timer *= 0.75;
 				global.upgrades_grid[# Upgrades.description, 0] = "FREQUENCIA AUMENTADA EM 5%";
                 break;
             case 1: // Level 4, 10, 16, ... (Aumenta dano em 10%)

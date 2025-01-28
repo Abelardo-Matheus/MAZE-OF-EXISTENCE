@@ -15,3 +15,4 @@ if (x < _camera_x - 64 || x > _camera_x + _camera_w + 64 ||
     y < _camera_y - 64 || y > _camera_y + _camera_h + 64) {
     instance_destroy();
 }
+

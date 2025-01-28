@@ -1,4 +1,4 @@
-
+event_inherited();
 if (!returning) {
     // Aplica dano ao inimigo atual
     other.vida -= damage; // Reduz a vida do inimigo

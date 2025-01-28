@@ -25,6 +25,7 @@ if (alarm[0] <= 0) {
         _inimigoA.dist_desaggro = 2000;
         _inimigoA.escala = 1.5;
 		_inimigoA.vida=10;
+		_inimigoA.max_vida=10;
         _inimigoA.id_inimigo = _enemy_id; // Associa o ID ao inimigo criado
 
         // Adiciona o inimigo e seu ID na lista global
@@ -37,6 +38,8 @@ if (alarm[0] <= 0) {
         _inimigoB.dist_aggro = 2000;
         _inimigoB.dist_desaggro = 2000;
         _inimigoB.escala = 1.5;
+		_inimigoB.vida=10;
+		_inimigoB.max_vida=10;
         _inimigoB.id_inimigo = _enemy_id; // Associa o ID ao inimigo criado
 
         // Adiciona o inimigo e seu ID na lista global

@@ -1,31 +1,29 @@
-function spr_pena_up(level) {
-    // Configurações baseadas no nível
-    var config = scr_pena_config(level); // Obtém as configurações do nível atual
-
-    // Aumenta a velocidade do jogador com base na frequência e no nível
-    if (config.frequency == 1) {
-        // Aumenta a velocidade apenas uma vez por nível
-        if (!global.pena_upgraded || global.pena_last_level != level) {
-            global.speed_player += config.speed_increase;
-            global.pena_upgraded = true; // Marca que o upgrade foi aplicado
-            global.pena_last_level = level; // Salva o nível atual
-        }
-    } else {
-        // Aumenta a velocidade continuamente
-        global.speed_player += config.speed_increase;
-    }
-}
-
-function scr_pena_config(level) {
+function scr_pena_config(_level) {
     // Configuração inicial
     var config = {
-        speed_increase: 5,      // Aumento base de velocidade
-        frequency: global.upgrades_grid[# Upgrades.frequency, 1] // Frequência definida na grid (1 = aplica uma vez, 0 = aplica continuamente)
+        speed_increase: 1 + (_level - 1) * 2
     };
-
-    // Aumenta o valor baseado no nível
-    config.speed_increase += level * 2; // A cada nível, aumenta 2% adicional na velocidade
 
     return config;
 }
 
+function scr_pena() {
+    var level = global.upgrades_grid[# Upgrades.level, 1]; // Obtém o nível atual
+
+    // Verifica se o upgrade já foi aplicado neste nível
+    if (!variable_global_exists("pena_last_level")) global.pena_last_level = 0;
+
+    if (global.pena_last_level < level) {
+        var config = scr_pena_config(level); // Configurações baseadas no nível
+
+        // Aumenta a velocidade do jogador uma vez
+        global.speed_player *= (1 + config.speed_increase / 100); // Aumenta a velocidade em porcentagem
+
+        // Atualiza a descrição do upgrade na grid
+        global.upgrades_grid[# Upgrades.description, 1] = 
+            "VELOCIDADE AUMENTADA EM " + string(config.speed_increase) + "%!";
+
+        // Atualiza o nível do último upgrade aplicado
+        global.pena_last_level = level;
+    }
+}

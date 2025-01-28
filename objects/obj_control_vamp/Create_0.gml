@@ -1,2 +1,2 @@
-spaw_timer = 100;
+spaw_timer = 10;
 randomize();

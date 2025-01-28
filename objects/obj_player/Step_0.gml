@@ -58,6 +58,9 @@ if (desenha_arma) {
     }
 }
 
+if(hit){
+	state = scr_personagem_hit;
+}
 
 // Itera sobre a lista de scripts ativos e os executa
 for (var i = 0; i < ds_list_size(global.active_upgrades); i++) {

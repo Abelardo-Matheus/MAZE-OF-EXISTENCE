@@ -1,22 +1,18 @@
 {
   "resourceType": "GMObject",
   "resourceVersion": "1.0",
-  "name": "obj_bola",
+  "name": "obj_bulmerangue_efeito",
   "eventList": [
-    {"resourceType":"GMEvent","resourceVersion":"1.0","name":"","collisionObjectId":{"name":"par_inimigos","path":"objects/par_inimigos/par_inimigos.yy",},"eventNum":0,"eventType":4,"isDnD":false,},
     {"resourceType":"GMEvent","resourceVersion":"1.0","name":"","collisionObjectId":null,"eventNum":0,"eventType":0,"isDnD":false,},
     {"resourceType":"GMEvent","resourceVersion":"1.0","name":"","collisionObjectId":null,"eventNum":0,"eventType":3,"isDnD":false,},
   ],
   "managed": true,
   "overriddenProperties": [],
   "parent": {
-    "name": "PODERES",
-    "path": "folders/Objects/FASE_VAMP/PODERES.yy",
+    "name": "EFEEITOS",
+    "path": "folders/Objects/FASE_VAMP/PODERES/EFEEITOS.yy",
   },
-  "parentObjectId": {
-    "name": "par_poder_arremessavel",
-    "path": "objects/par_poder_arremessavel/par_poder_arremessavel.yy",
-  },
+  "parentObjectId": null,
   "persistent": false,
   "physicsAngularDamping": 0.1,
   "physicsDensity": 0.5,
@@ -32,10 +28,7 @@
   "physicsStartAwake": true,
   "properties": [],
   "solid": false,
-  "spriteId": {
-    "name": "spr_bola",
-    "path": "sprites/spr_bola/spr_bola.yy",
-  },
+  "spriteId": null,
   "spriteMaskId": null,
   "visible": true,
 }

@@ -60,10 +60,10 @@ enum Upgrades{
 
 global.upgrades_grid = ds_grid_create(Upgrades.Length, 0);
 ds_grid_add_upgrade("BOLA",			scr_bola, -1, "Joga uma bola que persegue o inimigo mais próximo.",0); // Linha 0
-ds_grid_add_upgrade("PENA",			spr_pena_up, -1, "Deixa o jogador mais rápido, como se estivesse flutuando.",0); // Linha 1
+ds_grid_add_upgrade("PENA",			scr_pena, -1, "Deixa o jogador mais rápido, como se estivesse flutuando.",0); // Linha 1
 ds_grid_add_upgrade("IMÃ",			-1, -1, "Coleta recursos e itens de mais longe, como se fosse mágica.",0); // Linha 2
 ds_grid_add_upgrade("ESTRELA",		-1, -1, "Emite uma energia pulsante que repele os inimigos ao redor.",0); // Linha 3
-ds_grid_add_upgrade("SHURIKEN",		-1, -1, "Fica girando ao redor do jogador, causando dano aos inimigos.",0); // Linha 4
+ds_grid_add_upgrade("SHURIKEN",		scr_shuriken, -1, "Fica girando ao redor do jogador, causando dano aos inimigos.", 0); // Linha 4
 ds_grid_add_upgrade("SAPO",			-1, -1, "Um pet sapo que engole inimigos aleatórios próximos.",0); // Linha 5
 ds_grid_add_upgrade("BULMERANGUE",	scr_bumerangue, -1, "Arremessa um bumerangue que vai e volta, atingindo os inimigos.",0); // Linha 6
 ds_grid_add_upgrade("ORBE",			-1, -1, "Um orbe especial que explode em confetes quando atinge os inimigos.",0); // Linha 7

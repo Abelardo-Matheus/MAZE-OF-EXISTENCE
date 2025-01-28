@@ -312,6 +312,7 @@ function scr_personagem_hit(){
 	scr_player_colisao();
 	}else{
 		state = scr_andando;
+		hit = false;
 	}
 	
 	

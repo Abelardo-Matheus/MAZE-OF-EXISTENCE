@@ -1,3 +1,6 @@
+var _inst = instance_create_layer(x,y,"instances", obj_bulmerangue_efeito);
+_inst.sprite_index = sprite_index;
+_inst.image_angle += speed * 2;
 if(global.level_up == true){
 	image_speed = 0;
 	speed = 0;
@@ -16,7 +19,7 @@ if (!returning) {
 } else {
     // Volta para o jogador
     direction = point_direction(x, y, obj_player.x, obj_player.y);
-
+	speed = global.speed_player+1;
     // Destrói ao alcançar o jogador
     if (point_distance(x, y, obj_player.x, obj_player.y) <= 10) {
         ds_list_destroy(targets); // Limpa a lista local

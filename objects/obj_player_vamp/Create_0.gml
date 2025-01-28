@@ -9,7 +9,7 @@ image_speed = 1;
 
 // Criar o bloco de colisão logo acima do personagem
 global.bloco_colisao = instance_create_layer(x, y+30, "instances", obj_colisao);
-state = scr_andando
+state = scr_andando_vamp
 hveloc = -1;
 vveloc = -1;
 direita = -1;
@@ -20,7 +20,7 @@ veloc_dir = -1;
 dano = global.ataque;
 atacando = false;
 andar = false;
-
+hit = false;
 tomar_dano = true;
 empurrar_dir = 0;
 pegar = false;
