@@ -21,7 +21,7 @@ if (!returning) {
     direction = point_direction(x, y, obj_player.x, obj_player.y);
 	speed = global.speed_player+1;
     // Destrói ao alcançar o jogador
-    if (point_distance(x, y, obj_player.x, obj_player.y) <= 10) {
+    if (point_distance(x, y, obj_player.x, obj_player.y) <= 20) {
         ds_list_destroy(targets); // Limpa a lista local
         instance_destroy();
     }

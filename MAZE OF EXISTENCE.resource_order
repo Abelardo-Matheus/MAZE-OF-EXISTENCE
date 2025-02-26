@@ -27,6 +27,7 @@
     {"name":"FASE_VAMP","order":14,"path":"folders/Objects/FASE_VAMP.yy",},
     {"name":"COLETAVEIS","order":1,"path":"folders/Objects/FASE_VAMP/COLETAVEIS.yy",},
     {"name":"PODERES","order":2,"path":"folders/Objects/FASE_VAMP/PODERES.yy",},
+    {"name":"EFEEITOS","order":3,"path":"folders/Objects/FASE_VAMP/PODERES/EFEEITOS.yy",},
     {"name":"Particle Systems","order":15,"path":"folders/Particle Systems.yy",},
     {"name":"Paths","order":4,"path":"folders/Paths.yy",},
     {"name":"Rooms","order":10,"path":"folders/Rooms.yy",},
@@ -68,7 +69,6 @@
     {"name":"TILES","order":31,"path":"folders/Sprites/TILES.yy",},
     {"name":"Tile Sets","order":2,"path":"folders/Tile Sets.yy",},
     {"name":"Timelines","order":8,"path":"folders/Timelines.yy",},
-    {"name":"EFEEITOS","order":3,"path":"folders/Objects/FASE_VAMP/PODERES/EFEEITOS.yy",},
   ],
   "ResourceOrderSettings": [
     {"name":"obj_GUI","order":5,"path":"objects/obj_GUI/obj_GUI.yy",},
@@ -288,6 +288,7 @@
     {"name":"Sprite118","order":17,"path":"sprites/Sprite118/Sprite118.yy",},
     {"name":"spr_cadeira_tres","order":5,"path":"sprites/spr_cadeira_tres/spr_cadeira_tres.yy",},
     {"name":"PERSONAGEM_VAMP","order":5,"path":"scripts/PERSONAGEM_VAMP/PERSONAGEM_VAMP.yy",},
+    {"name":"spr_itens_vamp","order":4,"path":"sprites/spr_itens_vamp/spr_itens_vamp.yy",},
     {"name":"spr_hud_xp","order":10,"path":"sprites/spr_hud_xp/spr_hud_xp.yy",},
     {"name":"SALAS","order":3,"path":"scripts/SALAS/SALAS.yy",},
     {"name":"spr_armario_um121123","order":3,"path":"sprites/spr_armario_um121123/spr_armario_um121123.yy",},

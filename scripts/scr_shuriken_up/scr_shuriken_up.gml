@@ -16,36 +16,36 @@ function scr_shuriken_config(_level) {
         switch (i % 7) { // Alterna entre 6 tipos de upgrades
             case 1: // Nível 1, 7, 13, ... (Aumenta a quantidade de shurikens)
                 config.count = min(config.count + 1, 10); // Máximo de 10 shurikens
-                global.upgrades_grid[# Upgrades.description, 4] = "MAIS UMA SHURIKEN GIRANDO!";
+                global.upgrades_vamp_grid[# Upgrades_vamp.description, 2] = "MAIS UMA SHURIKEN GIRANDO!";
                 break;
 
             case 2: // Nível 2, 8, 14, ... (Aumenta a velocidade de rotação)
                 config.speed += 0.5;
-                global.upgrades_grid[# Upgrades.description, 4] = "VELOCIDADE DA SHURIKEN AUMENTADA!";
+                global.upgrades_vamp_grid[# Upgrades_vamp.description, 2] = "VELOCIDADE DA SHURIKEN AUMENTADA!";
                 break;
 
             case 3: // Nível 3, 9, 15, ... (Aumenta o tamanho da shuriken)
                 config.size += 0.2;
-                global.upgrades_grid[# Upgrades.description, 4] = "TAMANHO DA SHURIKEN AUMENTADO!";
+                global.upgrades_vamp_grid[# Upgrades_vamp.description, 2] = "TAMANHO DA SHURIKEN AUMENTADO!";
                 break;
 
             case 4: // Nível 4, 10, 16, ... (Aumenta o raio da órbita)
                 config.radius += 5;
-                global.upgrades_grid[# Upgrades.description, 4] = "RAIO DA ÓRBITA AUMENTADO!";
+                global.upgrades_vamp_grid[# Upgrades_vamp.description, 2] = "RAIO DA ÓRBITA AUMENTADO!";
                 break;
 
             case 5: // Nível 5, 11, 17, ... (Aumenta a duração da shuriken)
                 config.duration += room_speed * 0.5; // Aumenta a duração em 0.5 segundos
-                global.upgrades_grid[# Upgrades.description, 4] = "DURAÇÃO DA SHURIKEN AUMENTADA!";
+                global.upgrades_vamp_grid[# Upgrades_vamp.description, 2] = "DURAÇÃO DA SHURIKEN AUMENTADA!";
                 break;
 			case 6: // Level 5, 11, 17, ... (Aumenta o knockback em 1%)
                 config.push += 0.01;
-				global.upgrades_grid[# Upgrades.description, 4] = "EMPURRA OS INIMIGOS";
+				global.upgrades_vamp_grid[# Upgrades_vamp.description, 2] = "EMPURRA OS INIMIGOS";
                 break;
 
             case 0: // Nível 6, 12, 18, ... (Aumenta o dano da shuriken)
                 config.damage += 2;
-                global.upgrades_grid[# Upgrades.description, 4] = "DANO DA SHURIKEN AUMENTADO!";
+                global.upgrades_vamp_grid[# Upgrades_vamp.description, 2] = "DANO DA SHURIKEN AUMENTADO!";
                 break;
         }
     }
@@ -55,7 +55,7 @@ function scr_shuriken_config(_level) {
 
 
 function scr_shuriken() {
-    var level = global.upgrades_grid[# Upgrades.level, 4]; // Obtém o nível atual
+    var level = global.upgrades_vamp_grid[# Upgrades_vamp.level, 2]; // Obtém o nível atual
     var config = scr_shuriken_config(level); // Configurações baseadas no nível
 
     // Inicializa os temporizadores se ainda não existirem

@@ -17,35 +17,33 @@ if (!returning) {
     // Reduz o valor de "pulos" (pierce)
     pierce -= 1;
 
-    // Busca outro inimigo próximo, se ainda houver "pulos"
+    // Se ainda houver "pulos", busca outro inimigo
     if (pierce > 0) {
         var next_target = noone;
-        var nearest_distance = -1;
+        var nearest_distance = infinity; // Usa um valor infinito para a distância mínima
 
-        // Obter os limites da câmera
-        var cam_x = camera_get_view_x(view_camera[0]);
-        var cam_y = camera_get_view_y(view_camera[0]);
-        var cam_w = camera_get_view_width(view_camera[0]);
-        var cam_h = camera_get_view_height(view_camera[0]);
+        // Obtém a posição real do projétil
+        var proj_x = x;
+        var proj_y = y;
 
-        // Verificar inimigos na área da câmera
+        // Busca por inimigos na sala
         with (par_inimigos) {
-            if (x >= cam_x && x <= cam_x + cam_w && y >= cam_y && y <= cam_y + cam_h) {
-                // Calcula a distância do jogador ao inimigo
-                var dist = point_distance(obj_player.x, obj_player.y, x, y);
-                if (ds_list_find_index(other.targets, id) == -1 && (next_target == noone || dist < nearest_distance)) {
-                    next_target = id; // Define o próximo alvo
-                    nearest_distance = dist; // Atualiza a menor distância
+            // Verifica se o inimigo não está na lista de atingidos
+            if (ds_list_find_index(other.targets, id) == -1) {
+                var dist = point_distance(proj_x, proj_y, x, y);
+                if (dist < nearest_distance) {
+                    next_target = id;
+                    nearest_distance = dist;
                 }
             }
         }
 
-        // Verifica se encontrou um alvo válido
+        // Se encontrou um alvo válido, ajusta para o novo alvo
         if (instance_exists(next_target)) {
-            target = next_target; // Define o novo alvo
-            direction = point_direction(x, y, target.x, target.y); // Ajusta a direção para o novo alvo
+            target = next_target;
+            direction = point_direction(proj_x, proj_y, target.x, target.y);
         } else {
-            // Se nenhum alvo válido for encontrado, inicia o retorno ao jogador
+            // Se nenhum alvo for encontrado, retorna ao jogador
             returning = true;
         }
     } else {

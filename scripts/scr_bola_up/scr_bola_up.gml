@@ -14,23 +14,23 @@ function scr_bola_config(_level) {
         switch (i % 6) {
             case 5: // Level 1, 7, 13, ... (Atira em mais um inimigo)
                 config.balls += 1;
-				global.upgrades_grid[# Upgrades.description, 0] = "MAIS 1 BOLA ATIRADA";
+				global.upgrades_vamp_grid[# Upgrades_vamp.description, 0] = "MAIS 1 BOLA ATIRADA";
                 break;
             case 2: // Level 2, 8, 14, ... (Aumenta velocidade em 5%)
                 config.speed *= 1.05;
-				global.upgrades_grid[# Upgrades.description, 0] = "VELOCIDADE DE DISPARO MAIS RAPIDO";
+				global.upgrades_vamp_grid[# Upgrades_vamp.description, 0] = "VELOCIDADE DE DISPARO MAIS RAPIDO";
                 break;
             case 3: // Level 3, 9, 15, ... (Aumenta frequência de tiro em 5%)
                 config.timer *= 0.75;
-				global.upgrades_grid[# Upgrades.description, 0] = "FREQUENCIA AUMENTADA EM 5%";
+				global.upgrades_vamp_grid[# Upgrades_vamp.description, 0] = "FREQUENCIA AUMENTADA EM 5%";
                 break;
             case 1: // Level 4, 10, 16, ... (Aumenta dano em 10%)
                 config.damage *= 1.10;
-				global.upgrades_grid[# Upgrades.description, 0] = "AUMENTO DE 10% DE DANO";
+				global.upgrades_vamp_grid[# Upgrades_vamp.description, 0] = "AUMENTO DE 10% DE DANO";
                 break;
             case 4: // Level 5, 11, 17, ... (Empurra inimigos em 1%)
                 config.push += 0.01;
-				global.upgrades_grid[# Upgrades.description, 0] = "EMPURRA MAIS OS INIMIGOS";
+				global.upgrades_vamp_grid[# Upgrades_vamp.description, 0] = "EMPURRA MAIS OS INIMIGOS";
                 break;
      
         }
@@ -40,7 +40,7 @@ function scr_bola_config(_level) {
 }
 
 function scr_bola() {
-    var level = global.upgrades_grid[# Upgrades.level, 0]; // Obtém o nível atual
+    var level = global.upgrades_vamp_grid[# Upgrades_vamp.level, 0]; // Obtém o nível atual
     var config = scr_bola_config(level); // Configurações baseadas no nível
 
     // Timer e lógica da bola

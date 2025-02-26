@@ -11,20 +11,20 @@ global.ataque = global.dano_base[global.level_player];
 global.critico = 0;
 global.max_xp = global.level_player * 100;
 global.level_up = false
-global.upgrades_list = ds_list_create();
+global.upgrades_vamp_list = ds_list_create();
 
 
 function level_up() {
 	global.level_up = true;
     global.level_player += 1;
-	ds_list_clear(global.upgrades_list);
+	ds_list_clear(global.upgrades_vamp_list);
 	repeat(global.upgrade_num){
 		randomize();
-		var _upgrade = irandom(ds_grid_height(global.upgrades_grid) - 1);
-		while(ds_list_find_index(global.upgrades_list, _upgrade) != -1){
-			_upgrade = irandom(ds_grid_height(global.upgrades_grid) - 1);
+		var _upgrade = irandom(ds_grid_height(global.upgrades_vamp_grid) - 1);
+		while(ds_list_find_index(global.upgrades_vamp_list, _upgrade) != -1){
+			_upgrade = irandom(ds_grid_height(global.upgrades_vamp_grid) - 1);
 		}
-		ds_list_add(global.upgrades_list, _upgrade);
+		ds_list_add(global.upgrades_vamp_list, _upgrade);
 	}
 	
     global.vida_max_calc[global.level_player] = global.vida_max_calc[global.level_player - 1] + global.level_player*0.8; // Aumenta 10 de vida a cada level
@@ -40,9 +40,9 @@ function level_up() {
 
 function level_up_upgrade(_selected_upgrade) {
     // Verifica se o índice do poder selecionado é válido
-    if (_selected_upgrade >= 0 && _selected_upgrade < ds_grid_height(global.upgrades_grid)) {
+    if (_selected_upgrade >= 0 && _selected_upgrade < ds_grid_height(global.upgrades_vamp_grid)) {
         // Incrementa o nível do poder na grid
-        global.upgrades_grid[# Upgrades.level, _selected_upgrade] += 1;
+        global.upgrades_vamp_grid[# Upgrades_vamp.level, _selected_upgrade] += 1;
     } 
 }
 

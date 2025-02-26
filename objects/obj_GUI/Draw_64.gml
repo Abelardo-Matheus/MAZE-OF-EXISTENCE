@@ -18,11 +18,11 @@ if(global.level_up == true){
 		
 	for(var i = 0; i < global.upgrade_num; i++){
 		var _sprx = _xx + (_sprw + _buffer) * i;
-        var _y = global.upgrades_list[| i];
-        var _name = global.upgrades_grid[# Upgrades.Name, _y];
-        var _descrption = global.upgrades_grid[# Upgrades.description, _y];
-		var _level = global.upgrades_grid[# Upgrades.level, _y];
-		var _script = global.upgrades_grid[# Upgrades.Script, _y];
+        var _y = global.upgrades_vamp_list[| i];
+        var _name = global.upgrades_vamp_grid[# Upgrades_vamp.Name, _y];
+        var _descrption = global.upgrades_vamp_grid[# Upgrades_vamp.description, _y];
+		var _level = global.upgrades_vamp_grid[# Upgrades_vamp.level, _y];
+		var _script = global.upgrades_vamp_grid[# Upgrades_vamp.Script, _y];
 
 		if(point_in_rectangle(_mx, _my, _sprx - _sprw/2, _yy - _sprh/2, _sprx + _sprw/2 , _yy + _sprh/2)){
 			upgrade_alpha = 1;
