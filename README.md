@@ -1,6 +1,11 @@
+<div align="center">
+   
 # Maze of Existence
 
-![Banner do Jogo](/screenshots/banner.png) <!-- Adicione um banner visual aqui -->
+![Banner](https://github.com/user-attachments/assets/4209a1bb-86f1-417b-879d-2e9cc8d25104)
+
+ <!-- Adicione um banner visual aqui -->
+</div>
 
 ## 🎮 Descrição
 
@@ -60,7 +65,8 @@ O jogo está sendo desenvolvido no **GameMaker Studio 2**, utilizando as seguint
   - Ainda sem...
 
 ---
-
+<div align="center">
+   
 ## 🖼️ Capturas de Tela
 
 Aqui estão algumas capturas de tela do jogo:
@@ -69,7 +75,8 @@ Aqui estão algumas capturas de tela do jogo:
 ![image](https://github.com/user-attachments/assets/b6372f51-8244-496b-998f-5966677b421b)
 
 ### Menu
-![image](https://github.com/user-attachments/assets/a13904ce-7bc9-4eb4-96d2-8d5aa55fef38)
+![image](https://github.com/user-attachments/assets/abefa89b-9c30-4afb-b0e1-96edf5aeeaa0)
+
 
 
 ### Fase baseado em bind of isac
@@ -87,15 +94,19 @@ Aqui estão algumas capturas de tela do jogo:
 ![image](https://github.com/user-attachments/assets/48aa86db-da06-4be0-8e07-705f7cdc0356)
 
 
+</div>
 
 ---
-
+<div align="center">
+   
 ## 🎥 Vídeo do Beta 1.0
 
 Confira o vídeo do beta 1.0 do jogo:
+
 [![Vídeo do Beta](https://img.youtube.com/vi/3z6gc9FB7dg/0.jpg)](https://www.youtube.com/watch?v=3z6gc9FB7dg&t=28s)
 
 ---
+</div>
 
 ## 📥 Como Instalar a Demo
 
