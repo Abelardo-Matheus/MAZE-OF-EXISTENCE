@@ -7,8 +7,7 @@ enum Armamentos{
 
 direction_x = 0;
 direction_y = 0;
-image_xscale = 1.5;
-image_yscale = 1.5;
+
 hit = false;
 sprite_index = spr_player_baixo; // Ajuste conforme a direção inicial
 image_speed = 1;
@@ -27,6 +26,7 @@ dano = global.ataque;
 atacando = false;
 andar = false;
 
+proximo_de_estrutura = false;
 tomar_dano = true;
 empurrar_dir = 0;
 pegar = false;

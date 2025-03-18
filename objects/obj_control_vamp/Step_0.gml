@@ -1,7 +1,5 @@
 // Inicialize a lista global para armazenar inimigos (coloque no Create Event do controlador)
-if (!variable_global_exists("enemy_list")) {
-    global.enemy_list = ds_list_create(); // Lista para armazenar inimigos
-}
+scr_estruturas();
 if (!variable_global_exists("enemy_id_counter")) {
     global.enemy_id_counter = 0; // Contador para IDs únicos
 }
@@ -87,3 +85,5 @@ with (obj_chao_grama_vamp) {
         instance_destroy();
     }
 }
+
+

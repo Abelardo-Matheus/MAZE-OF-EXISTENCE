@@ -29,7 +29,7 @@ function level_up() {
 	
     global.vida_max_calc[global.level_player] = global.vida_max_calc[global.level_player - 1] + global.level_player*0.8; // Aumenta 10 de vida a cada level
     global.max_estamina_calc[global.level_player] = global.max_estamina_calc[global.level_player - 1] + 5; // Aumenta 5 de estamina
-    global.dano_base[global.level_player] = global.dano_base[global.level_player - 1] + global.level_player*0.5; // Aumenta 1 de ataque base
+    global.dano_base[global.level_player] = global.dano_base[global.level_player - 1] * 1.1; // Aumenta 1 de ataque base
     global.vida = global.vida_max_calc[global.level_player];
 	global.vida_max = global.vida_max_calc[global.level_player];
     global.estamina = global.max_estamina_calc[global.level_player];

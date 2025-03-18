@@ -25,7 +25,8 @@ function scr_bola_config(_level) {
 				global.upgrades_vamp_grid[# Upgrades_vamp.description, 0] = "FREQUENCIA AUMENTADA EM 5%";
                 break;
             case 1: // Level 4, 10, 16, ... (Aumenta dano em 10%)
-                config.damage *= 1.10;
+                config.damage *= (1.10);
+				config.damage += global.ataque;
 				global.upgrades_vamp_grid[# Upgrades_vamp.description, 0] = "AUMENTO DE 10% DE DANO";
                 break;
             case 4: // Level 5, 11, 17, ... (Empurra inimigos em 1%)

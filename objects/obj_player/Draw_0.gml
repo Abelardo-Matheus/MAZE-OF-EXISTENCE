@@ -1,4 +1,5 @@
-draw_sprite(spr_sombra,0,x,y +30);
+
+draw_sprite_ext(spr_sombra,0,x,y+20,0.8,0.8,0,c_white,1);
 draw_self();
 
 
@@ -15,13 +16,23 @@ if (alarm[3] > 0){
 }
 
 
-if (desenha_arma) {
-    if (global.armamento == 0) {
-        draw_sprite_ext(spr_arma, 0, x, y - 60, 1, 1, 0, c_white, dir_alfa);
-    } else if (global.armamento == 1) {
-        draw_sprite_ext(spr_arma, 1, x, y - 60, 1, 1, 0, c_white, dir_alfa);
-    }
+//if (desenha_arma) {
+//    if (global.armamento == 0) {
+//        draw_sprite_ext(spr_arma, 0, x, y - 60, 1, 1, 0, c_white, dir_alfa);
+//    } else if (global.armamento == 1) {
+//        draw_sprite_ext(spr_arma, 1, x, y - 60, 1, 1, 0, c_white, dir_alfa);
+//    }
+//}
+
+
+// Verifica se o jogador está próximo de alguma estrutura
+if (proximo_de_estrutura) {
+    desenha_botao = true; // Ativa o botão se estiver próximo de uma estrutura
+} else {
+    desenha_botao = false; // Desativa o botão se não estiver próximo de nenhuma estrutura
 }
+
+
 
 // Step Event (ou onde você controla a lógica do piscar)
 if (piscando_timer > 0) {
@@ -40,6 +51,8 @@ if (desenha_botao) {
 }
 
 
+// Reseta a variável para o próximo passo
+proximo_de_estrutura = false;
 
 
 

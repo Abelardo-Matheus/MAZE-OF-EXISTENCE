@@ -71,7 +71,7 @@ ds_grid_add_item_vamp("IMÃ",			-1, -1, "Coleta recursos e itens de mais longe, 
 
 global.upgrades_vamp_grid = ds_grid_create(Upgrades_vamp.Length, 0);
 ds_grid_add_upgrade_vamp("BOLA",			scr_bola, -1, "Joga uma bola que persegue o inimigo mais próximo.",0); // Linha 0
-ds_grid_add_upgrade_vamp("ESTRELA",		-1, -1, "Emite uma energia pulsante que repele os inimigos ao redor.",0); // Linha 3
+ds_grid_add_upgrade_vamp("EXPLOSÃO",		scr_explosao, -1, "Emite uma energia pulsante que repele os inimigos ao redor.",0); // Linha 3
 ds_grid_add_upgrade_vamp("SHURIKEN",		scr_shuriken, -1, "Fica girando ao redor do jogador, causando dano aos inimigos.", 0); // Linha 4
 ds_grid_add_upgrade_vamp("SAPO",			-1, -1, "Um pet sapo que engole inimigos aleatórios próximos.",0); // Linha 5
 ds_grid_add_upgrade_vamp("BULMERANGUE",	scr_bumerangue, -1, "Arremessa um bumerangue que vai e volta, atingindo os inimigos.",0); // Linha 6

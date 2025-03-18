@@ -7,7 +7,7 @@ draw_set_color(c_white);
 draw_set_halign(fa_center);
 draw_set_valign(fa_middle);
 
-draw_text(970,323,"_maze \nOF \nEXISTENCE");
+draw_text(970,323,"Maze \nOF \nEXISTENCE");
 
 if(option_list == 1){
 	draw_set_color(c_white);

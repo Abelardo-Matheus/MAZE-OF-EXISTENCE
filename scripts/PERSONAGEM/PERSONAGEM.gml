@@ -127,30 +127,30 @@ if (instance_exists(global.bloco_colisao)) {
 }
 
 
-if(mouse_check_button(mb_left)){
-	if(global.armamento == Armamentos.espada){
-	image_index = 0;
-	switch dir{
-	 default:
-	 sprite_index = spr_player_direita_parado_atacando;
-	 break;
-	 case 1:
-	 sprite_index = spr_player_cima_parado_atacando;
-	 break;
-	 case 2:
-	 sprite_index = spr_player_esquerda_parado_atacando;
-	 break;
-	 case 3:
-	 sprite_index = spr_player_baixo_parado_atacando;
-	 break;
-	}
-	 state = scr_ataque_player;
- }else if (global.armamento == Armamentos.arco){
+//if(mouse_check_button(mb_left)){
+//	if(global.armamento == Armamentos.espada){
+//	image_index = 0;
+//	switch dir{
+//	 default:
+//	 sprite_index = spr_player_direita_parado_atacando;
+//	 break;
+//	 case 1:
+//	 sprite_index = spr_player_cima_parado_atacando;
+//	 break;
+//	 case 2:
+//	 sprite_index = spr_player_esquerda_parado_atacando;
+//	 break;
+//	 case 3:
+//	 sprite_index = spr_player_baixo_parado_atacando;
+//	 break;
+//	}
+//	 state = scr_ataque_player;
+// }else if (global.armamento == Armamentos.arco){
 	 
-	image_index = 0;
-	state = scr_personagem_arco;
-	}
-}
+//	image_index = 0;
+//	state = scr_personagem_arco;
+//	}
+//}
 
 if(mouse_check_button_pressed(mb_right)){
 	

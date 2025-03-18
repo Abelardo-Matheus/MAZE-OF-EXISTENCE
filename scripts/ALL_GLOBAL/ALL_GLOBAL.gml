@@ -1,4 +1,10 @@
+if (!variable_global_exists("enemy_list")) {
+    global.enemy_list = ds_list_create(); // Lista para armazenar inimigos
+}
+
+
 global.dist_aggro_amoeba =  200;
+global.fase = 0;
 global.dist_desaggro_amoeba = 400;
 global.level_fase = 1;
 global.sala = noone;
