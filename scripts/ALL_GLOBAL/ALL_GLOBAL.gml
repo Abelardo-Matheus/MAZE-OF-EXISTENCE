@@ -2,7 +2,12 @@ if (!variable_global_exists("enemy_list")) {
     global.enemy_list = ds_list_create(); // Lista para armazenar inimigos
 }
 
-
+global.pos_x_map = -1;
+global.pos_y_map = -1;
+global.sair = false;
+global.seed_map = random_get_seed();
+global.estruturas_criadas = false;
+global.vetor_estruturas = [];
 global.dist_aggro_amoeba =  200;
 global.fase = 0;
 global.dist_desaggro_amoeba = 400;
@@ -40,7 +45,7 @@ global.direcao_escada = 0;
 global.sala_entrada = noone;
 global.entrou = false;
 global.passada = noone;
-
+global.seed_atual = noone;
 global.coleta = 50;
 global.moving_towards_player = true;
 global.upgrade_num = 4;

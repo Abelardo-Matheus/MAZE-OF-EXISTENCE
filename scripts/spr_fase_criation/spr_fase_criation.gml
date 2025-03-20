@@ -160,6 +160,7 @@ function coletar_vela(ponto_x, ponto_y, current_sala) {
 
 // Função para criar o templo e o jardim
 function criar_templo_e_jardim(player_sala, salas_geradas) {
+	random_set_seed(global.seed_atual);
     // Inicializa as variáveis globais se ainda não existirem
     if (!variable_global_exists("sala_jardim")) {
         global.sala_jardim = [];
@@ -301,7 +302,7 @@ function criar_templo_e_jardim(player_sala, salas_geradas) {
 
 function criar_templo_poder(_maze_width, _maze_height, _maze, w, h) {
     // Definir variáveis locais para as coordenadas do meio das paredes
-
+	random_set_seed(global.seed_atual);
 
     // Criar paredes na linha superior e inferior com base no valor de 'w'
     for (var i = w; i < _maze_width - w; i++) {
@@ -1274,25 +1275,24 @@ function conta_salas_adjacentes(salas, sala_atual) {
 }
 
 function gera_salas_procedurais(num_salas) {
-	randomize();
-    var salas = []; // Array para ar_mazenar as salas
+    // Define a seed atual para garantir que a geração seja consistente
+    random_set_seed(global.seed_atual);
+    var salas = []; // Array para armazenar as salas
     var sala_atual = [0, 0]; // Começamos na coordenada (0, 0)
     array_push(salas, sala_atual); // Adicionar a primeira sala
-	criar_salas_lista(sala_atual, 0);
+    criar_salas_lista(sala_atual, 0); // Função para processar a sala (se necessário)
 
     var direcoes = [[1, 0], [-1, 0], [0, 1], [0, -1]]; // Direções fixas: Direita, Esquerda, Baixo, Cima
     var tentativas_max = 100; // Limitar o número de tentativas de encontrar uma nova direção
 
     for (var i = 1; i < num_salas; i++) {
-        randomize();
         var nova_sala;
         var encontrou = false;
         var tentativas = 0;
-	
 
         // Tentar encontrar uma nova sala válida
         while (!encontrou && tentativas < tentativas_max) {
-            var sala_anterior = salas[irandom(i - 1)]; // Escolhe uma sala existente para expandir
+            var sala_anterior = salas[irandom(array_length(salas) - 1)]; // Escolhe uma sala existente para expandir
 
             // Verificar se a sala anterior já tem 3 salas adjacentes
             if (conta_salas_adjacentes(salas, sala_anterior) < 3) {
@@ -1304,7 +1304,7 @@ function gera_salas_procedurais(num_salas) {
 
                 // Verificar se essa nova sala já existe no array
                 encontrou = true;
-                for (var j = 0; j < array_length_1d(salas); j++) {
+                for (var j = 0; j < array_length(salas); j++) {
                     if (salas[j][0] == nova_sala[0] && salas[j][1] == nova_sala[1]) {
                         encontrou = false;
                         break;
@@ -1317,12 +1317,10 @@ function gera_salas_procedurais(num_salas) {
 
         // Adicionar a nova sala ao array se encontrou uma posição válida
         if (encontrou) {
-			
             array_push(salas, nova_sala);
-			criar_salas_lista(nova_sala, i+1);
+            criar_salas_lista(nova_sala, i + 1); // Função para processar a nova sala (se necessário)
         }
     }
-
 
     return salas; // Retornar o array de salas geradas
 }

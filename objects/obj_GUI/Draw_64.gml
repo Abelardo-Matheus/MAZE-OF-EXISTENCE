@@ -101,3 +101,6 @@ if(global.level_up == true){
 
 
 desenha_barra_vida();
+
+
+mini_mapa_vamp();

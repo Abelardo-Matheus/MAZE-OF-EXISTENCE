@@ -56,9 +56,9 @@ hveloc = lengthdir_x(current_speed, veloc_dir);
 vveloc = lengthdir_y(current_speed, veloc_dir);
 
 if(keyboard_check(vk_shift) && global.estamina > 0){
-		hveloc = lengthdir_x(current_speed+10, veloc_dir);
-		vveloc = lengthdir_y(current_speed+10, veloc_dir);
-		global.estamina-=2;
+		hveloc = lengthdir_x(current_speed+90, veloc_dir);
+		vveloc = lengthdir_y(current_speed+90, veloc_dir);
+		//global.estamina-=2;
 	}else if(keyboard_check(vk_shift) && global.estamina == 0){
 		hveloc = 0;
 		vveloc = 0;
