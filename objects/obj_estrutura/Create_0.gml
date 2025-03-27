@@ -1,9 +1,9 @@
 pos_x = -1;
 pos_y = -1;
-seed = -1;
-
+direction_y = 0;
+image_xscale = 2;
+image_yscale = 2;
 pos_x = -1;
 pos_y = -1;
-seed = -1; // Inicializa a seed como -1 (será substituída pelo valor correto)
 
 selecao_feita = false; 

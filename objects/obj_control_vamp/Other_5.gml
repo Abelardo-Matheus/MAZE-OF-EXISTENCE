@@ -1,0 +1,1 @@
+audio_pause_sound(snd_musica_fundo_2)

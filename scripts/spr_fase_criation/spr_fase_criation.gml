@@ -160,7 +160,7 @@ function coletar_vela(ponto_x, ponto_y, current_sala) {
 
 // Função para criar o templo e o jardim
 function criar_templo_e_jardim(player_sala, salas_geradas) {
-	random_set_seed(global.seed_atual);
+
     // Inicializa as variáveis globais se ainda não existirem
     if (!variable_global_exists("sala_jardim")) {
         global.sala_jardim = [];
@@ -168,7 +168,7 @@ function criar_templo_e_jardim(player_sala, salas_geradas) {
     if (!variable_global_exists("templos_salas_pos")) {
         global.templos_salas_pos = [];
     }
-
+	random_set_seed(global.seed_atual);
     // Passo 1: Criar o templo
 
     var sala_mais_distante_templo = undefined;
@@ -302,7 +302,7 @@ function criar_templo_e_jardim(player_sala, salas_geradas) {
 
 function criar_templo_poder(_maze_width, _maze_height, _maze, w, h) {
     // Definir variáveis locais para as coordenadas do meio das paredes
-	random_set_seed(global.seed_atual);
+	
 
     // Criar paredes na linha superior e inferior com base no valor de 'w'
     for (var i = w; i < _maze_width - w; i++) {
@@ -836,6 +836,7 @@ function recriar_escada_na_sala_atual(current_sala) {
 }
 
 function create_escada_porao_em_fundos(salas_geradas) {
+	random_set_seed(global.seed_atual);
     for (var i = 0; i < array_length_1d(salas_geradas); i++) {
         var sala = salas_geradas[i];
         var sala_detalhes = procurar_sala_por_numero(sala);
@@ -1558,8 +1559,8 @@ function criar_portas_gerais(sala_atual, salas_geradas) {
 }
 
 function recriar_booses(){
-	global.sala = procurar_sala_por_numero(global.current_sala);
 	
+	global.sala = procurar_sala_por_numero(global.current_sala);
 	if(global.sala.tipo == "jardim" && global.brocolis_vivo){
 	global.sala_boss_brocolis = global.sala;
 	instance_create_layer(global.room_width / 2 + 32, global.room_height / 2, "Layer_Player", obj_boss_brocolis);
@@ -1570,6 +1571,7 @@ function recriar_booses(){
 
 function carregar_sala(sala_atual, sala_origem_array) {
     clear_room(); 
+	random_set_seed(global.seed_atual);
 	global.current_sala = sala_atual;
 	global.sala_passada = sala_origem_array;
     cria_salas_e_objetos(global._maze_width, global._maze_height, global._maze, global._cell_size);

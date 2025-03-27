@@ -1,6 +1,7 @@
 // Inicialize a lista global para armazenar inimigos (coloque no Create Event do controlador)
 
 scr_estruturas();
+
 if (!variable_global_exists("enemy_id_counter")) {
     global.enemy_id_counter = 0; // Contador para IDs únicos
 }
@@ -54,7 +55,7 @@ if (keyboard_check_pressed(vk_enter)) {
 }
 
 // Configurações do terreno
-var tile_size = 271; // Tamanho de cada tile
+var tile_size = 273; // Tamanho de cada tile
 var grid_radius = 10; // Número de tiles ao redor do jogador em cada direção (3x3, 5x5, etc.)
 var max_distance = (grid_radius + 20) * tile_size; // Distância máxima para manter os tiles (mais 2 de margem)
 

@@ -101,6 +101,8 @@ if(global.level_up == true){
 
 
 desenha_barra_vida();
-
-
-mini_mapa_vamp();
+	if (global.map_bebe) {
+		mini_mapa_bebe();
+	}else if(global.map_vamp){
+		mini_mapa_vamp();
+	}

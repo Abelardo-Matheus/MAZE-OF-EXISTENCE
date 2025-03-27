@@ -2,6 +2,8 @@
 
 // Inicializar variáveis globais
 global.current_level = 1;
+global.map_vamp = false;
+global.map_bebe = true;
 
 
 // Inicializar grids

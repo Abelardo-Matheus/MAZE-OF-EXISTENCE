@@ -29,12 +29,11 @@ if (!selecao_feita) {
 
     // Seleciona o filho correspondente ao índice fixo
     var filho_selecionado = objetos_no_projeto[indice_fixo];
-
     // Altera a instância atual para o filho selecionado
+	global.seed_atual = seed;
     instance_change(filho_selecionado, true);
 
     // Marca que a seleção foi feita
     selecao_feita = true;
 }
-
 
