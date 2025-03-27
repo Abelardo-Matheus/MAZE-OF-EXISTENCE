@@ -78,7 +78,7 @@ ds_grid_add_upgrade_vamp("BULMERANGUE",	scr_bumerangue, -1, "Arremessa um bumera
 ds_grid_add_upgrade_vamp("ORBE",			-1, -1, "Um orbe especial que explode em confetes quando atinge os inimigos.",0); // Linha 7
 ds_grid_add_upgrade_vamp("BORBOLETA",	-1, -1, "Uma borboleta mágica que distrai os inimigos por um curto período.",0); // Linha 8
 ds_grid_add_upgrade_vamp("BOLHAS",		-1, -1, "Uma chuva de bolhas que estoura ao encostar nos inimigos.",0); // Linha 9
-ds_grid_add_upgrade_vamp("RAIO",			scr_raio, -1, "Cria um ursinho de pelúcia gigante que bloqueia os inimigos por alguns segundos.",100); // Linha 10
+ds_grid_add_upgrade_vamp("RAIO",			scr_raio, -1, "Cria um ursinho de pelúcia gigante que bloqueia os inimigos por alguns segundos.",0); // Linha 10
 
 
 

@@ -65,411 +65,273 @@ function adicionar_item_invent() {
     _grid[# Infos.image_ind, _empty_slot] = _ind;
 }
 
-function criar_item_aleatorio_ativos(pos_x, pos_y, prof) {
+function criar_item_aleatorio_ativos(pos_x, pos_y, prof, raridade) {
     randomize();
-
-    var item_nome,drop, ind, item_descricao, item_sprite, item_quantidade, sprite_ind, dano, armadura, velocidade, cura, tipo;
-    cura = 0;
-    velocidade = 0;
-    dano = 0;
-    armadura = 0;
-    tipo = 0;
-	drop = true;
-
-    // Gera um número aleatório entre 0 e 1000
-    var item_index = irandom(1000);
-
-    // Definir item com base na cura e probabilidade
-    if (item_index <= 300) { // 30% de chance - cura baixa
-        item_nome = "Maca";
-        item_descricao = "Uma maca suculenta, deliciosa e crocante. Ideal para um lanche rápido e saudável. Recupera 10 de vida!";
-        item_sprite = spr_itens_invent_consumiveis;
-        item_quantidade = irandom_range(1, 3);
-        sprite_ind = 1;
-        cura = 10;
-        ind = 1;
-        tipo = "uso";
-    } else if (item_index > 300 && item_index <= 550) { // 25% de chance - cura baixa
-        item_nome = "Uva";
-        item_descricao = "Um cacho de uvas doces, pequenas e cheias de sabor. Uma explosao de docura a cada mordida. Recupera 10 de vida!";
-        item_sprite = spr_itens_invent_consumiveis;
-        item_quantidade = irandom_range(1, 3);
-        sprite_ind = 3;
-        cura = 10;
-        ind = 3;
-        tipo = "uso";
-    } else if (item_index > 550 && item_index <= 750) { // 20% de chance - cura média
-        item_nome = "Banana";
-        item_descricao = "Uma banana fresca, carregada de potassio. Perfeita para recarregar suas energias! Recupera 13 de vida!";
-        item_sprite = spr_itens_invent_consumiveis;
-        item_quantidade = irandom_range(1, 3);
-        sprite_ind = 2;
-        cura = 13;
-        ind = 2;
-        tipo = "uso";
-    } else if (item_index > 750 && item_index <= 900) { // 15% de chance - cura média
-        item_nome = "Batata";
-        item_descricao = "Uma batata robusta, pronta para ser cozida ou assada. A fonte perfeita de energia natural. Recupera 20 de vida!";
-        item_sprite = spr_itens_invent_consumiveis;
-        item_quantidade = irandom_range(1, 3);
-        sprite_ind = 0;
-        cura = 20;
-        ind = 0;
-        tipo = "uso";
-    } else if (item_index > 900 && item_index <= 970) { // 7% de chance - cura alta
-        item_nome = "Leite";
-        item_descricao = "Um copo de leite fresco e nutritivo, perfeito para fortalecer seus ossos e garantir um dia saudavel. Recupera 30 de vida!";
-        item_sprite = spr_itens_invent_consumiveis;
-        item_quantidade = irandom_range(1, 3);
-        sprite_ind = 5;
-        cura = 30;
-        ind = 5;
-        tipo = "uso";
-    } else if (item_index > 970 && item_index <= 1000) { // 3% de chance - cura muito alta
-        item_nome = "Vitamina";
-        item_descricao = "Uma dose poderosa de vitamina. Essencial para manter sua vitalidade. Recupera 50 de vida!";
-        item_sprite = spr_itens_invent_consumiveis;
-        item_quantidade = irandom_range(1, 3);
-        sprite_ind = 4;
-        cura = 50;
-        ind = 4;
-        tipo = "uso";
-    }else if (item_index > 1100 && item_index <= 2000) { // 1% de chance
-		drop = false;
-	}
-
-  if (drop == true) {
-      var _inst = instance_create_layer(pos_x, pos_y, "Instances_itens", obj_item);
-    _inst.sprite_index = item_sprite;
-    _inst.quantidade = item_quantidade;
-    _inst.nome = item_nome;
-    _inst.descricao = item_descricao;
-    _inst.sala_x = global.current_sala[0];
-    _inst.sala_y = global.current_sala[1];
-    _inst.pos_x = pos_x;
-    _inst.pos_y = pos_y;
-    _inst.image_index = sprite_ind;
-    _inst.dano = dano;
-    _inst.cura = cura;
-    _inst.velocidade = velocidade;
-    _inst.armadura = armadura;
-    _inst.ind = ind;
-    _inst.tipo = tipo;
-    _inst.depth = prof - 1;
-    _inst.profundidade = prof - 1;
-    salvar_item(_inst.sala_x, _inst.sala_y, pos_x, pos_y, _inst);// code here
-  }
-}
-
-
-function criar_armadura_aleatoria(pos_x, pos_y, prof) {
-    randomize();
-
-    var item_nome,drop, item_descricao, item_sprite, item_quantidade, sprite_ind, dano, armadura, velocidade, cura, ind, tipo;
-    cura = 0;
-    velocidade = 0;
-    dano = 0;
-    armadura = 0;
-    tipo = "";
-	drop = true;
-
-    // Gera um número aleatório entre 0 e 1000
-    var item_index = irandom(1000);
-
-    // Definir item com base no índice e probabilidades
-    if (item_index <= 300) { // 30% de chance - menor armadura
-        item_nome = "Cobertor de Super-Herói";
-        item_descricao = "Um cobertor velho com estampa de super-herói. Não protege muito, mas traz conforto.";
-        item_sprite = spr_itens_invent_passivo_armadura;
-        item_quantidade = 0;
-        sprite_ind = 0;
-        armadura = 1;
-        tipo = "armadura";
-        ind = 0;
-    } else if (item_index > 300 && item_index <= 550) { // 25% de chance - armadura média
-        item_nome = "Armadura de Papelão";
-        item_descricao = "Caixas de papelão cortadas e pintadas. Oferece um pouco mais de proteção do que parece.";
-        item_sprite = spr_itens_invent_passivo_armadura;
-        item_quantidade = 0;
-        sprite_ind = 1;
-        armadura = 2;
-        tipo = "armadura";
-        ind = 1;
-    } else if (item_index > 550 && item_index <= 750) { // 20% de chance - armadura maior
-        item_nome = "Toalha Enrolada";
-        item_descricao = "Uma toalha enrolada como um manto. Ideal para proteger-se contra monstros imaginários.";
-        item_sprite = spr_itens_invent_passivo_armadura;
-        item_quantidade = 0;
-        sprite_ind = 2;
-        armadura = 3;
-        tipo = "armadura";
-        ind = 2;
-    } else if (item_index > 750 && item_index <= 900) { // 15% de chance - mais resistência
-        item_nome = "Capa de Chuva";
-        item_descricao = "Uma capa de chuva velha. Não oferece muita defesa física, mas é resistente à lama.";
-        item_sprite = spr_itens_invent_passivo_armadura;
-        item_quantidade = 0;
-        sprite_ind = 3;
-        armadura = 4;
-        tipo = "armadura";
-        ind = 3;
-    } else if (item_index > 900 && item_index <= 970) { // 7% de chance - proteção alta
-        item_nome = "Casaco Almofadado";
-        item_descricao = "Um casaco acolchoado, perfeito para afastar o frio e proteger contra golpes leves.";
-        item_sprite = spr_itens_invent_passivo_armadura;
-        item_quantidade = 0;
-        sprite_ind = 4;
-        armadura = 5;
-        tipo = "armadura";
-        ind = 4;
-    } else if (item_index > 970 && item_index <= 990) { // 2% de chance - armadura bem resistente
-        item_nome = "Armadura de Travesseiro";
-        item_descricao = "Feita com travesseiros amarrados, essa armadura improvisada é mais útil do que parece.";
-        item_sprite = spr_itens_invent_passivo_armadura;
-        item_quantidade = 0;
-        sprite_ind = 5;
-        armadura = 6;
-        tipo = "armadura";
-        ind = 5;
-    } else if (item_index > 990) { // 1% de chance - armadura lendária
-        item_nome = "Capa de Super-Herói";
-        item_descricao = "Uma capa que te faz sentir invencível. Proteção máxima contra todos os inimigos imaginários.";
-        item_sprite = spr_itens_invent_passivo_armadura;
-        item_quantidade = 0;
-        sprite_ind = 6;
-        armadura = 7;
-        tipo = "armadura";
-        ind = 6;
-    }else if (item_index > 1100 && item_index <= 2000) { // 1% de chance
-		drop = false;
-	}
-
-  if (drop == true) {
-      var _inst = instance_create_layer(pos_x, pos_y, "Instances_itens", obj_item);
-    _inst.sprite_index = item_sprite;
-    _inst.quantidade = item_quantidade;
-    _inst.nome = item_nome;
-    _inst.descricao = item_descricao;
-    _inst.sala_x = global.current_sala[0];
-    _inst.sala_y = global.current_sala[1];
-    _inst.pos_x = pos_x;
-    _inst.pos_y = pos_y;
-    _inst.image_index = sprite_ind;
-    _inst.dano = dano;
-    _inst.cura = cura;
-    _inst.velocidade = velocidade;
-    _inst.armadura = armadura;
-    _inst.ind = ind;
-    _inst.tipo = tipo;
-    _inst.depth = prof - 1;
-    _inst.profundidade = prof - 1;
-    salvar_item(_inst.sala_x, _inst.sala_y, pos_x, pos_y, _inst);// code here
-  }
-}
-
-
-
-function criar_item_aleatorio_passivos_arma(pos_x, pos_y, prof) {
-    randomize();
-
-    var item_nome, item_descricao, item_sprite, item_quantidade, sprite_ind, dano, armadura, velocidade,drop, cura, ind, tipo;
-    cura = 0;
-    velocidade = 0;
-    dano = 0;
-    armadura = 0;
-    tipo = "";
-	drop = true;
-	
-
-    // Gera um número aleatório entre 0 e 1000
-    var item_index = irandom_range(0, 2000);
-
-    // Definir item com base no índice e probabilidades
-    if (item_index <= 500) { // 50% de chance
-        item_nome = "Graveto";
-        item_descricao = "Um pequeno graveto. Aumenta em 2 o seu dano!";
-        item_sprite = spr_itens_invent_passivo_armas;
-        item_quantidade = 0;
-        sprite_ind = 0;
-        dano = 2;
-        tipo = "arma";
-        ind = 0;
-    } else if (item_index > 500 && item_index <= 800) { // 30% de chance
-        item_nome = "Vassoura";
-        item_descricao = "Uma vassoura velha. Aumenta em 4 o seu dano!";
-        item_sprite = spr_itens_invent_passivo_armas;
-        item_quantidade = 0;
-        sprite_ind = 1;
-        dano = 4;
-        tipo = "arma";
-        ind = 1;
-    } else if (item_index > 800 && item_index <= 950) { // 15% de chance
-        item_nome = "Espada de plastico";
-        item_descricao = "Uma espada de plastico. Aumenta em 5 o seu dano!";
-        item_sprite = spr_itens_invent_passivo_armas;
-        item_quantidade = 0;
-        sprite_ind = 2;
-        dano = 5;
-        tipo = "arma";
-        ind = 2;
-    } else if (item_index > 950 && item_index <= 990) { // 4% de chance
-        item_nome = "Espada de madeira";
-        item_descricao = "Uma espada de madeira. Aumenta em 7 o seu dano!";
-        item_sprite = spr_itens_invent_passivo_armas;
-        item_quantidade = 0;
-        sprite_ind = 3;
-        dano = 7;
-        tipo = "arma";
-        ind = 3;
-    } else if (item_index > 990 && item_index <= 1000) { // 1% de chance
-        item_nome = "Espada de ouro";
-        item_descricao = "Uma espada de ouro brilhante. Aumenta em 9 o seu dano!";
-        item_sprite = spr_itens_invent_passivo_armas;
-        item_quantidade = 0;
-        sprite_ind = 4;
-        dano = 9;
-        tipo = "arma";
-        ind = 4;
+    
+    // 1. Controle de raridade global (chance de não dropar nada)
+    var chance_nao_drop = raridade; // Raridade 1 = 1% chance de não dropar, 100 = 99% chance
+    if (random(101) < chance_nao_drop) {
+        return; // Não dropa nada
     }
-	 else if (item_index > 1000 && item_index <= 1100) { 
-        item_nome = "Espada mata Fantasma";
-        item_descricao = "Uma espada que lhe da o poder de matar fantasmas e aumenta em 9 o seu dano!";
-        item_sprite = spr_itens_invent_passivo_armas;
-        item_quantidade = 0;
-        sprite_ind = 5;
-        dano = 9;
-        tipo = "arma";
-        ind = 5;
-    }else if (item_index > 1100 && item_index <= 2000) { 
-		drop = false;
-	}
-
-  if (drop == true) {
-      var _inst = instance_create_layer(pos_x, pos_y, "Instances_itens", obj_item);
-    _inst.sprite_index = item_sprite;
-    _inst.quantidade = item_quantidade;
-    _inst.nome = item_nome;
-    _inst.descricao = item_descricao;
+    
+    // 2. Sistema de pesos com raridade progressiva
+    var itens = [
+        // nome, descrição, sprite_ind, cura, ind, tipo, peso_base, quantidade_min, quantidade_max
+        ["Maca", "Recupera 10 de vida", 1, 10, 1, "uso", 300, 1, 3],
+        ["Uva", "Recupera 10 de vida", 3, 10, 3, "uso", 250, 1, 3],
+        ["Banana", "Recupera 13 de vida", 2, 13, 2, "uso", 200, 1, 3],
+        ["Batata", "Recupera 20 de vida", 0, 20, 0, "uso", 150, 1, 3],
+        ["Leite", "Recupera 30 de vida", 5, 30, 5, "uso", 70, 1, 3],
+        ["Vitamina", "Recupera 50 de vida", 4, 50, 4, "uso", 30, 1, 3]
+    ];
+    
+    // Ajusta pesos baseado na raridade (itens de cura maior são mais afetados)
+    var total_pesos = 0;
+    for (var i = 0; i < array_length(itens); i++) {
+        var fator = 1 + (raridade * i / 40); // Progressão mais suave para itens de cura
+        itens[i][6] = round(itens[i][6] / fator); // Ajusta o peso
+        total_pesos += itens[i][6];
+    }
+    
+    // 3. Seleção do item
+    var roll = irandom(total_pesos - 1);
+    var acumulado = 0;
+    var item_selecionado;
+    
+    for (var i = 0; i < array_length(itens); i++) {
+        acumulado += itens[i][6];
+        if (roll < acumulado) {
+            item_selecionado = itens[i];
+            break;
+        }
+    }
+    
+    // 4. Criação da instância (mantendo sua estrutura original)
+    var _inst = instance_create_layer(pos_x, pos_y, "Instances_itens", obj_item);
+    _inst.sprite_index = spr_itens_invent_consumiveis;
+    _inst.image_index = item_selecionado[2];
+    _inst.nome = item_selecionado[0];
+    _inst.descricao = item_selecionado[1];
+    _inst.cura = item_selecionado[3];
+    _inst.ind = item_selecionado[4];
+    _inst.tipo = item_selecionado[5];
+    _inst.quantidade = irandom_range(item_selecionado[7], item_selecionado[8]);
+    _inst.depth = prof - 1;
+    _inst.profundidade = prof - 1;
+    
+    // Valores fixos conforme seu original
+    _inst.dano = 0;
+    _inst.velocidade = 0;
+    _inst.armadura = 0;
     _inst.sala_x = global.current_sala[0];
     _inst.sala_y = global.current_sala[1];
     _inst.pos_x = pos_x;
     _inst.pos_y = pos_y;
-    _inst.image_index = sprite_ind;
-    _inst.dano = dano;
-    _inst.cura = cura;
-    _inst.velocidade = velocidade;
-    _inst.armadura = armadura;
-    _inst.ind = ind;
-    _inst.tipo = tipo;
-    _inst.depth = prof - 1;
-    _inst.profundidade = prof - 1;
-    salvar_item(_inst.sala_x, _inst.sala_y, pos_x, pos_y, _inst);// code here
-  }
-   
+    
+    salvar_item(_inst.sala_x, _inst.sala_y, pos_x, pos_y, _inst);
 }
 
-function criar_item_aleatorio_passivos_pe(pos_x, pos_y, prof) {
+
+function criar_armadura_aleatoria(pos_x, pos_y, prof, raridade) {
     randomize();
-
-    var item_nome,drop, item_descricao, item_sprite, item_quantidade, sprite_ind, dano, armadura, velocidade, cura, ind, tipo;
-    cura = 0;
-    velocidade = 0;
-    dano = 0;
-    armadura = 0;
-    tipo = 0;
-	drop = true;
-
-    var item_index = irandom(1000);
-
-    // Itens baseados na probabilidade de velocidade
-    if (item_index <= 300) { // 30% de chance - baixa velocidade
-        item_nome = "Sapato Velho";
-        item_descricao = "Sapatos desgastados, porem ainda uteis. Oferece uma pequena melhoria de velocidade. Aumenta sua velocidade em 1 !";
-        item_sprite = spr_itens_invent_passivo_pe;
-        item_quantidade = 0;
-        sprite_ind = 0;
-        velocidade = 1;
-        tipo = "bota";
-        ind = 0;
-    } else if (item_index > 300 && item_index <= 550) { // 25% de chance
-        item_nome = "Tenis Velho";
-        item_descricao = "Tenis antigos, mas confortaveis o suficiente para dar um leve impulso. Aumenta sua velocidade em 2 !";
-        item_sprite = spr_itens_invent_passivo_pe;
-        item_quantidade = 0;
-        sprite_ind = 1;
-        velocidade = 2;
-        tipo = "bota";
-        ind = 1;
-    } else if (item_index > 550 && item_index <= 750) { // 20% de chance
-        item_nome = "Meia Vermelha Nova";
-        item_descricao = "Meias novas que oferecem proteção e velocidade moderada.  Aumenta sua velocidade em 3 !";
-        item_sprite = spr_itens_invent_passivo_pe;
-        item_quantidade = 0;
-        sprite_ind = 6;
-        velocidade = 3;
-        tipo = "bota";
-        ind = 6;
-    } else if (item_index > 750 && item_index <= 900) { // 15% de chance
-        item_nome = "Sapato Novo";
-        item_descricao = "Sapatos elegantes que oferecem um bom equilibrio entre estilo e desempenho.  Aumenta sua velocidade em 4 !";
-        item_sprite = spr_itens_invent_passivo_pe;
-        item_quantidade = 0;
-        sprite_ind = 5;
-        velocidade = 4;
-        tipo = "bota";
-        ind = 5;
-    } else if (item_index > 900 && item_index <= 970) { // 7% de chance
-        item_nome = "Tenis Novo";
-        item_descricao = "Tenis brilhantes que garantem um aumento consideravel na velocidade. Aumenta sua velocidade em 5 !";
-        item_sprite = spr_itens_invent_passivo_pe;
-        item_quantidade = 0;
-        sprite_ind = 4;
-        velocidade = 5;
-        tipo = "bota";
-        ind = 4;
-    } else if (item_index > 970 && item_index <= 990) { // 2% de chance
-        item_nome = "Skate";
-        item_descricao = "Aumenta a adrenalina com seu skate, deslizando rapidamente pelas ruas.  Aumenta sua velocidade em 6 !";
-        item_sprite = spr_itens_invent_passivo_pe;
-        item_quantidade = 0;
-        sprite_ind = 3;
-        velocidade = 6;
-        tipo = "bota";
-        ind = 3;
-    } else if (item_index > 990 && item_index <= 1100) { // 1% de chance
-        item_nome = "Patins";
-        item_descricao = "Rapidos e ageis, esses patins oferecem a maior velocidade possível.  Aumenta sua velocidade em 7 !";
-        item_sprite = spr_itens_invent_passivo_pe;
-        item_quantidade = 0;
-        sprite_ind = 2;
-        velocidade = 7;
-        tipo = "bota";
-        ind = 2;
-    }else if (item_index > 1100 && item_index <= 2000) { // 1% de chance
-		drop = false;
-	}
-
-  if (drop == true) {
-      var _inst = instance_create_layer(pos_x, pos_y, "Instances_itens", obj_item);
-    _inst.sprite_index = item_sprite;
-    _inst.quantidade = item_quantidade;
-    _inst.nome = item_nome;
-    _inst.descricao = item_descricao;
+    
+    // 1. Controle de raridade global (chance de não dropar nada)
+    var chance_nao_drop = raridade; // Raridade 1 = 1% chance de não dropar, 100 = 99% chance
+    if (random(101) < chance_nao_drop) {
+        return; // Não dropa nada
+    }
+    
+    // 2. Sistema de pesos com raridade progressiva
+    var itens = [
+        // nome, descrição, sprite_ind, armadura, ind, tipo, peso_base
+        ["Cobertor de Super-Herói", "Proteção básica. Armadura +1", 0, 1, 0, "armadura", 300],
+        ["Armadura de Papelão", "Proteção média. Armadura +2", 1, 2, 1, "armadura", 250],
+        ["Toalha Enrolada", "Proteção melhorada. Armadura +3", 2, 3, 2, "armadura", 200],
+        ["Capa de Chuva", "Resistência. Armadura +4", 3, 4, 3, "armadura", 150],
+        ["Casaco Almofadado", "Proteção alta. Armadura +5", 4, 5, 4, "armadura", 70],
+        ["Armadura de Travesseiro", "Proteção excelente. Armadura +6", 5, 6, 5, "armadura", 20],
+        ["Capa de Super-Herói", "Proteção máxima. Armadura +7", 6, 7, 6, "armadura", 10]
+    ];
+    
+    // Ajusta pesos baseado na raridade (itens mais raros são mais afetados)
+    var total_pesos = 0;
+    for (var i = 0; i < array_length(itens); i++) {
+        var fator = 1 + (raridade * i / 60); // Progressão balanceada para armaduras
+        itens[i][6] = round(itens[i][6] / fator); // Ajusta o peso
+        total_pesos += itens[i][6];
+    }
+    
+    // 3. Seleção do item
+    var roll = irandom(total_pesos - 1);
+    var acumulado = 0;
+    var item_selecionado;
+    
+    for (var i = 0; i < array_length(itens); i++) {
+        acumulado += itens[i][6];
+        if (roll < acumulado) {
+            item_selecionado = itens[i];
+            break;
+        }
+    }
+    
+    // 4. Criação da instância (mantendo sua estrutura original)
+    var _inst = instance_create_layer(pos_x, pos_y, "Instances_itens", obj_item);
+    _inst.sprite_index = spr_itens_invent_passivo_armadura;
+    _inst.image_index = item_selecionado[2];
+    _inst.nome = item_selecionado[0];
+    _inst.descricao = item_selecionado[1];
+    _inst.armadura = item_selecionado[3];
+    _inst.ind = item_selecionado[4];
+    _inst.tipo = item_selecionado[5];
+    _inst.depth = prof - 1;
+    _inst.profundidade = prof - 1;
+    
+    // Valores fixos conforme seu original
+    _inst.quantidade = 0;
+    _inst.dano = 0;
+    _inst.cura = 0;
+    _inst.velocidade = 0;
     _inst.sala_x = global.current_sala[0];
     _inst.sala_y = global.current_sala[1];
     _inst.pos_x = pos_x;
     _inst.pos_y = pos_y;
-    _inst.image_index = sprite_ind;
-    _inst.dano = dano;
-    _inst.cura = cura;
-    _inst.velocidade = velocidade;
-    _inst.armadura = armadura;
-    _inst.ind = ind;
-    _inst.tipo = tipo;
+    
+    salvar_item(_inst.sala_x, _inst.sala_y, pos_x, pos_y, _inst);
+}
+
+
+function criar_item_aleatorio_passivos_arma(pos_x, pos_y, prof, raridade) {
+    randomize();
+    
+    // 1. Controle de raridade global (chance de não dropar nada)
+    var chance_nao_drop = raridade; // Raridade 1 = 1% chance de não dropar, 100 = 99% chance
+    if (random(101) < chance_nao_drop) {
+        return; // Não dropa nada
+    }
+    
+    // 2. Sistema de pesos com raridade progressiva
+    var itens = [
+        // nome, descrição, sprite_ind, dano, ind, tipo, peso_base
+        ["Graveto", "Um pequeno graveto. Dano +2", 0, 2, 0, "arma", 500],
+        ["Vassoura", "Vassoura velha. Dano +4", 1, 4, 1, "arma", 300],
+        ["Espada de plastico", "Espada de plástico. Dano +5", 2, 5, 2, "arma", 150],
+        ["Espada de madeira", "Espada de madeira. Dano +7", 3, 7, 3, "arma", 40],
+        ["Espada de ouro", "Espada de ouro. Dano +9", 4, 9, 4, "arma", 10],
+        ["Espada mata Fantasma", "Mata fantasmas. Dano +9", 5, 9, 5, "arma", 10]
+    ];
+    
+    // Ajusta pesos baseado na raridade (itens mais raros são mais afetados)
+    var total_pesos = 0;
+    for (var i = 0; i < array_length(itens); i++) {
+        var fator = 1 + (raridade * i / 50); // Progressão mais acentuada para armas
+        itens[i][6] = round(itens[i][6] / fator); // Ajusta o peso
+        total_pesos += itens[i][6];
+    }
+    
+    // 3. Seleção do item
+    var roll = irandom(total_pesos - 1);
+    var acumulado = 0;
+    var item_selecionado;
+    
+    for (var i = 0; i < array_length(itens); i++) {
+        acumulado += itens[i][6];
+        if (roll < acumulado) {
+            item_selecionado = itens[i];
+            break;
+        }
+    }
+    
+    // 4. Criação da instância (mantendo sua estrutura original)
+    var _inst = instance_create_layer(pos_x, pos_y, "Instances_itens", obj_item);
+    _inst.sprite_index = spr_itens_invent_passivo_armas;
+    _inst.image_index = item_selecionado[2];
+    _inst.nome = item_selecionado[0];
+    _inst.descricao = item_selecionado[1];
+    _inst.dano = item_selecionado[3];
+    _inst.ind = item_selecionado[4];
+    _inst.tipo = item_selecionado[5];
     _inst.depth = prof - 1;
     _inst.profundidade = prof - 1;
-    salvar_item(_inst.sala_x, _inst.sala_y, pos_x, pos_y, _inst);// code here
-  }
+    
+    // Valores fixos conforme seu original
+    _inst.quantidade = 0;
+    _inst.cura = 0;
+    _inst.velocidade = 0;
+    _inst.armadura = 0;
+    _inst.sala_x = global.current_sala[0];
+    _inst.sala_y = global.current_sala[1];
+    _inst.pos_x = pos_x;
+    _inst.pos_y = pos_y;
+    
+    salvar_item(_inst.sala_x, _inst.sala_y, pos_x, pos_y, _inst);
+}
+
+function criar_item_aleatorio_passivos_pe(pos_x, pos_y, prof, raridade) {
+    randomize();
+	var tanto_itens = 6;
+    
+    // 1. Controle de raridade global (chance de não dropar nada)
+    var chance_nao_drop = raridade; // Raridade 1 = 1% chance de não dropar, 100 = 99% chance
+    if (random(101) < chance_nao_drop) {
+        return; // Não dropa nada
+    }
+    
+    // 2. Sistema de pesos com raridade progressiva
+    var itens = [
+        // nome, descrição, sprite_ind, velocidade, ind, tipo, peso_base
+        ["Sapato Velho", "Sapatos desgastados, mas úteis. Velocidade +1", 0, 1, 0, "bota", 300],
+        ["Tenis Velho", "Tênis antigos mas confortáveis. Velocidade +2", 1, 2, 1, "bota", 250],
+        ["Meia Vermelha Nova", "Meias novas com proteção. Velocidade +3", 6, 3, 6, "bota", 200],
+        ["Sapato Novo", "Sapatos elegantes. Velocidade +4", 5, 4, 5, "bota", 150],
+        ["Tenis Novo", "Tênis brilhantes. Velocidade +5", 4, 5, 4, "bota", 70],
+        ["Skate", "Aumenta adrenalina. Velocidade +6", 3, 6, 3, "bota", 20],
+        ["Patins", "Máxima velocidade. Velocidade +7", 2, 7, 2, "bota", 10]
+    ];
+    
+    // Ajusta pesos baseado na raridade (itens mais raros são mais afetados)
+    var total_pesos = 0;
+    for (var i = 0; i < array_length(itens); i++) {
+        var fator = 1 + (raridade * i / 100); // Progressão por índice
+        itens[i][tanto_itens] = round(itens[i][tanto_itens] / fator); // Ajusta o peso
+        total_pesos += itens[i][tanto_itens];
+    }
+    
+    // 3. Seleção do item
+    var roll = irandom(total_pesos - 1);
+    var acumulado = 0;
+    var item_selecionado;
+    
+    for (var i = 0; i < array_length(itens); i++) {
+        acumulado += itens[i][tanto_itens];
+        if (roll < acumulado) {
+            item_selecionado = itens[i];
+            break;
+        }
+    }
+    
+    // 4. Criação da instância (mantendo sua estrutura original)
+    var _inst = instance_create_layer(pos_x, pos_y, "Instances_itens", obj_item);
+    _inst.sprite_index = spr_itens_invent_passivo_pe;
+    _inst.image_index = item_selecionado[2];
+    _inst.nome = item_selecionado[0];
+    _inst.descricao = item_selecionado[1];
+    _inst.velocidade = item_selecionado[3];
+    _inst.ind = item_selecionado[4];
+    _inst.tipo = item_selecionado[5];
+    _inst.depth = prof - 1;
+    _inst.profundidade = prof - 1;
+    
+    // Valores fixos conforme seu original
+    _inst.quantidade = 0;
+    _inst.dano = 0;
+    _inst.cura = 0;
+    _inst.armadura = 0;
+    _inst.sala_x = global.current_sala[0];
+    _inst.sala_y = global.current_sala[1];
+    _inst.pos_x = pos_x;
+    _inst.pos_y = pos_y;
+    
+    salvar_item(_inst.sala_x, _inst.sala_y, pos_x, pos_y, _inst);
 }
 
 

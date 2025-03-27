@@ -16,6 +16,8 @@ if (vida <= 0) {
 	var _xp = instance_create_layer(x, y, "instances", obj_xp_um);
 	_xp.xp_multiplicador = lvl_inimigo*10 + (vida/100);
     instance_destroy();
+	obj_player.alarm[6] =  3;
+	criar_item_aleatorio_passivos_pe(x,y,depth,100);
 }
 
 if (instance_exists(obj_camera)){

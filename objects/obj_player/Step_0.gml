@@ -1,4 +1,5 @@
 
+
 if(global.level_up == true){
 	alarm[0]++;
 	alarm[2]++;

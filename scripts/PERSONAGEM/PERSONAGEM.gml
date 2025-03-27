@@ -109,7 +109,7 @@ if(instance_exists(obj_item)and obj_invetario.inventario = false and !global.inv
 	var _inst = instance_nearest(x,y,obj_item);
 	if(distance_to_point(_inst.x,_inst.y)<= 180){
 		desenha_botao = true;
-		if(keyboard_check_pressed(ord("F"))&& pegar = true){
+		if(keyboard_check_pressed(ord("F"))and pegar = true){
 			adicionar_item_invent(_inst.image_index,_inst.quantidade,_inst.sprite_index,_inst.nome,_inst.descricao,0,0,0,0,_inst.dano,_inst.armadura,_inst.velocidade,_inst.cura,_inst.tipo,_inst.ind);
 			coletar_item(_inst.x,_inst.y,global.current_sala);
 			instance_destroy(_inst);
