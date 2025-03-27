@@ -25,7 +25,8 @@ O jogo se divide em duas partes principais:
 2. **Parte de Exploração (The Binding of Isaac)**:
    - O jogador explora salas interconectadas em um labirinto procedural.
    - Encontra itens, power-ups e NPCs que podem ajudar ou atrapalhar sua jornada.
-
+### Como o projeto esta:
+   - Jogador é iniciado num mapa infinito com estruturas aleatorias e casas inimigos são gerados aleatoriamente e infinitamente cada level subido da um poder ao player de sua escolha podendo escolher entre 4(apenas poderes basicos adicionados) cada casa é gerada aleatoriamente e proceduralmente com um formato unico para cada uma jogador podendo sair e entrar a hora que quiser
 ### Progressão do Jogador:
 - **Bebê**: Fase inicial, com inimigos simples e habilidades básicas.
 - **Criança**: Introdução a novos desafios e medos infantis.
@@ -72,7 +73,11 @@ O jogo está sendo desenvolvido no **GameMaker Studio 2**, utilizando as seguint
 Aqui estão algumas capturas de tela do jogo:
 
 ### Fase de Bebê
-![image](https://github.com/user-attachments/assets/b6372f51-8244-496b-998f-5966677b421b)
+![image](https://github.com/user-attachments/assets/c731d17a-960b-41a5-ac3b-a46b79e7d5ac)
+
+### Escolha de poderes
+![image](https://github.com/user-attachments/assets/3f323e6b-6fed-4064-8eea-34bf5e04ec7f)
+
 
 ### Menu
 ![image](https://github.com/user-attachments/assets/abefa89b-9c30-4afb-b0e1-96edf5aeeaa0)
