@@ -7,3 +7,6 @@ pos_x = -1;
 pos_y = -1;
 
 selecao_feita = false; 
+
+sombra_alpha = 0;
+

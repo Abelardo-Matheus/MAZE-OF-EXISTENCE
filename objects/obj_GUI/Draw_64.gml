@@ -1,3 +1,4 @@
+relogio();
 if(global.level_up == true){
 
 	draw_set_alpha(.7);
@@ -97,7 +98,7 @@ if(global.level_up == true){
 			draw_set_color(c_white); // Define a cor do texto
 			draw_set_halign(fa_center); // Centraliza horizontalmente
 			draw_set_valign(fa_top); // Alinha no topo
-			draw_text_colour_outline_escalado(display_get_gui_width() / 2, 20, time_text, 3, c_black, 7, 30, 300, 1, 1);
+			draw_text_colour_outline_escalado(display_get_gui_width() / 2, 10, time_text, 3, c_black, 7, 30, 300, 1, 1);
 
 
 desenha_barra_vida();

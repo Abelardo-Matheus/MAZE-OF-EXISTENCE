@@ -37,3 +37,8 @@ if (!selecao_feita) {
     selecao_feita = true;
 }
 
+
+#region sombra
+
+
+#endregion

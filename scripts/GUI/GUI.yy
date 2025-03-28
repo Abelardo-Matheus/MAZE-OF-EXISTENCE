@@ -1,7 +1,7 @@
 {
   "resourceType": "GMScript",
   "resourceVersion": "1.0",
-  "name": "mini_mapa",
+  "name": "GUI",
   "isCompatibility": false,
   "isDnD": false,
   "parent": {

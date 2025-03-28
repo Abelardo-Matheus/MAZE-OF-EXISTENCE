@@ -1,3 +1,58 @@
+function relogio() {
+    var relogio_x = global.room_width / 2;
+    var relogio_y = 120;
+    var tamanho_ponteiro = 32; // Tamanho do ponteiro
+    
+    // Desenha o relógio base
+    draw_sprite_ext(spr_relogio, 0, relogio_x, relogio_y, 1, 1, 0, c_white, 1);
+    
+    // Calcula o ângulo baseado no global.timer
+    var segundos_por_volta = global.day_night_cycle.day_duration + global.day_night_cycle.night_duration; // Tempo para uma volta completa (ajuste conforme necessário)
+    var angulo_por_segundo = 360 / segundos_por_volta;
+    var angulo_ponteiro = 180 - (global.timer * angulo_por_segundo); // Sentido horário
+    
+    // Desenha o ponteiro
+	draw_set_color(c_red);
+	draw_circle(relogio_x,relogio_y,4,false);
+    draw_ponteiro(relogio_x, relogio_y, angulo_ponteiro, tamanho_ponteiro);
+}
+
+function draw_ponteiro(x, y, angle, length) {
+    // Calcula a extremidade do ponteiro
+    var dir_x = lengthdir_x(length, angle);
+    var dir_y = lengthdir_y(length, angle);
+    
+    // Define a base da seta (80% do comprimento para não sobrepor totalmente a linha)
+    var base_x = x + dir_x * 0.9;
+    var base_y = y + dir_y * 0.9;
+    var tip_x = x + dir_x;
+    var tip_y = y + dir_y;
+    
+    // Desenha a linha principal (mais grossa)
+    draw_line_width_color(x, y, base_x, base_y, 3, c_red, c_red);
+    
+
+    draw_triangles(tip_x, tip_y, angle, 8); // 6 = tamanho da seta
+	
+}
+function draw_triangles(tip_x, tip_y, angle, size) {
+    // Ângulos para os pontos laterais do triângulo
+    var angle_left = angle + 150; // 150° para abrir a seta
+    var angle_right = angle - 150;
+    
+    // Calcula os pontos do triângulo
+    var left_x = tip_x + lengthdir_x(size, angle_left);
+    var left_y = tip_y + lengthdir_y(size, angle_left);
+    var right_x = tip_x + lengthdir_x(size, angle_right);
+    var right_y = tip_y + lengthdir_y(size, angle_right);
+    
+    // Desenha o triângulo (preenchido)
+    draw_primitive_begin(pr_trianglelist);
+    draw_vertex_color(tip_x, tip_y, c_black, 1);       // Ponta
+    draw_vertex_color(left_x, left_y, c_black, 1);     // Esquerda
+    draw_vertex_color(right_x, right_y, c_black, 1);   // Direita
+    draw_primitive_end();
+}
 function mini_mapa_vamp() {
     // Configurações do mini mapa
     var minimap_width = 220; // Largura do mini mapa

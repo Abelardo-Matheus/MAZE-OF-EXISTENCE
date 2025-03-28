@@ -13,7 +13,7 @@ if (global.level_up == true) {
 
 var _side = irandom(1);
 
-if (alarm[0] <= 0) {
+if (alarm[0] <= 0 and !global.day_night_cycle.is_day) {
     var _enemy_id = global.enemy_id_counter++; // Gera um ID único para o inimigo
 
     if (_side == 0) {
@@ -55,7 +55,7 @@ if (keyboard_check_pressed(vk_enter)) {
 }
 
 // Configurações do terreno
-var tile_size = 273; // Tamanho de cada tile
+var tile_size = 272; // Tamanho de cada tile
 var grid_radius = 10; // Número de tiles ao redor do jogador em cada direção (3x3, 5x5, etc.)
 var max_distance = (grid_radius + 20) * tile_size; // Distância máxima para manter os tiles (mais 2 de margem)
 
@@ -75,8 +75,15 @@ for (var i = -grid_radius; i <= grid_radius; i++) {
 
         // Verifica se o tile já existe
         if (!instance_position(tile_x, tile_y, obj_chao_grama_vamp)) {
-            // Cria um novo tile
-            instance_create_layer(tile_x, tile_y, "chao", obj_chao_grama_vamp);
+            // Cria um novo tile com rotação aleatória
+            var new_tile = instance_create_layer(tile_x, tile_y, "chao", obj_chao_grama_vamp);
+            
+            // Define uma rotação aleatória entre 0, 90, 180 ou 270 graus
+            var random_angle = choose(0, 90, 180, 270);
+            new_tile.image_angle = random_angle;
+            
+            // Se precisar manter a rotação física também
+            new_tile.rotation = random_angle;
         }
     }
 }
