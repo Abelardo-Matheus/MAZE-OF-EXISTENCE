@@ -8,8 +8,8 @@
   "managed": true,
   "overriddenProperties": [],
   "parent": {
-    "name": "ESTRUTURAS",
-    "path": "folders/Objects/FASE_VAMP/ESTRUTURAS.yy",
+    "name": "CASA",
+    "path": "folders/Objects/FASE_VAMP/ESTRUTURAS/CASA.yy",
   },
   "parentObjectId": {
     "name": "obj_estrutura",

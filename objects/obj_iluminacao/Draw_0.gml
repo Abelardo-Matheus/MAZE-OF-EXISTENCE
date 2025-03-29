@@ -40,8 +40,6 @@ surface_set_target(sombra_surface);
 surface_reset_target();
 }else{
 	sombra_surface = surface_create(room_width,room_height);
-
-
 }
 
 

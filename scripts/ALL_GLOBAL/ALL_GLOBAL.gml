@@ -1,6 +1,8 @@
 if (!variable_global_exists("enemy_list")) {
     global.enemy_list = ds_list_create(); // Lista para armazenar inimigos
 }
+
+global.lista_luzes = ds_list_create();
 global.map_vamp = true;
 global.map_bebe = true;
 global.pos_x_map = -1;
