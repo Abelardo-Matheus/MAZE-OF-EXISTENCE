@@ -12,7 +12,7 @@ function zoom() {
     // Limites de zoom
     var min_width = 740; // Largura mínima da viewport
     var min_height = min_width * (1080 / 1920); // Altura mínima mantendo a proporção
-    var max_width = 1280*2; // Largura máxima da viewport
+    var max_width = 1280*4; // Largura máxima da viewport
     var max_height = max_width * (1080 / 1920); // Altura máxima mantendo a proporção
 
     // Verifica se a roda do mouse foi rolada para cima

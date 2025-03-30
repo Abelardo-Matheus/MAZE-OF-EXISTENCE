@@ -1,6 +1,9 @@
-// Inicialize a lista global para armazenar inimigos (coloque no Create Event do controlador)
 
-scr_estruturas();
+gerar_estruturas(obj_estrutura, quantidade_estruturas, distancia_minima);
+gerar_estruturas(obj_poste, 5, 100);
+
+
+
 
 if (!variable_global_exists("enemy_id_counter")) {
     global.enemy_id_counter = 0; // Contador para IDs únicos
@@ -88,7 +91,8 @@ for (var i = -grid_radius; i <= grid_radius; i++) {
     }
 }
 
-// Destrói tiles que estão muito longe do jogador
+
+
 with (obj_chao_grama_vamp) {
     if (point_distance(x, y, player_x, player_y) > max_distance) {
         instance_destroy();

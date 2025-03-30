@@ -1,100 +1,51 @@
-
-// Inicializa a lista global de estruturas
+// Inicializa listas globais se ainda não existirem
 if (!variable_global_exists("posicoes_estruturas")) {
-    global.posicoes_estruturas = ds_list_create();
+    global.posicoes_estruturas = ds_list_create(); // Lista de estruturas (posição, seed, objeto)
+}
+if (!variable_global_exists("blocos_gerados")) {
+    global.blocos_gerados = ds_map_create(); // Mapa que armazena listas de tipos já gerados por bloco
 }
 
+global.tamanho_bloco = 20000; // Tamanho do bloco
+global.ultimo_bloco = [0, 0]; // Última posição do jogador em blocos
 
-global.tamanho_bloco = 20000;  // Tamanho de cada bloco (ajustável)
-global.blocos_gerados = ds_list_create();
-global.ultimo_bloco = [0, 0];
-
-function recriar_estruturas() {
-    if (ds_exists(global.posicoes_estruturas, ds_type_list) && ds_list_size(global.posicoes_estruturas) > 0) {
-        for (var i = 0; i < ds_list_size(global.posicoes_estruturas); i++) {
-            var estrutura_info = global.posicoes_estruturas[| i];
-            var pos_x = estrutura_info[0];
-            var pos_y = estrutura_info[1];
-            var seed = estrutura_info[2];
-
-                var casa = instance_create_depth(pos_x, pos_y, 0, obj_estrutura);
-                casa.seed = seed;
-            
-        }
-    }
-}
-
-function scr_estruturas() {
+function gerar_estruturas(obj_struct, quantidade_estruturas, distancia_minima) {
     var bloco_atual_x = floor(obj_player.x / global.tamanho_bloco);
     var bloco_atual_y = floor(obj_player.y / global.tamanho_bloco);
 
-    if (!variable_instance_exists(global, "estruturas_iniciais_geradas")) {
-        gerar_blocos_3x3(bloco_atual_x, bloco_atual_y);
-        global.ultimo_bloco = [bloco_atual_x, bloco_atual_y];
-        global.estruturas_iniciais_geradas = true;
+    for (var bx = bloco_atual_x - 1; bx <= bloco_atual_x + 1; bx++) {
+        for (var by = bloco_atual_y - 1; by <= bloco_atual_y + 1; by++) {
+            gerar_estruturas_para_bloco(bx, by, obj_struct, quantidade_estruturas, distancia_minima);
+        }
+    }
+}
+
+function gerar_estruturas_para_bloco(bx, by, obj_struct, quantidade_estruturas, distancia_minima) {
+    var bloco_id = string(bx) + "," + string(by);
+
+    // Verifica se esse bloco já existe no mapa
+    if (!ds_map_exists(global.blocos_gerados, bloco_id)) {
+        global.blocos_gerados[? bloco_id] = ds_list_create(); // Criamos uma nova lista para esse bloco
+    }
+
+    var lista_estruturas = global.blocos_gerados[? bloco_id];
+
+    // Se esse tipo de estrutura já foi gerado nesse bloco, não gera novamente
+    if (ds_list_find_index(lista_estruturas, obj_struct) != -1) {
         return;
     }
 
-    // Verifica distância e destrói estruturas muito distantes
-    for (var i = ds_list_size(global.posicoes_estruturas) - 1; i >= 0; i--) {
-        var estrutura_info = global.posicoes_estruturas[| i];
-        var pos_x = estrutura_info[0];
-        var pos_y = estrutura_info[1];
-        var bloco_x = floor(pos_x / global.tamanho_bloco);
-        var bloco_y = floor(pos_y / global.tamanho_bloco);
-        
-        if (abs(bloco_x - bloco_atual_x) > 2 || abs(bloco_y - bloco_atual_y) > 2) {
-            var estrutura = instance_position(pos_x, pos_y, obj_estrutura);
-            if (estrutura) {
-                instance_destroy(estrutura);
-            }
-           
-        }
-    }
-
-    // Se o jogador mudou de bloco, gera novos blocos e recria estruturas
-    if (global.ultimo_bloco[0] != bloco_atual_x || global.ultimo_bloco[1] != bloco_atual_y) {
-        gerar_blocos_3x3(bloco_atual_x, bloco_atual_y); // Gera novos blocos
-        recriar_estruturas(); // Recria estruturas existentes
-        global.ultimo_bloco = [bloco_atual_x, bloco_atual_y];
-    }
-}
-
-
-
-function gerar_blocos_3x3(bloco_centro_x, bloco_centro_y) {
-    // Gera blocos em um grid 3x3 ao redor do bloco central
-    for (var bx = bloco_centro_x - 1; bx <= bloco_centro_x + 1; bx++) {
-        for (var by = bloco_centro_y - 1; by <= bloco_centro_y + 1; by++) {
-            gerar_estruturas_para_bloco(bx, by);
-        }
-    }
-}
-
-function gerar_estruturas_para_bloco(bx, by) {
-    // Verifica se o bloco já foi gerado
-    var bloco_id = string(bx) + "," + string(by);
-    if (ds_list_find_index(global.blocos_gerados, bloco_id) != -1) {
-        return; // Bloco já foi gerado
-    }
-    
-    // Marca o bloco como gerado
-    ds_list_add(global.blocos_gerados, bloco_id);
-    
-    // Calcula as coordenadas do centro do bloco
     var centro_x = (bx + 0.5) * global.tamanho_bloco;
     var centro_y = (by + 0.5) * global.tamanho_bloco;
     
-    // Gera estruturas aleatoriamente dentro deste bloco
     var estruturas_geradas = 0;
     var tentativas = 0;
     var max_tentativas = quantidade_estruturas * 3;
-    
+
     while (estruturas_geradas < quantidade_estruturas && tentativas < max_tentativas) {
         var pos_x = centro_x + random_range(-global.tamanho_bloco/2 + 100, global.tamanho_bloco/2 - 100);
         var pos_y = centro_y + random_range(-global.tamanho_bloco/2 + 100, global.tamanho_bloco/2 - 100);
         
-        // Verifica distância mínima
         var posicao_valida = true;
         for (var j = 0; j < ds_list_size(global.posicoes_estruturas); j++) {
             var estrutura_info = global.posicoes_estruturas[| j];
@@ -108,33 +59,32 @@ function gerar_estruturas_para_bloco(bx, by) {
         }
         
         if (posicao_valida) {
-			randomize();
+            randomize();
             var seed = random_get_seed();
-            var casa = instance_create_depth(pos_x, pos_y, 0, obj_estrutura);
-            casa.seed = seed;
-            
-            // Salva a posição global (como no seu código original)
-            if (estruturas_geradas == 0) {
-                global.pos_x_map = pos_x;
-                global.pos_y_map = pos_y;
-            }
-            
-            ds_list_add(global.posicoes_estruturas, [pos_x, pos_y, seed]);
+            var nova_estrutura = instance_create_depth(pos_x, pos_y, 0, obj_struct);
+            nova_estrutura.seed = seed;
+
+            ds_list_add(global.posicoes_estruturas, [pos_x, pos_y, seed, obj_struct]);
             estruturas_geradas++;
         }
-        
         tentativas++;
     }
+
+    // Adicionamos o tipo de estrutura à lista do bloco
+    ds_list_add(lista_estruturas, obj_struct);
 }
 
+function recriar_estruturas() {
+    if (ds_exists(global.posicoes_estruturas, ds_type_list)) {
+        for (var i = 0; i < ds_list_size(global.posicoes_estruturas); i++) {
+            var estrutura_info = global.posicoes_estruturas[| i];
+            var pos_x = estrutura_info[0];
+            var pos_y = estrutura_info[1];
+            var seed = estrutura_info[2];
+            var obj_tipo = estrutura_info[3];
 
-
-
-function filhos(){
-	random_set_seed(seed);
-    var objetos_no_projeto = [obj_casa_1, obj_casa_2, obj_casa_3, obj_casa_4];
-    var indice_aleatorio = irandom(array_length(objetos_no_projeto) - 1);
-    var filho_selecionado = filhos[indice_aleatorio];
-    instance_change(filho_selecionado, true);
-	
+            var nova_estrutura = instance_create_depth(pos_x, pos_y, 0, obj_tipo);
+            nova_estrutura.seed = seed;
+        }
+    }
 }
