@@ -397,6 +397,7 @@
     {"id":{"name":"obj_control_dia_noite","path":"objects/obj_control_dia_noite/obj_control_dia_noite.yy",},},
     {"id":{"name":"obj_ataque_boss","path":"objects/obj_ataque_boss/obj_ataque_boss.yy",},},
     {"id":{"name":"spr_amoeba_laranja","path":"sprites/spr_amoeba_laranja/spr_amoeba_laranja.yy",},},
+    {"id":{"name":"spr_sanidade","path":"sprites/spr_sanidade/spr_sanidade.yy",},},
     {"id":{"name":"par_poder_arremessavel","path":"objects/par_poder_arremessavel/par_poder_arremessavel.yy",},},
     {"id":{"name":"PERSONAGEM_TUTORIAL","path":"scripts/PERSONAGEM_TUTORIAL/PERSONAGEM_TUTORIAL.yy",},},
     {"id":{"name":"obj_player_tutorial","path":"objects/obj_player_tutorial/obj_player_tutorial.yy",},},

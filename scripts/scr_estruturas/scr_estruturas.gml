@@ -6,7 +6,7 @@ if (!variable_global_exists("blocos_gerados")) {
     global.blocos_gerados = ds_map_create(); // Mapa que armazena listas de tipos já gerados por bloco
 }
 
-global.tamanho_bloco = 20000; // Tamanho do bloco
+global.tamanho_bloco = 30000; // Tamanho do bloco
 global.ultimo_bloco = [0, 0]; // Última posição do jogador em blocos
 
 function gerar_estruturas(obj_struct, quantidade_estruturas, distancia_minima) {

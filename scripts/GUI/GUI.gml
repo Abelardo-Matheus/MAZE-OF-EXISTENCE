@@ -54,32 +54,53 @@ function draw_triangles(tip_x, tip_y, angle, size) {
     draw_primitive_end();
 }
 function mini_mapa_vamp() {
-    // Configurações do mini mapa
-    var minimap_width = 220;
-    var minimap_height = 200;
-    var minimap_x = display_get_width() - minimap_width - 40;
-    var minimap_y = display_get_height() - minimap_height - 40;
-    var minimap_scale = 0.008;
-    var distancia_maxima = 14000;
+    var minimap_width, minimap_height, minimap_x, minimap_y, minimap_scale, distancia_maxima;
+
+    if (keyboard_check_pressed(ord("M"))) {
+        global.minimap_expandido = !global.minimap_expandido;
+    }
+
+    if (global.minimap_expandido) {
+        minimap_width = 1000;
+        minimap_height = 800;
+        minimap_x = (display_get_width() - minimap_width) / 2;
+        minimap_y = (display_get_height() - minimap_height) / 2;
+        minimap_scale = 0.02;
+        distancia_maxima = 30000;
+    } else {
+        minimap_width = 220;
+        minimap_height = 200;
+        minimap_x = display_get_width() - minimap_width - 40;
+        minimap_y = display_get_height() - minimap_height - 40;
+        minimap_scale = 0.008;
+        distancia_maxima = 14000;
+    }
+
     var tamanho_minimo = 0.6;
     var tamanho_normal = 1;
 
-    // Desenha o fundo do mini mapa (retângulo preto)
+    var cor_marrom = make_color_rgb(174, 91, 28);
+    
     draw_set_color(c_black);
+    draw_rectangle(minimap_x - 4, minimap_y - 4, minimap_x + minimap_width + 4, minimap_y + minimap_height + 4, false);
+    
+    draw_set_color(cor_marrom);
     draw_rectangle(minimap_x, minimap_y, minimap_x + minimap_width, minimap_y + minimap_height, false);
 
-    // Desenha o jogador no centro do mini mapa
     var player_x = minimap_x + minimap_width / 2;
     var player_y = minimap_y + minimap_height / 2;
     draw_set_color(c_red);
     draw_circle(player_x, player_y, 3, false);
 
-    // Percorre a lista global de estruturas
+    var mouse_x_minimap = device_mouse_x_to_gui(0);
+    var mouse_y_minimap = device_mouse_y_to_gui(0);
+    var estrutura_hover = -1;
+
     for (var i = 0; i < ds_list_size(global.posicoes_estruturas); i++) {
         var estrutura_info = global.posicoes_estruturas[| i];
         var estrutura_x = estrutura_info[0];
         var estrutura_y = estrutura_info[1];
-        var obj_tipo = estrutura_info[3]; // Tipo do objeto (casa, poste, etc.)
+        var obj_tipo = estrutura_info[3];
 
         var distancia = point_distance(estrutura_x, estrutura_y, obj_player.x, obj_player.y);
 
@@ -94,15 +115,29 @@ function mini_mapa_vamp() {
             fator_tamanho = clamp(fator_tamanho, tamanho_minimo, 1);
             var tamanho_bolinha = tamanho_normal * fator_tamanho;
 
+            if (point_distance(mouse_x_minimap, mouse_y_minimap, estrutura_minimap_x, estrutura_minimap_y) < tamanho_bolinha * 20) {
+                estrutura_hover = i;
+                tamanho_bolinha *= 2.5;
+            }
+
             if (obj_tipo == obj_estrutura) {
-                // Desenha as casas com um sprite
                 draw_sprite_ext(spr_casa_mini_map, 0, estrutura_minimap_x, estrutura_minimap_y, tamanho_bolinha, tamanho_bolinha, 0, c_white, 0.8);
             } else if (obj_tipo == obj_poste) {
-                // Desenha os postes como bolinhas amarelas
                 draw_set_color(c_yellow);
                 draw_circle(estrutura_minimap_x, estrutura_minimap_y, tamanho_bolinha * 2, false);
             }
         }
+    }
+
+    if (estrutura_hover != -1) {
+        var estrutura_info = global.posicoes_estruturas[| estrutura_hover];
+        var estrutura_x = estrutura_info[0];
+        var estrutura_y = estrutura_info[1];
+        var obj_tipo = estrutura_info[3];
+        var nome_estrutura = (obj_tipo == obj_estrutura) ? "Casa" : "Poste";
+
+        draw_set_color(c_white);
+        draw_text(mouse_x_minimap + 10, mouse_y_minimap, nome_estrutura);
     }
 }
 

@@ -76,7 +76,7 @@ for (var i = 0; i < ds_list_size(global.lista_luzes); i++) {
         var tamanho_luz_5 = luz.luz_5 * scale_x;
         var tamanho_luz_6 = 0; // Caso precise adicionar algo depois
 
-        draw_set_color(luz.light_color);
+
 
         switch (luz.light_style) {
             case "soft":

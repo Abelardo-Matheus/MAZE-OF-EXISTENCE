@@ -325,6 +325,7 @@
     {"name":"obj_control_dia_noite","order":1,"path":"objects/obj_control_dia_noite/obj_control_dia_noite.yy",},
     {"name":"obj_ataque_boss","order":13,"path":"objects/obj_ataque_boss/obj_ataque_boss.yy",},
     {"name":"spr_amoeba_laranja","order":2,"path":"sprites/spr_amoeba_laranja/spr_amoeba_laranja.yy",},
+    {"name":"spr_sanidade","order":18,"path":"sprites/spr_sanidade/spr_sanidade.yy",},
     {"name":"par_poder_arremessavel","order":2,"path":"objects/par_poder_arremessavel/par_poder_arremessavel.yy",},
     {"name":"PERSONAGEM_TUTORIAL","order":3,"path":"scripts/PERSONAGEM_TUTORIAL/PERSONAGEM_TUTORIAL.yy",},
     {"name":"obj_player_tutorial","order":7,"path":"objects/obj_player_tutorial/obj_player_tutorial.yy",},
