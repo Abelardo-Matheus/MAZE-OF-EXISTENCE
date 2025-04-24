@@ -1,4 +1,5 @@
 
+
 function adicionar_item_invent() {
     ///@arg Item
     ///@arg Quantidade
@@ -15,8 +16,9 @@ function adicionar_item_invent() {
     ///@arg cura
     ///@arg tipo
     ///@arg ind
+	///@arg preco
     
-    var _grid = global.grid_itens;
+	var _grid = global.grid_itens;
     var _item = argument[0];
     var _quantidade = argument[1];
     var _sprite = argument[2];
@@ -28,6 +30,7 @@ function adicionar_item_invent() {
     var _cura = argument[12];
     var _tipo = argument[13];
     var _ind = argument[14];
+    var _preco = argument_count > 1 ? argument[15] : 0; // Correção aqui
     
     var _check = -1;
     var _empty_slot = -1;
@@ -63,131 +66,128 @@ function adicionar_item_invent() {
     _grid[# Infos.cura, _empty_slot] = _cura;
     _grid[# Infos.tipo, _empty_slot] = _tipo;
     _grid[# Infos.image_ind, _empty_slot] = _ind;
+	_grid[# Infos.preco, _empty_slot] = _preco;
 }
 
 function criar_item_aleatorio_ativos(pos_x, pos_y, prof, raridade) {
     randomize();
-    
-    // 1. Controle de raridade global (chance de não dropar nada)
-    var chance_nao_drop = raridade; // Raridade 1 = 1% chance de não dropar, 100 = 99% chance
+
+    // 1. Chance de não dropar nada
+    var chance_nao_drop = raridade;
     if (random(101) < chance_nao_drop) {
         return; // Não dropa nada
     }
-    
-    // 2. Sistema de pesos com raridade progressiva
-    var itens = [
-        // nome, descrição, sprite_ind, cura, ind, tipo, peso_base, quantidade_min, quantidade_max
-        ["Maca", "Recupera 10 de vida", 1, 10, 1, "uso", 300, 1, 3],
-        ["Uva", "Recupera 10 de vida", 3, 10, 3, "uso", 250, 1, 3],
-        ["Banana", "Recupera 13 de vida", 2, 13, 2, "uso", 200, 1, 3],
-        ["Batata", "Recupera 20 de vida", 0, 20, 0, "uso", 150, 1, 3],
-        ["Leite", "Recupera 30 de vida", 5, 30, 5, "uso", 70, 1, 3],
-        ["Vitamina", "Recupera 50 de vida", 4, 50, 4, "uso", 30, 1, 3]
-    ];
-    
-    // Ajusta pesos baseado na raridade (itens de cura maior são mais afetados)
-    var total_pesos = 0;
-    for (var i = 0; i < array_length(itens); i++) {
-        var fator = 1 + (raridade * i / 40); // Progressão mais suave para itens de cura
-        itens[i][6] = round(itens[i][6] / fator); // Ajusta o peso
-        total_pesos += itens[i][6];
+
+    // 2. Filtra os itens do tipo "uso" e calcula pesos
+    var lista_uso = ds_list_create();
+    var total_peso = 0;
+
+    for (var i = 0; i < ds_list_size(global.lista_itens); i++) {
+        var item = global.lista_itens[| i];
+        if (item[8] == "uso") { // Tipo está na posição 8
+            var peso = 100 - (i * 5); // Itens mais raros no final da lista têm menor peso
+            ds_list_add(lista_uso, [item, peso]);
+            total_peso += peso;
+        }
     }
-    
-    // 3. Seleção do item
-    var roll = irandom(total_pesos - 1);
+
+    // 3. Escolhe o item com base no peso
+    if (total_peso <= 0) {
+        ds_list_destroy(lista_uso);
+        return;
+    }
+
+    var roll = irandom(total_peso - 1);
     var acumulado = 0;
     var item_selecionado;
-    
-    for (var i = 0; i < array_length(itens); i++) {
-        acumulado += itens[i][6];
+
+    for (var i = 0; i < ds_list_size(lista_uso); i++) {
+        var entry = lista_uso[| i];
+        acumulado += entry[1];
         if (roll < acumulado) {
-            item_selecionado = itens[i];
+            item_selecionado = entry[0];
             break;
         }
     }
-    
-    // 4. Criação da instância (mantendo sua estrutura original)
+
+    ds_list_destroy(lista_uso);
+
+    // 4. Cria o item na instância
     var _inst = instance_create_layer(pos_x, pos_y, "Instances_itens", obj_item);
-    _inst.sprite_index = spr_itens_invent_consumiveis;
-    _inst.image_index = item_selecionado[2];
-    _inst.nome = item_selecionado[0];
-    _inst.descricao = item_selecionado[1];
-    _inst.cura = item_selecionado[3];
-    _inst.ind = item_selecionado[4];
-    _inst.tipo = item_selecionado[5];
-    _inst.quantidade = irandom_range(item_selecionado[7], item_selecionado[8]);
-    _inst.depth = prof - 1;
-    _inst.profundidade = prof - 1;
-    
-    // Valores fixos conforme seu original
+    _inst.sprite_index = item_selecionado[0];
+    _inst.image_index = item_selecionado[7]; // image_ind está na posição 7
+    _inst.nome = item_selecionado[1]; // nome na posição 0
+    _inst.descricao = item_selecionado[2]; // descrição na posição 1
+    _inst.cura = item_selecionado[3]; // cura na posição 3
     _inst.dano = 0;
-    _inst.velocidade = 0;
     _inst.armadura = 0;
+    _inst.velocidade = 0;
+    _inst.ind = item_selecionado[7]; // image_ind na posição 7
+    _inst.tipo = item_selecionado[8]; // tipo na posição 8
+    _inst.preco = item_selecionado[9]; // preco na posição 9
+
+	_inst.quantidade = item_selecionado[10];
+
     _inst.sala_x = global.current_sala[0];
     _inst.sala_y = global.current_sala[1];
     _inst.pos_x = pos_x;
     _inst.pos_y = pos_y;
-    
+
     salvar_item(_inst.sala_x, _inst.sala_y, pos_x, pos_y, _inst);
 }
 
-
-function criar_armadura_aleatoria(pos_x, pos_y, prof, raridade) {
+function criar_item_aleatorio_passivos_armadura(pos_x, pos_y, prof, raridade) {
     randomize();
-    
-    // 1. Controle de raridade global (chance de não dropar nada)
-    var chance_nao_drop = raridade; // Raridade 1 = 1% chance de não dropar, 100 = 99% chance
-    if (random(101) < chance_nao_drop) {
-        return; // Não dropa nada
+
+    var chance_nao_drop = raridade;
+    if (random(101) < chance_nao_drop) return;
+
+    var lista_armaduras = ds_list_create();
+    var total_peso = 0;
+
+    for (var i = 0; i < ds_list_size(global.lista_itens); i++) {
+        var item = global.lista_itens[| i];
+        if (item[8] == "armadura") { // Tipo na posição 8
+            var peso = 100 - (i * 5); // Itens mais raros têm menor peso
+            ds_list_add(lista_armaduras, [item, peso]);
+            total_peso += peso;
+        }
     }
-    
-    // 2. Sistema de pesos com raridade progressiva
-    var itens = [
-        // nome, descrição, sprite_ind, armadura, ind, tipo, peso_base
-        ["Cobertor de Super-Herói", "Proteção básica. Armadura +1", 0, 1, 0, "armadura", 300],
-        ["Armadura de Papelão", "Proteção média. Armadura +2", 1, 2, 1, "armadura", 250],
-        ["Toalha Enrolada", "Proteção melhorada. Armadura +3", 2, 3, 2, "armadura", 200],
-        ["Capa de Chuva", "Resistência. Armadura +4", 3, 4, 3, "armadura", 150],
-        ["Casaco Almofadado", "Proteção alta. Armadura +5", 4, 5, 4, "armadura", 70],
-        ["Armadura de Travesseiro", "Proteção excelente. Armadura +6", 5, 6, 5, "armadura", 20],
-        ["Capa de Super-Herói", "Proteção máxima. Armadura +7", 6, 7, 6, "armadura", 10]
-    ];
-    
-    // Ajusta pesos baseado na raridade (itens mais raros são mais afetados)
-    var total_pesos = 0;
-    for (var i = 0; i < array_length(itens); i++) {
-        var fator = 1 + (raridade * i / 60); // Progressão balanceada para armaduras
-        itens[i][6] = round(itens[i][6] / fator); // Ajusta o peso
-        total_pesos += itens[i][6];
+
+    if (total_peso <= 0) {
+        ds_list_destroy(lista_armaduras);
+        return;
     }
-    
-    // 3. Seleção do item
-    var roll = irandom(total_pesos - 1);
+
+    var roll = irandom(total_peso - 1);
     var acumulado = 0;
     var item_selecionado;
-    
-    for (var i = 0; i < array_length(itens); i++) {
-        acumulado += itens[i][6];
+
+    for (var i = 0; i < ds_list_size(lista_armaduras); i++) {
+        var entry = lista_armaduras[| i];
+        acumulado += entry[1];
         if (roll < acumulado) {
-            item_selecionado = itens[i];
+            item_selecionado = entry[0];
             break;
         }
     }
-    
-    // 4. Criação da instância (mantendo sua estrutura original)
+
+    ds_list_destroy(lista_armaduras);
+
     var _inst = instance_create_layer(pos_x, pos_y, "Instances_itens", obj_item);
-    _inst.sprite_index = spr_itens_invent_passivo_armadura;
-    _inst.image_index = item_selecionado[2];
-    _inst.nome = item_selecionado[0];
-    _inst.descricao = item_selecionado[1];
-    _inst.armadura = item_selecionado[3];
-    _inst.ind = item_selecionado[4];
-    _inst.tipo = item_selecionado[5];
+    _inst.sprite_index = item_selecionado[0];
+    _inst.image_index = item_selecionado[7]; // image_ind
+    _inst.nome = item_selecionado[1]; // nome
+    _inst.descricao = item_selecionado[2]; // descrição
+    _inst.armadura = item_selecionado[5]; // armadura na posição 5
+    _inst.ind = item_selecionado[7]; // image_ind
+    _inst.tipo = item_selecionado[8]; // tipo
+    _inst.preco = item_selecionado[9]; // preco
+
     _inst.depth = prof - 1;
     _inst.profundidade = prof - 1;
-    
-    // Valores fixos conforme seu original
-    _inst.quantidade = 0;
+
+    _inst.quantidade = item_selecionado[10];
     _inst.dano = 0;
     _inst.cura = 0;
     _inst.velocidade = 0;
@@ -195,134 +195,125 @@ function criar_armadura_aleatoria(pos_x, pos_y, prof, raridade) {
     _inst.sala_y = global.current_sala[1];
     _inst.pos_x = pos_x;
     _inst.pos_y = pos_y;
-    
+
     salvar_item(_inst.sala_x, _inst.sala_y, pos_x, pos_y, _inst);
 }
-
 
 function criar_item_aleatorio_passivos_arma(pos_x, pos_y, prof, raridade) {
     randomize();
-    
-    // 1. Controle de raridade global (chance de não dropar nada)
-    var chance_nao_drop = raridade; // Raridade 1 = 1% chance de não dropar, 100 = 99% chance
-    if (random(101) < chance_nao_drop) {
-        return; // Não dropa nada
+
+    var chance_nao_drop = raridade;
+    if (random(101) < chance_nao_drop) return;
+
+    var lista_armas = ds_list_create();
+    var total_peso = 0;
+
+    for (var i = 0; i < ds_list_size(global.lista_itens); i++) {
+        var item = global.lista_itens[| i];
+        if (item[8] == "arma") { // Tipo na posição 8
+            var peso = 100 - (i * 5); // Itens mais raros têm menor peso
+            ds_list_add(lista_armas, [item, peso]);
+            total_peso += peso;
+        }
     }
-    
-    // 2. Sistema de pesos com raridade progressiva
-    var itens = [
-        // nome, descrição, sprite_ind, dano, ind, tipo, peso_base
-        ["Graveto", "Um pequeno graveto. Dano +2", 0, 2, 0, "arma", 500],
-        ["Vassoura", "Vassoura velha. Dano +4", 1, 4, 1, "arma", 300],
-        ["Espada de plastico", "Espada de plástico. Dano +5", 2, 5, 2, "arma", 150],
-        ["Espada de madeira", "Espada de madeira. Dano +7", 3, 7, 3, "arma", 40],
-        ["Espada de ouro", "Espada de ouro. Dano +9", 4, 9, 4, "arma", 10],
-        ["Espada mata Fantasma", "Mata fantasmas. Dano +9", 5, 9, 5, "arma", 10]
-    ];
-    
-    // Ajusta pesos baseado na raridade (itens mais raros são mais afetados)
-    var total_pesos = 0;
-    for (var i = 0; i < array_length(itens); i++) {
-        var fator = 1 + (raridade * i / 50); // Progressão mais acentuada para armas
-        itens[i][6] = round(itens[i][6] / fator); // Ajusta o peso
-        total_pesos += itens[i][6];
+
+    if (total_peso <= 0) {
+        ds_list_destroy(lista_armas);
+        return;
     }
-    
-    // 3. Seleção do item
-    var roll = irandom(total_pesos - 1);
+
+    var roll = irandom(total_peso - 1);
     var acumulado = 0;
     var item_selecionado;
-    
-    for (var i = 0; i < array_length(itens); i++) {
-        acumulado += itens[i][6];
+
+    for (var i = 0; i < ds_list_size(lista_armas); i++) {
+        var entry = lista_armas[| i];
+        acumulado += entry[1];
         if (roll < acumulado) {
-            item_selecionado = itens[i];
+            item_selecionado = entry[0];
             break;
         }
     }
-    
-    // 4. Criação da instância (mantendo sua estrutura original)
+
+    ds_list_destroy(lista_armas);
+
     var _inst = instance_create_layer(pos_x, pos_y, "Instances_itens", obj_item);
-    _inst.sprite_index = spr_itens_invent_passivo_armas;
-    _inst.image_index = item_selecionado[2];
-    _inst.nome = item_selecionado[0];
-    _inst.descricao = item_selecionado[1];
-    _inst.dano = item_selecionado[3];
-    _inst.ind = item_selecionado[4];
-    _inst.tipo = item_selecionado[5];
+    _inst.sprite_index = item_selecionado[0];
+    _inst.image_index = item_selecionado[7]; // image_ind
+    _inst.nome = item_selecionado[1]; // nome
+    _inst.descricao = item_selecionado[2]; // descrição
+    _inst.dano = item_selecionado[4]; // dano na posição 4
+    _inst.ind = item_selecionado[7]; // image_ind
+    _inst.tipo = item_selecionado[8]; // tipo
+    _inst.preco = item_selecionado[9]; // preco
+
     _inst.depth = prof - 1;
     _inst.profundidade = prof - 1;
-    
-    // Valores fixos conforme seu original
-    _inst.quantidade = 0;
+
+    _inst.quantidade = item_selecionado[10];
+    _inst.armadura = 0;
     _inst.cura = 0;
     _inst.velocidade = 0;
-    _inst.armadura = 0;
     _inst.sala_x = global.current_sala[0];
     _inst.sala_y = global.current_sala[1];
     _inst.pos_x = pos_x;
     _inst.pos_y = pos_y;
-    
+
     salvar_item(_inst.sala_x, _inst.sala_y, pos_x, pos_y, _inst);
 }
 
 function criar_item_aleatorio_passivos_pe(pos_x, pos_y, prof, raridade) {
     randomize();
-	var tanto_itens = 6;
-    
-    // 1. Controle de raridade global (chance de não dropar nada)
-    var chance_nao_drop = raridade; // Raridade 1 = 1% chance de não dropar, 100 = 99% chance
-    if (random(101) < chance_nao_drop) {
-        return; // Não dropa nada
+
+    var chance_nao_drop = raridade;
+    if (random(101) < chance_nao_drop) return;
+
+    var lista_botas = ds_list_create();
+    var total_peso = 0;
+
+    for (var i = 0; i < ds_list_size(global.lista_itens); i++) {
+        var item = global.lista_itens[| i];
+        if (item[8] == "bota") { // Tipo na posição 8
+            var peso = 100 - (i * 5); // Itens mais raros têm menor peso
+            ds_list_add(lista_botas, [item, peso]);
+            total_peso += peso;
+        }
     }
-    
-    // 2. Sistema de pesos com raridade progressiva
-    var itens = [
-        // nome, descrição, sprite_ind, velocidade, ind, tipo, peso_base
-        ["Sapato Velho", "Sapatos desgastados, mas úteis. Velocidade +1", 0, 1, 0, "bota", 300],
-        ["Tenis Velho", "Tênis antigos mas confortáveis. Velocidade +2", 1, 2, 1, "bota", 250],
-        ["Meia Vermelha Nova", "Meias novas com proteção. Velocidade +3", 6, 3, 6, "bota", 200],
-        ["Sapato Novo", "Sapatos elegantes. Velocidade +4", 5, 4, 5, "bota", 150],
-        ["Tenis Novo", "Tênis brilhantes. Velocidade +5", 4, 5, 4, "bota", 70],
-        ["Skate", "Aumenta adrenalina. Velocidade +6", 3, 6, 3, "bota", 20],
-        ["Patins", "Máxima velocidade. Velocidade +7", 2, 7, 2, "bota", 10]
-    ];
-    
-    // Ajusta pesos baseado na raridade (itens mais raros são mais afetados)
-    var total_pesos = 0;
-    for (var i = 0; i < array_length(itens); i++) {
-        var fator = 1 + (raridade * i / 100); // Progressão por índice
-        itens[i][tanto_itens] = round(itens[i][tanto_itens] / fator); // Ajusta o peso
-        total_pesos += itens[i][tanto_itens];
+
+    if (total_peso <= 0) {
+        ds_list_destroy(lista_botas);
+        return;
     }
-    
-    // 3. Seleção do item
-    var roll = irandom(total_pesos - 1);
+
+    var roll = irandom(total_peso - 1);
     var acumulado = 0;
     var item_selecionado;
-    
-    for (var i = 0; i < array_length(itens); i++) {
-        acumulado += itens[i][tanto_itens];
+
+    for (var i = 0; i < ds_list_size(lista_botas); i++) {
+        var entry = lista_botas[| i];
+        acumulado += entry[1];
         if (roll < acumulado) {
-            item_selecionado = itens[i];
+            item_selecionado = entry[0];
             break;
         }
     }
-    
-    // 4. Criação da instância (mantendo sua estrutura original)
+
+    ds_list_destroy(lista_botas);
+
     var _inst = instance_create_layer(pos_x, pos_y, "Instances_itens", obj_item);
-    _inst.sprite_index = spr_itens_invent_passivo_pe;
-    _inst.image_index = item_selecionado[2];
-    _inst.nome = item_selecionado[0];
-    _inst.descricao = item_selecionado[1];
-    _inst.velocidade = item_selecionado[3];
-    _inst.ind = item_selecionado[4];
-    _inst.tipo = item_selecionado[5];
+    _inst.sprite_index = item_selecionado[0];
+    _inst.image_index = item_selecionado[7]; // image_ind
+    _inst.nome = item_selecionado[1]; // nome
+    _inst.descricao = item_selecionado[2]; // descrição
+    _inst.velocidade = item_selecionado[6]; // velocidade na posição 6
+    _inst.ind = item_selecionado[7]; // image_ind
+    _inst.tipo = item_selecionado[8]; // tipo
+    _inst.preco = item_selecionado[9]; // preco
+
     _inst.depth = prof - 1;
     _inst.profundidade = prof - 1;
-    
-    // Valores fixos conforme seu original
-    _inst.quantidade = 0;
+
+    _inst.quantidade = item_selecionado[10];
     _inst.dano = 0;
     _inst.cura = 0;
     _inst.armadura = 0;
@@ -330,9 +321,11 @@ function criar_item_aleatorio_passivos_pe(pos_x, pos_y, prof, raridade) {
     _inst.sala_y = global.current_sala[1];
     _inst.pos_x = pos_x;
     _inst.pos_y = pos_y;
-    
+
     salvar_item(_inst.sala_x, _inst.sala_y, pos_x, pos_y, _inst);
 }
+
+
 
 
 #region item
@@ -389,7 +382,8 @@ function salvar_item(sala_atual_x, sala_atual_y, _item_x, _item_y, item) {
         item.sala_y, 
         item.pos_x, 
         item.pos_y,
-		item.profundidade
+		item.profundidade,
+		item.preco,
     ];
     ds_list_add(lista_itens, item_info);
     
@@ -428,6 +422,7 @@ function recriar_item_dropado(current_sala_x, current_sala_y) {
             var pos_x = item_info[15];
             var pos_y = item_info[16];
 			var prof = item_info[17];
+			var preco = item_info[18];
 
 
             // Criar a instância do item na sala
@@ -449,6 +444,7 @@ function recriar_item_dropado(current_sala_x, current_sala_y) {
             _inst.pos_y = pos_y;
 			_inst.depth = prof -1;
 			_inst.prof = prof -1;
+			_inst.preco = preco;
         }
     }
 }
@@ -456,3 +452,60 @@ function recriar_item_dropado(current_sala_x, current_sala_y) {
 
 #endregion
 
+
+
+function criar_lista_itens_padronizados() {
+    global.lista_itens = ds_list_create();
+
+    // --- ITENS DE USO ---
+    var uso = [
+        // [sprite, nome, descrição, cura, dano, armadura, velocidade, id, tipo, preco, quantidade]
+        [spr_itens_invent_consumiveis, "Maca", "Recupera 10 de vida",         10, -1, -1, -1, 1, "uso",  10, 1],
+        [spr_itens_invent_consumiveis, "Uva", "Recupera 10 de vida",          10, -1, -1, -1, 3, "uso",  12, 1],
+        [spr_itens_invent_consumiveis, "Banana", "Recupera 13 de vida",       13, -1, -1, -1, 2, "uso",  15, 1],
+        [spr_itens_invent_consumiveis, "Batata", "Recupera 20 de vida",       20, -1, -1, -1, 0, "uso",  20, 1],
+        [spr_itens_invent_consumiveis, "Leite", "Recupera 30 de vida",        30, -1, -1, -1, 5, "uso",  35, 1],
+        [spr_itens_invent_consumiveis, "Vitamina", "Recupera 50 de vida",     50, -1, -1, -1, 4, "uso",  50, 1]
+    ];
+
+    // --- ARMADURAS ---
+    var armaduras = [
+        // [sprite, nome, descrição, cura, dano, armadura, velocidade, id, tipo, preco, quantidade]
+        [spr_itens_invent_passivo_armadura, "Cobertor de Super-Herói", "Proteção básica. Armadura +1",        -1, -1, 1, -1, 0, "armadura",  10, 1],
+        [spr_itens_invent_passivo_armadura, "Armadura de Papelão", "Proteção média. Armadura +2",             -1, -1, 2, -1, 1, "armadura",  20, 1],
+        [spr_itens_invent_passivo_armadura, "Toalha Enrolada", "Proteção melhorada. Armadura +3",             -1, -1, 3, -1, 2, "armadura",  30, 1],
+        [spr_itens_invent_passivo_armadura, "Capa de Chuva", "Resistência. Armadura +4",                      -1, -1, 4, -1, 3, "armadura",  40, 1],
+        [spr_itens_invent_passivo_armadura, "Casaco Almofadado", "Proteção alta. Armadura +5",                -1, -1, 5, -1, 4, "armadura",  50, 1],
+        [spr_itens_invent_passivo_armadura, "Armadura de Travesseiro", "Proteção excelente. Armadura +6",     -1, -1, 6, -1, 5, "armadura",  60, 1],
+        [spr_itens_invent_passivo_armadura, "Capa de Super-Herói", "Proteção máxima. Armadura +7",            -1, -1, 7, -1, 6, "armadura",  100, 1]
+    ];
+
+    // --- ARMAS ---
+    var armas = [
+        // [sprite, nome, descrição, cura, dano, armadura, velocidade, id, tipo, preco, quantidade]
+        [spr_itens_invent_passivo_armas, "Graveto", "Um pequeno graveto. Dano +2",             -1, 2, -1, -1, 0, "arma",  5, 1],
+        [spr_itens_invent_passivo_armas, "Vassoura", "Vassoura velha. Dano +4",                -1, 4, -1, -1, 1, "arma",  10, 1],
+        [spr_itens_invent_passivo_armas, "Espada de plástico", "Espada de plástico. Dano +5",  -1, 5, -1, -1, 2, "arma",  15, 1],
+        [spr_itens_invent_passivo_armas, "Espada de madeira", "Espada de madeira. Dano +7",    -1, 7, -1, -1, 3, "arma",  25, 1],
+        [spr_itens_invent_passivo_armas, "Espada de ouro", "Espada de ouro. Dano +9",          -1, 9, -1, -1, 4, "arma",  50, 1],
+        [spr_itens_invent_passivo_armas, "Espada mata Fantasma", "Mata fantasmas. Dano +9",    -1, 9, -1, -1, 5, "arma",  60, 1]
+    ];
+
+    // --- BOTAS ---
+    var botas = [
+        // [sprite, nome, descrição, cura, dano, armadura, velocidade, id, tipo, preco, quantidade]
+        [spr_itens_invent_passivo_pe, "Sapato Velho", "Sapatos desgastados. Velocidade +1",        -1, -1, -1, 1, 0, "bota",  5, 1],
+        [spr_itens_invent_passivo_pe, "Tenis Velho", "Tênis antigos. Velocidade +2",               -1, -1, -1, 2, 1, "bota",  10, 1],
+        [spr_itens_invent_passivo_pe, "Meia Vermelha Nova", "Meias novas. Velocidade +3",          -1, -1, -1, 3, 6, "bota",  15, 1],
+        [spr_itens_invent_passivo_pe, "Sapato Novo", "Sapatos elegantes. Velocidade +4",           -1, -1, -1, 4, 5, "bota",  25, 1],
+        [spr_itens_invent_passivo_pe, "Tenis Novo", "Tênis brilhantes. Velocidade +5",             -1, -1, -1, 5, 4, "bota",  30, 1],
+        [spr_itens_invent_passivo_pe, "Skate", "Aumenta adrenalina. Velocidade +6",                -1, -1, -1, 6, 3, "bota",  40, 1],
+        [spr_itens_invent_passivo_pe, "Patins", "Máxima velocidade. Velocidade +7",                -1, -1, -1, 7, 2, "bota",  60, 1]
+    ];
+
+    // --- Adiciona todos os itens à lista global ---
+    for (var i = 0; i < array_length(uso); i++) ds_list_add(global.lista_itens, uso[i]);
+    for (var i = 0; i < array_length(armaduras); i++) ds_list_add(global.lista_itens, armaduras[i]);
+    for (var i = 0; i < array_length(armas); i++) ds_list_add(global.lista_itens, armas[i]);
+    for (var i = 0; i < array_length(botas); i++) ds_list_add(global.lista_itens, botas[i]);
+}

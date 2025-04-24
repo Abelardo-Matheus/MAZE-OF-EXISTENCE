@@ -11,6 +11,7 @@ if (distance_to_point(_inst.x, _inst.y) <= 100) {
 			global.pos_x_map = x;
 			global.pos_y_map = y;
 			global.seed_atual = seed;
+			global.current_sala = [0,0];
 			room_goto(Fase_BEBE);
 		}
 }

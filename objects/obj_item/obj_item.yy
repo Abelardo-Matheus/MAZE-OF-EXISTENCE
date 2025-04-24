@@ -8,8 +8,8 @@
   "managed": true,
   "overriddenProperties": [],
   "parent": {
-    "name": "GUI",
-    "path": "folders/Objects/FASE_BEBE_ALL/CONTROLES/GUI.yy",
+    "name": "OBJETOS",
+    "path": "folders/Objects/FASE_BEBE_ALL/OBJETOS.yy",
   },
   "parentObjectId": null,
   "persistent": false,

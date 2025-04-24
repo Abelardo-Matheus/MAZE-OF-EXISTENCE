@@ -12,6 +12,7 @@ cura = -1;
 tipo = -1;
 ind = -1;
 profundidade =-1;
+preco = -1;
 
 
 

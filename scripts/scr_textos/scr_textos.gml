@@ -1,7 +1,86 @@
 // Script assets have changed for v2.3.0 see
 // https://help.yoyogames.com/hc/en-us/articles/360005277377 for more information
 function scr_textos(){
+	
+	
 	switch npc_nome {
+		
+	case "Primeiro_encontro":
+		    texto = "*Ajeitando o chapéu* Bem-vindo à minha lojinha, aventureiro! Trouxe mercadorias diretamente das terras do leste!";
+		    ds_grid_add_text(texto, spr_retrato1_moca, 0, "Vendedora", false);
+    
+		    texto = "Sua loja parece... diferente das outras";
+		    ds_grid_add_text(texto, spr_retrato3_player, 1, "Você", false);
+    
+		    texto = "*Sorri misteriosamente* Isso porque meu estoque é tão único quanto meus clientes!";
+		    ds_grid_add_text(texto, spr_retrato2_moca, 0, "Vendedora", false);
+    
+		    add_op("O que tem de especial hoje?", "V1");
+		    add_op("Seus preços são justos?", "V2");
+		    add_op("De onde vem essas mercadorias?", "V3");
+		    break;
+
+		case "Segundo_encontro":
+		    texto = "*Acenando animadamente* Olá de novo! Trouxe coisas que brilham até no escuro... literalmente!";
+		    ds_grid_add_text(texto, spr_retrato2_moca, 0, "Vendedora", false);
+    
+		    texto = "Não sei se devo confiar...";
+		    ds_grid_add_text(texto, spr_retrato2_player, 1, "Você", false);
+    
+		    texto = "*Inclina a cabeça* Confiança se conquista, e eu estou aqui pra isso!";
+		    ds_grid_add_text(texto, spr_retrato1_moca, 0, "Vendedora", false);
+    
+		    add_op("Mostre-me suas armas", "V4");
+		    add_op("Preciso de proteção", "V5");
+		    add_op("Tem algo... ilícito?", "V6");
+		    break;
+
+		case "Depois_de_compra":
+		    texto = "*Abanando a mão* Essa peça vai servir bem para você... se souber usar direito!";
+		    ds_grid_add_text(texto, spr_retrato3_moca, 0, "Vendedora", false);
+    
+		    texto = "Isso soou como uma ameaça...";
+		    ds_grid_add_text(texto, spr_retrato1_player, 1, "Você", false);
+    
+		    texto = "*Rindo* Apenas um conselho profissional! Volte quando precisar de mais... conselhos!";
+		    ds_grid_add_text(texto, spr_retrato2_moca, 0, "Vendedora", false);
+    
+		    add_op("Na verdade quero ver mais", "V7");
+		    add_op("Quanto me cobrou a mais?", "V8");
+		    add_op("Até logo", "V9");
+		    break;
+
+		case "Adeus":
+		    texto = "*Levantando a sombrinha* Que os ventos te levem a tesouros... mas não esqueça de quem te fornece os melhores!";
+		    ds_grid_add_text(texto, spr_retrato3_moca, 0, "Vendedora", false);
+    
+		    texto = "Você é... peculiar";
+		    ds_grid_add_text(texto, spr_retrato3_player, 1, "Você", false);
+    
+		    texto = "*Sorrindo maliciosamente* Peculiar é elogio no meu ramo! Até a próxima, cliente!";
+		    ds_grid_add_text(texto, spr_retrato2_moca, 0, "Vendedora", false);
+		    break;
+
+		// Respostas específicas
+		case "V1":
+		    texto = "*Abaixando a voz* Para você... tenho esse artefato que brilha sob a lua cheia. Interessado?";
+		    ds_grid_add_text(texto, spr_retrato3_moca, 0, "Vendedora", false);
+			
+			par_npc_vendedor_um.abrir_venda = true;
+		    break;
+
+		case "V2":
+		    texto = "*Franze a testa* Meus preços? Cada moeda reflete o sangue, suor e... bem, principalmente o suor que gastei pra conseguir!";
+		    ds_grid_add_text(texto, spr_retrato1_moca, 0, "Vendedora", false);
+			par_npc_vendedor_um.abrir_venda = true;
+		    break;
+
+		case "V3":
+		    texto = "*Gira a sombrinha* Ah, isso é segredo do ofício... mas digamos que conheço rotas pouco convencionais!";
+		    ds_grid_add_text(texto, spr_retrato3_moca, 0, "Vendedora", false);
+			par_npc_vendedor_um.abrir_venda = true;
+		    break;
+		
     case "BV0":
         texto = "Olá, quem é você?";
         ds_grid_add_text(texto, spr_retrato1_player, 0, "Você", false);

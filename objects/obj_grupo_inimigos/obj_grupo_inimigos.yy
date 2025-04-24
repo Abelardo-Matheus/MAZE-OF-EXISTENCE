@@ -1,16 +1,18 @@
 {
   "resourceType": "GMObject",
   "resourceVersion": "1.0",
-  "name": "ovj_control_dialogo",
+  "name": "obj_grupo_inimigos",
   "eventList": [
     {"resourceType":"GMEvent","resourceVersion":"1.0","name":"","collisionObjectId":null,"eventNum":0,"eventType":0,"isDnD":false,},
+    {"resourceType":"GMEvent","resourceVersion":"1.0","name":"","collisionObjectId":{"name":"obj_player","path":"objects/obj_player/obj_player.yy",},"eventNum":0,"eventType":4,"isDnD":false,},
     {"resourceType":"GMEvent","resourceVersion":"1.0","name":"","collisionObjectId":null,"eventNum":0,"eventType":3,"isDnD":false,},
+    {"resourceType":"GMEvent","resourceVersion":"1.0","name":"","collisionObjectId":null,"eventNum":0,"eventType":8,"isDnD":false,},
   ],
   "managed": true,
   "overriddenProperties": [],
   "parent": {
-    "name": "GUI",
-    "path": "folders/Objects/FASE_BEBE_ALL/CONTROLES/GUI.yy",
+    "name": "INIMIGOS_GRUPOS",
+    "path": "folders/Objects/FASE_VAMP/ESTRUTURAS/INIMIGOS_GRUPOS.yy",
   },
   "parentObjectId": null,
   "persistent": false,
@@ -27,8 +29,11 @@
   "physicsShapePoints": [],
   "physicsStartAwake": true,
   "properties": [],
-  "solid": false,
-  "spriteId": null,
+  "solid": true,
+  "spriteId": {
+    "name": "spr_grupo_inimigos",
+    "path": "sprites/spr_grupo_inimigos/spr_grupo_inimigos.yy",
+  },
   "spriteMaskId": null,
   "visible": true,
 }

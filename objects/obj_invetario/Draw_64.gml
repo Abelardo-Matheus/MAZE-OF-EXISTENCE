@@ -61,6 +61,7 @@
 					global.grid_itens[# Infos.velocidade, i] = -1;
 					global.grid_itens[# Infos.cura, i] = -1;
 					global.grid_itens[# Infos.armadura, i] = -1;
+					global.grid_itens[# Infos.preco, i] = -1;
 				}
 				if (keyboard_check_pressed(ord("F"))and global.grid_itens[# Infos.item, i] != -1 ){
 					var _inst = instance_create_layer(obj_player.x,obj_player.y,"instances",obj_item);
@@ -80,6 +81,7 @@
 					_inst.sala_y = global.current_sala[1];
 					_inst.pos_x = obj_player.x;
 					_inst.pos_y = obj_player.y;
+					_inst.preco = global.grid_itens[# Infos.preco, i];
 
 				
 
@@ -101,6 +103,7 @@
 					global.grid_itens[# Infos.velocidade, i] = -1;
 					global.grid_itens[# Infos.cura, i] = -1;
 					global.grid_itens[# Infos.armadura, i] = -1;
+					global.grid_itens[# Infos.preco, i] = -1;
 				}
 			
 				 if (mouse_check_button_pressed(mb_left)) {
@@ -132,7 +135,7 @@
 							global.grid_itens[# Infos.image_ind, i] = global.grid_itens[# Infos.image_ind, pos_selecionada];
 							global.grid_itens[# Infos.armadura, i] = global.grid_itens[# Infos.armadura, pos_selecionada];
 							global.grid_itens[# Infos.velocidade, i] = global.grid_itens[# Infos.velocidade, pos_selecionada];
-					
+							global.grid_itens[# Infos.preco, i] = global.grid_itens[# Infos.preco, pos_selecionada];
 							
 							global.grid_itens[# Infos.item, pos_selecionada] = -1;
 							global.grid_itens[# Infos.quantidade, pos_selecionada] = -1;
@@ -149,6 +152,7 @@
 							global.grid_itens[# Infos.dano, pos_selecionada] = -1;
 							global.grid_itens[# Infos.velocidade, pos_selecionada] = -1;
 							global.grid_itens[# Infos.armadura, pos_selecionada] = -1;
+							global.grid_itens[# Infos.preco, pos_selecionada] = -1;
 							item_selecionado = -1;
 							pos_selecionada = -1;
 						
@@ -169,6 +173,7 @@
 							var _dano = global.grid_itens[# Infos.dano, i];
 							var _armadura = global.grid_itens[# Infos.armadura, i];
 							var _velocidade = global.grid_itens[# Infos.velocidade, i];
+							var _preco = global.grid_itens[# Infos.preco, i];
 						
 							global.grid_itens[# Infos.item, i] = global.grid_itens[# Infos.item, pos_selecionada];
 							global.grid_itens[# Infos.quantidade, i] = global.grid_itens[# Infos.quantidade, pos_selecionada];
@@ -185,6 +190,7 @@
 							global.grid_itens[# Infos.dano, i] = global.grid_itens[# Infos.dano, pos_selecionada];
 							global.grid_itens[# Infos.velocidade, i] = global.grid_itens[# Infos.velocidade, pos_selecionada];
 							global.grid_itens[# Infos.armadura, i] = global.grid_itens[# Infos.armadura, pos_selecionada];
+							global.grid_itens[# Infos.preco, i] = global.grid_itens[# Infos.preco, pos_selecionada];
 						
 							global.grid_itens[# Infos.item, pos_selecionada] = _item;
 							global.grid_itens[# Infos.quantidade, pos_selecionada] = _quantidade;
@@ -201,6 +207,7 @@
 							global.grid_itens[# Infos.dano, pos_selecionada] =  _dano;
 							global.grid_itens[# Infos.armadura, pos_selecionada] =  _armadura;
 							global.grid_itens[# Infos.velocidade, pos_selecionada] =  _velocidade;
+							global.grid_itens[# Infos.preco, pos_selecionada] =  _preco;
 					
 							item_selecionado = -1;
 							pos_selecionada = -1;
@@ -218,7 +225,11 @@
 				draw_set_valign(fa_middle);
 				if(global.grid_itens[# Infos.item, i] != -1){
 				descricao = global.grid_itens[# Infos.descricao, i];
-				draw_text_outlined_wrapped_block(_invx +(238*escala),_invy+(277*escala),_invx +(408*escala+30),_invy+(331*escala+50), c_black, c_white,descricao,30);
+				preco = global.grid_itens[# Infos.preco, i];
+				var texto_combined = descricao + "\nPreço: R$" + string(preco)  ; // Junta a descrição e o preço com quebra de linha
+
+				draw_text_outlined_wrapped_block(_invx +(238*escala), _invy+(287*escala), _invx +(408*escala+30), _invy+(331*escala+50), c_black, c_white, texto_combined, 30);
+
 			
 				draw_set_font(fnt_nomes_itens);
 			
@@ -291,6 +302,7 @@
 	    global.grid_itens[# Infos.velocidade, slot_arma] = global.grid_itens[# Infos.velocidade, pos_selecionada];
 	    global.grid_itens[# Infos.cura, slot_arma] = global.grid_itens[# Infos.cura, pos_selecionada];
 	    global.grid_itens[# Infos.tipo, slot_arma] = global.grid_itens[# Infos.tipo, pos_selecionada];
+		global.grid_itens[# Infos.preco, slot_arma] = global.grid_itens[# Infos.preco, pos_selecionada];
 		global.dano_base[global.level_player] += global.grid_itens[# Infos.dano, slot_arma];
 		global.ataque += global.grid_itens[# Infos.dano, slot_arma]
 	    // Esvaziar o slot do inventário
@@ -309,6 +321,7 @@
 	    global.grid_itens[# Infos.velocidade, pos_selecionada] = -1;
 	    global.grid_itens[# Infos.cura, pos_selecionada] = -1;
 	    global.grid_itens[# Infos.armadura, pos_selecionada] = -1;
+		global.grid_itens[# Infos.preco, pos_selecionada] = -1;
 	    // Transferir o image_index corretamente para o slot de status
 
 		item_selecionado = -1;
@@ -325,6 +338,7 @@
 	    global.grid_itens[# Infos.dano, slot_armadura] = global.grid_itens[# Infos.dano, pos_selecionada];
 	    global.grid_itens[# Infos.armadura, slot_armadura] = global.grid_itens[# Infos.armadura, pos_selecionada];
 	    global.grid_itens[# Infos.velocidade, slot_armadura] = global.grid_itens[# Infos.velocidade, pos_selecionada];
+		global.grid_itens[# Infos.preco, slot_armadura] = global.grid_itens[# Infos.preco, pos_selecionada];
 	    global.grid_itens[# Infos.cura, slot_armadura] = global.grid_itens[# Infos.cura, pos_selecionada];
 	    global.grid_itens[# Infos.tipo, slot_armadura] = global.grid_itens[# Infos.tipo, pos_selecionada];
 		global.armadura_bebe += global.grid_itens[# Infos.armadura, slot_armadura];
@@ -344,6 +358,7 @@
 	    global.grid_itens[# Infos.velocidade, pos_selecionada] = -1;
 	    global.grid_itens[# Infos.cura, pos_selecionada] = -1;
 	    global.grid_itens[# Infos.armadura, pos_selecionada] = -1;
+		global.grid_itens[# Infos.preco, pos_selecionada] = -1;
 	    item_selecionado = -1;
 	    pos_selecionada = -1;
 	} else if (i == total_slots + 2 && item_tipo == "bota" && slot_bota == -1) {
@@ -359,6 +374,7 @@
 	    global.grid_itens[# Infos.dano, slot_bota] = global.grid_itens[# Infos.dano, pos_selecionada];
 	    global.grid_itens[# Infos.armadura, slot_bota] = global.grid_itens[# Infos.armadura, pos_selecionada];
 	    global.grid_itens[# Infos.velocidade, slot_bota] = global.grid_itens[# Infos.velocidade, pos_selecionada];
+		global.grid_itens[# Infos.preco, slot_bota] = global.grid_itens[# Infos.preco, pos_selecionada];
 	    global.grid_itens[# Infos.cura, slot_bota] = global.grid_itens[# Infos.cura, pos_selecionada];
 	    global.grid_itens[# Infos.tipo, slot_bota] = global.grid_itens[# Infos.tipo, pos_selecionada];
 		global.speed_player += global.grid_itens[# Infos.velocidade, slot_bota];
@@ -371,6 +387,7 @@
 	    global.grid_itens[# Infos.image_ind, pos_selecionada] = -1;
 	    global.grid_itens[# Infos.sala_x, pos_selecionada] = -1;
 	    global.grid_itens[# Infos.sala_y, pos_selecionada] = -1;
+		global.grid_itens[# Infos.preco, pos_selecionada] = -1;
 	    global.grid_itens[# Infos.pos_x, pos_selecionada] = -1;
 	    global.grid_itens[# Infos.pos_y, pos_selecionada] = -1;
 	    global.grid_itens[# Infos.tipo, pos_selecionada] = -1;
@@ -394,15 +411,19 @@
 		
 					}
 		
+				
 
 				if (i == total_slots && slot_arma != -1) {
 				draw_set_font(fnt_descricao);
 				draw_set_halign(fa_center);
 				draw_set_valign(fa_middle);
-			
+				
 				descricao = global.grid_itens[# Infos.descricao, slot_arma];
+				preco = global.grid_itens[# Infos.preco, i];
+				var texto_combined = descricao + "\nPreço: R$" + string(preco)  ; // Junta a descrição e o preço com quebra de linha
+				
 		
-				draw_text_outlined_wrapped_block(_invx +(238*escala),_invy+(277*escala),_invx +(408*escala+30),_invy+(331*escala+50), c_black, c_white,descricao,30);
+				draw_text_outlined_wrapped_block(_invx +(238*escala),_invy+(287*escala),_invx +(408*escala+30),_invy+(331*escala+50), c_black, c_white,texto_combined,30);
 				draw_set_font(fnt_nomes_itens);
 				nome = global.grid_itens[# Infos.nome, slot_arma];
 				draw_text_outlined(_invx + (comeco_x_nome*escala)+110, _invy+(comeco_y_nome*escala)+23, c_black, c_white,nome);
@@ -413,19 +434,25 @@
 				draw_set_valign(fa_middle);
 			
 				descricao = global.grid_itens[# Infos.descricao, slot_armadura];
+				preco = global.grid_itens[# Infos.preco, i];
+				var texto_combined = descricao + "\nPreço: R$" + string(preco)  ; // Junta a descrição e o preço com quebra de linha
+				
 			
-				draw_text_outlined_wrapped_block(_invx +(238*escala),_invy+(277*escala),_invx +(408*escala+30),_invy+(331*escala+50), c_black, c_white,descricao,30);
+				draw_text_outlined_wrapped_block(_invx +(238*escala),_invy+(287*escala),_invx +(408*escala+30),_invy+(331*escala+50), c_black, c_white,texto_combined,30);
 				draw_set_font(fnt_nomes_itens);
 				nome = global.grid_itens[# Infos.nome, slot_armadura];
 				draw_text_outlined(_invx + (comeco_x_nome*escala)+110, _invy+(comeco_y_nome*escala)+23, c_black, c_white,nome);
 				}else if(i == total_slots+2 && slot_bota != -1){
-						draw_set_font(fnt_descricao);
+				draw_set_font(fnt_descricao);
 				draw_set_halign(fa_center);
 				draw_set_valign(fa_middle);
 			
 				descricao = global.grid_itens[# Infos.descricao, slot_bota];
+				preco = global.grid_itens[# Infos.preco, i];
+				var texto_combined = descricao + "\nPreço: R$" + string(preco)  ; // Junta a descrição e o preço com quebra de linha
+				
 			
-				draw_text_outlined_wrapped_block(_invx +(238*escala),_invy+(277*escala),_invx +(408*escala+30),_invy+(331*escala+50), c_black, c_white,descricao,30);
+				draw_text_outlined_wrapped_block(_invx +(238*escala),_invy+(287*escala),_invx +(408*escala+30),_invy+(331*escala+50), c_black, c_white,texto_combined,30);
 				draw_set_font(fnt_nomes_itens);
 				nome = global.grid_itens[# Infos.nome, slot_bota];
 				draw_text_outlined(_invx + (comeco_x_nome*escala)+110, _invy+(comeco_y_nome*escala)+23, c_black, c_white,nome);
@@ -462,6 +489,7 @@
                     global.grid_itens[# Infos.image_ind, j] = global.grid_itens[# Infos.image_ind, slot_item];
                     global.grid_itens[# Infos.tipo, j] = global.grid_itens[# Infos.tipo, slot_item];
                     global.grid_itens[# Infos.dano, j] = global.grid_itens[# Infos.dano, slot_item];
+					global.grid_itens[# Infos.preco, j] = global.grid_itens[# Infos.preco, slot_item];
                     global.grid_itens[# Infos.armadura, j] = global.grid_itens[# Infos.armadura, slot_item];
                     global.grid_itens[# Infos.velocidade, j] = global.grid_itens[# Infos.velocidade, slot_item];
                     global.grid_itens[# Infos.cura, j] = global.grid_itens[# Infos.cura, slot_item];
@@ -474,6 +502,7 @@
                     global.grid_itens[# Infos.descricao, slot_item] = -1;
                     global.grid_itens[# Infos.tipo, slot_item] = -1;
                     global.grid_itens[# Infos.dano, slot_item] = -1;
+					global.grid_itens[# Infos.preco, slot_item] = -1;
                     global.grid_itens[# Infos.armadura, slot_item] = -1;
                     global.grid_itens[# Infos.velocidade, slot_item] = -1;
                     global.grid_itens[# Infos.cura, slot_item] = -1;
@@ -582,6 +611,7 @@
 		var velo = "SPD: " + string( global.speed_player);
 		var armadura = "DEF: " +  string(global.armadura_bebe);
 		var level = "LVL: " +  string(global.level_player);
+
 		
 		draw_text(_invx +(370 * escala), _invy +(183 * escala - 35),level)
 		

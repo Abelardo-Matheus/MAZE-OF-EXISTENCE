@@ -20,7 +20,7 @@ if (vida <= 0) {
 	criar_item_aleatorio_passivos_pe(x,y,depth,100);
 }
 
-if (instance_exists(obj_camera)){
+if (instance_exists(obj_camera)and !global.day_night_cycle.is_day){
 var _border = 64;
 if(y < global.cmy - _border){
 	y = global.cmy + global.cmh + _border;

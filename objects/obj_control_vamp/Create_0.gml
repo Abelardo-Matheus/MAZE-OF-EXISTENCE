@@ -12,7 +12,7 @@ if(global.sair){
 	global.estruturas_criadas = true;
 	recriar_estruturas();
 	obj_player.x = global.pos_x_map;
-	obj_player.y = global.pos_y_map+200;
+	obj_player.y = global.pos_y_map+300;
 	global.sair = false;
 	
 }

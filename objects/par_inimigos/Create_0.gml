@@ -1,4 +1,5 @@
 randomize();
+grupo_id = noone; // vai ser atribuído ao spawn
 
 escala = 3;
 state = -1;

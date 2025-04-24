@@ -16,13 +16,13 @@ if (alarm[3] > 0){
 }
 
 
-//if (desenha_arma) {
-//    if (global.armamento == 0) {
-//        draw_sprite_ext(spr_arma, 0, x, y - 60, 1, 1, 0, c_white, dir_alfa);
-//    } else if (global.armamento == 1) {
-//        draw_sprite_ext(spr_arma, 1, x, y - 60, 1, 1, 0, c_white, dir_alfa);
-//    }
-//}
+if (desenha_arma) {
+    if (global.armamento == 0) {
+        draw_sprite_ext(spr_arma, 0, x, y - 60, 1, 1, 0, c_white, dir_alfa);
+    } else if (global.armamento == 1) {
+        draw_sprite_ext(spr_arma, 1, x, y - 60, 1, 1, 0, c_white, dir_alfa);
+    }
+}
 
 
 // Verifica se o jogador está próximo de alguma estrutura
@@ -55,6 +55,16 @@ if (desenha_botao) {
 proximo_de_estrutura = false;
 
 
+
+if(distance_to_object(par_npc_vendedor_um) <= 100 ){
+	if(keyboard_check_pressed(ord("P"))and !global.dialogo){
+		andar = true;
+		var _npc = instance_nearest(x, y, par_npc_vendedor_um);
+		var _dialogo = instance_create_layer(x , y, "Instances_dialogo", obj_dialogo);
+		_dialogo.npc_nome = _npc.nome;
+	}
+	
+}
 
 
 

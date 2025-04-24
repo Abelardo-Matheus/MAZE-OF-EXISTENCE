@@ -1,7 +1,7 @@
 
 gerar_estruturas(obj_estrutura, quantidade_estruturas, distancia_minima);
 gerar_estruturas(obj_poste, 5, 100);
-
+gerar_estruturas(obj_grupo_inimigos,10,100);
 
 
 

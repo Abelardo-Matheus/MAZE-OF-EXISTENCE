@@ -23,7 +23,7 @@ if(inicializar = false){
 			 if(keyboard_check_pressed(ord("E"))){
 			global.dialogo = false;
 			instance_destroy();
-			obj_player_tutorial.andar = false;
+			obj_player.andar = false;
 			}
 		 }
 		}

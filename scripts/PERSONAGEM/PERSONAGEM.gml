@@ -1,5 +1,3 @@
-
-
 function scr_andando(){
 	
 if (global.estamina > 0 ){
@@ -15,6 +13,7 @@ var moving = false;
 var current_image_speed = 1; // Velocidade padrão da animação
 var diagonal_angle = 0;
 
+if (andar = false){
 esquerda = keyboard_check(ord("A")) || keyboard_check(vk_left);
 direita = keyboard_check(ord("D")) || keyboard_check(vk_right);
 cima = keyboard_check(ord("W")) || keyboard_check(vk_up);
@@ -55,15 +54,18 @@ if(hveloc != 0 or vveloc != 0){
 hveloc = lengthdir_x(current_speed, veloc_dir);
 vveloc = lengthdir_y(current_speed, veloc_dir);
 
-if(keyboard_check(vk_shift) && global.estamina > 0){
-		hveloc = lengthdir_x(current_speed+90, veloc_dir);
-		vveloc = lengthdir_y(current_speed+90, veloc_dir);
-		//global.estamina-=2;
-	}else if(keyboard_check(vk_shift) && global.estamina == 0){
-		hveloc = 0;
-		vveloc = 0;
-		
-	}
+if (keyboard_check(vk_shift) && global.estamina > 0) {
+    var speed_corrida = current_speed + 10; // ou qualquer valor extra de velocidade
+    hveloc = lengthdir_x(speed_corrida, veloc_dir);
+    vveloc = lengthdir_y(speed_corrida, veloc_dir);
+    
+    //global.estamina -= 0.4; // consome estamina (opcional)
+    
+} else {
+    hveloc = lengthdir_x(current_speed, veloc_dir);
+    vveloc = lengthdir_y(current_speed, veloc_dir);
+}
+
 	
 
 scr_player_colisao();
@@ -84,6 +86,7 @@ if(hveloc == 0 and vveloc == 0){
 	 sprite_index = spr_player_baixo_parado
 	 break;
  }	
+}
 }
 
 if(global.in_dash == true){
@@ -110,7 +113,7 @@ if(instance_exists(obj_item)and obj_invetario.inventario = false and !global.inv
 	if(distance_to_point(_inst.x,_inst.y)<= 180){
 		desenha_botao = true;
 		if(keyboard_check_pressed(ord("F"))and pegar = true){
-			adicionar_item_invent(_inst.image_index,_inst.quantidade,_inst.sprite_index,_inst.nome,_inst.descricao,0,0,0,0,_inst.dano,_inst.armadura,_inst.velocidade,_inst.cura,_inst.tipo,_inst.ind);
+			adicionar_item_invent(_inst.image_index,_inst.quantidade,_inst.sprite_index,_inst.nome,_inst.descricao,0,0,0,0,_inst.dano,_inst.armadura,_inst.velocidade,_inst.cura,_inst.tipo,_inst.ind,_inst.preco);
 			coletar_item(_inst.x,_inst.y,global.current_sala);
 			instance_destroy(_inst);
 			desenha_botao = false;
@@ -127,30 +130,30 @@ if (instance_exists(global.bloco_colisao)) {
 }
 
 
-//if(mouse_check_button(mb_left)){
-//	if(global.armamento == Armamentos.espada){
-//	image_index = 0;
-//	switch dir{
-//	 default:
-//	 sprite_index = spr_player_direita_parado_atacando;
-//	 break;
-//	 case 1:
-//	 sprite_index = spr_player_cima_parado_atacando;
-//	 break;
-//	 case 2:
-//	 sprite_index = spr_player_esquerda_parado_atacando;
-//	 break;
-//	 case 3:
-//	 sprite_index = spr_player_baixo_parado_atacando;
-//	 break;
-//	}
-//	 state = scr_ataque_player;
-// }else if (global.armamento == Armamentos.arco){
+if(mouse_check_button(mb_left)){
+	if(global.armamento == Armamentos.espada){
+	image_index = 0;
+	switch dir{
+	 default:
+	 sprite_index = spr_player_direita_parado_atacando;
+	 break;
+	 case 1:
+	 sprite_index = spr_player_cima_parado_atacando;
+	 break;
+	 case 2:
+	 sprite_index = spr_player_esquerda_parado_atacando;
+	 break;
+	 case 3:
+	 sprite_index = spr_player_baixo_parado_atacando;
+	 break;
+	}
+	 state = scr_ataque_player;
+ }else if (global.armamento == Armamentos.arco){
 	 
-//	image_index = 0;
-//	state = scr_personagem_arco;
-//	}
-//}
+	image_index = 0;
+	state = scr_personagem_arco;
+	}
+}
 
 if(mouse_check_button_pressed(mb_right)){
 	
@@ -190,7 +193,6 @@ if(place_meeting(x , y + vveloc, global.sala.parede)){
 	}
 	vveloc = 0;
 }
-// Atualiza a posição do player
 
 y += vveloc;
 }
@@ -277,6 +279,7 @@ function scr_personagem_arco() {
 
 
 function scr_ataque_player(){
+
 	if(image_index >= 1){
 	if(atacando = false){
 	switch dir{

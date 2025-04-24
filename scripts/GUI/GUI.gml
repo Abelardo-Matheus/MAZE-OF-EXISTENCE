@@ -78,66 +78,72 @@ function mini_mapa_vamp() {
 
     var tamanho_minimo = 0.6;
     var tamanho_normal = 1;
-
     var cor_marrom = make_color_rgb(174, 91, 28);
-    
+
     draw_set_color(c_black);
     draw_rectangle(minimap_x - 4, minimap_y - 4, minimap_x + minimap_width + 4, minimap_y + minimap_height + 4, false);
-    
+
     draw_set_color(cor_marrom);
     draw_rectangle(minimap_x, minimap_y, minimap_x + minimap_width, minimap_y + minimap_height, false);
 
     var player_x = minimap_x + minimap_width / 2;
     var player_y = minimap_y + minimap_height / 2;
-    draw_set_color(c_red);
+
+    draw_set_color(c_blue);
     draw_circle(player_x, player_y, 3, false);
 
     var mouse_x_minimap = device_mouse_x_to_gui(0);
     var mouse_y_minimap = device_mouse_y_to_gui(0);
-    var estrutura_hover = -1;
+    var estrutura_hover_info = undefined;
 
-    for (var i = 0; i < ds_list_size(global.posicoes_estruturas); i++) {
-        var estrutura_info = global.posicoes_estruturas[| i];
-        var estrutura_x = estrutura_info[0];
-        var estrutura_y = estrutura_info[1];
-        var obj_tipo = estrutura_info[3];
+    // Percorre todas as listas globais de entidades no mini mapa
+    var listas = [global.posicoes_estruturas, global.posicoes_grupos_inimigos];
 
-        var distancia = point_distance(estrutura_x, estrutura_y, obj_player.x, obj_player.y);
+    for (var l = 0; l < array_length(listas); l++) {
+        var lista = listas[l];
 
-        if (distancia <= distancia_maxima) {
-            var estrutura_minimap_x = minimap_x + (estrutura_x - obj_player.x) * minimap_scale + minimap_width / 2;
-            var estrutura_minimap_y = minimap_y + (estrutura_y - obj_player.y) * minimap_scale + minimap_height / 2;
+        for (var i = 0; i < ds_list_size(lista); i++) {
+            var estrutura_info = lista[| i];
+            var estrutura_x = estrutura_info[0];
+            var estrutura_y = estrutura_info[1];
+            var sprite_minimap = estrutura_info[4];
+            var nome = estrutura_info[5];
 
-            estrutura_minimap_x = clamp(estrutura_minimap_x, minimap_x, minimap_x + minimap_width);
-            estrutura_minimap_y = clamp(estrutura_minimap_y, minimap_y, minimap_y + minimap_height);
+            var distancia = point_distance(estrutura_x, estrutura_y, obj_player.x, obj_player.y);
 
-            var fator_tamanho = 1 - (distancia / distancia_maxima);
-            fator_tamanho = clamp(fator_tamanho, tamanho_minimo, 1);
-            var tamanho_bolinha = tamanho_normal * fator_tamanho;
+            if (distancia <= distancia_maxima) {
+                var estrutura_minimap_x = minimap_x + (estrutura_x - obj_player.x) * minimap_scale + minimap_width / 2;
+                var estrutura_minimap_y = minimap_y + (estrutura_y - obj_player.y) * minimap_scale + minimap_height / 2;
 
-            if (point_distance(mouse_x_minimap, mouse_y_minimap, estrutura_minimap_x, estrutura_minimap_y) < tamanho_bolinha * 20) {
-                estrutura_hover = i;
-                tamanho_bolinha *= 2.5;
-            }
+                estrutura_minimap_x = clamp(estrutura_minimap_x, minimap_x, minimap_x + minimap_width);
+                estrutura_minimap_y = clamp(estrutura_minimap_y, minimap_y, minimap_y + minimap_height);
 
-            if (obj_tipo == obj_estrutura) {
-                draw_sprite_ext(spr_casa_mini_map, 0, estrutura_minimap_x, estrutura_minimap_y, tamanho_bolinha, tamanho_bolinha, 0, c_white, 0.8);
-            } else if (obj_tipo == obj_poste) {
-                draw_set_color(c_yellow);
-                draw_circle(estrutura_minimap_x, estrutura_minimap_y, tamanho_bolinha * 2, false);
+                var fator_tamanho = 1 - (distancia / distancia_maxima);
+                fator_tamanho = clamp(fator_tamanho, tamanho_minimo, 1);
+                var tamanho_bolinha = tamanho_normal * fator_tamanho;
+
+                var is_hover = point_distance(mouse_x_minimap, mouse_y_minimap, estrutura_minimap_x, estrutura_minimap_y) < tamanho_bolinha * 20;
+                if (is_hover) {
+                    estrutura_hover_info = nome;
+                    tamanho_bolinha *= 2.5;
+                }
+
+                if (sprite_minimap != noone) {
+                    draw_sprite_ext(sprite_minimap, 0, estrutura_minimap_x, estrutura_minimap_y, tamanho_bolinha, tamanho_bolinha, 0, c_white, 0.8);
+                } else {
+                    draw_set_color(c_red);
+                    var piscar_alpha = 0.5 + 0.5 * sin(current_time / 200);
+                    draw_set_alpha(piscar_alpha);
+                    draw_circle(estrutura_minimap_x, estrutura_minimap_y, 6, false);
+                    draw_set_alpha(1);
+                }
             }
         }
     }
 
-    if (estrutura_hover != -1) {
-        var estrutura_info = global.posicoes_estruturas[| estrutura_hover];
-        var estrutura_x = estrutura_info[0];
-        var estrutura_y = estrutura_info[1];
-        var obj_tipo = estrutura_info[3];
-        var nome_estrutura = (obj_tipo == obj_estrutura) ? "Casa" : "Poste";
-
+    if (estrutura_hover_info != undefined) {
         draw_set_color(c_white);
-        draw_text(mouse_x_minimap + 10, mouse_y_minimap, nome_estrutura);
+        draw_text(mouse_x_minimap + 10, mouse_y_minimap, estrutura_hover_info);
     }
 }
 

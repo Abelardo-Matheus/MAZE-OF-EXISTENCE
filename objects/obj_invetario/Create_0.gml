@@ -101,6 +101,7 @@ enum Infos {
 	cura,
 	tipo,
 	image_ind,
+	preco,
     Altura
 }
 
