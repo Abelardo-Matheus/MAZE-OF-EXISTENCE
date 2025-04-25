@@ -80,6 +80,9 @@ function gerar_estruturas_para_bloco(bx, by, obj_struct, quantidade_estruturas, 
             } else if (obj_struct == obj_grupo_inimigos) {
                 spr = spr_grupoini_mini_map;
                 nome = "Grupo Inimigos";
+            }else if (obj_struct == par_npc_vendedor_um) {
+                spr = spr_vendedor;
+                nome = "Vendedor";
             }
 
             ds_list_add(global.posicoes_estruturas, [pos_x, pos_y, seed, obj_struct, spr, nome]);

@@ -161,6 +161,7 @@
     {"id":{"name":"obj_chao_tijolo","path":"objects/obj_chao_tijolo/obj_chao_tijolo.yy",},},
     {"id":{"name":"spr_retrato2_fada","path":"sprites/spr_retrato2_fada/spr_retrato2_fada.yy",},},
     {"id":{"name":"obj_tiro","path":"objects/obj_tiro/obj_tiro.yy",},},
+    {"id":{"name":"spr_vendedor","path":"sprites/spr_vendedor/spr_vendedor.yy",},},
     {"id":{"name":"obj_geladeira","path":"objects/obj_geladeira/obj_geladeira.yy",},},
     {"id":{"name":"spr_selecionado","path":"sprites/spr_selecionado/spr_selecionado.yy",},},
     {"id":{"name":"spr_itens_invent_passivo_pe","path":"sprites/spr_itens_invent_passivo_pe/spr_itens_invent_passivo_pe.yy",},},

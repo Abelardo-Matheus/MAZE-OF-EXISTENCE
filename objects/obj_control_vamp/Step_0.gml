@@ -3,6 +3,13 @@ gerar_estruturas(obj_estrutura, quantidade_estruturas, distancia_minima);
 gerar_estruturas(obj_poste, 5, 100);
 gerar_estruturas(obj_grupo_inimigos,10,100);
 
+gerar_estruturas(par_npc_vendedor_um,10,100);
+if (mouse_check_button_pressed(mb_left)) {
+    var mx = device_mouse_x_to_gui(0); // ou apenas mouse_x se não estiver usando GUI
+    var my = device_mouse_y_to_gui(0); // ou apenas mouse_y
+    show_debug_message("Mouse clicado na posição: x = " + string(mx) + ", y = " + string(my));
+}
+
 
 
 if (!variable_global_exists("enemy_id_counter")) {

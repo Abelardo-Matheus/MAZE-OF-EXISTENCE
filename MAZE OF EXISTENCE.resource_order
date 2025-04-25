@@ -132,6 +132,7 @@
     {"name":"obj_chao_tijolo","order":2,"path":"objects/obj_chao_tijolo/obj_chao_tijolo.yy",},
     {"name":"spr_retrato2_fada","order":5,"path":"sprites/spr_retrato2_fada/spr_retrato2_fada.yy",},
     {"name":"obj_tiro","order":3,"path":"objects/obj_tiro/obj_tiro.yy",},
+    {"name":"spr_vendedor","order":22,"path":"sprites/spr_vendedor/spr_vendedor.yy",},
     {"name":"obj_geladeira","order":11,"path":"objects/obj_geladeira/obj_geladeira.yy",},
     {"name":"spr_selecionado","order":5,"path":"sprites/spr_selecionado/spr_selecionado.yy",},
     {"name":"spr_itens_invent_passivo_pe","order":5,"path":"sprites/spr_itens_invent_passivo_pe/spr_itens_invent_passivo_pe.yy",},

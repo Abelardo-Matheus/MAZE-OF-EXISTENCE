@@ -2,6 +2,7 @@ if (!variable_global_exists("enemy_list")) {
     global.enemy_list = ds_list_create(); // Lista para armazenar inimigos
 }
 criar_lista_itens_padronizados();
+global.debug = true;
 global.max_sanidade = 100;
 global.sanidade = 100;
 global.minimap_expandido = false;
@@ -11,7 +12,7 @@ global.map_bebe = true;
 global.pos_x_map = -1;
 global.pos_y_map = -1;
 global.sair = false;
-global.moedas = 10;
+global.moedas = 1000;
 global.seed_map = random_get_seed();
 global.estruturas_criadas = false;
 global.vetor_estruturas = [];

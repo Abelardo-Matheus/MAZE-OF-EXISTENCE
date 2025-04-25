@@ -68,6 +68,62 @@ function adicionar_item_invent() {
     _grid[# Infos.image_ind, _empty_slot] = _ind;
 	_grid[# Infos.preco, _empty_slot] = _preco;
 }
+function comprar_item_loja(_slot_index) {
+    var _grid = inventario_venda;
+
+    // Verifica se o slot é válido
+    if (_slot_index < 0 || _slot_index >= ds_grid_height(_grid)) return;
+
+    // Verifica se há um item no slot
+    if (_grid[# Infos.item, _slot_index] == -1) return;
+
+    var preco = _grid[# Infos.preco, _slot_index];
+
+    // Verifica se o jogador tem moedas suficientes
+    if (global.moedas < preco) {
+        show_debug_message("Moedas insuficientes!");
+        return;
+    }
+
+    // Subtrai o preço das moedas do jogador
+    global.moedas -= preco;
+
+    // Adiciona o item ao inventário do jogador
+    adicionar_item_invent(
+        _grid[# Infos.item, _slot_index],
+        1, // Quantidade
+        _grid[# Infos.sprite, _slot_index],
+        _grid[# Infos.nome, _slot_index],
+        _grid[# Infos.descricao, _slot_index],
+        -1, -1, -1, -1, // Sala/posição (opcional, ignorado)
+        _grid[# Infos.dano, _slot_index],
+        _grid[# Infos.armadura, _slot_index],
+        _grid[# Infos.velocidade, _slot_index],
+        _grid[# Infos.cura, _slot_index],
+        _grid[# Infos.tipo, _slot_index],
+        _grid[# Infos.image_ind, _slot_index],
+        _grid[# Infos.preco, _slot_index]
+    );
+
+    // Apaga o item comprado do inventário do vendedor
+    _grid[# Infos.item, _slot_index] = -1;
+    _grid[# Infos.quantidade, _slot_index] = 0;
+    _grid[# Infos.sprite, _slot_index] = -1;
+    _grid[# Infos.nome, _slot_index] = "";
+    _grid[# Infos.descricao, _slot_index] = "";
+    _grid[# Infos.dano, _slot_index] = 0;
+    _grid[# Infos.armadura, _slot_index] = 0;
+    _grid[# Infos.velocidade, _slot_index] = 0;
+    _grid[# Infos.cura, _slot_index] = 0;
+    _grid[# Infos.tipo, _slot_index] = -1;
+    _grid[# Infos.image_ind, _slot_index] = 0;
+    _grid[# Infos.preco, _slot_index] = 0;
+
+    // Limpa seleção do slot
+    global.item_selecionado_venda = -1;
+
+}
+
 
 function criar_item_aleatorio_ativos(pos_x, pos_y, prof, raridade) {
     randomize();

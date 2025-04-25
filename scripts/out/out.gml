@@ -27,6 +27,14 @@ function draw_text_outlined_wrapped_block(x1, y1, x2, y2, cor, cor2, string, lin
     var words = string_split(string, " ");
     var yy = y1;
 
+    // Se debug estiver ativo, desenha o retângulo delimitador
+    if (global.debug) {
+        draw_set_color(c_orange); // ou qualquer cor de destaque
+        draw_set_alpha(0.8); // transparência para facilitar visualização
+        draw_rectangle(x1, y1, x2, y2, false);
+        draw_set_alpha(1); // restaura a opacidade
+    }
+
     for (var i = 0; i < array_length_1d(words); i++) {
         var temp_line = current_line + (current_line == "" ? "" : " ") + words[i];
 
@@ -51,6 +59,8 @@ function draw_text_outlined_wrapped_block(x1, y1, x2, y2, cor, cor2, string, lin
         draw_text_outlined(x1, yy, cor, cor2, current_line);
     }
 }
+
+
 
 function draw_text_colour_outline(){
 
