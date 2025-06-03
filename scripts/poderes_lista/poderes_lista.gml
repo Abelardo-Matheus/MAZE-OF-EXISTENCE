@@ -71,14 +71,17 @@ ds_grid_add_item_vamp("IMÃ",			-1, -1, "Coleta recursos e itens de mais longe, 
 
 global.upgrades_vamp_grid = ds_grid_create(Upgrades_vamp.Length, 0);
 ds_grid_add_upgrade_vamp("BOLA",			scr_bola, -1, "Joga uma bola que persegue o inimigo mais próximo.",0); // Linha 0
-ds_grid_add_upgrade_vamp("EXPLOSÃO",		scr_explosao, -1, "Emite uma energia pulsante que repele os inimigos ao redor.",0); // Linha 3
-ds_grid_add_upgrade_vamp("SHURIKEN",		scr_shuriken, -1, "Fica girando ao redor do jogador, causando dano aos inimigos.", 0); // Linha 4
-ds_grid_add_upgrade_vamp("SAPO",			-1, -1, "Um pet sapo que engole inimigos aleatórios próximos.",0); // Linha 5
-ds_grid_add_upgrade_vamp("BULMERANGUE",	scr_bumerangue, -1, "Arremessa um bumerangue que vai e volta, atingindo os inimigos.",0); // Linha 6
-ds_grid_add_upgrade_vamp("ORBE",			-1, -1, "Um orbe especial que explode em confetes quando atinge os inimigos.",0); // Linha 7
+ds_grid_add_upgrade_vamp("EXPLOSÃO",		scr_explosao, -1, "Emite uma energia pulsante que repele os inimigos ao redor.",0); // Linha 1
+ds_grid_add_upgrade_vamp("SHURIKEN",		scr_shuriken, -1, "Fica girando ao redor do jogador, causando dano aos inimigos.", 0); // Linha 2
+
+ds_grid_add_upgrade_vamp("BULMERANGUE",	scr_bumerangue, -1, "Arremessa um bumerangue que vai e volta, atingindo os inimigos.",0); // Linha 3
+ds_grid_add_upgrade_vamp("ORBE",			-1, -1, "Um orbe especial que explode em confetes quando atinge os inimigos.",0); // Linha 4
+
+ds_grid_add_upgrade_vamp("BOLHAS",		-1, -1, "Uma chuva de bolhas que estoura ao encostar nos inimigos.",0); // Linha 5
+ds_grid_add_upgrade_vamp("RAIO",			scr_raio, -1, "Cria um ursinho de pelúcia gigante que bloqueia os inimigos por alguns segundos.",0); // Linha 6
+
+ds_grid_add_upgrade_vamp("SAPO",			scr_sapo, -1, "Um pet sapo que engole inimigos aleatórios próximos.",100); // Linha 7
 ds_grid_add_upgrade_vamp("BORBOLETA",	-1, -1, "Uma borboleta mágica que distrai os inimigos por um curto período.",0); // Linha 8
-ds_grid_add_upgrade_vamp("BOLHAS",		-1, -1, "Uma chuva de bolhas que estoura ao encostar nos inimigos.",0); // Linha 9
-ds_grid_add_upgrade_vamp("RAIO",			scr_raio, -1, "Cria um ursinho de pelúcia gigante que bloqueia os inimigos por alguns segundos.",0); // Linha 10
 
 
 

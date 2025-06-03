@@ -15,27 +15,27 @@ function scr_bumerangue_config(_level) {
         switch (i % 7) {
             case 1: // Level 1, 7, 13, ... (Aumenta a quantidade de inimigos atravessados)
                 config.pierce += 10;
-				global.upgrades_vamp_grid[# Upgrades_vamp.description, 4] = "ATRAVESSA MAIS UM INIMIGO";
+				global.upgrades_vamp_grid[# Upgrades_vamp.description, 3] = "ATRAVESSA MAIS UM INIMIGO";
                 break;
             case 2: // Level 2, 8, 14, ... (Aumenta a velocidade em 5%)
                 config.speed *= 1.05;
-				global.upgrades_vamp_grid[# Upgrades_vamp.description, 4] = "VELOCIDADE DO BUMERANGUE AUMENTADA EM 5%";
+				global.upgrades_vamp_grid[# Upgrades_vamp.description, 3] = "VELOCIDADE DO BUMERANGUE AUMENTADA EM 5%";
                 break;
             case 3: // Level 3, 9, 15, ... (Reduz o tempo entre lançamentos em 5%)
                 config.timer *= 0.95;
-				global.upgrades_vamp_grid[# Upgrades_vamp.description, 4] = "TEMPO DE RECARGA REDUZIDO EM 5%";
+				global.upgrades_vamp_grid[# Upgrades_vamp.description, 3] = "TEMPO DE RECARGA REDUZIDO EM 5%";
                 break;
             case 4: // Level 4, 10, 16, ... (Aumenta o dano em 10%)
                 config.damage *= 1.10;
-				global.upgrades_vamp_grid[# Upgrades_vamp.description, 4] = "DANO DO BUMERANGUE AUMENTADO EM 10%";
+				global.upgrades_vamp_grid[# Upgrades_vamp.description, 3] = "DANO DO BUMERANGUE AUMENTADO EM 10%";
                 break;
             case 5: // Level 5, 11, 17, ... (Aumenta o knockback em 1%)
                 config.push += 0.01;
-				global.upgrades_vamp_grid[# Upgrades_vamp.description, 4] = "EMPURRA OS INIMIGOS";
+				global.upgrades_vamp_grid[# Upgrades_vamp.description, 3] = "EMPURRA OS INIMIGOS";
                 break;
 			case 6: // Level 5, 11, 17, ... (Aumenta a quantidade atirada )
                 config.quanti += 1;
-				global.upgrades_vamp_grid[# Upgrades_vamp.description, 4] = "ATIRA MAIS UM BULMERANGUE";
+				global.upgrades_vamp_grid[# Upgrades_vamp.description, 3] = "ATIRA MAIS UM BULMERANGUE";
                 break;
         }
     }
@@ -45,7 +45,7 @@ function scr_bumerangue_config(_level) {
 
 
 function scr_bumerangue() {
-    var level = global.upgrades_vamp_grid[# Upgrades_vamp.level, 4]; // Obtém o nível atual
+    var level = global.upgrades_vamp_grid[# Upgrades_vamp.level, 3]; // Obtém o nível atual
     var config = scr_bumerangue_config(level); // Configurações baseadas no nível
 
     // Inicializa a lista global para rastrear alvos atingidos se ainda não existir

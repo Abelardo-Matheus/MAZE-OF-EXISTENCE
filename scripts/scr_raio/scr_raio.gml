@@ -13,27 +13,27 @@ function scr_raio_config(_level) {
         switch (i % 6) {
             case 1: // Level 1, 7, 13, ... (Aumenta dano em 10%)
                 config.damage *= 1.10;
-                global.upgrades_vamp_grid[# Upgrades_vamp.description, 8] = "AUMENTO DE 10% DE DANO";
+                global.upgrades_vamp_grid[# Upgrades_vamp.description, 6] = "AUMENTO DE 10% DE DANO";
                 break;
             case 2: // Level 2, 8, 14, ... (Aumenta raio da área de efeito em 10%)
                 config.radius *= 1.10;
-                global.upgrades_vamp_grid[# Upgrades_vamp.description, 8] = "RAIO DA ÁREA DE EFEITO AUMENTADO EM 10%";
+                global.upgrades_vamp_grid[# Upgrades_vamp.description, 6] = "RAIO DA ÁREA DE EFEITO AUMENTADO EM 10%";
                 break;
             case 3: // Level 3, 9, 15, ... (Aumenta força de empurrão em 5%)
                 config.push *= 1.05;
-                global.upgrades_vamp_grid[# Upgrades_vamp.description, 8] = "FORÇA DE EMPURRÃO AUMENTADA EM 5%";
+                global.upgrades_vamp_grid[# Upgrades_vamp.description, 6] = "FORÇA DE EMPURRÃO AUMENTADA EM 5%";
                 break;
             case 4: // Level 4, 10, 16, ... (Reduz cooldown em 5%)
                 config.cooldown *= 0.65;
-                global.upgrades_vamp_grid[# Upgrades_vamp.description, 8] = "COOLDOWN REDUZIDO EM 5%";
+                global.upgrades_vamp_grid[# Upgrades_vamp.description, 6] = "COOLDOWN REDUZIDO EM 5%";
                 break;
             case 5: // Level 5, 11, 17, ... (Aumenta duração do raio em 10%)
                 config.duration *= 1.10;
-                global.upgrades_vamp_grid[# Upgrades_vamp.description, 8] = "DURAÇÃO DO RAIO AUMENTADA EM 10%";
+                global.upgrades_vamp_grid[# Upgrades_vamp.description, 6] = "DURAÇÃO DO RAIO AUMENTADA EM 10%";
                 break;
             case 0: // Level 6, 12, 18, ... (Aumenta dano em 15%)
                 config.damage *= 1.15;
-                global.upgrades_vamp_grid[# Upgrades_vamp.description, 8] = "AUMENTO DE 15% DE DANO";
+                global.upgrades_vamp_grid[# Upgrades_vamp.description, 6] = "AUMENTO DE 15% DE DANO";
                 break;
         }
     }
@@ -41,7 +41,7 @@ function scr_raio_config(_level) {
     return config;
 }
 function scr_raio() {
-    var level = global.upgrades_vamp_grid[# Upgrades_vamp.level, 8]; // Obtém o nível atual
+    var level = global.upgrades_vamp_grid[# Upgrades_vamp.level, 6]; // Obtém o nível atual
     var config = scr_raio_config(level); // Configurações baseadas no nível
 
     // Inicializa os temporizadores se ainda não existirem
