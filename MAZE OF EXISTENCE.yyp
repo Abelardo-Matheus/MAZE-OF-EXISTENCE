@@ -190,6 +190,7 @@
     {"id":{"name":"spr_player_esquerda","path":"sprites/spr_player_esquerda/spr_player_esquerda.yy",},},
     {"id":{"name":"obj_camera","path":"objects/obj_camera/obj_camera.yy",},},
     {"id":{"name":"spr_slow_fase1","path":"sprites/spr_slow_fase1/spr_slow_fase1.yy",},},
+    {"id":{"name":"scr_bomba","path":"scripts/scr_bomba/scr_bomba.yy",},},
     {"id":{"name":"FUNCOES","path":"scripts/FUNCOES/FUNCOES.yy",},},
     {"id":{"name":"obj_poder_correr","path":"objects/obj_poder_correr/obj_poder_correr.yy",},},
     {"id":{"name":"scr_bulmerangue_up","path":"scripts/scr_bulmerangue_up/scr_bulmerangue_up.yy",},},
