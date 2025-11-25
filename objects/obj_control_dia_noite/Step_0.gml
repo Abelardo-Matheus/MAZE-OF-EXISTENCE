@@ -1,1 +1,1 @@
-dia_noite();
+day_night_cycle_manager();

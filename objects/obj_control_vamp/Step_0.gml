@@ -1,111 +1,140 @@
+/// @desc Gerenciador de Mundo (Chunks, Inimigos e Terreno)
+/// [O QUE]: Controla a geração procedural do mapa, o spawn contínuo de inimigos nas bordas, a renderização do chão infinito e ferramentas de debug.
+/// [COMO] :
+/// 1. Debug: Monitora clique do mouse para coordenadas.
+/// 2. Level Up: Pausa a lógica de spawn se o menu de nível estiver aberto.
+/// 3. Chunks: Verifica se o jogador cruzou a fronteira de um bloco (30k pixels). Se sim, gera novas estruturas.
+/// 4. Inimigos: Se for noite e o timer zerar, cria inimigos fora da visão da câmera.
+/// 5. Terreno: Cria tiles de grama ao redor do jogador e destrói os distantes para economizar memória.
 
-gerar_estruturas(obj_estrutura, quantidade_estruturas, distancia_minima);
-gerar_estruturas(obj_poste, 5, 100);
-gerar_estruturas(obj_grupo_inimigos,10,100);
-
-gerar_estruturas(par_npc_vendedor_um,10,100);
-if (mouse_check_button_pressed(mb_left)) {
-    var mx = device_mouse_x_to_gui(0); // ou apenas mouse_x se não estiver usando GUI
-    var my = device_mouse_y_to_gui(0); // ou apenas mouse_y
-    show_debug_message("Mouse clicado na posição: x = " + string(mx) + ", y = " + string(my));
+// --- 1. Inicialização de Segurança e Debug ---
+// Garante que o contador de IDs de inimigos exista
+if (!variable_global_exists("enemy_id_counter")) 
+{
+    global.enemy_id_counter = 0;
 }
 
-
-
-if (!variable_global_exists("enemy_id_counter")) {
-    global.enemy_id_counter = 0; // Contador para IDs únicos
+// Debug: Clique do Mouse
+if (mouse_check_button_pressed(mb_left)) 
+{
+    var _mx = device_mouse_x_to_gui(0);
+    var _my = device_mouse_y_to_gui(0);
+    show_debug_message("Mouse clicado na posição GUI: x=" + string(_mx) + ", y=" + string(_my));
 }
 
-if (global.level_up == true) {
-    alarm[0]++;
-    exit;
+// --- 2. Pause de Level Up ---
+if (global.level_up == true) 
+{
+    alarm[0]++; // Congela o timer de spawn
+    exit;       // O código PARA aqui. Nada abaixo executa.
 }
 
-var _side = irandom(1);
-
-if (alarm[0] <= 0 and !global.day_night_cycle.is_day) {
-    var _enemy_id = global.enemy_id_counter++; // Gera um ID único para o inimigo
-
-    if (_side == 0) {
-        var _xx = irandom_range(global.cmx, global.cmx + global.cmw);
-        var _yy = choose(global.cmy - 12, global.cmy + global.cmh + 64);
-
-        var _inimigoA = instance_create_layer(_xx, _yy, "instances", obj_amoeba);
-        _inimigoA.dist_aggro = 2000;
-        _inimigoA.dist_desaggro = 2000;
-        _inimigoA.escala = 1.5;
-		_inimigoA.vida=1000;
-		_inimigoA.max_vida=1000;
-        _inimigoA.id_inimigo = _enemy_id; // Associa o ID ao inimigo criado
-
-        // Adiciona o inimigo e seu ID na lista global
-        ds_list_add(global.enemy_list, _enemy_id);
-    } else if (_side == 1) {
-        var _xx = choose(global.cmx - 12, global.cmx + global.cmw + 64);
-        var _yy = irandom_range(global.cmy, global.cmy + global.cmh);
-
-        var _inimigoB = instance_create_layer(_xx, _yy, "instances", obj_amoeba);
-        _inimigoB.dist_aggro = 2000;
-        _inimigoB.dist_desaggro = 2000;
-        _inimigoB.escala = 1.5;
-		_inimigoB.vida=1000;
-		_inimigoB.max_vida=1000;
-        _inimigoB.id_inimigo = _enemy_id; // Associa o ID ao inimigo criado
-
-        // Adiciona o inimigo e seu ID na lista global
-        ds_list_add(global.enemy_list, _enemy_id);
-    }
-
-    alarm[0] = spaw_timer; // Reinicia o timer de spawn
-}
-
-// Tecla para simular level up
-if (keyboard_check_pressed(vk_enter)) {
+// Cheat: Level Up Manual com Enter
+if (keyboard_check_pressed(vk_enter)) 
+{
     level_up();
 }
 
-// Configurações do terreno
-var tile_size = 272; // Tamanho de cada tile
-var grid_radius = 10; // Número de tiles ao redor do jogador em cada direção (3x3, 5x5, etc.)
-var max_distance = (grid_radius + 20) * tile_size; // Distância máxima para manter os tiles (mais 2 de margem)
+// --- 3. Sistema de Chunks (Geração de Estruturas) ---
+// Calcula em qual "blocozão" do mundo o jogador está agora
+var _chunk_x_atual = floor(obj_player.x / global.tamanho_bloco);
+var _chunk_y_atual = floor(obj_player.y / global.tamanho_bloco);
 
-// Posição do jogador
-var player_x = obj_player.x;
-var player_y = obj_player.y;
+// Só roda a geração se o jogador MUDOU de bloco (entrou em uma nova área)
+if (_chunk_x_atual != global.ultimo_bloco[0] || _chunk_y_atual != global.ultimo_bloco[1]) 
+{
+    show_debug_message("Novo Chunk detectado: Gerando estruturas...");
+    
+    // Chama as funções de geração para o bloco atual e vizinhos
+    gerar_estruturas(obj_estrutura, quantidade_estruturas, distancia_minima);
+    gerar_estruturas(obj_poste, 5, 100);
+    gerar_estruturas(obj_grupo_inimigos, 10, 100);
+    gerar_estruturas(par_npc_vendedor_um, 10, 100);
+    
+    // Atualiza a memória para não rodar de novo no próximo frame
+    global.ultimo_bloco[0] = _chunk_x_atual;
+    global.ultimo_bloco[1] = _chunk_y_atual;
+}
 
-// Converte a posição do jogador para a grade de tiles
-var grid_x = floor(player_x / tile_size);
-var grid_y = floor(player_y / tile_size);
+// --- 4. Spawn de Inimigos (Apenas à Noite) ---
+if (alarm[0] <= 0 && !global.day_night_cycle.is_day) 
+{
+    var _enemy_id = global.enemy_id_counter++;
+    var _side = irandom(1); // 0 = Vertical (Cima/Baixo), 1 = Horizontal (Esq/Dir)
+    var _xx, _yy;
 
-// Gera os tiles dinamicamente ao redor do jogador
-for (var i = -grid_radius; i <= grid_radius; i++) {
-    for (var j = -grid_radius; j <= grid_radius; j++) {
-        var tile_x = (grid_x + i) * tile_size;
-        var tile_y = (grid_y + j) * tile_size;
+    // Define coordenadas de spawn fora da câmera
+    if (_side == 0) 
+    {
+        _xx = irandom_range(global.cmx, global.cmx + global.cmw);
+        _yy = choose(global.cmy - 12, global.cmy + global.cmh + 64);
+    } 
+    else 
+    {
+        _xx = choose(global.cmx - 12, global.cmx + global.cmw + 64);
+        _yy = irandom_range(global.cmy, global.cmy + global.cmh);
+    }
 
-        // Verifica se o tile já existe
-        if (!instance_position(tile_x, tile_y, obj_chao_grama_vamp)) {
-            // Cria um novo tile com rotação aleatória
-            var new_tile = instance_create_layer(tile_x, tile_y, "chao", obj_chao_grama_vamp);
+    // Cria e configura o inimigo
+    var _novo_inimigo = instance_create_layer(_xx, _yy, "instances", obj_amoeba);
+    
+    // Configura variáveis do inimigo usando 'with' para clareza
+    with (_novo_inimigo) 
+    {
+        dist_aggro = 2000;
+        dist_desaggro = 2000;
+        escala = 1.5;
+        vida = 1000;
+        max_vida = 1000;
+        id_inimigo = _enemy_id;
+    }
+
+    // Adiciona à lista global de inimigos ativos
+    ds_list_add(global.enemy_list, _enemy_id);
+
+    alarm[0] = spaw_timer; // Reseta o timer
+}
+
+// --- 5. Geração Procedural de Terreno (Tiles) ---
+var _tile_size = 272; 
+var _grid_radius = 10; // Tamanho da área carregada ao redor do player
+var _max_distance = (_grid_radius + 2) * _tile_size; // Distância para deletar tiles velhos
+
+// Posição do jogador na grid de tiles
+var _grid_x = floor(obj_player.x / _tile_size);
+var _grid_y = floor(obj_player.y / _tile_size);
+
+// Loop para criar tiles ao redor do jogador
+for (var i = -_grid_radius; i <= _grid_radius; i++) 
+{
+    for (var j = -_grid_radius; j <= _grid_radius; j++) 
+    {
+        var _tile_x = (_grid_x + i) * _tile_size;
+        var _tile_y = (_grid_y + j) * _tile_size;
+
+        // Otimização: Só cria se não existir nada naquela posição exata
+        if (!instance_position(_tile_x, _tile_y, obj_chao_grama_vamp)) 
+        {
+            var _new_tile = instance_create_layer(_tile_x, _tile_y, "chao", obj_chao_grama_vamp);
             
-            // Define uma rotação aleatória entre 0, 90, 180 ou 270 graus
-            var random_angle = choose(0, 90, 180, 270);
-            new_tile.image_angle = random_angle;
+            // Randomiza rotação visual
+            var _random_angle = choose(0, 90, 180, 270);
+            _new_tile.image_angle = _random_angle;
             
-            // Se precisar manter a rotação física também
-            new_tile.rotation = random_angle;
+            // Define variável de rotação física (se o objeto usar)
+            if (variable_instance_exists(_new_tile, "rotation")) {
+                _new_tile.rotation = _random_angle;
+            }
         }
     }
 }
 
-
-
-with (obj_chao_grama_vamp) {
-    if (point_distance(x, y, player_x, player_y) > max_distance) {
+// Limpeza de Memória (Culling)
+// Destrói tiles que ficaram muito longe
+with (obj_chao_grama_vamp) 
+{
+    if (point_distance(x, y, obj_player.x, obj_player.y) > _max_distance) 
+    {
         instance_destroy();
     }
 }
-
-
-
-
