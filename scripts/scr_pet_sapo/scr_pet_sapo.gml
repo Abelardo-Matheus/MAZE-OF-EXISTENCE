@@ -31,7 +31,7 @@ function scr_pet_config(_level) {
                 if (pode_alterar_grid) global.upgrades_vamp_grid[# Upgrades_vamp.description, linha_sapo] = "INTERVALO DE ATAQUE DO PET REDUZIDO EM 10%";
                 break;
             case 4:
-                config.quanti += 10;
+                config.quanti += 1;
                 if (pode_alterar_grid) global.upgrades_vamp_grid[# Upgrades_vamp.description, linha_sapo] = "MAIS UM SAPO";
                 break;
             case 5:

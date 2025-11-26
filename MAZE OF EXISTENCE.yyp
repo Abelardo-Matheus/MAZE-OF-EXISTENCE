@@ -108,7 +108,7 @@
     {"id":{"name":"obj_torreta","path":"objects/obj_torreta/obj_torreta.yy",},},
     {"id":{"name":"scr_shuriken_up","path":"scripts/scr_shuriken_up/scr_shuriken_up.yy",},},
     {"id":{"name":"spr_logo_menu","path":"sprites/spr_logo_menu/spr_logo_menu.yy",},},
-    {"id":{"name":"Sprite7","path":"sprites/Sprite7/Sprite7.yy",},},
+    {"id":{"name":"spr_bomba_vamp","path":"sprites/spr_bomba_vamp/spr_bomba_vamp.yy",},},
     {"id":{"name":"spr_seletor","path":"sprites/spr_seletor/spr_seletor.yy",},},
     {"id":{"name":"Restart","path":"scripts/Restart/Restart.yy",},},
     {"id":{"name":"spr_carne_cirular","path":"sprites/spr_carne_cirular/spr_carne_cirular.yy",},},

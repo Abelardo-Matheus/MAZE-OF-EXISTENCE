@@ -9,6 +9,10 @@
 global.map_vamp = true;
 global.map_bebe = false;
 
+
+//Inicializa grid de poderes
+inicializar_tudo();
+
 // --- Parâmetros de Geração (Procedural) ---
 spaw_timer = 10;            // Timer para controle de spawn
 distancia_minima = 200;     // Raio mínimo entre estruturas

@@ -16,8 +16,8 @@ initial_x = x;
 initial_y = y;
 
 // --- NOVAS VARIÁVEIS PARA GERENCIAR O TAMANHO ---
-base_bomb_size = 32; // Tamanho base (em pixels) do seu sprite de bomba. Ajuste se necessário.
-                     // Por exemplo, se o seu spr_bomba tem 32x32 pixels.
+base_bomb_size = 96; // Tamanho base (em pixels) do seu sprite de bomba. Ajuste se necessário.
+z = 0;             // Por exemplo, se o seu spr_bomba tem 32x32 pixels.
 // --- FIM DAS NOVAS VARIÁVEIS ---
 
 // Variáveis para a explosão
