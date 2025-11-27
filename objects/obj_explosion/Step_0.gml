@@ -1,11 +1,15 @@
-// Evento Step do obj_explosion
-if (follow_player) {
-    // Atualiza a posição da explosão para seguir o jogador
+// Step do obj_explosion
+
+if (follow_player && instance_exists(obj_player)) {
     x = obj_player.x;
     y = obj_player.y;
 }
 
-// Verifica se a duração acabou
-if (alarm[0] == 0) {
-    instance_destroy(); // Destroi a explosão quando a duração terminar
+// Se for baseado em tempo:
+// duration -= delta_time / 1000000;
+// if (duration <= 0) instance_destroy();
+
+// Se for baseado em animação (Recomendado):
+if (image_index >= image_number - 1) {
+    instance_destroy();
 }

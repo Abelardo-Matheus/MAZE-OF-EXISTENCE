@@ -7,3 +7,5 @@ push = 0;
 veloc = 0;
 duration = 2000; // Duração base
 
+hit_list = ds_list_create();
+reset_hit_timer = 0;
