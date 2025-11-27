@@ -1,20 +1,20 @@
-if(inicializar = false){
-	scr_textos();
-	inicializar = true;
+if(initialized = false){
+	scr_dialogs();
+	initialized = true;
 	alarm[0] = 1;
 }
 
 
-	if(caracter < string_length(texto_grid[# infos.texto, pagina])){
+	if(char_index < string_length(text_grid[# DialogInfo.TEXT, page])){
 		if(keyboard_check_pressed(ord("E"))){
-		caracter = string_length(texto_grid[# infos.texto, pagina]);
+		char_index = string_length(text_grid[# DialogInfo.TEXT, page]);
 		}
 	}else{
-	if(pagina < ds_grid_height(texto_grid) - 1){
+	if(page < ds_grid_height(text_grid) - 1){
 		if(keyboard_check_pressed(ord("E"))){
 		alarm[0] = 1;
-		caracter = 0;
-		pagina++;
+		char_index = 0;
+		page++;
 		}
 	}else{
 		 if(op_num != 0){

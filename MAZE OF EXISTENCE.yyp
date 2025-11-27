@@ -214,7 +214,7 @@
     {"id":{"name":"ALL_GLOBAL","path":"scripts/ALL_GLOBAL/ALL_GLOBAL.yy",},},
     {"id":{"name":"fnt_status","path":"fonts/fnt_status/fnt_status.yy",},},
     {"id":{"name":"spr_retrato1_player","path":"sprites/spr_retrato1_player/spr_retrato1_player.yy",},},
-    {"id":{"name":"APGAR","path":"scripts/APGAR/APGAR.yy",},},
+    {"id":{"name":"APAGAR","path":"scripts/APAGAR/APAGAR.yy",},},
     {"id":{"name":"obj_slow","path":"objects/obj_slow/obj_slow.yy",},},
     {"id":{"name":"spr_itens_invent_passivo_armas","path":"sprites/spr_itens_invent_passivo_armas/spr_itens_invent_passivo_armas.yy",},},
     {"id":{"name":"obj_shuriken","path":"objects/obj_shuriken/obj_shuriken.yy",},},
@@ -436,10 +436,10 @@
     {"id":{"name":"spr_player_direita","path":"sprites/spr_player_direita/spr_player_direita.yy",},},
   ],
   "RoomOrderNodes": [
+    {"roomId":{"name":"Main_tutorial","path":"rooms/Main_tutorial/Main_tutorial.yy",},},
     {"roomId":{"name":"Fase_vamp","path":"rooms/Fase_vamp/Fase_vamp.yy",},},
     {"roomId":{"name":"Menu","path":"rooms/Menu/Menu.yy",},},
     {"roomId":{"name":"Fase_BEBE","path":"rooms/Fase_BEBE/Fase_BEBE.yy",},},
-    {"roomId":{"name":"Main_tutorial","path":"rooms/Main_tutorial/Main_tutorial.yy",},},
   ],
   "templateType": "game",
   "TextureGroups": [

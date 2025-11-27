@@ -1,29 +1,20 @@
-if (cutscene_active) {
-        var _current_action = cutscene_data[action];
-        var _let = array_length(_current_action) - 1;
+/// @desc Executa a Ação Atual
+if (!cutscene_active) exit; // Se não estiver ativa, não faz nada
 
-        // Executa a ação com base no número de parâmetros
-        switch (_let) {
-            case 0:
-                script_execute(_current_action[0]);
-                break;
-            case 1:
-                script_execute(_current_action[0], _current_action[1]);
-                break;
-            case 2:
-                script_execute(_current_action[0], _current_action[1], _current_action[2]);
-                break;
-            case 3:
-                script_execute(_current_action[0], _current_action[1], _current_action[2], _current_action[3]);
-                break;
-            case 4:
-                script_execute(_current_action[0], _current_action[1], _current_action[2], _current_action[3], _current_action[4]);
-                break;
-            case 5:
-                script_execute(_current_action[0], _current_action[1], _current_action[2], _current_action[3], _current_action[4], _current_action[5]);
-                break;
-            case 6:
-                script_execute(_current_action[0], _current_action[1], _current_action[2], _current_action[3], _current_action[4], _current_action[5], _current_action[6]);
-                break;
-        }
+// Segurança: Verifica se o array existe e se o índice é válido
+if (is_array(cutscene_data) && action_index < array_length(cutscene_data)) 
+{
+    // 1. Pega a linha atual da cutscene (Ex: [action_move_object, id, x, y...])
+    var _current_action_array = cutscene_data[action_index];
+    
+    // 2. O primeiro item do array é sempre o SCRIPT (a função)
+    var _script_to_run = _current_action_array[0];
+    
+    // 3. Executa o script passando o resto do array como argumentos
+    // 'script_execute_ext' pega um array e distribui os valores como argumentos (arg0, arg1...)
+    // O '1' no final diz para começar do índice 1 (ignorando o script no índice 0)
+    if (script_exists(_script_to_run)) 
+    {
+        script_execute_ext(_script_to_run, _current_action_array, 1);
+    }
 }

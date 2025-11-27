@@ -1,4 +1,4 @@
-ds_grid_destroy(texto_grid);
+ds_grid_destroy(text_grid);
 
 
 

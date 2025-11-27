@@ -7,13 +7,13 @@ function ds_grid_add_row(){
 }
 
 function ds_grid_add_text(){
-	///@arg texto
-	///@arg retrato
-	///@arg lado
-	///@arg nome
+	///@arg _text_string
+	///@arg _portrait
+	///@arg _side
+	///@arg _name
 	///@arg op
 	
-	var _grid = texto_grid;
+	var _grid = text_grid;
 	var _y = ds_grid_add_row(_grid);
 
 	// Verifica se o texto é vazio e se há opções disponíveis

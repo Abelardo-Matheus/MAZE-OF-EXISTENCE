@@ -177,7 +177,7 @@
     {"name":"Sprite16","order":1,"path":"sprites/Sprite16/Sprite16.yy",},
     {"name":"ALL_GLOBAL","order":1,"path":"scripts/ALL_GLOBAL/ALL_GLOBAL.yy",},
     {"name":"fnt_status","order":6,"path":"fonts/fnt_status/fnt_status.yy",},
-    {"name":"APGAR","order":5,"path":"scripts/APGAR/APGAR.yy",},
+    {"name":"APAGAR","order":5,"path":"scripts/APAGAR/APAGAR.yy",},
     {"name":"obj_slow","order":2,"path":"objects/obj_slow/obj_slow.yy",},
     {"name":"spr_itens_invent_passivo_armas","order":6,"path":"sprites/spr_itens_invent_passivo_armas/spr_itens_invent_passivo_armas.yy",},
     {"name":"obj_shuriken","order":4,"path":"objects/obj_shuriken/obj_shuriken.yy",},

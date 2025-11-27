@@ -1,23 +1,28 @@
-// scr_cutscenes.gml
+function cutscene_fada1() 
+{
+    var _scene = new CutsceneBuilder();
 
-function cutscene_fada1() {
-    return [
-		[scr_cutscene_change_variable, obj_npc_fada, "dig", 3],
-        [scr_cutscenes_move_obj, obj_npc_fada, 0, 200, true, 3],
-        [scr_play_sound_cutscene, snd_fala, false],
-        [scr_xscale_cutescene, obj_npc_fada],
-        [scr_cutscenes_wait, 1, obj_npc_fada],
-        [scr_create_instance_cutescene, 100, 100, "instances", obj_amoeba],
-        [scr_cutscenes_move_obj, obj_npc_fada, 800, 0, true, 3],
-		[scr_acaba_cut, obj_cutscene],
-    ];
+    _scene
+        .set_var(obj_npc_fada, "dig", 3)
+        .move(obj_npc_fada, 0, 200, true, 3)    // Move relativo (+200y)
+        .sound(snd_fala, false)                 // Toca som
+        .scale(obj_npc_fada)                    // Inverte lado
+		.destroy(global.id_parede_um)
+        .wait(1)                                // Espera
+        .create(1825, 735, "Instances_Enemys", obj_amoeba)
+        .move(obj_npc_fada, 800, 0, true, 3)
+        .finish(obj_cutscene)                   // Libera controle (se necessário)
+        .run();
 }
 
-function cutscene_example2() {
-    return [
-        [scr_cutscenes_move_obj, obj_npc_enemy, 100, 200, false, 5],
-        [scr_play_sound_cutscene, snd_enemy_fala, true],
-        [scr_cutscenes_wait, 2, obj_npc_enemy],
-		[scr_acaba_cut(obj_cutscene)],
-    ];
+function cutscene_example2() 
+{
+    var _scene = new CutsceneBuilder();
+
+    _scene
+        .move(obj_npc_enemy, 100, 200, false, 5) // Move para posição absoluta 100,200
+        .sound(snd_enemy_fala, true)
+        .wait(2)
+        .finish()
+        .run();
 }

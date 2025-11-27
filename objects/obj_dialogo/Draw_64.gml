@@ -1,63 +1,121 @@
-if(inicializar = true){
-	var _guiw = display_get_gui_width();
-	var _guih = display_get_gui_height();
+/// @desc Renderização da Interface de Diálogo
+/// [O QUE]: Desenha a caixa de texto, retrato e nome baseados no lado (Esquerda/Direita). Gerencia o menu de escolhas se necessário.
+/// [COMO] : 
+/// 1. Extrai dados da Grid usando o Enum.
+/// 2. Desenha o fundo preto e o texto baseado no alinhamento (Lado 0 ou 1).
+/// 3. Se 'draw_options' for true, desenha o menu de seleção e processa o input do teclado.
 
-	var _xx = 0;
-	var _yy = _guih - 200;
-	var _c = c_black;
-	var _sprite = texto_grid[# infos.retrato, pagina];
-	var _text = string_copy( texto_grid[# infos.texto, pagina], 0, caracter);
+// Verifica se inicializou
+if (initialized == true) 
+{
+    
+	
 
-	if(texto_grid[# infos.lado, pagina] == 0){
-	draw_rectangle_color(_xx + 200, _yy, _guiw, _guih, _c, _c, _c, _c, false);
-	draw_set_font(fnt_dialogos);
-	draw_text_ext(_xx+ 232,_yy+32, _text, 32, _guiw - 264);
-	draw_text(_xx + 216, _yy - 32, texto_grid[# infos.nome, pagina])
-	draw_sprite_ext(_sprite, 0 , 100, _guih, 6, 6, 0 , c_white, 1);
-	}else{
-	draw_rectangle_color(_xx, _yy, _guiw - 200, _guih, _c, _c, _c, _c, false);
-	var _stgw = string_width(texto_grid[# infos.nome, pagina]);
-	draw_set_font(fnt_dialogos);
-	draw_text_ext(_xx+32,_yy+32, _text, 32, _guiw - 264);
-	draw_text(_guiw - 216 - _stgw, _yy - 32, texto_grid[# infos.nome, pagina])
-	draw_sprite_ext(_sprite, 0 , _guiw-100, _guih, -6, 6, 0 , c_white, 1);
-	}
-	if(op_draw ){
-		var _opx = _xx + 32;
-		var _opy = _yy - 48;
-		var _opsep = 48;
-		var _op_borda = 6;
-		
-		op_selecionada += keyboard_check_pressed(ord("W")) - keyboard_check_pressed(ord("S"));
-		op_selecionada = clamp(op_selecionada, 0, op_num - 1);
-		
-		for(var i = 0; i< op_num; i++){
-			draw_set_font(fnt_escolhas);
-			var _stringw = string_width(op[i]);
-			draw_sprite_ext(spr_bloco, 0,_opx, _opy - (_opsep * i),(_stringw+_op_borda*2)/16,1,0,c_white,1);
-			draw_text(_opx+_op_borda, _opy - (_opsep * i)-3, op[i]);
-			
-			if(op_selecionada = i){
-				draw_sprite(spr_seletor, 0,_xx+15, _opy - (_opsep * i)+15)
-			}
-			
-		}
-		
-		if(keyboard_check_pressed(ord("E"))){
-			var _dialogo = instance_create_layer(x , y, "Instances_dialogo", obj_dialogo);
-			_dialogo.npc_nome = op_resposta[op_selecionada];
-			instance_destroy();
-			
-		}
-	}
+    var _gui_w = display_get_gui_width();
+    var _gui_w = display_get_gui_width();
+    var _gui_h = display_get_gui_height();
+
+    // --- Configurações de Layout ---
+    var _box_height = 200;
+    var _box_y = _gui_h - _box_height;
+    var _padding = 32;
+    var _color_bg = c_black;
+    
+    // --- Extração de Dados ---
+    // Pega o sprite, o texto cortado (efeito digitar) e o alinhamento
+    var _current_portrait = text_grid[# DialogInfo.PORTRAIT, page];
+    var _current_text = string_copy(text_grid[# DialogInfo.TEXT, page], 0, char_index);
+    var _current_name = text_grid[# DialogInfo.NAME, page];
+    var _alignment = text_grid[# DialogInfo.SIDE, page]; // 0 = Esquerda, 1 = Direita
+	
+	
+    draw_set_font(fnt_dialogos);
+
+    // ============================================================
+    // PARTE 1: CAIXA DE DIÁLOGO E RETRATO
+    // ============================================================
+    
+    if (_alignment == 0) 
+    {
+        // --- LADO ESQUERDO (NPC) ---
+        // Fundo
+        draw_rectangle_color(200, _box_y, _gui_w, _gui_h, _color_bg, _color_bg, _color_bg, _color_bg, false);
+        
+        // Texto e Nome
+        draw_text_ext(232, _box_y + _padding, _current_text, 32, _gui_w - 264);
+        draw_text(216, _box_y - 32, _current_name);
+        
+        // Retrato (Na esquerda)
+        draw_sprite_ext(_current_portrait, 0, 100, _gui_h, 6, 6, 0, c_white, 1);
+    } 
+    else 
+    {
+        // --- LADO DIREITO (PLAYER) ---
+        // Fundo
+        draw_rectangle_color(0, _box_y, _gui_w - 200, _gui_h, _color_bg, _color_bg, _color_bg, _color_bg, false);
+        
+        // Texto e Nome
+        var _name_width = string_width(_current_name);
+        draw_text_ext(32, _box_y + _padding, _current_text, 32, _gui_w - 264);
+        draw_text(_gui_w - 216 - _name_width, _box_y - 32, _current_name);
+        
+        // Retrato (Na direita, espelhado com -6)
+        draw_sprite_ext(_current_portrait, 0, _gui_w - 100, _gui_h, -6, 6, 0, c_white, 1);
+    }
+
+    // ============================================================
+    // PARTE 2: MENU DE OPÇÕES (ESCOLHAS)
+    // ============================================================
+    
+    if (op_draw) 
+    {
+        var _op_x = 32;
+        var _op_y = _box_y - 48;
+        var _op_sep = 48; // Separação vertical
+        var _op_border = 6;
+        
+        // --- Input de Seleção ---
+        // W sobe (index diminui), S desce (index aumenta)
+        // Usamos a subtração direta dos booleanos para obter -1, 0 ou 1
+        var _input_dir = keyboard_check_pressed(ord("S")) - keyboard_check_pressed(ord("W"));
+        
+        if (_input_dir != 0) {
+            op_selected += _input_dir;
+            // Garante que a seleção não saia dos limites (Loop ou Clamp)
+            op_selected = clamp(op_selected, 0, op_num - 1);
+        }
+        
+        // --- Desenho das Opções ---
+        draw_set_font(fnt_escolhas);
+        
+        for (var i = 0; i < op_num; i++) 
+        {
+            var _string_w = string_width(op[i]);
+            var _current_y = _op_y - (_op_sep * i); // Desenha de baixo para cima
+            
+            // Fundo da Opção
+            draw_sprite_ext(spr_bloco, 0, _op_x, _current_y, (_string_w + _op_border * 2) / 16, 1, 0, c_white, 1);
+            
+            // Texto da Opção
+            draw_text(_op_x + _op_border, _current_y - 3, op[i]);
+            
+            // Seletor (Setinha)
+            if (op_selected == i) 
+            {
+                draw_sprite(spr_seletor, 0, 15, _current_y + 15);
+            }
+        }
+        
+        // --- Confirmação ---
+        if (keyboard_check_pressed(ord("E"))) 
+        {
+            // Cria um novo diálogo baseado na resposta escolhida
+            var _next_dialog_id = op_resposta[op_selected];
+            var _new_dialog = instance_create_layer(x, y, "Instances_dialogo", obj_dialogo);
+            _new_dialog.npc_nome = _next_dialog_id;
+            
+            // Destrói o diálogo atual (substituição)
+            instance_destroy();
+        }
+    }
 }
-
-
-
-
-
-
-
-
-
-
