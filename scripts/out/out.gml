@@ -62,41 +62,82 @@ function draw_text_outlined_wrapped_block(x1, y1, x2, y2, cor, cor2, string, lin
 
 
 
-function draw_text_colour_outline(){
+/// @function draw_text_colour_outline(x, y, str, thickness, outline_color, quality, sep, w)
+/// @desc Desenha texto com contorno usando draw_text_ext.
+/// @param {Real} _x Posição X.
+/// @param {Real} _y Posição Y.
+/// @param {String} _str O texto.
+/// @param {Real} _thickness Espessura do contorno.
+/// @param {Constant.Color} _outline_color Cor do contorno.
+/// @param {Real} _quality Precisão (ex: 4 = cantos, 8 = mais redondo).
+/// @param {Real} _sep Separação entre linhas.
+/// @param {Real} _w Largura máxima da linha.
+function draw_text_colour_outline(_x, _y, _str, _thickness, _outline_color, _quality, _sep, _w){
 
-var dto_dcol = draw_get_color();
+    // Salva a cor atual (que será a cor do texto principal)
+    var _main_color = draw_get_color();
 
-	draw_set_color(argument4);
-	
-	for(var dto_i=45; dto_i<405; dto_i+=360/argument5)
-	{
-	
-	draw_text_ext(argument0+round(lengthdir_x(argument3,dto_i)),argument1+round(lengthdir_y(argument3,dto_i)),argument2,argument6,argument7);
-	}
-	
-	draw_set_color(dto_dcol);
-	
-	draw_text_ext(argument0,argument1,argument2,argument6,argument7);
-
+    // Define a cor do contorno
+    draw_set_color(_outline_color);
+    
+    // Desenha o contorno girando em volta da posição original
+    for(var _i = 45; _i < 405; _i += 360 / _quality)
+    {
+        draw_text_ext(
+            _x + lengthdir_x(_thickness, _i),
+            _y + lengthdir_y(_thickness, _i),
+            _str,
+            _sep,
+            _w
+        );
+    }
+    
+    // Restaura a cor original
+    draw_set_color(_main_color);
+    
+    // Desenha o texto principal por cima do contorno
+    draw_text_ext(_x, _y, _str, _sep, _w);
 }
 
-function draw_text_colour_outline_escalado(){
+/// @function draw_text_colour_outline_escalado(x, y, str, thickness, outline_color, quality, sep, w, xscale, yscale)
+/// @desc Desenha texto escalado com contorno.
+/// @param {Real} _x Posição X.
+/// @param {Real} _y Posição Y.
+/// @param {String} _str O texto.
+/// @param {Real} _thickness Espessura do contorno.
+/// @param {Constant.Color} _outline_color Cor do contorno.
+/// @param {Real} _quality Precisão (ex: 8).
+/// @param {Real} _sep Separação entre linhas.
+/// @param {Real} _w Largura máxima.
+/// @param {Real} _xscale Escala X.
+/// @param {Real} _yscale Escala Y.
+function draw_text_colour_outline_escalado(_x, _y, _str, _thickness, _outline_color, _quality, _sep, _w, _xscale, _yscale){
 
-var dto_dcol = draw_get_color();
+    // Guarda a cor original (texto principal)
+    var _main_color = draw_get_color();
 
-	draw_set_color(argument4);
-	
-	for(var dto_i=45; dto_i<405; dto_i+=360/argument5)
-	{
-
-	draw_text_ext_transformed(argument0+round(lengthdir_x(argument3,dto_i)),argument1+round(lengthdir_y(argument3,dto_i)),argument2,argument6,argument7,argument8,argument9,0);
-	}
-	
-	draw_set_color(dto_dcol);
-	
-
-	draw_text_ext_transformed(argument0,argument1,argument2,argument6,argument7,argument8,argument9,0);
-
+    // Configura cor do contorno
+    draw_set_color(_outline_color);
+    
+    // Loop para desenhar o contorno (várias cópias do texto ao redor)
+    for(var _i = 45; _i < 405; _i += 360 / _quality)
+    {
+        draw_text_ext_transformed(
+            _x + round(lengthdir_x(_thickness, _i)),
+            _y + round(lengthdir_y(_thickness, _i)),
+            _str,
+            _sep,
+            _w,
+            _xscale,
+            _yscale,
+            0 // Ângulo (rotação) fixo em 0
+        );
+    }
+    
+    // Restaura cor e desenha o texto principal
+    draw_set_color(_main_color);
+    
+    draw_text_ext_transformed(_x, _y, _str, _sep, _w, _xscale, _yscale, 0);
 }
 
 

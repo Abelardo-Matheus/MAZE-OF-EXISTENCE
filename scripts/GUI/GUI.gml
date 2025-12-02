@@ -176,7 +176,8 @@ function mini_mapa_bebe(){
     var max_cells_y = mini_map_height div _cell_size;  // Quantidade máxima de células visíveis no eixo Y
 
     // Desenhar cada sala no minimapa
-    for (var i = 0; i < array_length_1d(global.salas_geradas); i++) {
+	
+    for (var i = 0; i < array_length(global.salas_geradas); i++) {
         var sala = global.salas_geradas[i];
         if (is_array(sala)) {
             var sala_x = sala[0];

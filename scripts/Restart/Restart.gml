@@ -24,7 +24,7 @@ function resetar_fase_por_level() {
 	
     // Para cada sala gerada, criar a sala e armazená-la
 	
-    for (var i = 0; i < array_length_1d(global.salas_geradas); i++) {
+    for (var i = 0; i < array_length(global.salas_geradas); i++) {
         var sala_info = criar_salas_lista(global.salas_geradas[i], i + 1);
         array_push(global.salas_criadas, sala_info);
     }

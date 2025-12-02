@@ -112,7 +112,7 @@ function criar_salas_lista(sala_atual, numero) {
         // Se todos os tipos de sala já foram usados, definir como "quarto"
         tipo_sala = "quarto";
     }
-	 var detalhes_sala = ds_map_find_value(global.tipos_de_salas, tipo_sala);
+	 detalhes_sala = ds_map_find_value(global.tipos_de_salas, tipo_sala);
 	if (global.templo_criado) {
 		
     // Verificar se a sala atual é um templo

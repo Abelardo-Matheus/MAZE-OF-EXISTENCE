@@ -436,8 +436,8 @@
     {"id":{"name":"spr_player_direita","path":"sprites/spr_player_direita/spr_player_direita.yy",},},
   ],
   "RoomOrderNodes": [
-    {"roomId":{"name":"Main_tutorial","path":"rooms/Main_tutorial/Main_tutorial.yy",},},
     {"roomId":{"name":"Fase_vamp","path":"rooms/Fase_vamp/Fase_vamp.yy",},},
+    {"roomId":{"name":"Main_tutorial","path":"rooms/Main_tutorial/Main_tutorial.yy",},},
     {"roomId":{"name":"Menu","path":"rooms/Menu/Menu.yy",},},
     {"roomId":{"name":"Fase_BEBE","path":"rooms/Fase_BEBE/Fase_BEBE.yy",},},
   ],

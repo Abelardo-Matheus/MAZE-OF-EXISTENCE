@@ -1,3 +1,4 @@
+
 #region ESCRIVANINHA
 function recriar__escrivaninha_na_sala_atual(current_sala) {
     // Gerar um ID único para a sala atual
@@ -51,7 +52,7 @@ function create_escrivaninha(salas_geradas, quantidade_salas, quantidade_escriv)
         var lista_escrivaninha = ds_list_create(); 
 
         for (var j = 0; j < quantidade_escriv; j++) {
-            var ponto_valido = false;
+            ponto_valido = false;
             var ponto_x, ponto_y;
 
             do {
@@ -142,7 +143,7 @@ function create_geladeira(salas_geradas, quantidade_salas, quantidade_escriv) {
 		var sala_detalhes = procurar_sala_por_numero(sala);
 		if (sala_detalhes.tipo == "cozinha") {
         for (var j = 0; j < quantidade_escriv; j++) {
-            var ponto_valido = false;
+            ponto_valido = false;
             var ponto_x, ponto_y,ponto_valido;
 
             do {
@@ -234,7 +235,7 @@ function create_guarda_roupa(salas_geradas, quantidade_salas, quantidade_escriv)
 		var sala_detalhes = procurar_sala_por_numero(sala);
 		if (sala_detalhes.tipo == "quarto") {
         for (var j = 0; j < quantidade_escriv; j++) {
-            var ponto_valido = false;
+            ponto_valido = false;
             var ponto_x, ponto_y,ponto_valido;
 
             do {
