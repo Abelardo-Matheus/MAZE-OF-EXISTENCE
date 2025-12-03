@@ -1,189 +1,127 @@
-// Função para resetar todas as fases e recriar de acordo com o nível
-function resetar_fase_por_level() {
-	randomize();
-	global.level_fase ++;
-    // Destruir as grids antigas, se existirem
-    if (ds_exists(global._maze, ds_type_grid)) {
-        ds_grid_destroy(global._maze);
-    }
-    if (ds_exists(global.visited, ds_type_grid)) {
-        ds_grid_destroy(global.visited);
-    }
-	salas();
-	
-    // Criar as grids novamente
+/// @desc Reseta e recria a fase inteira baseado no nível atual.
+/// [O QUE]: Incrementa o nível, limpa estruturas antigas, gera novo labirinto procedural e popula com objetos/inimigos.
+function reset_level_data() 
+{
+    randomize();
+    global.level_fase++; // Incrementa nível
+
+    // --- 1. Limpeza de Dados Antigos ---
+    
+    // Destrói grids do labirinto
+    if (ds_exists(global._maze, ds_type_grid)) ds_grid_destroy(global._maze);
+    if (ds_exists(global.visited, ds_type_grid)) ds_grid_destroy(global.visited);
+
+    // Reinicia configurações de sala (chama a função 'salas()' original)
+    // Sugestão: Renomeie 'salas()' para 'scr_init_room_settings()' se possível
+    salas(); 
+    
+    // Recria as grids principais
+    // Nota: width/height devem estar definidos globalmente
     global._maze = ds_grid_create(global._maze_width + 2, global._maze_height + 2);
     global.visited = ds_grid_create(global._maze_width + 2, global._maze_height + 2);
 
-    // Limpar arrays de salas e criar novas salas
+    // --- 2. Geração Procedural ---
+    
+    // Gera layout das salas
     global.salas_geradas = gera_salas_procedurais(global.total_rooms);
 
-	
-    // Criar salas distantes com templos
-    //criar_salas_distantes_com_templos(global.current_sala, global.salas_geradas, 1);
-	
-    // Para cada sala gerada, criar a sala e armazená-la
-	
-    for (var i = 0; i < array_length(global.salas_geradas); i++) {
-        var sala_info = criar_salas_lista(global.salas_geradas[i], i + 1);
-        array_push(global.salas_criadas, sala_info);
+    // Popula a lista de salas criadas
+    // Limpa a lista antiga antes de adicionar novas
+    global.salas_criadas = []; 
+    
+    var _total_rooms = array_length(global.salas_geradas);
+    for (var i = 0; i < _total_rooms; i++) 
+    {
+        var _room_info = criar_salas_lista(global.salas_geradas[i], i + 1);
+        array_push(global.salas_criadas, _room_info);
     }
 
-    // Gerar inimigos e itens com base no nível atual
+    // --- 3. População de Objetos e Inimigos ---
+    
+    // Gera inimigos e itens baseados na dificuldade do nível
     gerar_inimigos_e_itens_para_o_nivel(global.salas_geradas, global.level_fase);
-	
-    // Criar os objetos específicos nas salas
+    
+    // Móveis e Decoração
     create_escrivaninha(global.salas_geradas, 3, 1);
     create_geladeira(global.salas_geradas, 1, 1);
     create_guarda_roupa(global.salas_geradas, 1, 1);
     recriar__geladeira_na_sala_atual(global.current_sala);
-	create_escada_porao_em_fundos(global.salas_geradas);
-   
-    create_pontos_em_salas_aleatorias(global.salas_geradas, 10, 5);  // Criar até 5 pontos em salas aleatórias
-	
+    create_escada_porao_em_fundos(global.salas_geradas);
+    
+    // Pontos de interesse
+    create_pontos_em_salas_aleatorias(global.salas_geradas, 10, 5); 
+    
+    // Estruturas Especiais (Templos, Jardins, Escuridão)
     criar_templo_e_jardim(global.current_sala, global.salas_geradas);
-	criar_salas_escuras(global.current_sala, global.salas_geradas, 3);
+    criar_salas_escuras(global.current_sala, global.salas_geradas, 3);
+    
+    // Inimigos Especiais
+    create_inimigos_em_salas_escuras(2);
+    
+    // --- 4. Finalização ---
+    
+    // Carrega a sala inicial
     carregar_sala(global.current_sala, global.current_sala);
     
-    // Criar inimigos em salas escuras
-    create_inimigos_em_salas_escuras(2);
-	
-	
-	sala_tuto();
-   
+    // Prepara sala de tutorial (se necessário)
+    sala_tuto();
+    
+    // Reseta Minimapa
     global.minimap = [];
-    for (var i = 0; i < array_length_1d(global.salas_geradas); i++) {
-        global.minimap[i] = c_white;  // Todas as salas começam com cor branca
+    for (var i = 0; i < _total_rooms; i++) 
+    {
+        global.minimap[i] = c_white; // Todas as salas começam inexploradas/brancas
     }
 }
 
+/// @desc Reseta todas as variáveis globais e limpa mapas de spawn.
+/// [O QUE]: Limpa todos os DS Maps e Listas usados para controlar o spawn de objetos nas salas.
+function reset_global_variables() 
+{
+    global.current_sala = [0, 0];
+    
+    // Chama função auxiliar de limpar salas (se existir)
+    resetar_salas(); 
+    
+    // --- Limpeza de DS Maps ---
+    // Helper function para limpar ou criar mapas (reduz repetição de código)
+    var _reset_map = function(_map_id) 
+    {
+        if (ds_exists(_map_id, ds_type_map)) {
+            ds_map_clear(_map_id);
+            return _map_id;
+        } else {
+            return ds_map_create();
+        }
+    };
 
+    global.salas_com_amoeba       = _reset_map(global.salas_com_amoeba);
+    global.salas_com_inimigos     = _reset_map(global.salas_com_inimigos);
+    global.salas_com_geladeira    = _reset_map(global.salas_com_geladeira);
+    global.salas_com_guarda_roupa = _reset_map(global.salas_com_guarda_roupa);
+    global.sala_com_item_drop     = _reset_map(global.sala_com_item_drop);
+    global.salas_com_vela         = _reset_map(global.salas_com_vela);
+    global.salas_com_escrivaninha = _reset_map(global.salas_com_escrivaninha);
+    global.salas_com_escada_porao = _reset_map(global.salas_com_escada_porao);
+    global.salas_com_pontos       = _reset_map(global.salas_com_pontos);
+    global.salas_com_torretas     = _reset_map(global.salas_com_torretas);
+    global.salas_com_slow         = _reset_map(global.salas_com_slow);
+    global.salas_com_paredes      = _reset_map(global.salas_com_paredes);
+    global.salas_com_fantasma     = _reset_map(global.salas_com_fantasma);
 
-function resetar_variaveis_globais() {
-	global.current_sala = [0, 0];
-	resetar_salas();
-	
-	if (ds_exists(global.salas_com_amoeba,ds_type_map)) {
-        ds_map_clear(global.salas_com_amoeba);
-    } else {
-        global.salas_com_amoeba = ds_map_create();
-    }
-	
-	if (ds_exists(global.salas_com_inimigos,ds_type_map)) {
-        ds_map_clear(global.salas_com_inimigos);
-    } else {
-        global.salas_com_inimigos = ds_map_create();
-    }
-	
-	
-	
-	if (ds_exists(global.salas_com_geladeira,ds_type_map)) {
-        ds_map_clear(global.salas_com_geladeira);
-    } else {
-        global.salas_com_geladeira = ds_map_create();
-    }
-
-	
-	if (ds_exists(global.salas_com_guarda_roupa,ds_type_map)) {
-        ds_map_clear(global.salas_com_guarda_roupa);
-    } else {
-        global.salas_com_guarda_roupa = ds_map_create();
-    }
-
-	 if (ds_exists(global.sala_com_item_drop,ds_type_map)) {
-        ds_map_clear(global.sala_com_item_drop);
-    } else {
-        global.sala_com_item_drop = ds_map_create();
-    }
-	 if (ds_exists(global.salas_com_vela,ds_type_map)) {
-        ds_map_clear(global.salas_com_vela);
-    } else {
-        global.salas_com_vela = ds_map_create();
-    }
-	
-	 if (ds_exists(global.salas_com_escrivaninha,ds_type_map)) {
-        ds_map_clear(global.salas_com_escrivaninha);
-    } else {
-        global.salas_com_escrivaninha = ds_map_create();
-    }
-	
-
-
-	
-	 if (ds_exists(global.salas_com_escada_porao,ds_type_map)) {
-        ds_map_clear(global.salas_com_escada_porao);
-    } else {
-        global.salas_com_escada_porao = ds_map_create();
-    }
-
-    if (ds_exists(global.salas_com_pontos,ds_type_map)) {
-        ds_map_clear(global.salas_com_pontos);
-    } else {
-        global.salas_com_pontos = ds_map_create();
-    }
-	
-	 if (ds_exists(global.room_positions,ds_type_list)) {
+    // --- Limpeza de DS Lists ---
+    if (ds_exists(global.room_positions, ds_type_list)) {
         ds_list_clear(global.room_positions);
     } else {
         global.room_positions = ds_list_create();
     }
 
+    // --- Limpeza de Arrays ---
+    global.salas_geradas = [];
+    global.templos_salas_pos = [];
+    global.salas_escuras = [];
 
-    // Limpar e recriar global.salas_com_inimigos
-    if (ds_exists(global.salas_com_inimigos,ds_type_map)) {
-        ds_map_clear(global.salas_com_inimigos);
-    } else {
-        global.salas_com_inimigos = ds_map_create();
-    }
-
-    // Limpar e recriar global.salas_com_torretas
-    if (ds_exists(global.salas_com_torretas,ds_type_map)) {
-        ds_map_clear(global.salas_com_torretas);
-    } else {
-        global.salas_com_torretas = ds_map_create();
-    }
-
-    // Limpar e recriar global.salas_com_slow
-    if (ds_exists(global.salas_com_slow,ds_type_map)) {
-        ds_map_clear(global.salas_com_slow);
-    } else {
-        global.salas_com_slow = ds_map_create();
-    }
-	if (is_array(global.salas_geradas)) {
-        array_resize(global.salas_geradas, 0); // Limpa o array
-    } else {
-        global.salas_geradas = []; // Cria um array vazio
-    }
-
-    // Limpar e recriar global.salas_com_paredes
-    if (ds_exists(global.salas_com_paredes,ds_type_map)) {
-        ds_map_clear(global.salas_com_paredes);
-    } else {
-        global.salas_com_paredes = ds_map_create();
-    }
-   
-    // Resetar a variável global.templos_salas_pos (array)
-    if (is_array(global.templos_salas_pos)) {
-        array_resize(global.templos_salas_pos, 0); // Limpa o array
-    } else {
-        global.templos_salas_pos = []; // Cria um array vazio
-    }
-	if (is_array(global.salas_escuras)) {
-        array_resize(global.salas_escuras, 0); // Limpa o array
-    } else {
-     	global.salas_escuras = [];
-    }
-	
-	
-	 if (ds_exists(global.salas_com_fantasma,ds_type_map)) {
-        ds_map_clear(global.salas_com_fantasma);
-    } else {
-        global.salas_com_fantasma = ds_map_create();
-    }
-	
-	
-
-
-	global.templo_criado = false;
-    global.inimigo_id_count = 0; // Reiniciar o contador de IDs de inimigos
+    // --- Reset de Flags ---
+    global.templo_criado = false;
+    global.inimigo_id_count = 0; 
 }

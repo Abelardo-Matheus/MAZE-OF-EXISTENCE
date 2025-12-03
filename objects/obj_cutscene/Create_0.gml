@@ -3,7 +3,7 @@ action = 0;
 timer = 0;
 
 // Create Event do obj_cutscene
-cutscene_data = -1;
+cutscene_data = [];
 cutscene_active = false;
 action_index = 0; // Antigo "action"
 timer = 0;

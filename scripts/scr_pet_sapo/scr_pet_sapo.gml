@@ -1,86 +1,85 @@
-function scr_pet_config(_level) {
-    // Configuração inicial
-    var config = {
-        damage: 10,                     
-        velocidade: 1,                   
-        attack_interval: 60, 
-        orbit_distance: 400,             
-        quanti: 1                      
+/// @desc Calcula atributos do 'Sapo' (Pet)
+/// [O QUE]: Define dano, velocidade, intervalo de ataque e quantidade de pets.
+function scr_frog_calculate_stats(_level) 
+{
+    var _stats = {
+        damage: 10,             // Dano
+        move_speed: 3,          // Velocidade de movimento (pixels/frame)
+        attack_cooldown: 60,    // Intervalo de ataque (frames)
+        orbit_radius: 200,      // Distância que o sapo tenta manter do player
+        quantity: 1             // Quantidade de sapos
     };
 
-    var linha_sapo = 7;
-    var pode_alterar_grid = ds_grid_height(global.upgrades_vamp_grid) > linha_sapo;
+    var _frog_row_index = 7; // Índice na grid
 
-    // Limite máximo baseado na viewport customizada
-    var max_width = 1280 * 4; // 5120
-    var max_height = max_width * (1080 / 1920); // 2880
-    var max_orbit_distance = min(max_width, max_height) / 2;  // metade do menor lado
-
-    for (var i = 1; i <= _level; i++) {
-        switch (i % 6) {
-            case 1:
-                config.damage *= 1.10;
-                if (pode_alterar_grid) global.upgrades_vamp_grid[# Upgrades_vamp.description, linha_sapo] = "DANO DO PET AUMENTADO EM 10%";
+    for (var i = 1; i <= _level; i++) 
+    {
+        switch (i % 6) 
+        {
+            case 1: // Dano (+10%)
+                _stats.damage *= 1.10;
+                global.upgrades_vamp_grid[# Upgrades_vamp.description, _frog_row_index] = "DANO DO PET AUMENTADO EM 10%";
                 break;
-            case 2:
-                config.velocidade *= 1.10;
-                if (pode_alterar_grid) global.upgrades_vamp_grid[# Upgrades_vamp.description, linha_sapo] = "VELOCIDADE DO PET AUMENTADA EM 10%";
+            case 2: // Velocidade (+10%)
+                _stats.move_speed *= 1.10;
+                global.upgrades_vamp_grid[# Upgrades_vamp.description, _frog_row_index] = "VELOCIDADE DO PET AUMENTADA";
                 break;
-            case 3:
-                config.attack_interval *= 0.90;
-                if (pode_alterar_grid) global.upgrades_vamp_grid[# Upgrades_vamp.description, linha_sapo] = "INTERVALO DE ATAQUE DO PET REDUZIDO EM 10%";
+            case 3: // Cooldown (-10%)
+                _stats.attack_cooldown *= 0.90;
+                global.upgrades_vamp_grid[# Upgrades_vamp.description, _frog_row_index] = "ATAQUE MAIS RÁPIDO";
                 break;
-            case 4:
-                config.quanti += 1;
-                if (pode_alterar_grid) global.upgrades_vamp_grid[# Upgrades_vamp.description, linha_sapo] = "MAIS UM SAPO";
+            case 4: // Quantidade (+1 Sapo)
+                _stats.quantity += 1;
+                global.upgrades_vamp_grid[# Upgrades_vamp.description, _frog_row_index] = "MAIS UM SAPO";
                 break;
-            case 5:
-                var novo_orbit = config.orbit_distance + (config.orbit_distance / 8);
-                if (novo_orbit <= max_orbit_distance) {
-                    config.orbit_distance = novo_orbit;
-                    if (pode_alterar_grid) global.upgrades_vamp_grid[# Upgrades_vamp.description, linha_sapo] = "MAIS 12.5% DE RANGE PARA O SAPO";
-                } else {
-                    config.orbit_distance = max_orbit_distance;
-                    if (pode_alterar_grid) global.upgrades_vamp_grid[# Upgrades_vamp.description, linha_sapo] = "RANGE MÁXIMO ALCANÇADO";
-                }
+            case 5: // Range/Orbit (+12.5%)
+                _stats.orbit_radius *= 1.125;
+                global.upgrades_vamp_grid[# Upgrades_vamp.description, _frog_row_index] = "ALCANCE DE PATRULHA AUMENTADO";
                 break;
-            case 0:
-                config.damage *= 1.20;
-                if (pode_alterar_grid) global.upgrades_vamp_grid[# Upgrades_vamp.description, linha_sapo] = "DANO DO PET AUMENTADO EM 20%";
+            case 0: // Dano Extra (+20%)
+                _stats.damage *= 1.20;
+                global.upgrades_vamp_grid[# Upgrades_vamp.description, _frog_row_index] = "DANO DO PET AUMENTADO EM 20%";
                 break;
         }
     }
-
-    return config;
+    return _stats;
 }
+/// @desc Gerencia a matilha de Sapos
+/// [O QUE]: Cria novos sapos se necessário e atualiza os status de TODOS os sapos ativos.
+/// @desc Gerencia a matilha de Sapos (Criação e Atualização de Status)
+function scr_sapo() 
+{
+    var _frog_row_index = 7;
+    var _current_level = global.upgrades_vamp_grid[# Upgrades_vamp.level, _frog_row_index];
+    var _stats = scr_frog_calculate_stats(_current_level); // Usa seu script de config
 
+    // 1. Cria sapos que faltam
+    var _current_count = instance_number(obj_sapo_pet);
+    var _needed = _stats.quantity - _current_count;
 
+    if (_needed > 0) {
+        repeat(_needed) {
+            instance_create_layer(obj_player.x, obj_player.y, "Instances", obj_sapo_pet);
+        }
+    }
 
-function scr_sapo() {
-    var linha_sapo = 7;
-    var pet_level = global.upgrades_vamp_grid[# Upgrades_vamp.level, linha_sapo];
-    var pet_config = scr_pet_config(pet_level);
+    // 2. Atualiza TODOS os sapos (Atributos e Posição na Roda)
+    var _index = 0;
+    var _total_frogs = instance_number(obj_sapo_pet);
 
-    // Verifica quantos sapos já existem para não criar infinitos
-    var sapos_existentes = instance_number(obj_sapo_pet);
+    with (obj_sapo_pet) 
+    {
+        // Atualiza Status (Isso garante que upgrades de dano funcionem na hora)
+        damage = _stats.damage;
+        velocidade = _stats.move_speed;
+        cooldown_max = _stats.attack_cooldown;
+        orbit_radius = _stats.orbit_radius; // Distância do player
+        range = _stats.orbit_radius * 1.5; // Range de detecção um pouco maior que a órbita
 
-    var para_criar = pet_config.quanti - sapos_existentes;
-    if (para_criar <= 0) return; // Já tem sapos suficientes
-
-    // Distribuir sapos em círculo ao redor do jogador
-    var cx = obj_player.x;
-    var cy = obj_player.y;
-    var distancia = pet_config.orbit_distance * 0.7; // distância do player para espalhar sapos
-
-    for (var i = 0; i < para_criar; i++) {
-        var angulo = (360 / pet_config.quanti) * i;
-        var sx = cx + lengthdir_x(distancia, angulo);
-        var sy = cy + lengthdir_y(distancia, angulo);
-
-        var pet = instance_create_layer(sx, sy, "Instances", obj_sapo_pet);
-        pet.damage = pet_config.damage;
-        pet.velocidade = pet_config.velocidade;
-        pet.cooldown_max = pet_config.attack_interval;
-        pet.follow_distance = pet_config.orbit_distance;
+        // Define o ângulo único deste sapo na formação
+        // Ex: 2 sapos = 0 e 180 graus.
+        my_angle_offset = (360 / _total_frogs) * _index;
+        
+        _index++;
     }
 }

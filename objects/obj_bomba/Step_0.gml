@@ -33,8 +33,8 @@ switch (state)
             // Define escala final da explosão baseada no raio
             // Nota: Certifique-se que 'base_bomb_size' está definido no Create (ex: 64)
             var _final_scale = radius / base_bomb_size;
-            image_xscale = _final_scale*2;
-            image_yscale = _final_scale*2;
+            image_xscale = _final_scale*4;
+            image_yscale = _final_scale*4;
             
             exploded = false; // Prepara para causar dano no próximo frame
         } 
