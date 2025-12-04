@@ -13,7 +13,8 @@ var _inst = instance_nearest(x,y,obj_player);
 			var item_x = self.x; // Posição X do jogador
 			var item_y = self.y; // Posição Y do jogador
 		criar_item_aleatorio_ativos(item_x-_index_w,item_y-_index_h,depth, 1);
-		definir_geladeira_aberta(self.x,self.y,global.current_sala);
+		// Exemplo dentro do obj_geladeira
+	furniture_update_state(x, y, global.current_sala, global.salas_com_geladeira, true);
 		}
 	}
 	

@@ -13,8 +13,7 @@ var _inst = instance_nearest(x,y,obj_player);
 			var item_x = self.x; // Posição X do jogador
 			var item_y = self.y; // Posição Y do jogador
 		criar_item_aleatorio_passivos_pe(item_x-_index_w,item_y-_index_h+25,depth,1);
-		
-		definir_escrivaninha_aberta(self.x,self.y,global.current_sala);
+		furniture_update_state(x, y, global.current_sala, global.salas_com_escrivaninha, true);
 		}
 	}
 

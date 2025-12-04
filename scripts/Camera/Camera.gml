@@ -1,52 +1,61 @@
+// Inicialize estas variáveis no Create Event do seu controlador
 global.cmw = camera_get_view_width(view_camera[0]);
 global.cmh = camera_get_view_height(view_camera[0]);
 
-
-
 function zoom() {
-	// Variáveis para controle de aceleração do zoom
-	var zoom_speed_base = 50; // Velocidade base do zoom
-	var zoom_speed_multiplier = 1; // Multiplicador de velocidade (aumenta com o tempo)
-	var zoom_acceleration = 0.8; // Taxa de aceleração do zoom
-	var max_zoom_multiplier = 5; // Limite máximo do multiplicador de velocidade
-    // Limites de zoom
-    var min_width = 740; // Largura mínima da viewport
-    var min_height = min_width * (1080 / 1920); // Altura mínima mantendo a proporção
-    var max_width = 1280*4; // Largura máxima da viewport
-    var max_height = max_width * (1080 / 1920); // Altura máxima mantendo a proporção
+    // --- Configurações (Constantes Locais) ---
+    var _zoom_speed_base = 50;       // Velocidade base
+    var _zoom_accel = 0.2;           // Aceleração (ajustado para ser mais suave)
+    var _max_zoom_mult = 5;          // Multiplicador máximo
+    var _aspect_ratio = 1080 / 1920; // Proporção da tela (Altura / Largura)
+    
+    // Limites de Tamanho
+    var _min_w = 740;
+    var _max_w = 1280 * 4;
 
-    // Verifica se a roda do mouse foi rolada para cima
-    if (mouse_wheel_up()) {
-        // Aumenta o zoom (diminui o tamanho da viewport)
-        global.cmw -= zoom_speed_base * zoom_speed_multiplier;
-        global.cmh = global.cmw * (1080 / 1920); // Mantém a proporção
-        // Aumenta o multiplicador de velocidade (aceleração)
-        zoom_speed_multiplier = min(zoom_speed_multiplier + zoom_acceleration, max_zoom_multiplier);
+    // --- Variáveis de Estado (Persistentes) ---
+    // 'static' mantém o valor da variável entre os frames
+    static _current_mult = 1;
+
+    // --- Inputs ---
+    var _wheel_up = mouse_wheel_up();
+    var _wheel_down = mouse_wheel_down();
+
+    // --- Lógica de Zoom ---
+    if (_wheel_up || _wheel_down) {
+        // Incrementa aceleração
+        _current_mult = min(_current_mult + _zoom_accel, _max_zoom_mult);
+        
+        // Calcula a alteração
+        var _change = _zoom_speed_base * _current_mult;
+
+        if (_wheel_up) {
+            global.cmw -= _change; // Zoom In
+        } else {
+            global.cmw += _change; // Zoom Out
+        }
+    } else {
+        // Reseta aceleração se não houver input
+        _current_mult = 1;
     }
 
-    // Verifica se a roda do mouse foi rolada para baixo
-    if (mouse_wheel_down()) {
-        // Diminui o zoom (aumenta o tamanho da viewport)
-        global.cmw += zoom_speed_base * zoom_speed_multiplier;
-        global.cmh = global.cmw * (1080 / 1920); // Mantém a proporção
-        // Aumenta o multiplicador de velocidade (aceleração)
-        zoom_speed_multiplier = min(zoom_speed_multiplier + zoom_acceleration, max_zoom_multiplier);
-    }
+    // --- Aplicação de Limites e Proporção ---
+    global.cmw = clamp(global.cmw, _min_w, _max_w);
+    global.cmh = global.cmw * _aspect_ratio;
 
-    // Reseta o multiplicador de velocidade se não houver input de zoom
-    if (!mouse_wheel_up() && !mouse_wheel_down()) {
-        zoom_speed_multiplier = 1;
-    }
-
-    // Limita o tamanho da viewport
-    global.cmw = clamp(global.cmw, min_width, max_width);
-    global.cmh = clamp(global.cmh, min_height, max_height);
-
-    // Atualiza o tamanho da viewport da câmera
+    // Atualiza o tamanho da view
     camera_set_view_size(view_camera[0], global.cmw, global.cmh);
 
-    // Define a posição da câmera diretamente (sem suavização)
-    global.cmx = obj_player.x - global.cmw / 2;
-    global.cmy = obj_player.y - global.cmh / 2;
-    camera_set_view_pos(view_camera[0], global.cmx, global.cmy);
+    // --- Posicionamento da Câmera ---
+    if (instance_exists(obj_player)) {
+        // Centraliza a câmera no player (sem suavização conforme solicitado)
+        var _cam_x = obj_player.x - (global.cmw / 2);
+        var _cam_y = obj_player.y - (global.cmh / 2);
+        
+        camera_set_view_pos(view_camera[0], _cam_x, _cam_y);
+        
+        // Atualiza variáveis globais de posição, caso sejam usadas em outros lugares
+        global.cmx = _cam_x;
+        global.cmy = _cam_y;
+    }
 }

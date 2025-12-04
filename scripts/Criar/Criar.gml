@@ -1,288 +1,105 @@
-
-#region ESCRIVANINHA
-function recriar__escrivaninha_na_sala_atual(current_sala) {
-    // Gerar um ID único para a sala atual
-    var sala_id = string(current_sala[0]) + "_" + string(current_sala[1]);
-
-    // Verificar se a sala atual tem escrivaninhas salvas
-    if (ds_map_exists(global.salas_com_escrivaninha, sala_id)) {
-        var lista_pontos = ds_map_find_value(global.salas_com_escrivaninha, sala_id);
-
-        // Recriar as escrivaninhas nas posições salvas
-        for (var i = 0; i < ds_list_size(lista_pontos); i++) {
-            var ponto_pos = ds_list_find_value(lista_pontos, i);
-            var ponto_x = ponto_pos[0];
-            var ponto_y = ponto_pos[1];
-            var aberta = ponto_pos[2]; // Pega o estado de "aberta"
-
-            // Criar o objeto escrivaninha na posição salva
-            var _inst = instance_create_layer(ponto_x, ponto_y, "Instances_moveis", obj_mesa_1);
-
-            // Definir a variável 'aberta' se estiver definida como aberta
-            if (aberta == true) {
-                _inst.aberto = true;
-            } else {
-                _inst.aberto = false;
-            }
-        }
-    } 
+// Helper para gerar o ID da sala consistentemente
+function get_room_id(_room_coords) {
+    return string(_room_coords[0]) + "_" + string(_room_coords[1]);
 }
 
+// --- FUNÇÃO 1: RECRIAR (Respawn) ---
+// Recria qualquer mobília baseada no mapa global e objeto fornecido
+function furniture_respawn_in_room(_current_sala_coords, _global_map, _obj_index) {
+    var _sala_id = get_room_id(_current_sala_coords);
 
-function create_escrivaninha(salas_geradas, quantidade_salas, quantidade_escriv) {
- // Criar um array para armazenar as salas que terão escrivaninhas
-    var salas_selecionadas = [];
+    // Verifica se existem dados salvos para esta sala neste mapa específico
+    if (ds_map_exists(_global_map, _sala_id)) {
+        var _list_points = ds_map_find_value(_global_map, _sala_id);
 
-    // Selecionar um número específico de salas aleatórias
-    for (var i = 0; i < quantidade_salas; i++) {
-        var sala_aleatoria;
+        for (var i = 0; i < ds_list_size(_list_points); i++) {
+            var _data = ds_list_find_value(_list_points, i);
+            var _px = _data[0];
+            var _py = _data[1];
+            var _is_open = _data[2];
 
-        // Garantir que a sala selecionada ainda não foi escolhida
-        do {
-            sala_aleatoria = salas_geradas[irandom(array_length_1d(salas_geradas) - 1)];
-        } until (!array_contains(salas_selecionadas, sala_aleatoria));
-
-        array_push(salas_selecionadas, sala_aleatoria); // Adicionar sala selecionada à lista
+            // Cria o objeto genérico passado no argumento _obj_index
+            var _inst = instance_create_layer(_px, _py, "Instances_moveis", _obj_index);
+            
+            // Aplica o estado salvo
+            _inst.aberto = _is_open;
+        }
     }
+}
 
-    // Para cada sala selecionada, criar escrivaninhas
-    for (var i = 0; i < array_length_1d(salas_selecionadas); i++) {
-        var sala = salas_selecionadas[i];
-        var sala_id = string(sala[0]) + "_" + string(sala[1]); 
-        var lista_escrivaninha = ds_list_create(); 
+// --- FUNÇÃO 2: ATUALIZAR ESTADO (Save State) ---
+// Marca qualquer mobília como aberta/fechada no mapa global
+function furniture_update_state(_x, _y, _current_sala_coords, _global_map, _is_open) {
+    var _sala_id = get_room_id(_current_sala_coords);
 
-        for (var j = 0; j < quantidade_escriv; j++) {
-            ponto_valido = false;
-            var ponto_x, ponto_y;
+    if (ds_map_exists(_global_map, _sala_id)) {
+        var _list_points = ds_map_find_value(_global_map, _sala_id);
 
+        for (var i = 0; i < ds_list_size(_list_points); i++) {
+            var _data = ds_list_find_value(_list_points, i);
+
+            // Encontra a mobília pela posição X e Y
+            if (_data[0] == _x && _data[1] == _y) {
+                _data[2] = _is_open; // Atualiza o estado
+                ds_list_replace(_list_points, i, _data);
+                break; 
+            }
+        }
+        // Não é estritamente necessário replace o mapa se a lista é a mesma referência, 
+        // mas garante integridade em algumas versões do GM.
+        ds_map_replace(_global_map, _sala_id, _list_points);
+    }
+}
+
+// --- FUNÇÃO 3: GERAR (Create/Procedural) ---
+// Gera posições para qualquer mobília, com filtro opcional de tipo de sala
+function furniture_generate_positions(_salas_geradas, _global_map, _amount, _required_room_type = undefined) {
+    randomize();
+
+    for (var i = 0; i < array_length(_salas_geradas); i++) {
+        var _sala_coords = _salas_geradas[i];
+        
+        // Se um tipo de sala for exigido (ex: "cozinha"), verifica antes
+        if (_required_room_type != undefined) {
+            var _sala_detalhes = procurar_sala_por_numero(_sala_coords);
+            if (_sala_detalhes.tipo != _required_room_type) continue; // Pula se não for o tipo certo
+        }
+
+        var _sala_id = get_room_id(_sala_coords);
+        var _list_furniture = ds_list_create();
+
+        for (var j = 0; j < _amount; j++) {
+            var _px, _py, _valid;
+            var _attempts = 0;
+
+            // Tenta achar uma posição válida (com limite de tentativas para evitar loop infinito)
             do {
-                ponto_x = irandom_range(300, room_width - 300); 
-                ponto_y = irandom_range(300, room_height - 300);
+                _px = irandom_range(300, room_width - 300);
+                _py = irandom_range(300, room_height - 300);
+                _valid = true;
+                _attempts++;
 
-                ponto_valido = true;
-
-                for (var k = 0; k < ds_list_size(lista_escrivaninha); k++) {
-                    var ponto_existente = ds_list_find_value(lista_escrivaninha, k);
-                    var distancia = point_distance(ponto_x, ponto_y, ponto_existente[0], ponto_existente[1]);
-
-                    if (distancia < 100) {
-                        ponto_valido = false;
+                // Verifica distância de outras mobílias desta lista
+                for (var k = 0; k < ds_list_size(_list_furniture); k++) {
+                    var _existing = ds_list_find_value(_list_furniture, k);
+                    if (point_distance(_px, _py, _existing[0], _existing[1]) < 100) {
+                        _valid = false;
                         break;
                     }
                 }
-            } until (ponto_valido);
+            } until (_valid || _attempts > 50);
 
-            // Salvar a posição da escrivaninha e sua variável aberta (true para aberta)
-            ds_list_add(lista_escrivaninha, [ponto_x, ponto_y, false]); // "true" representa a escrivaninha aberta
+            if (_valid) {
+                // Adiciona: [X, Y, Aberto(false)]
+                ds_list_add(_list_furniture, [_px, _py, false]);
+            }
         }
 
-        // Armazenar a lista de escrivaninhas no mapa global para a sala correspondente
-        ds_map_add(global.salas_com_escrivaninha, sala_id, lista_escrivaninha);
+        // Só adiciona ao mapa se realmente criou alguma mobília
+        if (ds_list_size(_list_furniture) > 0) {
+            ds_map_add(_global_map, _sala_id, _list_furniture);
+        } else {
+            ds_list_destroy(_list_furniture); // Limpa memória se vazia
+        }
     }
 }
-function definir_escrivaninha_aberta(ponto_x, ponto_y, current_sala) {
-    var sala_id = string(current_sala[0]) + "_" + string(current_sala[1]);
-
-    // Verificar se a sala tem escrivaninhas salvas
-    if (ds_map_exists(global.salas_com_escrivaninha, sala_id)) {
-        var lista_escrivaninha = ds_map_find_value(global.salas_com_escrivaninha, sala_id);
-
-        // Procurar a escrivaninha e marcá-la como aberta
-        for (var i = 0; i < ds_list_size(lista_escrivaninha); i++) {
-            var escriv_info = ds_list_find_value(lista_escrivaninha, i);
-
-            if (escriv_info[0] == ponto_x && escriv_info[1] == ponto_y) {
-                escriv_info[2] = true; // Marcar como aberta
-                ds_list_replace(lista_escrivaninha, i, escriv_info); // Atualizar a lista
-                break;
-            }
-        }
-
-        ds_map_replace(global.salas_com_escrivaninha, sala_id, lista_escrivaninha); // Salvar as alterações
-    }
-}
-#endregion
-#region Geladeira
-function recriar__geladeira_na_sala_atual(current_sala) {
-    // Gerar um ID único para a sala atual
-    var sala_id = string(current_sala[0]) + "_" + string(current_sala[1]);
-
-    // Verificar se a sala atual tem escrivaninhas salvas
-    if (ds_map_exists(global.salas_com_geladeira, sala_id)) {
-        var lista_geladeira = ds_map_find_value(global.salas_com_geladeira, sala_id);
-
-        // Recriar as escrivaninhas nas posições salvas
-        for (var i = 0; i < ds_list_size(lista_geladeira); i++) {
-            var ponto_pos = ds_list_find_value(lista_geladeira, i);
-            var ponto_x = ponto_pos[0];
-            var ponto_y = ponto_pos[1];
-            var aberta = ponto_pos[2]; // Pega o estado de "aberta"
-
-            // Criar o objeto escrivaninha na posição salva
-            var _inst = instance_create_layer(ponto_x, ponto_y, "Instances_moveis", obj_geladeira);
-
-            // Definir a variável 'aberta' se estiver definida como aberta
-            if (aberta == true) {
-                _inst.aberto = true;
-            } else {
-                _inst.aberto = false;
-            }
-        }
-    } 
-}
-
-
-function create_geladeira(salas_geradas, quantidade_salas, quantidade_escriv) {
-
-	randomize();
-	
-	for (var i = 0; i < array_length_1d(salas_geradas); i++) {
-        var sala = salas_geradas[i];
-        var sala_id = string(sala[0]) + "_" + string(sala[1]); 
-        var lista_geladeira = ds_list_create(); 
-		var sala_detalhes = procurar_sala_por_numero(sala);
-		if (sala_detalhes.tipo == "cozinha") {
-        for (var j = 0; j < quantidade_escriv; j++) {
-            ponto_valido = false;
-            var ponto_x, ponto_y,ponto_valido;
-
-            do {
-                ponto_x = irandom_range(300, room_width - 300); 
-                ponto_y = irandom_range(300, room_height - 300);
-
-                ponto_valido = true;
-
-                for (var k = 0; k < ds_list_size(lista_geladeira); k++) {
-                    var ponto_existente = ds_list_find_value(lista_geladeira, k);
-                    var distancia = point_distance(ponto_x, ponto_y, ponto_existente[0], ponto_existente[1]);
-
-                    if (distancia < 100) {
-                        ponto_valido = false;
-                        break;
-                    }
-                }
-            } until (ponto_valido);
-
-            // Salvar a posição da escrivaninha e sua variável aberta (true para aberta)
-            ds_list_add(lista_geladeira, [ponto_x, ponto_y, false]); // "true" representa a escrivaninha aberta
-        }
-		 }
-        // Armazenar a lista de escrivaninhas no mapa global para a sala correspondente
-        ds_map_add(global.salas_com_geladeira, sala_id, lista_geladeira);
-   
-	}
-}
-function definir_geladeira_aberta(ponto_x, ponto_y, current_sala) {
-    var sala_id = string(current_sala[0]) + "_" + string(current_sala[1]);
-
-    // Verificar se a sala tem escrivaninhas salvas
-    if (ds_map_exists(global.salas_com_geladeira, sala_id)) {
-        var lista_geladeira = ds_map_find_value(global.salas_com_geladeira, sala_id);
-
-        // Procurar a escrivaninha e marcá-la como aberta
-        for (var i = 0; i < ds_list_size(lista_geladeira); i++) {
-            var escriv_info = ds_list_find_value(lista_geladeira, i);
-
-            if (escriv_info[0] == ponto_x && escriv_info[1] == ponto_y) {
-                escriv_info[2] = true; // Marcar como aberta
-                ds_list_replace(lista_geladeira, i, escriv_info); // Atualizar a lista
-                break;
-            }
-        }
-
-        ds_map_replace(global.salas_com_geladeira, sala_id, lista_geladeira); // Salvar as alterações
-    }
-}
-#endregion
-#region Guarda_roupa
-function recriar_guarda_roupa_na_sala_atual(current_sala) {
-    // Gerar um ID único para a sala atual
-    var sala_id = string(current_sala[0]) + "_" + string(current_sala[1]);
-
-    // Verificar se a sala atual tem escrivaninhas salvas
-    if (ds_map_exists(global.salas_com_guarda_roupa, sala_id)) {
-        var lista_pontos = ds_map_find_value(global.salas_com_guarda_roupa, sala_id);
-
-        // Recriar as escrivaninhas nas posições salvas
-        for (var i = 0; i < ds_list_size(lista_pontos); i++) {
-            var ponto_pos = ds_list_find_value(lista_pontos, i);
-            var ponto_x = ponto_pos[0];
-            var ponto_y = ponto_pos[1];
-            var aberta = ponto_pos[2]; // Pega o estado de "aberta"
-
-            // Criar o objeto escrivaninha na posição salva
-            var _inst = instance_create_layer(ponto_x, ponto_y, "Instances_moveis", obj_guarda_roupa);
-
-            // Definir a variável 'aberta' se estiver definida como aberta
-            if (aberta == true) {
-                _inst.aberto = true;
-            } else {
-                _inst.aberto = false;
-            }
-        }
-    } 
-}
-
-
-function create_guarda_roupa(salas_geradas, quantidade_salas, quantidade_escriv) {
-
-	randomize();
-	
-	for (var i = 0; i < array_length_1d(salas_geradas); i++) {
-        var sala = salas_geradas[i];
-        var sala_id = string(sala[0]) + "_" + string(sala[1]); 
-        var lista_geladeira = ds_list_create(); 
-		var sala_detalhes = procurar_sala_por_numero(sala);
-		if (sala_detalhes.tipo == "quarto") {
-        for (var j = 0; j < quantidade_escriv; j++) {
-            ponto_valido = false;
-            var ponto_x, ponto_y,ponto_valido;
-
-            do {
-                ponto_x = irandom_range(300, room_width - 300); 
-                ponto_y = irandom_range(300, room_height - 300);
-
-                ponto_valido = true;
-
-                for (var k = 0; k < ds_list_size(lista_geladeira); k++) {
-                    var ponto_existente = ds_list_find_value(lista_geladeira, k);
-                    var distancia = point_distance(ponto_x, ponto_y, ponto_existente[0], ponto_existente[1]);
-
-                    if (distancia < 100) {
-                        ponto_valido = false;
-                        break;
-                    }
-                }
-            } until (ponto_valido);
-
-            // Salvar a posição da escrivaninha e sua variável aberta (true para aberta)
-            ds_list_add(lista_geladeira, [ponto_x, ponto_y, false]); // "true" representa a escrivaninha aberta
-        }
-		 }
-        // Armazenar a lista de escrivaninhas no mapa global para a sala correspondente
-        ds_map_add(global.salas_com_guarda_roupa, sala_id, lista_geladeira);
-   
-	}
-}
-function definir_guarda_roupa_aberta(ponto_x, ponto_y, current_sala) {
-    var sala_id = string(current_sala[0]) + "_" + string(current_sala[1]);
-
-    // Verificar se a sala tem escrivaninhas salvas
-    if (ds_map_exists(global.salas_com_guarda_roupa, sala_id)) {
-        var lista_escrivaninha = ds_map_find_value(global.salas_com_guarda_roupa, sala_id);
-
-        // Procurar a escrivaninha e marcá-la como aberta
-        for (var i = 0; i < ds_list_size(lista_escrivaninha); i++) {
-            var escriv_info = ds_list_find_value(lista_escrivaninha, i);
-
-            if (escriv_info[0] == ponto_x && escriv_info[1] == ponto_y) {
-                escriv_info[2] = true; // Marcar como aberta
-                ds_list_replace(lista_escrivaninha, i, escriv_info); // Atualizar a lista
-                break;
-            }
-        }
-
-        ds_map_replace(global.salas_com_guarda_roupa, sala_id, lista_escrivaninha); // Salvar as alterações
-    }
-}
-#endregion

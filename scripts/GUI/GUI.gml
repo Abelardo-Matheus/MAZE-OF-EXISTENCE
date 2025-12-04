@@ -1,251 +1,271 @@
 function relogio() {
-    var relogio_x = global.room_width / 2;
-    var relogio_y = 120;
-    var tamanho_ponteiro = 32; // Tamanho do ponteiro
+    // --- Configuração ---
+    var _x = global.room_width / 2;
+    var _y = 120;
+    var _pointer_len = 32;
+    var _color_pointer = c_red;
     
-    // Desenha o relógio base
-    draw_sprite_ext(spr_relogio, 0, relogio_x, relogio_y, 1, 1, 0, c_white, 1);
+    // --- Desenho Base ---
+    draw_sprite_ext(spr_relogio, 0, _x, _y, 1, 1, 0, c_white, 1);
     
-    // Calcula o ângulo baseado no global.timer
-    var segundos_por_volta = global.day_night_cycle.day_duration + global.day_night_cycle.night_duration; // Tempo para uma volta completa (ajuste conforme necessário)
-    var angulo_por_segundo = 360 / segundos_por_volta;
-    var angulo_ponteiro = 180 - (global.timer * angulo_por_segundo); // Sentido horário
+    // --- Cálculo do Ângulo ---
+    // Timer total do ciclo
+    var _total_cycle = global.day_night_cycle.day_duration + global.day_night_cycle.night_duration;
     
-    // Desenha o ponteiro
-	draw_set_color(c_red);
-	draw_circle(relogio_x,relogio_y,4,false);
-    draw_ponteiro(relogio_x, relogio_y, angulo_ponteiro, tamanho_ponteiro);
+    // Mapeia o timer atual (0 a total) para um ângulo (180 a -180 para sentido horário começando da esquerda)
+    // Ajuste o '180' e o '-' conforme a direção desejada da sua arte
+    var _angle = 180 - ((global.timer / _total_cycle) * 360);
+    
+    // --- Desenho do Ponteiro ---
+    draw_set_color(_color_pointer);
+    draw_circle(_x, _y, 4, false); // Eixo central
+    
+    // Desenha a haste e a seta
+    draw_clock_hand(_x, _y, _angle, _pointer_len, _color_pointer);
+    
+    // Reset de cor
+    draw_set_color(c_white);
 }
 
-function draw_ponteiro(x, y, angle, length) {
-    // Calcula a extremidade do ponteiro
-    var dir_x = lengthdir_x(length, angle);
-    var dir_y = lengthdir_y(length, angle);
+function draw_clock_hand(_x, _y, _angle, _len, _color) {
+    // Calcula a ponta e a base da seta
+    var _tip_x = _x + lengthdir_x(_len, _angle);
+    var _tip_y = _y + lengthdir_y(_len, _angle);
     
-    // Define a base da seta (80% do comprimento para não sobrepor totalmente a linha)
-    var base_x = x + dir_x * 0.9;
-    var base_y = y + dir_y * 0.9;
-    var tip_x = x + dir_x;
-    var tip_y = y + dir_y;
+    // A linha vai apenas até 90% do caminho para dar espaço à cabeça da seta
+    var _line_end_x = _x + lengthdir_x(_len * 0.9, _angle);
+    var _line_end_y = _y + lengthdir_y(_len * 0.9, _angle);
     
-    // Desenha a linha principal (mais grossa)
-    draw_line_width_color(x, y, base_x, base_y, 3, c_red, c_red);
+    // Desenha Linha
+    draw_line_width_color(_x, _y, _line_end_x, _line_end_y, 3, _color, _color);
     
-
-    draw_triangles(tip_x, tip_y, angle, 8); // 6 = tamanho da seta
-	
-}
-function draw_triangles(tip_x, tip_y, angle, size) {
-    // Ângulos para os pontos laterais do triângulo
-    var angle_left = angle + 150; // 150° para abrir a seta
-    var angle_right = angle - 150;
+    // Desenha Cabeça da Seta (Triângulo)
+    var _arrow_size = 8;
+    var _angle_diff = 150; // Abertura da seta
     
-    // Calcula os pontos do triângulo
-    var left_x = tip_x + lengthdir_x(size, angle_left);
-    var left_y = tip_y + lengthdir_y(size, angle_left);
-    var right_x = tip_x + lengthdir_x(size, angle_right);
-    var right_y = tip_y + lengthdir_y(size, angle_right);
+    var _p1_x = _tip_x + lengthdir_x(_arrow_size, _angle + _angle_diff);
+    var _p1_y = _tip_y + lengthdir_y(_arrow_size, _angle + _angle_diff);
+    var _p2_x = _tip_x + lengthdir_x(_arrow_size, _angle - _angle_diff);
+    var _p2_y = _tip_y + lengthdir_y(_arrow_size, _angle - _angle_diff);
     
-    // Desenha o triângulo (preenchido)
     draw_primitive_begin(pr_trianglelist);
-    draw_vertex_color(tip_x, tip_y, c_black, 1);       // Ponta
-    draw_vertex_color(left_x, left_y, c_black, 1);     // Esquerda
-    draw_vertex_color(right_x, right_y, c_black, 1);   // Direita
+    draw_vertex_color(_tip_x, _tip_y, c_black, 1); // Ponta
+    draw_vertex_color(_p1_x, _p1_y, c_black, 1);   // Lado A
+    draw_vertex_color(_p2_x, _p2_y, c_black, 1);   // Lado B
     draw_primitive_end();
 }
 function mini_mapa_vamp() {
-    var minimap_width, minimap_height, minimap_x, minimap_y, minimap_scale, distancia_maxima;
-
+    // --- Input (Idealmente mover para o Step Event, mas mantido aqui para portabilidade) ---
     if (keyboard_check_pressed(ord("M"))) {
         global.minimap_expandido = !global.minimap_expandido;
     }
 
+    // --- Configuração Dinâmica ---
+    var _w, _h, _map_x, _map_y, _scale, _max_dist;
+    var _gw = display_get_width();
+    var _gh = display_get_height();
+
     if (global.minimap_expandido) {
-        minimap_width = 1000;
-        minimap_height = 800;
-        minimap_x = (display_get_width() - minimap_width) / 2;
-        minimap_y = (display_get_height() - minimap_height) / 2;
-        minimap_scale = 0.02;
-        distancia_maxima = 30000;
+        _w = 1000; _h = 800;
+        _map_x = (_gw - _w) / 2;
+        _map_y = (_gh - _h) / 2;
+        _scale = 0.02;
+        _max_dist = 30000;
     } else {
-        minimap_width = 220;
-        minimap_height = 200;
-        minimap_x = display_get_width() - minimap_width - 40;
-        minimap_y = display_get_height() - minimap_height - 40;
-        minimap_scale = 0.008;
-        distancia_maxima = 14000;
+        _w = 220; _h = 200;
+        _map_x = _gw - _w - 40;
+        _map_y = _gh - _h - 40;
+        _scale = 0.008;
+        _max_dist = 14000;
     }
 
-    var tamanho_minimo = 0.6;
-    var tamanho_normal = 1;
-    var cor_marrom = make_color_rgb(174, 91, 28);
+    // --- Renderização do Fundo ---
+    var _c_border = c_black;
+    var _c_bg = make_color_rgb(174, 91, 28); // Marrom
+    
+    draw_set_color(_c_border);
+    draw_rectangle(_map_x - 4, _map_y - 4, _map_x + _w + 4, _map_y + _h + 4, false);
+    
+    draw_set_color(_c_bg);
+    draw_rectangle(_map_x, _map_y, _map_x + _w, _map_y + _h, false);
 
-    draw_set_color(c_black);
-    draw_rectangle(minimap_x - 4, minimap_y - 4, minimap_x + minimap_width + 4, minimap_y + minimap_height + 4, false);
-
-    draw_set_color(cor_marrom);
-    draw_rectangle(minimap_x, minimap_y, minimap_x + minimap_width, minimap_y + minimap_height, false);
-
-    var player_x = minimap_x + minimap_width / 2;
-    var player_y = minimap_y + minimap_height / 2;
-
+    // --- Renderização do Player (Centro) ---
+    var _center_x = _map_x + _w / 2;
+    var _center_y = _map_y + _h / 2;
+    
     draw_set_color(c_blue);
-    draw_circle(player_x, player_y, 3, false);
+    draw_circle(_center_x, _center_y, 3, false);
 
-    var mouse_x_minimap = device_mouse_x_to_gui(0);
-    var mouse_y_minimap = device_mouse_y_to_gui(0);
-    var estrutura_hover_info = undefined;
+    // --- Loop de Entidades ---
+    var _mx = device_mouse_x_to_gui(0);
+    var _my = device_mouse_y_to_gui(0);
+    var _hover_text = undefined;
+    
+    // Array de listas para iterar
+    var _lists_to_check = [global.posicoes_estruturas, global.posicoes_grupos_inimigos];
 
-    // Percorre todas as listas globais de entidades no mini mapa
-    var listas = [global.posicoes_estruturas, global.posicoes_grupos_inimigos];
+    for (var l = 0; l < array_length(_lists_to_check); l++) {
+        var _list = _lists_to_check[l];
+        var _size = ds_list_size(_list);
 
-    for (var l = 0; l < array_length(listas); l++) {
-        var lista = listas[l];
+        for (var i = 0; i < _size; i++) {
+            var _data = _list[| i]; // [x, y, ?, ?, sprite, nome]
+            
+            // Dados da entidade
+            var _ent_x = _data[0];
+            var _ent_y = _data[1];
+            var _sprite = _data[4];
+            var _name   = _data[5];
 
-        for (var i = 0; i < ds_list_size(lista); i++) {
-            var estrutura_info = lista[| i];
-            var estrutura_x = estrutura_info[0];
-            var estrutura_y = estrutura_info[1];
-            var sprite_minimap = estrutura_info[4];
-            var nome = estrutura_info[5];
+            // Verifica distância
+            var _dist = point_distance(_ent_x, _ent_y, obj_player.x, obj_player.y);
+            
+            if (_dist <= _max_dist) {
+                // Projeção no minimapa
+                var _draw_x = _center_x + (_ent_x - obj_player.x) * _scale;
+                var _draw_y = _center_y + (_ent_y - obj_player.y) * _scale;
 
-            var distancia = point_distance(estrutura_x, estrutura_y, obj_player.x, obj_player.y);
+                // Clamp para não desenhar fora do quadrado
+                _draw_x = clamp(_draw_x, _map_x, _map_x + _w);
+                _draw_y = clamp(_draw_y, _map_y, _map_y + _h);
 
-            if (distancia <= distancia_maxima) {
-                var estrutura_minimap_x = minimap_x + (estrutura_x - obj_player.x) * minimap_scale + minimap_width / 2;
-                var estrutura_minimap_y = minimap_y + (estrutura_y - obj_player.y) * minimap_scale + minimap_height / 2;
+                // Escala visual baseada na distância
+                var _size_factor = clamp(1 - (_dist / _max_dist), 0.6, 1);
+                var _radius = 1 * _size_factor; // Tamanho base 1
 
-                estrutura_minimap_x = clamp(estrutura_minimap_x, minimap_x, minimap_x + minimap_width);
-                estrutura_minimap_y = clamp(estrutura_minimap_y, minimap_y, minimap_y + minimap_height);
-
-                var fator_tamanho = 1 - (distancia / distancia_maxima);
-                fator_tamanho = clamp(fator_tamanho, tamanho_minimo, 1);
-                var tamanho_bolinha = tamanho_normal * fator_tamanho;
-
-                var is_hover = point_distance(mouse_x_minimap, mouse_y_minimap, estrutura_minimap_x, estrutura_minimap_y) < tamanho_bolinha * 20;
-                if (is_hover) {
-                    estrutura_hover_info = nome;
-                    tamanho_bolinha *= 2.5;
+                // Verifica Hover
+                // Multiplicamos o raio por um valor maior para facilitar o mouse over
+                if (point_distance(_mx, _my, _draw_x, _draw_y) < (_radius * 20)) {
+                    _hover_text = _name;
+                    _radius *= 2.5; // Aumenta ao passar o mouse
                 }
 
-                if (sprite_minimap != noone) {
-                    draw_sprite_ext(sprite_minimap, 0, estrutura_minimap_x, estrutura_minimap_y, tamanho_bolinha, tamanho_bolinha, 0, c_white, 0.8);
+                // Desenha Sprite ou Ponto
+                if (_sprite != noone) {
+                    draw_sprite_ext(_sprite, 0, _draw_x, _draw_y, _radius, _radius, 0, c_white, 0.8);
                 } else {
+                    var _blink = 0.5 + 0.5 * sin(current_time / 200);
                     draw_set_color(c_red);
-                    var piscar_alpha = 0.5 + 0.5 * sin(current_time / 200);
-                    draw_set_alpha(piscar_alpha);
-                    draw_circle(estrutura_minimap_x, estrutura_minimap_y, 6, false);
+                    draw_set_alpha(_blink);
+                    draw_circle(_draw_x, _draw_y, 6, false);
                     draw_set_alpha(1);
                 }
             }
         }
     }
 
-    if (estrutura_hover_info != undefined) {
+    // --- Tooltip ---
+    if (_hover_text != undefined) {
         draw_set_color(c_white);
-        draw_text(mouse_x_minimap + 10, mouse_y_minimap, estrutura_hover_info);
+        draw_text(_mx + 10, _my, _hover_text);
     }
+    
+    // Reset final de segurança
+    draw_set_color(c_white);
 }
+function mini_mapa_bebe() {
+    // --- Configuração ---
+    var _map_w = 220;
+    var _map_h = 200;
+    var _cell_size = 25;
+    var _sprite_base_size = 64; 
+    var _scale_factor = _cell_size / _sprite_base_size;
+    
+    // Posição na tela (Canto Inferior Direito)
+    var _start_x = display_get_width() - _map_w - 40;
+    var _start_y = display_get_height() - _map_h - 40;
+    
+    // Centro do Minimapa
+    var _center_x = _start_x + _map_w / 2;
+    var _center_y = _start_y + _map_h / 2;
 
+    // Limites de Visibilidade (em células)
+    var _limit_x = (_map_w div _cell_size) / 2;
+    var _limit_y = (_map_h div _cell_size) / 2;
 
-
-
-function mini_mapa_bebe(){
-
-    var mini_map_width = 220;
-    var mini_map_height = 200;
-    var _cell_size = 25;  // Tamanho de cada célula no minimapa
-	var sprite_size = 64;  // Tamanho da sprite (64x64)
-
+    // --- Fundo ---
     draw_set_alpha(0.7);
-
-    // Posição do canto inferior direito da tela
-    var mini_map_x = display_get_width() - mini_map_width - 40;
-    var mini_map_y = display_get_height() - mini_map_height - 40;
-	var scale_factor = _cell_size / sprite_size;
-    // Desenhar fundo do minimapa
     draw_set_color(c_black);
-    draw_rectangle(mini_map_x, mini_map_y, mini_map_x + mini_map_width, mini_map_y + mini_map_height, false);
+    draw_rectangle(_start_x, _start_y, _start_x + _map_w, _start_y + _map_h, false);
+    draw_set_alpha(1);
 
-    // Calcular os limites para o centro do minimapa (a sala atual do jogador)
-    var center_x = mini_map_x + mini_map_width / 2;
-    var center_y = mini_map_y + mini_map_height / 2;
+    // --- Loop de Salas ---
+    var _total_rooms = array_length(global.salas_geradas);
+    
+    for (var i = 0; i < _total_rooms; i++) {
+        var _room_data = global.salas_geradas[i];
+        
+        if (!is_array(_room_data)) continue;
 
-    // Limites do minimapa para o número de células que podem ser mostradas
-    var max_cells_x = mini_map_width div _cell_size;  // Quantidade máxima de células visíveis no eixo X
-    var max_cells_y = mini_map_height div _cell_size;  // Quantidade máxima de células visíveis no eixo Y
+        var _rx = _room_data[0]; // Room X Grid Coordinate
+        var _ry = _room_data[1]; // Room Y Grid Coordinate
 
-    // Desenhar cada sala no minimapa
-	
-    for (var i = 0; i < array_length(global.salas_geradas); i++) {
-        var sala = global.salas_geradas[i];
-        if (is_array(sala)) {
-            var sala_x = sala[0];
-            var sala_y = sala[1];
+        // Distância relativa à sala atual do player
+        var _dx = _rx - global.current_sala[0];
+        var _dy = _ry - global.current_sala[1];
 
-            // Posição da sala relativa à sala atual
-            var delta_x = sala_x - global.current_sala[0];
-            var delta_y = sala_y - global.current_sala[1];
-			var delta = [sala_x - global.current_sala[0], sala_y - global.current_sala[1]];
-			var dir_ind = 0;
-			
-			
-			
-            // Calcula a posição no minimapa com base na distância da sala atual
-            var mini_x = center_x + (delta_x * _cell_size);
-            var mini_y = center_y - (delta_y * _cell_size);
+        // Só desenha se estiver dentro da área visível do minimapa
+        if (abs(_dx) <= _limit_x && abs(_dy) <= _limit_y) {
+            
+            // Posição visual final
+            var _draw_x = _center_x + (_dx * _cell_size);
+            var _draw_y = _center_y - (_dy * _cell_size); // Y invertido para grid cartesiano visual
 
-            // Verificar se a sala está dentro dos limites do minimapa
-            if (abs(delta_x) <= max_cells_x / 2 && abs(delta_y) <= max_cells_y / 2) {
-                var sprite_to_draw = spr_salas;  // Sala comum por padrão
+            // --- Lógica do Tipo de Sala (Ícone) ---
+            var _subimg = 0; // 0 = Padrão
 
-                // Verificar se a sala é um templo
-                var esta_no_templo = false;
-                if (global.templos_salas_pos != undefined) {
-                    for (var j = 0; j < array_length_1d(global.templos_salas_pos); j++) {
-                        var templo_pos = global.templos_salas_pos[j];
-                        if (templo_pos[0] == sala_x && templo_pos[1] == sala_y) {
-                            dir_ind = 1;
-                            esta_no_templo = true;
-                            break;
-                        }
+            // Verifica Templos
+            if (variable_global_exists("templos_salas_pos") && global.templos_salas_pos != undefined) {
+                var _len_t = array_length(global.templos_salas_pos);
+                for (var j = 0; j < _len_t; j++) {
+                    var _t_pos = global.templos_salas_pos[j];
+                    if (_t_pos[0] == _rx && _t_pos[1] == _ry) {
+                        _subimg = 1;
+                        break;
                     }
                 }
+            }
 
-                // Verificar se a sala contém o boss
-                var sala_boss = false;
-                if (global.sala_jardim != undefined) {
-                    for (var k = 0; k < array_length_1d(global.sala_jardim); k++) {
-                        var boss_pos = global.sala_jardim;
-                        if (boss_pos[0] == sala_x && boss_pos[1] == sala_y) {
-                            dir_ind = 2;
-                            sala_boss = true;
-                            break;
-                        }
-                    }
-                }
+            // Verifica Boss (Jardim)
+            // Assumindo que global.sala_jardim pode ser uma coordenada [x,y] ou array de coordenadas
+            if (variable_global_exists("sala_jardim") && global.sala_jardim != undefined) {
+                 // Verifica se é array de coordenadas ou apenas uma coordenada
+                 if (array_length(global.sala_jardim) > 0) {
+                     // Checagem simplificada: Se sala_jardim for apenas [x, y]
+                     if (!is_array(global.sala_jardim[0])) {
+                         if (global.sala_jardim[0] == _rx && global.sala_jardim[1] == _ry) {
+                             _subimg = 2;
+                         }
+                     } else {
+                         // Se for array de arrays [[x,y], [x,y]]
+                         var _len_b = array_length(global.sala_jardim);
+                         for (var k = 0; k < _len_b; k++) {
+                             var _b_pos = global.sala_jardim[k];
+                             if (_b_pos[0] == _rx && _b_pos[1] == _ry) {
+                                 _subimg = 2;
+                                 break;
+                             }
+                         }
+                     }
+                 }
+            }
 
-                // Desenhar a sala como um sprite
-               draw_sprite_ext(sprite_to_draw, dir_ind, mini_x + _cell_size / 2, mini_y + _cell_size / 2, scale_factor, scale_factor, 0, c_white, 1);
+            // --- Desenho da Sala ---
+            // Desenha Sprite da Sala
+            draw_sprite_ext(spr_salas, _subimg, _draw_x + _cell_size/2, _draw_y + _cell_size/2, _scale_factor, _scale_factor, 0, c_white, 1);
 
-                // Se for a sala atual, desenhar uma borda vermelha ao redor
-                if (global.current_sala[0] == sala_x && global.current_sala[1] == sala_y) {
-                    draw_set_color(c_red);  // Sempre vermelha para a sala atual
-					draw_set_alpha(0.6)
-                    draw_rectangle(mini_x+4, mini_y+4, mini_x + _cell_size-5, mini_y + _cell_size-5, false);
-					draw_set_alpha(1)
-                    draw_set_color(c_white);  // Voltar à cor padrão
-               
+            // Destaque para Sala Atual
+            if (_dx == 0 && _dy == 0) {
+                draw_set_color(c_red);
+                draw_set_alpha(0.6);
+                // Borda interna leve
+                draw_rectangle(_draw_x + 4, _draw_y + 4, _draw_x + _cell_size - 5, _draw_y + _cell_size - 5, false);
+                draw_set_alpha(1);
             }
         }
     }
-}
 
-draw_set_alpha(1);
-draw_set_color(c_white);
-draw_set_font(fnt_menu_op);
-
-
-
-	
+    // Reset final
+    draw_set_color(c_white);
+    draw_set_font(fnt_menu_op); // Restaura fonte se necessário
 }

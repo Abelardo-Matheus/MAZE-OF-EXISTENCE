@@ -1,223 +1,143 @@
+/// @desc Inicializa o banco de dados de tipos de salas
+function salas() {
+    // Helper Constructor para criar definições de sala rapidamente
+    var RoomDef = function(_nome, _chao, _parede, _objetos) constructor {
+        name = _nome;
+        floor_sprite = _chao;
+        wall_sprite = _parede;
+        objects = _objetos;
+    };
 
+    // 1. Inicializa o Mapa Global de Definições
+    global.room_definitions = {};
 
-function salas(){
-var banheiro2 = ds_map_create();
-ds_map_add(banheiro2, "nome", "banheiro2");
-ds_map_add(banheiro2, "chao", obj_chao_tijolo);
-ds_map_add(banheiro2, "parede", obj_parede_bebe);
-ds_map_add(banheiro2, "objetos", [obj_pontos]);
+    // 2. Definindo Salas Comuns (Armazenamos em uma Struct para acesso rápido por string)
+    global.room_definitions.comuns = {
+        "banheiro2": new RoomDef("banheiro2", obj_chao_tijolo, obj_parede_bebe, [obj_pontos]),
+        "fundos":    new RoomDef("fundos",    obj_chao_tijolo, obj_parede_bebe, [obj_pontos]),
+        "porao":     new RoomDef("porao",     obj_chao_tijolo, obj_parede_bebe, [obj_pontos]),
+        "quarto3":   new RoomDef("quarto3",   obj_chao_tijolo, obj_parede_bebe, [obj_pontos, obj_vela]),
+        "quarto2":   new RoomDef("quarto2",   obj_chao_tijolo, obj_parede_bebe, [obj_pontos]),
+        "quarto":    new RoomDef("quarto",    obj_chao_tijolo, obj_parede_bebe, [obj_pontos]),
+        "banheiro":  new RoomDef("banheiro",  obj_chao_banheiro, obj_parede_bebe, [obj_pontos]),
+        "cozinha":   new RoomDef("cozinha",   obj_chao_cozinha, obj_parede_cozinha, [obj_pontos]),
+        "sala_estar":new RoomDef("Sala de Estar", obj_chao_tijolo, obj_parede_bebe, [obj_pontos])
+    };
 
-var fundos = ds_map_create();
-ds_map_add(fundos, "nome", "fundos");
-ds_map_add(fundos, "chao", obj_chao_tijolo);
-ds_map_add(fundos, "parede", obj_parede_bebe);
-ds_map_add(fundos, "objetos", [obj_pontos]);
+    // 3. Definindo Salas Especiais
+    global.room_definitions.templo = {
+        "templo": new RoomDef("templo", obj_chao_templo, obj_parede_templo, [])
+    };
 
-var porao = ds_map_create();
-ds_map_add(porao, "nome", "porao");
-ds_map_add(porao, "chao", obj_chao_tijolo);
-ds_map_add(porao, "parede", obj_parede_bebe);
-ds_map_add(porao, "objetos", [obj_pontos]);
+    global.room_definitions.jardim = {
+        "jardim": new RoomDef("jardim", obj_chao_grama, obj_cerca, [])
+    };
 
-var quarto3 = ds_map_create();
-ds_map_add(quarto3, "nome", "quarto3");
-ds_map_add(quarto3, "chao", obj_chao_tijolo);
-ds_map_add(quarto3, "parede", obj_parede_bebe);
-ds_map_add(quarto3, "objetos", [obj_pontos,obj_vela]);
-
-var quarto2 = ds_map_create();
-ds_map_add(quarto2, "nome", "quarto2");
-ds_map_add(quarto2, "chao", obj_chao_tijolo);
-ds_map_add(quarto2, "parede", obj_parede_bebe);
-ds_map_add(quarto2, "objetos", [obj_pontos]);
-
-var quarto = ds_map_create();
-ds_map_add(quarto, "nome", "quarto");
-ds_map_add(quarto, "chao", obj_chao_tijolo);
-ds_map_add(quarto, "parede", obj_parede_bebe);
-ds_map_add(quarto, "objetos", [obj_pontos]);
-
-var banheiro = ds_map_create();
-ds_map_add(banheiro, "nome", "banheiro");
-ds_map_add(banheiro, "chao", obj_chao_banheiro);
-ds_map_add(banheiro, "parede", obj_parede_bebe);
-ds_map_add(banheiro, "objetos", [obj_pontos]);
-
-var cozinha = ds_map_create();
-ds_map_add(cozinha, "nome", "cozinha");
-ds_map_add(cozinha, "chao", obj_chao_cozinha);
-ds_map_add(cozinha, "parede", obj_parede_cozinha);
-ds_map_add(cozinha, "objetos", [obj_pontos]);
-
-var sala_estar = ds_map_create();
-ds_map_add(sala_estar, "nome", "Sala de Estar");
-ds_map_add(sala_estar, "chao", obj_chao_tijolo);
-ds_map_add(sala_estar, "parede", obj_parede_bebe);
-ds_map_add(sala_estar, "objetos", [obj_pontos]);
-
-
-var templo = ds_map_create();
-ds_map_add(templo, "nome", "templo");
-ds_map_add(templo, "chao", obj_chao_templo);
-ds_map_add(templo, "parede", obj_parede_templo);
-ds_map_add(templo, "objetos", noone);
-
-var jardim = ds_map_create();
-ds_map_add(jardim, "nome", "jardim");
-ds_map_add(jardim, "chao", obj_chao_grama);
-ds_map_add(jardim, "parede", obj_cerca);
-ds_map_add(jardim, "objetos", noone);
-
-
-
-ds_map_add(global.tipos_de_salas, "sala_estar", sala_estar);
-ds_map_add(global.tipos_de_salas, "fundos", fundos);
-ds_map_add(global.tipos_de_salas, "cozinha", cozinha);
-ds_map_add(global.tipos_de_salas, "banheiro", banheiro);
-ds_map_add(global.tipos_de_salas, "quarto", quarto);
-ds_map_add(global.tipos_de_salas, "quarto2", quarto2);
-ds_map_add(global.tipos_de_salas, "quarto3", quarto3);
-ds_map_add(global.tipos_de_salas, "porao", porao);
-ds_map_add(global.tipos_de_salas, "banheiro2", banheiro2);
-
-
-
-
-ds_map_add(global.tipos_de_salas_templo, "templo", templo);
-
-
-ds_map_add(global.tipos_de_salas_jardim, "jardim", jardim);
+    // 4. Lista de chaves ordenada para garantir a ordem de sorteio (Maps não garantem ordem)
+    global.common_room_keys = variable_struct_get_names(global.room_definitions.comuns);
 }
 
-
-
-function criar_salas_lista(sala_atual, numero) {
-    // Variável global para rastrear quais tipos de sala já foram atribuídos
-    if (!variable_global_exists("tipos_salas_usadas")) {
-        global.tipos_salas_usadas = [];
-        global.tipo_sala_index = 0; // Índice para rastrear o tipo de sala atual
+/// @desc Cria os dados de uma sala específica baseada no index e posição
+function criar_salas_lista(_pos_array, _index) {
+    // Inicialização segura de variáveis globais
+    if (!variable_global_exists("tipo_sala_index")) {
+        global.tipo_sala_index = 0;
     }
 
-    var tipo_sala;
-	
-    // Verificar se ainda existem tipos de salas disponíveis não usados
-    var tipos_disponiveis = get_ds_map_keys(global.tipos_de_salas);
+    var _selected_key = "quarto"; // Default fallback
+    var _source_struct = global.room_definitions.comuns;
 
-    if (numero < array_length_1d(tipos_disponiveis)) {
-        // Pega o tipo de sala na sequência do índice
-        tipo_sala = tipos_disponiveis[numero];
-		var detalhes_sala = ds_map_find_value(global.tipos_de_salas, tipo_sala);
-        global.tipo_sala_index++; // Incrementar o índice para a próxima sala
-    }else {
-        // Se todos os tipos de sala já foram usados, definir como "quarto"
-        tipo_sala = "quarto";
+    // Lógica 1: Seleção de Salas Comuns
+    if (_index < array_length(global.common_room_keys)) {
+        _selected_key = global.common_room_keys[_index];
+        global.tipo_sala_index++;
     }
-	 detalhes_sala = ds_map_find_value(global.tipos_de_salas, tipo_sala);
-	if (global.templo_criado) {
-		
-    // Verificar se a sala atual é um templo
-    if (sala_atual == global.templos_salas_pos[0]) {
-        tipo_sala = "templo";
-       
-        // Pegar a lista de tipos de salas disponíveis para templos
-        var tipos_disponiveis_templo = get_ds_map_keys(global.tipos_de_salas_templo);
-        
-        // Definir os detalhes da sala com base no tipo selecionado
-        var detalhes_sala = ds_map_find_value(global.tipos_de_salas_templo, tipos_disponiveis_templo[0]);
-    }
-    
-    // Verificar se a sala atual é um jardim
-    if (sala_atual == global.sala_jardim) {
-        tipo_sala = "jardim";
-        
-        // Pegar a lista de tipos de salas disponíveis para jardim
-        var tipos_disponiveis_jardim = get_ds_map_keys(global.tipos_de_salas_jardim);
-        
-        // Definir os detalhes da sala com base no tipo selecionado
-        var detalhes_sala = ds_map_find_value(global.tipos_de_salas_jardim, tipos_disponiveis_jardim[0]);
-    }
-}
 
+    // Lógica 2: Sobrescrita para Templo
+    if (global.templo_criado && array_equals(_pos_array, global.templos_salas_pos[0])) {
+        _source_struct = global.room_definitions.templo;
+        var _keys = variable_struct_get_names(_source_struct);
+        _selected_key = _keys[0];
+    }
+
+   // Lógica 3: Sobrescrita para Jardim 
+    // 1. Verifica se é um array antes de comparar (impede erro se for 'noone')
+    if (is_array(global.sala_jardim)) { 
+        if (array_equals(_pos_array, global.sala_jardim)) {
+            _source_struct = global.room_definitions.jardim;
+            var _keys = variable_struct_get_names(_source_struct);
+            if (array_length(_keys) > 0) _selected_key = _keys[0];
+        }
+    }
+
+    // Recupera a definição da struct
+    var _def = variable_struct_get(_source_struct, _selected_key);
+
+    // Retorna Struct limpa (Substitui o DS Map de retorno)
     return {
-        sala: sala_atual,
-        tag: numero,
-        tipo: tipo_sala,
-        chao: ds_map_find_value(detalhes_sala, "chao"),
-        parede: ds_map_find_value(detalhes_sala, "parede"),
-        objetos: ds_map_find_value(detalhes_sala, "objetos")
+        sala: _pos_array,
+        tag: _index,
+        tipo: _selected_key,
+        chao: _def.floor_sprite,
+        parede: _def.wall_sprite,
+        objetos: _def.objects
     };
 }
 
-
-// Função para procurar uma sala específica pelo número (tag)
-function procurar_sala_por_numero(sala_current) {
-    for (var i = 0; i < array_length_1d(global.salas_criadas); i++) {
-        var sala = global.salas_criadas[i];
-        // Comparar os elementos do array sala_current com os elementos do array sala.sala
-        if (sala.sala[0] == sala_current[0] && sala.sala[1] == sala_current[1]) {
-            return sala; // Retorna a sala se a posição corresponder
+/// @desc Procura sala por coordenadas [x, y]
+function procurar_sala_por_numero(_target_pos) {
+    var _len = array_length(global.salas_criadas);
+    
+    for (var i = 0; i < _len; i++) {
+        var _sala = global.salas_criadas[i];
+        // Otimização: Comparar arrays diretamente
+        if (array_equals(_sala.sala, _target_pos)) {
+            return _sala;
         }
-
-		
     }
-    return criar_salas_lista([0.0],0); // Retorna noone se nenhuma sala for encontrada com a posição dada
+    
+    // Retorna struct vazia/padrão ao invés de recursão perigosa
+    return { sala: [0,0], tag: -1, tipo: "none", chao: noone, parede: noone, objetos: [] };
 }
 
-function get_ds_map_keys(map) {
-    var keys = [];
-    var key = ds_map_find_first(map);
+/// @desc Debuga as informações da sala no console
+function escrever_informacoes_sala(_sala) {
+    if (is_struct(_sala) && _sala.tag != -1) {
+        show_debug_message("=== INFO SALA ===");
+        show_debug_message("Tag: " + string(_sala.tag));
+        show_debug_message("Tipo: " + _sala.tipo);
+        
+        var _chao_name = object_exists(_sala.chao) ? object_get_name(_sala.chao) : "Nenhum";
+        var _parede_name = object_exists(_sala.parede) ? object_get_name(_sala.parede) : "Nenhum";
+        
+        show_debug_message("Chão: " + _chao_name);
+        show_debug_message("Parede: " + _parede_name);
 
-    while (key != undefined) {
-        array_push(keys, key);
-        key = ds_map_find_next(map, key);
-    }
-
-    return keys;
-}
-// Função para escrever as informações da sala, incluindo o nome dos objetos
-function escrever_informacoes_sala(sala) {
-    if (sala != noone) {
-        show_debug_message("Tag: " + string(sala.tag));
-        show_debug_message("Tipo: " + sala.tipo);
-        show_debug_message("Textura do Chão: " + object_get_name(sala.chao));
-        show_debug_message("Textura da Parede: " + object_get_name(sala.parede));
-
-        for (var i = 0; i < array_length_1d(sala.objetos); i++) {
-            show_debug_message("Objeto " + string(i) + ": " + object_get_name(sala.objetos[i]));
+        if (is_array(_sala.objetos)) {
+            for (var i = 0; i < array_length(_sala.objetos); i++) {
+                var _obj_name = object_get_name(_sala.objetos[i]);
+                show_debug_message("Obj " + string(i) + ": " + _obj_name);
+            }
         }
+        show_debug_message("=================");
     } else {
-        show_debug_message("Sala não encontrada.");
+        show_debug_message("Sala inválida ou não encontrada.");
     }
 }
+
 function resetar_salas() {
-    // Verifica se existe a lista de salas criadas
-    if (global.salas_criadas != undefined) {
-        // Percorre todas as salas na lista
-        for (var i = 0; i < array_length_1d(global.salas_criadas); i++) {
-            var sala = global.salas_criadas[i];
-
-            // Reinicializa as propriedades da sala
-            sala.sala = [0, 0];  // Posição padrão ou redefinir como desejado
-            sala.tag = 0;         // Redefine a tag (pode ser incrementada ou ajustada conforme necessário)
-            sala.tipo = "";       // Remove o tipo ou redefina
-            sala.chao = noone;    // Remove o chão
-            sala.parede = noone;  // Remove a parede
-            sala.objetos = [];    // Limpa a lista de objetos
-        }
-    }
-
-    // Opcional: Redefinir a lista inteira (se preferir limpar completamente)
+    // Com structs, o Garbage Collector do GameMaker limpa a memória automaticamente
+    // Basta zerar o array.
     global.salas_criadas = [];
+    global.tipo_sala_index = 0;
 }
-function verificar_sala_escura(sala_atual) {
-    // Percorre todas as salas escuras ar_mazenadas
-    for (var i = 0; i < array_length_1d(global.salas_escuras); i++) {
-        var sala_escura = global.salas_escuras[i];
 
-        // Verifica se a sala atual corresponde à sala escura
-        if (sala_escura[0] == sala_atual[0] && sala_escura[1] == sala_atual[1]) {
-            return true; // Sala escura encontrada
+function verificar_sala_escura(_sala_atual) {
+    var _len = array_length(global.salas_escuras);
+    for (var i = 0; i < _len; i++) {
+        if (array_equals(global.salas_escuras[i], _sala_atual)) {
+            return true;
         }
     }
-    return false; // Sala escura não encontrada
+    return false;
 }

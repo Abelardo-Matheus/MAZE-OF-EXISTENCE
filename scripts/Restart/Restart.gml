@@ -5,8 +5,9 @@ function reset_level_data()
     randomize();
     global.level_fase++; // Incrementa nível
 
+    global.templo_criado = false;
     // --- 1. Limpeza de Dados Antigos ---
-    
+    reset_global_variables();
     // Destrói grids do labirinto
     if (ds_exists(global._maze, ds_type_grid)) ds_grid_destroy(global._maze);
     if (ds_exists(global.visited, ds_type_grid)) ds_grid_destroy(global.visited);
@@ -42,10 +43,9 @@ function reset_level_data()
     gerar_inimigos_e_itens_para_o_nivel(global.salas_geradas, global.level_fase);
     
     // Móveis e Decoração
-    create_escrivaninha(global.salas_geradas, 3, 1);
-    create_geladeira(global.salas_geradas, 1, 1);
-    create_guarda_roupa(global.salas_geradas, 1, 1);
-    recriar__geladeira_na_sala_atual(global.current_sala);
+    furniture_generate_positions(global.salas_geradas, global.salas_com_escrivaninha, 3)
+    furniture_generate_positions(global.salas_geradas, global.salas_com_geladeira, 1, "cozinha");
+    furniture_generate_positions(global.salas_geradas, global.salas_com_guarda_roupa, 1, "quarto");
     create_escada_porao_em_fundos(global.salas_geradas);
     
     // Pontos de interesse
