@@ -171,7 +171,7 @@ if(global.in_dash == true){
 
 
 
-if(instance_exists(obj_item)and obj_invetario.inventario = false and !global.inventario_cheio){
+if(instance_exists(obj_item)and obj_inventario.inventario = false and !global.inventario_cheio){
 	var _inst = instance_nearest(x,y,obj_item);
 	if(distance_to_point(_inst.x,_inst.y)<= 180){
 		desenha_botao = true;

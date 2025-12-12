@@ -1,5 +1,5 @@
 // obj_npc_vendedor (Create Event)
-inventario_venda = ds_grid_create(Infos.Altura, 18); // 20 slots de venda
+inventario_venda = ds_grid_create(Infos.Height, 18); // 20 slots de venda
 ds_grid_clear(inventario_venda, -1); // Inicializa todos os slots como vazios
 inicializar_itens_venda(10);
 nome = "cu";

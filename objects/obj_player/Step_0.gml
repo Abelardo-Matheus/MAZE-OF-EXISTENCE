@@ -1,209 +1,226 @@
-/// @desc Lógica Principal (Sanidade, Movimento, Armas)
-/// [O QUE]: Gerencia o cálculo de sanidade baseado na luz, pausa de level up, regeneração de estamina, troca de armas e execução de estados.
-/// [COMO] :
-/// 1. Itera sobre 'global.lista_luzes' calculando a distância para recuperar sanidade.
-/// 2. Aplica penalidade de sanidade se estiver no escuro.
-/// 3. Se 'global.level_up' estiver ativo, pausa alarmes e encerra o evento (exit).
-/// 4. Executa a máquina de estados ('state') e gerencia inputs de troca de arma.
-/// 5. Executa scripts de upgrades passivos.
+/// @description Lógica Principal (Step)
 
-// --- 1. Sistema de Sanidade e Luz ---
+
+// --- Abrir/Fechar Inventário ---
+// Isso DEVE vir antes da pausa, senão você nunca consegue fechar!
+if (keyboard_check_pressed(ord("I")) || keyboard_check_pressed(vk_tab)) {
+    if (instance_exists(obj_inventario)) {
+        obj_inventario.is_open = !obj_inventario.is_open;
+        
+        // Reseta estados visuais ao abrir
+        if (obj_inventario.is_open) {
+            image_speed = 0;
+            desenha_botao = false;
+            // Opcional: Parar sons de passos, etc.
+        }
+    }
+}
+// ========================================================
+// 1. SISTEMA DE PAUSA E CONGELAMENTO
+// ========================================================
+
+// Pausa: Level Up
+
+if (!global.level_up) {
+    // Congela os alarmes para não perderem tempo
+    alarm[ALARM_ESTAMINA]++; 
+    alarm[ALARM_KNOCKBACK]++; 
+    alarm[ALARM_INVENCIBILIDADE]++; 
+    alarm[ALARM_DASH_COOLDOWN]++; 
+    
+    image_speed = 0;
+    exit; // Para o código aqui
+}
+
+// Pausa: Inventário Aberto
+if (instance_exists(obj_inventario) && obj_inventario.is_open) {
+    image_speed = 0;
+    // Opcional: image_index = 0; // Se quiser forçar a pose parada
+    exit; // Para o código aqui
+}
+
+// ========================================================
+// 2. SISTEMA DE SANIDADE E LUZ
+// ========================================================
 var _limite_escuridao = 0.5;
-var _recuperacao_sanidade = 0; // Acumulador local
-
-// Otimização: Cache do tamanho da lista para não recalcular a cada loop
+var _recuperacao_sanidade = 0;
 var _qtd_luzes = ds_list_size(global.lista_luzes);
 
-for (var i = 0; i < _qtd_luzes; i++) 
-{
+// Verifica proximidade com luzes
+for (var i = 0; i < _qtd_luzes; i++) {
     var _luz = global.lista_luzes[| i];
     
-    if (instance_exists(_luz)) 
-    {
-        // Nota: Usamos 'x' e 'y' diretamente pois estamos no objeto do player
+    if (instance_exists(_luz)) {
         var _distancia = point_distance(x, y, _luz.x, _luz.y);
-
-        // Verifica a potência da luz baseada na distância
+        
+        // Define recuperação baseada na intensidade/distância da luz
         if (_distancia < _luz.luz_1)      _recuperacao_sanidade = max(_recuperacao_sanidade, 0.09);
         else if (_distancia < _luz.luz_2) _recuperacao_sanidade = max(_recuperacao_sanidade, 0.07);
         else if (_distancia < _luz.luz_3) _recuperacao_sanidade = max(_recuperacao_sanidade, 0.05);
         else if (_distancia < _luz.luz_4) _recuperacao_sanidade = max(_recuperacao_sanidade, 0.04);
         else if (_distancia < _luz.luz_5) _recuperacao_sanidade = max(_recuperacao_sanidade, 0.02);
-        else if (global.day_night_cycle.is_day) _recuperacao_sanidade = max(_recuperacao_sanidade, 0.09);
+        
+        // Se for dia, recupera independente da luz artificial
+        if (global.day_night_cycle.is_day) _recuperacao_sanidade = max(_recuperacao_sanidade, 0.09);
     }
 }
 
-// Aplica a recuperação ou o dano de sanidade
-if (_recuperacao_sanidade > 0) 
-{
+// Aplica Recuperação ou Dano
+if (_recuperacao_sanidade > 0) {
     global.sanidade += _recuperacao_sanidade;
 } 
-else if (!global.day_night_cycle.is_day && global.day_night_cycle.current_light < _limite_escuridao) 
-{
+else if (!global.day_night_cycle.is_day && global.day_night_cycle.current_light < _limite_escuridao) {
+    // Dano progressivo pela escuridão
     var _fator_escuridao = 1 - (global.day_night_cycle.current_light / _limite_escuridao);
-    global.sanidade -= 0.08 * _fator_escuridao; // Dano progressivo no escuro
+    global.sanidade -= 0.08 * _fator_escuridao;
 }
 
-// Mantém a sanidade dentro dos limites (0 a 100)
+// Limita sanidade
 global.sanidade = clamp(global.sanidade, 0, 100);
 
-
-// --- 2. Pause de Level Up ---
-if (global.level_up == true) 
-{
-    // Congela alarmes para não perderem o tempo enquanto o jogo está pausado
-    alarm[0]++; alarm[2]++; alarm[3]++; alarm[6]++; alarm[11]++;
-    image_speed = 0;
-    exit; // O CÓDIGO PARA AQUI. Nada abaixo executa se for level up.
-}
-
-// --- 3. Execução Normal do Jogo ---
+// ========================================================
+// 3. MÁQUINA DE ESTADOS (Movimento e Ação)
+// ========================================================
 image_speed = 1;
 
-// Troca de estado por Dano
-if (hit) 
-{
+// Força estado de Hit se tomou dano (Knockback)
+if (hit) {
     state = scr_personagem_hit;
 }
 
-// Executa o Estado Atual
+// Executa o script do estado atual (Andando, Atacando, Dash, etc.)
 script_execute(state);
 
-// --- 4. Gerenciamento de Estamina ---
-// Regeneração
-if (global.estamina <= global.max_estamina && !andar) 
-{
+// Atualiza posição do bloco de colisão auxiliar
+if (instance_exists(global.bloco_colisao)) {
+    global.bloco_colisao.x = x;
+    global.bloco_colisao.y = y + 30;
+}
+
+// ========================================================
+// 4. ESTAMINA E VIDA
+// ========================================================
+
+// Regeneração de Estamina
+// Só regenera se não estiver correndo/gastando (andar == false) e alarm[0] zerado
+if (global.estamina < global.max_estamina && !andar && alarm[ALARM_ESTAMINA] <= 0) {
     global.estamina += 0.5;
 }
 
-// Verificação de Morte (Game Over)
-if (global.vida <= 0) 
-{
-    // game_end(); // Descomentar quando implementar tela de game over
-}
-
 // Exaustão (Estamina zerada)
-if (global.estamina <= 0 && !andar) 
-{
-    andar = true;
+if (global.estamina <= 0 && !andar) {
+    andar = true; // Trava corrida
     global.estamina = 0;
-    alarm[0] = 50; // Tempo de recarga
+    alarm[ALARM_ESTAMINA] = 50; // Tempo de penalidade
 }
 
-// --- 5. Troca de Armas (Input) ---
-// Rolar para Cima
-if (mouse_wheel_up() && dir_alfa <= 0) 
-{
-    global.armamento += 1;
+// Morte
+if (global.vida <= 0) {
+    // Lógica de Game Over
+    game_restart(); 
+}
+
+// ========================================================
+// 5. TROCA DE ARMAS
+// ========================================================
+if (mouse_wheel_up() && dir_alfa <= 0) {
+    global.armamento++;
+    dir_alfa = 1;
+    desenha_arma = true;
+}
+if (mouse_wheel_down() && dir_alfa <= 0) {
+    global.armamento--;
     dir_alfa = 1;
     desenha_arma = true;
 }
 
-// Rolar para Baixo
-if (mouse_wheel_down() && dir_alfa <= 0) 
-{
-    global.armamento -= 1;
-    dir_alfa = 1;
-    desenha_arma = true;
-}
+// Loop cíclico (Wrap)
+if (global.armamento >= Armamentos.Altura) global.armamento = 0;
+else if (global.armamento < 0) global.armamento = Armamentos.Altura - 1;
 
-// Loop Cíclico das Armas (Wrap)
-if (global.armamento >= Armamentos.Altura) 
-{
-    global.armamento = 0; // Volta para o início
-} 
-else if (global.armamento < 0) 
-{
-    global.armamento = Armamentos.Altura - 1; // Vai para o final
-}
-
-// --- 6. Efeito Visual da Arma (Fade Out) ---
-if (desenha_arma) 
-{
+// Fade out do ícone da arma
+if (desenha_arma) {
     dir_alfa -= 0.02;
-
-    if (dir_alfa <= 0) 
-    {
+    if (dir_alfa <= 0) {
         dir_alfa = 0;
         desenha_arma = false;
     }
 }
 
-// --- 7. Upgrades Passivos ---
-var _qtd_upgrades = ds_list_size(global.active_upgrades);
 
-for (var i = 0; i < _qtd_upgrades; i++) 
-{
-    var _script = global.active_upgrades[| i];
-    script_execute(_script); 
-}
+// --- Coletar Itens (Proximidade) ---
+var _item_perto = instance_nearest(x, y, obj_item);
+var _dist_coleta = 25; // Distância em pixels para aparecer o botão
 
-
-/// @desc Lógica Visual e Interação (Timer e NPCs)
-/// [O QUE]: Controla oscilação de transparência (dano/botão) e interação com NPCs.
-/// [COMO] :
-/// 1. Se alarm[3] estiver ativo, faz o sprite piscar (efeito de dano).
-/// 2. Controla o timer do botão de interação para piscar.
-/// 3. Define 'desenha_botao' baseado na proximidade da estrutura.
-/// 4. Checa proximidade e input 'P' para iniciar diálogo com NPC Vendedor.
-
-// --- 1. Efeito de Dano (Piscar Sprite) ---
-if (alarm[3] > 0) 
-{
-    // Lógica "Ping-Pong" do Alpha
-    if (image_alpha >= 1) 
-    {
-        dano_alfa = -0.05;
-    } 
-    else if (image_alpha <= 0) 
-    {
-        dano_alfa = 0.05;
+if (_item_perto != noone && distance_to_object(_item_perto) <= _dist_coleta && !global.inventario_cheio) {
+    desenha_botao = true; // Mostra ícone "F"
+    
+    if (keyboard_check_pressed(ord("F"))) {
+        // Adiciona ao inventário
+        adicionar_item_invent(
+            _item_perto.image_index,
+            _item_perto.quantidade,
+            _item_perto.sprite_index,
+            _item_perto.nome,
+            _item_perto.descricao,
+            _item_perto.sala_x,
+            _item_perto.sala_y,
+            _item_perto.pos_x,
+            _item_perto.pos_y,
+            _item_perto.dano,
+            _item_perto.armadura,
+            _item_perto.velocidade,
+            _item_perto.cura,
+            _item_perto.tipo,
+            _item_perto.ind,
+            _item_perto.preco
+        );
+        
+        // Remove da persistência e destrói
+        coletar_item(_item_perto.pos_x, _item_perto.pos_y, global.current_sala);
+        instance_destroy(_item_perto);
+        
+        desenha_botao = false;
     }
-    image_alpha += dano_alfa;
-} 
-else 
-{
-    // Garante que o sprite volte ao normal quando o alarme acabar
-    image_alpha = 1;
-}
-
-// --- 2. Controle do Botão de Interação (Piscar) ---
-if (piscando_timer > 0) 
-{
-    piscando_timer--; // Contagem regressiva
-} 
-else 
-{
-    piscando_alpha = 1 - piscando_alpha; // Alterna entre 0 e 1 matematicamente
-    piscando_timer = 20; // Reseta timer
-}
-
-// Lógica simplificada: Se estiver próximo, desenha.
-if (proximo_de_estrutura) 
-{
-    desenha_botao = true;
-} 
-else 
-{
+} else {
     desenha_botao = false;
 }
 
-// --- 3. Interação com NPC (Vendedor) ---
-var _distancia_npc = 100;
-
-if (distance_to_object(par_npc_vendedor_um) <= _distancia_npc) 
-{
-    // Input de Interação
-    if (keyboard_check_pressed(ord("P")) && !global.dialogo) 
-    {
-        andar = true; // Trava/Destrava movimento (conforme sua lógica original)
-        
-        // Busca o NPC mais próximo para pegar o nome dele
-        var _npc = instance_nearest(x, y, par_npc_vendedor_um);
+// --- Interação com NPC ---
+var _npc = instance_nearest(x, y, par_npc_vendedor_um); // Use seu objeto pai de NPC
+if (_npc != noone && distance_to_object(_npc) <= 50) {
+    desenha_botao = true;
+    
+    if (keyboard_check_pressed(ord("P")) && !global.dialogo) {
+        andar = true; // Trava movimento
         var _dialogo = instance_create_layer(x, y, "Instances_dialogo", obj_dialogo);
         _dialogo.npc_nome = _npc.nome;
     }
 }
 
-// Importante: Reseta a variável para o próximo frame
-proximo_de_estrutura = false;
+// ========================================================
+// 7. UPGRADES E EFEITOS VISUAIS
+// ========================================================
+
+// Executa Upgrades Passivos
+var _qtd_upgrades = ds_list_size(global.active_upgrades);
+for (var i = 0; i < _qtd_upgrades; i++) {
+    script_execute(global.active_upgrades[| i]); 
+}
+
+// Efeito de Dano (Piscar)
+if (alarm[ALARM_INVENCIBILIDADE] > 0) {
+    if (image_alpha >= 1) dano_alfa = -0.05;
+    else if (image_alpha <= 0.2) dano_alfa = 0.05; // Mínimo 0.2 para não sumir
+    image_alpha += dano_alfa;
+} else {
+    image_alpha = 1;
+}
+
+// Efeito Botão de Interação (Piscar)
+if (piscando_timer > 0) {
+    piscando_timer--;
+} else {
+    piscando_alpha = (piscando_alpha == 1) ? 0 : 1; // Alterna 0 e 1
+    piscando_timer = 20;
+}

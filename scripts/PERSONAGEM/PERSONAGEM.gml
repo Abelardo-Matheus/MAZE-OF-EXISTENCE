@@ -1,322 +1,264 @@
-function scr_andando(){
-	
-if (global.estamina > 0 ){
-if(global.vida == 0){
-	game_restart();
-}
+// ========================================================
+// 1. ESTADO: ANDANDO (Movimento Padrão)
+// ========================================================
+function scr_personagem_andando() {
+    // --- Entradas (Inputs) ---
+    var _left  = keyboard_check(ord("A")) || keyboard_check(vk_left);
+    var _right = keyboard_check(ord("D")) || keyboard_check(vk_right);
+    var _up    = keyboard_check(ord("W")) || keyboard_check(vk_up);
+    var _down  = keyboard_check(ord("S")) || keyboard_check(vk_down);
+    var _run   = keyboard_check(vk_shift);
 
-if(global.tamanho_player >3){
-global.tamanho_player = 3;
-}
+    // --- Cálculo de Velocidade ---
+    var _h_input = _right - _left;
+    var _v_input = _down - _up;
+    var _speed   = global.speed_player;
 
-var moving = false;
-var current_image_speed = 1; // Velocidade padrão da animação
-var diagonal_angle = 0;
-
-if (andar = false){
-esquerda = keyboard_check(ord("A")) || keyboard_check(vk_left);
-direita = keyboard_check(ord("D")) || keyboard_check(vk_right);
-cima = keyboard_check(ord("W")) || keyboard_check(vk_up);
-baixo = keyboard_check(ord("S")) || keyboard_check(vk_down);
-
-
-if (esquerda) {
-	sprite_index = spr_player_esquerda;
-     moving = true;
-	
-} else if (direita) {
-	sprite_index = spr_player_direita;
-        moving = true;
-}
-
-else if (cima) { 
-	 sprite_index = spr_player_cima;
-      moving = true;
-	  
-} else if (baixo) { 
-	sprite_index = spr_player_baixo;
-        moving = true;
-		
-}
-
-
-vveloc = (baixo - cima) ;
-hveloc = (direita - esquerda);
-
-veloc_dir = point_direction(x, y, x + hveloc, y + vveloc);
-
-if(hveloc != 0 or vveloc != 0){
-	current_speed = global.speed_player;
-}else{
-	current_speed = 0;
-}
-
-hveloc = lengthdir_x(current_speed, veloc_dir);
-vveloc = lengthdir_y(current_speed, veloc_dir);
-
-if (keyboard_check(vk_shift) && global.estamina > 0) {
-    var speed_corrida = current_speed + 10; // ou qualquer valor extra de velocidade
-    hveloc = lengthdir_x(speed_corrida, veloc_dir);
-    vveloc = lengthdir_y(speed_corrida, veloc_dir);
-    
-    //global.estamina -= 0.4; // consome estamina (opcional)
-    
-} else {
-    hveloc = lengthdir_x(current_speed, veloc_dir);
-    vveloc = lengthdir_y(current_speed, veloc_dir);
-}
-
-	
-
-scr_player_colisao();
-dir = floor((point_direction(x,y,mouse_x,mouse_y)+ 45)/90);
-
-if(hveloc == 0 and vveloc == 0){
- switch dir{
-	 default:
-	 sprite_index = spr_player_direita_parado
-	 break;
-	 case 1:
-	 sprite_index = spr_player_cima_parado
-	 break;
-	 case 2:
-	 sprite_index = spr_player_esquerda_parado
-	 break;
-	 case 3:
-	 sprite_index = spr_player_baixo_parado
-	 break;
- }	
-}
-}
-
-if(global.in_dash == true){
-	var rastro = instance_create_layer(x,y,"instances",obj_rastro_player);
-		with(rastro){
-		if (obj_player.esquerda) {
-    sprite_index = spr_player_esquerda;
-		} else if (obj_player.direita) {
-    sprite_index = spr_player_direita;
-		} else if (obj_player.cima) {
-    sprite_index = spr_player_cima;
-		} else if (obj_player.baixo) {
-     sprite_index = spr_player_baixo;
-}
-		
-		}
-}
-
-
-
-
-if(instance_exists(obj_item)and obj_invetario.inventario = false and !global.inventario_cheio){
-	var _inst = instance_nearest(x,y,obj_item);
-	if(distance_to_point(_inst.x,_inst.y)<= 180){
-		desenha_botao = true;
-		if(keyboard_check_pressed(ord("F"))and pegar = true){
-			adicionar_item_invent(_inst.image_index,_inst.quantidade,_inst.sprite_index,_inst.nome,_inst.descricao,0,0,0,0,_inst.dano,_inst.armadura,_inst.velocidade,_inst.cura,_inst.tipo,_inst.ind,_inst.preco);
-			coletar_item(_inst.x,_inst.y,global.current_sala);
-			instance_destroy(_inst);
-			desenha_botao = false;
-			pegar = false;
-		}
-	}
-}
-
-// Manter o bloco de colisão na posição correta
-if (instance_exists(global.bloco_colisao)) {
-    global.bloco_colisao.x = x;
-    global.bloco_colisao.y = y +30; // Ajuste 50 conforme necessário
-}
-}
-
-
-if(mouse_check_button(mb_left)){
-	if(global.armamento == Armamentos.espada){
-	image_index = 0;
-	switch dir{
-	 default:
-	 sprite_index = spr_player_direita_parado_atacando;
-	 break;
-	 case 1:
-	 sprite_index = spr_player_cima_parado_atacando;
-	 break;
-	 case 2:
-	 sprite_index = spr_player_esquerda_parado_atacando;
-	 break;
-	 case 3:
-	 sprite_index = spr_player_baixo_parado_atacando;
-	 break;
-	}
-	 state = scr_ataque_player;
- }else if (global.armamento == Armamentos.arco){
-	 
-	image_index = 0;
-	state = scr_personagem_arco;
-	}
-}
-
-if(mouse_check_button_pressed(mb_right)){
-	
-	alarm[11] = 10;
-	dash_dir = point_direction(x, y, mouse_x, mouse_y);
-	state = scr_personagem_dash;
-}
-}
-
-function scr_personagem_dash(){
-	global.estamina -= 3;
-	andar = true;
-	alarm[0] = 50;
-	tomar_dano = false;
-	hveloc = lengthdir_x(dash_veloc, dash_dir);
-	vveloc = lengthdir_y(dash_veloc, dash_dir);
-	
-	x += hveloc;
-	y += vveloc;
-	
-	var _inst = instance_create_layer(x, y, "instances", obj_rastro_player);
-	_inst.sprite_index = sprite_index;
-}
-
-function scr_player_colisao(){
-if(place_meeting(x + hveloc, y, global.sala.parede)){
-	while !place_meeting(x + sign(hveloc),y,global.sala.parede){
-		x += sign(hveloc);
-	}
-	hveloc = 0;
-}
-x += hveloc;
-
-if(place_meeting(x , y + vveloc, global.sala.parede)){
-	while !place_meeting(x ,y + sign(vveloc),global.sala.parede){
-		y += sign(vveloc);
-	}
-	vveloc = 0;
-}
-
-y += vveloc;
-}
-
-function scr_personagem_arco() {
-    // Calcula a direção do mouse em relação ao jogador
-    var direction_to_mouse = point_direction(x, y, mouse_x, mouse_y);
-	var xx,yy;
-	dir = floor((point_direction(x,y,mouse_x,mouse_y)+ 45)/90);
-	switch dir{
-	 default:
-	 sprite_index = spr_player_direita_parado;
-	 break;
-	 case 1:
-	 sprite_index = spr_player_cima_parado;
-	 break;
-	 case 2:
-	 sprite_index = spr_player_esquerda_parado;
-	 break;
-	 case 3:
-	 sprite_index = spr_player_baixo_parado;
-	 break;
-	}
-    // Define o raio do círculo ao redor do jogador onde o arco será criado e posicionado
-    var raio = 30; // Ajuste o valor conforme necessário
-
-    // Verifica se o arco já foi criado
-    if (!instance_exists(obj_arco)) {
-        // Converte a direção para coordenadas polares (posição no círculo)
-        var arco_x = x + lengthdir_x(raio, direction_to_mouse);
-        var arco_y = y + lengthdir_y(raio, direction_to_mouse);
-
-        // Cria o obj_arco na posição calculada
-        var arco_inst = instance_create_layer(arco_x, arco_y, "Instances_itens", obj_arco);
-        arco_inst.direction = direction_to_mouse;
-        arco_inst.image_angle = direction_to_mouse;
+    // Sistema de Corrida (Gasta Estamina)
+    if (_run && global.estamina > 0 && (_h_input != 0 || _v_input != 0)) {
+        _speed += 2; // Bônus de velocidade
+        andar = true; // Flag para parar regeneração de estamina
+        global.estamina -= 0.5; // Custo por frame
+        alarm[ALARM_ESTAMINA] = 60; // Delay para voltar a regenerar
     } else {
-        // Se o arco já existe, atualiza sua posição e direção
-        with (obj_arco) {
-            // Atualiza a posição do arco para que ele se mova ao redor do jogador
-            x = other.x + lengthdir_x(raio, direction_to_mouse);
-            y = other.y+10 + lengthdir_y(raio, direction_to_mouse);
-			xx = x;
-			yy = y;
-            // Atualiza a direção e o ângulo do arco para apontar para o mouse
-            direction = point_direction(x, y, mouse_x, mouse_y);
-            image_angle = direction+90;
-			
-			 // Verifica se a animação do arco terminou
-            if (fim_animation(sprite_index, image_index, image_speed)) {
-                image_index = 4;  // Define um frame específico da animação, se aplicável
-            }
+        andar = false;
+    }
+
+    // Aplica Movimento
+    if (_h_input != 0 || _v_input != 0) {
+        var _dir = point_direction(0, 0, _h_input, _v_input);
+        hveloc = lengthdir_x(_speed, _dir);
+        vveloc = lengthdir_y(_speed, _dir);
+
+        // Define Sprite de Movimento
+        if (_h_input > 0) sprite_index = spr_player_direita;
+        else if (_h_input < 0) sprite_index = spr_player_esquerda;
+        else if (_v_input > 0) sprite_index = spr_player_baixo;
+        else if (_v_input < 0) sprite_index = spr_player_cima;
+        
+    } else {
+        hveloc = 0;
+        vveloc = 0;
+        
+        // Define Sprite Parado (Baseado no Mouse)
+        dir = floor((point_direction(x, y, mouse_x, mouse_y) + 45) / 90);
+        switch (dir) {
+            case 0: sprite_index = spr_player_direita_parado; break;
+            case 1: sprite_index = spr_player_cima_parado; break;
+            case 2: sprite_index = spr_player_esquerda_parado; break;
+            case 3: sprite_index = spr_player_baixo_parado; break;
+            default: sprite_index = spr_player_baixo_parado; break;
         }
     }
 
-    // Permite que o jogador ande enquanto usa o arco
-    scr_andando();  // Chama a função de movimento do jogador
+    // Aplica Colisão
+    scr_player_colisao();
 
+    // --- Transição de Estados (Ataque e Dash) ---
+    
+    // Ataque (Botão Esquerdo)
+    if (mouse_check_button_pressed(mb_left)) {
+        if (global.armamento == Armamentos.espada) {
+            image_index = 0;
+            atacando = false; // Reseta flag de hitbox
+            state = scr_ataque_player;
+        } 
+        else if (global.armamento == Armamentos.arco) {
+            image_index = 0;
+            state = scr_personagem_arco;
+        }
+    }
+
+    // Dash (Botão Direito)
+    if (mouse_check_button_pressed(mb_right) && global.estamina >= 10 && alarm[ALARM_DASH_COOLDOWN] <= 0) {
+        global.estamina -= 10;
+        alarm[ALARM_ESTAMINA] = 60;
+        
+        dash_dir = point_direction(x, y, mouse_x, mouse_y);
+        global.in_dash = true;
+        state = scr_personagem_dash;
+    }
+}
+
+// ========================================================
+// 2. ESTADO: DASH
+// ========================================================
+function scr_personagem_dash() {
+    // Movimento fixo na direção do dash
+    hveloc = lengthdir_x(dash_veloc, dash_dir);
+    vveloc = lengthdir_y(dash_veloc, dash_dir);
+
+    // Colisão (Opcional: Se quiser atravessar paredes, remova esta linha)
+    scr_player_colisao();
+
+    // Cria rastro visual
+    var _rastro = instance_create_layer(x, y, "Instances", obj_rastro_player);
+    _rastro.sprite_index = sprite_index;
+    _rastro.image_index = image_index;
+    _rastro.image_alpha = 0.5;
+
+    // Condição de Saída (Velocidade diminui ou tempo acaba)
+    // Aqui estou usando um decaimento simples da velocidade para sair do dash
+    dash_veloc *= 0.9; 
+
+    if (dash_veloc < global.speed_player) {
+        dash_veloc = 10; // Reseta para o próximo dash
+        global.in_dash = false;
+        alarm[ALARM_DASH_COOLDOWN] = 20; // Cooldown para não spammar
+        state = scr_personagem_andando;
+    }
+}
+
+// ========================================================
+// 3. ESTADO: ATAQUE (ESPADA)
+// ========================================================
+function scr_ataque_player() {
+    hveloc = 0;
+    vveloc = 0;
+
+    // Define Sprite de Ataque baseado na direção do olhar (dir)
+    switch (dir) {
+        case 0: sprite_index = spr_player_direita_parado_atacando; break;
+        case 1: sprite_index = spr_player_cima_parado_atacando; break;
+        case 2: sprite_index = spr_player_esquerda_parado_atacando; break;
+        case 3: sprite_index = spr_player_baixo_parado_atacando; break;
+    }
+
+    // Cria Hitbox no momento certo da animação (ex: frame 1 ou 2)
+    if (image_index >= 1 && !atacando) {
+        atacando = true;
+        
+        var _xx = x;
+        var _yy = y;
+        
+        // Ajuste da posição da hitbox
+        switch (dir) {
+            case 0: _xx += 20; break; // Direita
+            case 1: _yy -= 20; break; // Cima
+            case 2: _xx -= 20; break; // Esquerda
+            case 3: _yy += 20; break; // Baixo
+        }
+        
+        var _hitbox = instance_create_layer(_xx, _yy, "Instances", obj_hibox_ataque);
+        _hitbox.dano = global.ataque; // Passa o dano atual do player
+        
+        // Lógica da Espada Mata-Fantasma
+        _hitbox.pode_matar_fantasma = global.mata_fantasma;
+    }
+
+    // Fim da Animação
+    if (fim_animation_()) {
+        atacando = false;
+        state = scr_personagem_andando;
+    }
+}
+
+// ========================================================
+// 4. ESTADO: ARCO E FLECHA
+// ========================================================
+function scr_personagem_arco() {
+    // Trava movimento ou permite andar devagar (opcional)
+    hveloc = 0;
+    vveloc = 0;
+
+    var _dir_mouse = point_direction(x, y, mouse_x, mouse_y);
+    
+    // Atualiza sprite do player para a direção do mouse
+    dir = floor((_dir_mouse + 45) / 90);
+    switch (dir) {
+        case 0: sprite_index = spr_player_direita_parado; break;
+        case 1: sprite_index = spr_player_cima_parado; break;
+        case 2: sprite_index = spr_player_esquerda_parado; break;
+        case 3: sprite_index = spr_player_baixo_parado; break;
+    }
+
+    // Gerencia o Objeto Arco Visual
+    if (!instance_exists(obj_arco)) {
+        instance_create_layer(x, y, "Instances_itens", obj_arco);
+    }
+
+    with (obj_arco) {
+        x = other.x + lengthdir_x(10, _dir_mouse);
+        y = other.y + lengthdir_y(10, _dir_mouse) + 5; // +5 ajuste vertical
+        image_angle = _dir_mouse;
+        
+        // Toca animação de "puxar a corda" e trava no final
+        if (image_index >= image_number - 1) image_speed = 0;
+        else image_speed = 1;
+    }
+
+    // Soltou o botão -> Atira
     if (mouse_check_button_released(mb_left)) {
-        if (obj_arco.image_index >= 4) {
-            var _flecha = instance_create_layer(obj_arco.x, obj_arco.y, "Instances_itens", obj_flecha);
-            with (_flecha) {
-                direction = point_direction(x, y, mouse_x, mouse_y);
-                speed = 15;
-                image_angle = direction;
-            }
-
-            with (obj_arco) {
-                instance_destroy();
-            }
-
-            empurrar_dir = point_direction(mouse_x, mouse_y, x, y);
-            alarm[2] = 5;
-            state = scr_personagem_hit;
+        // Só atira se o arco estiver "carregado" (frame 4 por exemplo)
+        if (instance_exists(obj_arco) && obj_arco.image_index >= 3) {
+            var _flecha = instance_create_layer(obj_arco.x, obj_arco.y, "Instances", obj_flecha);
+            _flecha.direction = _dir_mouse;
+            _flecha.image_angle = _dir_mouse;
+            _flecha.speed = 12;
+            _flecha.dano = global.ataque; // Dano da flecha
+            
+            // Recuo no player
+            var _recuo_dir = _dir_mouse + 180;
+            hveloc = lengthdir_x(4, _recuo_dir);
+            vveloc = lengthdir_y(4, _recuo_dir);
+            state = scr_personagem_hit; // Usa o estado de hit para fazer o recuo
+            alarm[ALARM_KNOCKBACK] = 5; // Duração do recuo curto
         } else {
-            with (obj_arco) {
-                instance_destroy();
-            }
-            state = scr_andando;
+            // Cancelou o tiro
+            state = scr_personagem_andando;
         }
+        
+        instance_destroy(obj_arco);
     }
 }
 
-
-
-function scr_ataque_player(){
-
-	if(image_index >= 1){
-	if(atacando = false){
-	switch dir{
-	 default:
-	  instance_create_layer( x + 10, y - 20, "instances", obj_hibox_ataque);
-	 break;
-	 case 1:
-	  instance_create_layer( x - 40 , y -70, "instances", obj_hibox_ataque);
-	 break;
-	 case 2:
-	  instance_create_layer( x - 70, y -20 , "instances", obj_hibox_ataque);
-	 break;
-	 case 3:
-	  instance_create_layer( x - 40 , y + 20, "instances", obj_hibox_ataque);
-	 break;
- }	
- atacando = true;
-		}
-	}
-	if fim_animation(){
-		state = scr_andando;
-		atacando = false;
-	}
-	
+// ========================================================
+// 5. ESTADO: HIT (Knockback)
+// ========================================================
+function scr_personagem_hit() {
+    // Se o alarme ainda estiver rodando, continua sendo empurrado
+    if (alarm[ALARM_KNOCKBACK] > 0) {
+        // empurrar_dir é definido no evento de colisão com inimigo
+        hveloc = lengthdir_x(4, empurrar_dir); // Velocidade do empurrão
+        vveloc = lengthdir_y(4, empurrar_dir);
+        
+        scr_player_colisao();
+    } else {
+        // Alarme acabou, volta a andar
+        state = scr_personagem_andando;
+        hit = false;
+    }
 }
-	
-function scr_personagem_hit(){
-	if(alarm[2] > 0 ){
-	
-	hveloc = lengthdir_x(8,empurrar_dir);
-	vveloc = lengthdir_y(8,empurrar_dir);
 
-	scr_player_colisao();
-	}else{
-		state = scr_andando;
-		hit = false;
-	}
-	
-	
+// ========================================================
+// 6. HELPER: COLISÃO
+// ========================================================
+function scr_player_colisao() {
+    // Verifica se a parede existe na sala (baseado no seu código de geração procedural)
+    var _parede = (variable_global_exists("sala") && variable_struct_exists(global.sala, "parede")) ? global.sala.parede : obj_parede_bebe;
+
+    // Colisão Horizontal
+    if (place_meeting(x + hveloc, y, _parede)) {
+        while (!place_meeting(x + sign(hveloc), y, _parede)) {
+            x += sign(hveloc);
+        }
+        hveloc = 0;
+    }
+    x += hveloc;
+
+    // Colisão Vertical
+    if (place_meeting(x, y + vveloc, _parede)) {
+        while (!place_meeting(x, y + sign(vveloc), _parede)) {
+            y += sign(vveloc);
+        }
+        vveloc = 0;
+    }
+    y += vveloc;
+}
+
+// ========================================================
+// 7. HELPER: FIM DA ANIMAÇÃO
+// ========================================================
+function fim_animation_() {
+    return (image_index + image_speed >= image_number);
 }

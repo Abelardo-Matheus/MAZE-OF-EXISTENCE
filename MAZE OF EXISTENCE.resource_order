@@ -82,6 +82,7 @@
     {"name":"TILES","order":13,"path":"folders/Sprites/TILES.yy",},
     {"name":"Tile Sets","order":2,"path":"folders/Tile Sets.yy",},
     {"name":"Timelines","order":8,"path":"folders/Timelines.yy",},
+    {"name":"ORC","order":19,"path":"folders/Sprites/INIMIGOS/ORC.yy",},
   ],
   "ResourceOrderSettings": [
     {"name":"obj_GUI","order":5,"path":"objects/obj_GUI/obj_GUI.yy",},
@@ -221,6 +222,7 @@
     {"name":"TORRETA","order":2,"path":"scripts/TORRETA/TORRETA.yy",},
     {"name":"fnt_menu_op","order":1,"path":"fonts/fnt_menu_op/fnt_menu_op.yy",},
     {"name":"spr_carne_cirular3","order":11,"path":"sprites/spr_carne_cirular3/spr_carne_cirular3.yy",},
+    {"name":"obj_colisao_player","order":10,"path":"objects/obj_colisao_player/obj_colisao_player.yy",},
     {"name":"fnt_escolhas","order":10,"path":"fonts/fnt_escolhas/fnt_escolhas.yy",},
     {"name":"spr_sapo_attack","order":3,"path":"sprites/spr_sapo_attack/spr_sapo_attack.yy",},
     {"name":"scr_explosao","order":7,"path":"scripts/scr_explosao/scr_explosao.yy",},
@@ -337,6 +339,7 @@
     {"name":"spr_armario_um121123","order":3,"path":"sprites/spr_armario_um121123/spr_armario_um121123.yy",},
     {"name":"GUI","order":4,"path":"scripts/GUI/GUI.yy",},
     {"name":"spr_chao_bebe_banheiro","order":4,"path":"sprites/spr_chao_bebe_banheiro/spr_chao_bebe_banheiro.yy",},
+    {"name":"inventario","order":7,"path":"scripts/inventario/inventario.yy",},
     {"name":"spr_grupo_inimigos","order":4,"path":"sprites/spr_grupo_inimigos/spr_grupo_inimigos.yy",},
     {"name":"spr_sapo_idle","order":1,"path":"sprites/spr_sapo_idle/spr_sapo_idle.yy",},
     {"name":"obj_vela","order":4,"path":"objects/obj_vela/obj_vela.yy",},
