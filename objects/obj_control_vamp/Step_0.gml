@@ -6,6 +6,7 @@
 /// 3. Chunks: Verifica se o jogador cruzou a fronteira de um bloco (30k pixels). Se sim, gera novas estruturas.
 /// 4. Inimigos: Se for noite e o timer zerar, cria inimigos fora da visão da câmera.
 /// 5. Terreno: Cria tiles de grama ao redor do jogador e destrói os distantes para economizar memória.
+// --- 6. Gerenciador de Ondas Noturnas ---
 
 // --- 1. Inicialização de Segurança e Debug ---
 // Garante que o contador de IDs de inimigos exista
@@ -35,6 +36,8 @@ if (keyboard_check_pressed(vk_enter))
     level_up();
 }
 
+
+
 // --- 3. Sistema de Chunks (Geração de Estruturas) ---
 // Calcula em qual "blocozão" do mundo o jogador está agora
 var _chunk_x_atual = floor(obj_player.x / global.tamanho_bloco);
@@ -43,7 +46,7 @@ var _chunk_y_atual = floor(obj_player.y / global.tamanho_bloco);
 // Só roda a geração se o jogador MUDOU de bloco (entrou em uma nova área)
 if (_chunk_x_atual != global.ultimo_bloco[0] || _chunk_y_atual != global.ultimo_bloco[1]) 
 {
-    show_debug_message("Novo Chunk detectado: Gerando estruturas...");
+
     
     // Chama as funções de geração para o bloco atual e vizinhos
     gerar_estruturas(obj_estrutura, quantidade_estruturas, distancia_minima);
@@ -56,44 +59,7 @@ if (_chunk_x_atual != global.ultimo_bloco[0] || _chunk_y_atual != global.ultimo_
     global.ultimo_bloco[1] = _chunk_y_atual;
 }
 
-// --- 4. Spawn de Inimigos (Apenas à Noite) ---
-if (alarm[0] <= 0 && !global.day_night_cycle.is_day) 
-{
-    var _enemy_id = global.enemy_id_counter++;
-    var _side = irandom(1); // 0 = Vertical (Cima/Baixo), 1 = Horizontal (Esq/Dir)
-    var _xx, _yy;
 
-    // Define coordenadas de spawn fora da câmera
-    if (_side == 0) 
-    {
-        _xx = irandom_range(global.cmx, global.cmx + global.cmw);
-        _yy = choose(global.cmy - 12, global.cmy + global.cmh + 64);
-    } 
-    else 
-    {
-        _xx = choose(global.cmx - 12, global.cmx + global.cmw + 64);
-        _yy = irandom_range(global.cmy, global.cmy + global.cmh);
-    }
-
-    // Cria e configura o inimigo
-    var _novo_inimigo = instance_create_layer(_xx, _yy, "instances", obj_amoeba);
-    
-    // Configura variáveis do inimigo usando 'with' para clareza
-    with (_novo_inimigo) 
-    {
-        dist_aggro = 2000;
-        dist_desaggro = 2000;
-        escala = 1.5;
-        vida = 1000;
-        max_vida = 1000;
-        id_inimigo = _enemy_id;
-    }
-
-    // Adiciona à lista global de inimigos ativos
-    ds_list_add(global.enemy_list, _enemy_id);
-
-    alarm[0] = spaw_timer; // Reseta o timer
-}
 
 // --- 5. Geração Procedural de Terreno (Tiles) ---
 var _tile_size = 272; 
@@ -128,6 +94,12 @@ for (var i = -_grid_radius; i <= _grid_radius; i++)
         }
     }
 }
+
+
+// --- 6. Gerenciador de Ondas Noturnas ---
+// Este script cuida de verificar se é noite, contar o tempo,
+// mudar de onda e chamar o spawn quando o alarm[0] permitir.
+process_night_waves();
 
 // Limpeza de Memória (Culling)
 // Destrói tiles que ficaram muito longe

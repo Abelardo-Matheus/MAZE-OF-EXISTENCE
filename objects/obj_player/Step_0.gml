@@ -1,5 +1,6 @@
 /// @description Lógica Principal (Step)
-
+// Executa o script do estado atual (Andando, Atacando, Dash, etc.)
+script_execute(state);
 
 // --- Abrir/Fechar Inventário ---
 // Isso DEVE vir antes da pausa, senão você nunca consegue fechar!
@@ -88,8 +89,7 @@ if (hit) {
     state = scr_personagem_hit;
 }
 
-// Executa o script do estado atual (Andando, Atacando, Dash, etc.)
-script_execute(state);
+
 
 // Atualiza posição do bloco de colisão auxiliar
 if (instance_exists(global.bloco_colisao)) {

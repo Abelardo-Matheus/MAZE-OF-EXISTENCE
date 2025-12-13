@@ -10,6 +10,12 @@ global.map_vamp = true;
 global.map_bebe = false;
 
 
+// Inicializa sistema de ondas
+init_night_waves();
+
+// Garanta que o alarme 0 comece zerado para o sistema assumir
+alarm[0] = 0;
+
 //Inicializa grid de poderes
 inicializar_tudo();
 

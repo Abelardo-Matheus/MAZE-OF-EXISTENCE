@@ -68,6 +68,7 @@
     {"name":"IMAGENS","order":8,"path":"folders/Sprites/IMAGENS.yy",},
     {"name":"INIMIGOS","order":4,"path":"folders/Sprites/INIMIGOS.yy",},
     {"name":"BOSS BROC","order":16,"path":"folders/Sprites/INIMIGOS/BOSS BROC.yy",},
+    {"name":"ORC","order":19,"path":"folders/Sprites/INIMIGOS/ORC.yy",},
     {"name":"SLIME","order":18,"path":"folders/Sprites/INIMIGOS/SLIME.yy",},
     {"name":"ITENS","order":3,"path":"folders/Sprites/ITENS.yy",},
     {"name":"NPCS","order":12,"path":"folders/Sprites/NPCS.yy",},
@@ -82,7 +83,6 @@
     {"name":"TILES","order":13,"path":"folders/Sprites/TILES.yy",},
     {"name":"Tile Sets","order":2,"path":"folders/Tile Sets.yy",},
     {"name":"Timelines","order":8,"path":"folders/Timelines.yy",},
-    {"name":"ORC","order":19,"path":"folders/Sprites/INIMIGOS/ORC.yy",},
   ],
   "ResourceOrderSettings": [
     {"name":"obj_GUI","order":5,"path":"objects/obj_GUI/obj_GUI.yy",},
@@ -343,6 +343,7 @@
     {"name":"spr_grupo_inimigos","order":4,"path":"sprites/spr_grupo_inimigos/spr_grupo_inimigos.yy",},
     {"name":"spr_sapo_idle","order":1,"path":"sprites/spr_sapo_idle/spr_sapo_idle.yy",},
     {"name":"obj_vela","order":4,"path":"objects/obj_vela/obj_vela.yy",},
+    {"name":"spr_inimigos_geracao_vamp","order":2,"path":"scripts/spr_inimigos_geracao_vamp/spr_inimigos_geracao_vamp.yy",},
     {"name":"obj_estrutura","order":4,"path":"objects/obj_estrutura/obj_estrutura.yy",},
     {"name":"spr_interios_moveis","order":7,"path":"sprites/spr_interios_moveis/spr_interios_moveis.yy",},
     {"name":"spr_chao_bebe_2","order":2,"path":"sprites/spr_chao_bebe_2/spr_chao_bebe_2.yy",},

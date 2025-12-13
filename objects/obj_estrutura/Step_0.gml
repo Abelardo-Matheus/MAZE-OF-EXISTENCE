@@ -2,7 +2,6 @@
 var _inst = instance_nearest(x, y, obj_player);
 
 if (distance_to_point(_inst.x, _inst.y) <= 100) {
-	show_debug_message(seed)
     // Se o jogador estiver próximo, marca que ele está próximo de uma estrutura
     obj_player.proximo_de_estrutura = true;
 	

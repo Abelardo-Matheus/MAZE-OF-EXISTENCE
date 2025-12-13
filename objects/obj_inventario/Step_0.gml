@@ -1,5 +1,5 @@
 
-show_debug_message(is_open)
+
 if (!is_open) exit;
 
 var _mx = device_mouse_x_to_gui(0);

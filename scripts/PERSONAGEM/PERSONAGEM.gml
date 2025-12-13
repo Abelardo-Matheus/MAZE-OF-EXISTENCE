@@ -212,22 +212,57 @@ function scr_personagem_arco() {
     }
 }
 
-// ========================================================
-// 5. ESTADO: HIT (Knockback)
-// ========================================================
 function scr_personagem_hit() {
-    // Se o alarme ainda estiver rodando, continua sendo empurrado
-    if (alarm[ALARM_KNOCKBACK] > 0) {
-        // empurrar_dir é definido no evento de colisão com inimigo
-        hveloc = lengthdir_x(4, empurrar_dir); // Velocidade do empurrão
-        vveloc = lengthdir_y(4, empurrar_dir);
+    // Verifica se a parede existe na sala (baseado no seu código de geração procedural)
+    var _parede = (variable_global_exists("sala") && variable_struct_exists(global.sala, "parede")) ? global.sala.parede : obj_parede_bebe;
+
+    // Limite máximo de loops para evitar travamentos
+    var _max_loops = 32; 
+    var _loops = 0;
+
+    // ========================================================
+    // COLISÃO HORIZONTAL
+    // ========================================================
+    if (place_meeting(x + hveloc, y, _parede)) {
+        // Reseta contador
+        _loops = 0;
         
-        scr_player_colisao();
-    } else {
-        // Alarme acabou, volta a andar
-        state = scr_personagem_andando;
-        hit = false;
+        // Enquanto não encontrar uma parede a 1 pixel de distância...
+        // E o número de loops for menor que o limite...
+        while (!place_meeting(x + sign(hveloc), y, _parede) && _loops < _max_loops) {
+            x += sign(hveloc);
+            _loops++; // --- TRAVA DE SEGURANÇA: Incrementa contador
+        }
+        
+        // Se atingiu o limite, é porque ia travar. Debug opcional.
+        if (_loops >= _max_loops) {
+             show_debug_message("ALERTA: Evitou travamento na colisão Horizontal!");
+        }
+        
+        hveloc = 0;
     }
+    x += hveloc;
+
+    // ========================================================
+    // COLISÃO VERTICAL
+    // ========================================================
+    if (place_meeting(x, y + vveloc, _parede)) {
+        // Reseta contador
+        _loops = 0;
+        
+        while (!place_meeting(x, y + sign(vveloc), _parede) && _loops < _max_loops) {
+            y += sign(vveloc);
+            _loops++; // --- TRAVA DE SEGURANÇA: Incrementa contador
+        }
+
+        // Se atingiu o limite, é porque ia travar.
+        if (_loops >= _max_loops) {
+             show_debug_message("ALERTA: Evitou travamento na colisão Vertical!");
+        }
+
+        vveloc = 0;
+    }
+    y += vveloc;
 }
 
 // ========================================================
