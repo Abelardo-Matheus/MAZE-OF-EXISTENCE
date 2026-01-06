@@ -4,13 +4,13 @@
 // ========================================================
 
 // O "other" aqui se refere ao PLAYER
-
+var _dano_causado = dano; 
 // 1. Verifica se o alvo (Player) pode tomar dano
 // Certifique-se que o player tem a variável "tomar_dano" no Create
 if (other.tomar_dano) { 
     
     // Sugestão: Em vez de 40 fixo, use uma variável do inimigo, ex: "meu_dano"
-    var _dano_causado = 40; 
+    
 
     // 2. Aplica o dano e configura o estado de "Hit" NO PLAYER
     with (other) {
@@ -48,6 +48,6 @@ if (other.tomar_dano) {
     var _inst = instance_create_layer(other.x, other.y - 30, "Instances", obj_dano);
     
     // Certifique-se que seu obj_dano usa a variável "dano_valor" para mostrar o texto
-    _inst.dano_valor = _dano_causado; 
+    _inst.dano = _dano_causado; 
     _inst.cor = c_red;
 }

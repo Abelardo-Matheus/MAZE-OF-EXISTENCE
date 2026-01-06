@@ -1,6 +1,3 @@
-/// @description Fim da Invencibilidade
-// Restaura a opacidade do sprite
-image_alpha = 1; 
-
-// Permite tomar dano novamente (se você usar essa variável)
-tomar_dano = true;
+/// @description Fim da Invencibilidade (i-frames)
+tomar_dano = true; // Permite tomar dano novamente
+image_alpha = 1;   // Garante que o personagem fique totalmente visível

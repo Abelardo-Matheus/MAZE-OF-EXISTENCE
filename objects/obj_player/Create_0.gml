@@ -3,10 +3,11 @@
 // 1. MACROS E CONFIGURAÇÕES
 // ========================================================
 // Definindo nomes para os Alarmes (Clean Code)
+// Ajuste os números se você já usa estes alarmes para outras coisas
 #macro ALARM_ESTAMINA 0
-#macro ALARM_KNOCKBACK 2
-#macro ALARM_INVENCIBILIDADE 3
-#macro ALARM_DASH_COOLDOWN 11
+#macro ALARM_DASH_COOLDOWN 1
+#macro ALARM_KNOCKBACK 2        // Controla o tempo sendo empurrado
+#macro ALARM_INVENCIBILIDADE 3  // Controla o tempo piscando sem tomar dano
 
 // Enum de Armas (Caso não esteja em um script global)
 enum Armamentos {
@@ -21,8 +22,7 @@ enum Armamentos {
 // Inicializa apenas se não existirem (segurança para mudar de sala)
 
 // --- Status Básicos ---
-if (!variable_global_exists("vida"))          global.vida = 100;
-if (!variable_global_exists("vida_max"))      global.vida_max = 100;
+
 if (!variable_global_exists("estamina"))      global.estamina = 100;
 if (!variable_global_exists("max_estamina"))  global.max_estamina = 100;
 if (!variable_global_exists("sanidade"))      global.sanidade = 100;
@@ -39,7 +39,6 @@ if (!variable_global_exists("armamento"))     global.armamento = Armamentos.espa
 if (!variable_global_exists("mata_fantasma")) global.mata_fantasma = false;
 
 // --- Controle de Estado Global ---
-if (!variable_global_exists("level_up"))      global.level_up = false;
 if (!variable_global_exists("dialogo"))       global.dialogo = false;
 if (!variable_global_exists("in_dash"))       global.in_dash = false;
 
@@ -71,10 +70,11 @@ if (!variable_global_exists("bloco_colisao") || !instance_exists(global.bloco_co
 // ========================================================
 // 5. COMBATE
 // ========================================================
-atacando = false;
-tomar_dano = true; // Flag de invencibilidade (true = pode tomar dano)
-hit = false;       // Flag de estado de hit (empurrão)
-empurrar_dir = 0;  // Direção do knockback
+hit = false;           // Se está atualmente no estado de "sendo empurrado"
+tomar_dano = true;     // Se pode receber dano no momento (invencibilidade)
+empurrar_dir = 0;      // A direção para onde será empurrado
+dano_alfa = 0;         // Controle visual para piscar
+image_blend = c_white; // Garante que começa com a cor normal
 
 // Variáveis visuais da arma
 desenha_arma = false;

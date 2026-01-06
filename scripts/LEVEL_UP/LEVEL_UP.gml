@@ -9,7 +9,7 @@ global.level_up = false;
 
 // --- Tabelas de Crescimento (Stats por Nível) ---
 // Inicializa arrays para evitar erro de "index out of bounds"
-global.vida_max_calc[1] = 30;
+global.vida_max_calc[1] = 100;
 global.max_estamina_calc[1] = 50;
 global.dano_base[1] = 6;
 
@@ -33,7 +33,7 @@ global.upgrade_num = 4; // Quantidade de opções que aparecem na tela (3 ou 4)
 /// 1. Incrementa nível e atualiza arrays de status (vida, estamina, dano).
 /// 2. Cria um "Pool" (lista temporária) e joga dentro dele todas as Armas e Itens disponíveis.
 /// 3. Embaralha o Pool e escolhe os primeiros X itens para exibir na tela.
-function level_up() 
+function level_upp() 
 {
     global.level_up = true;
     global.level_player += 1;

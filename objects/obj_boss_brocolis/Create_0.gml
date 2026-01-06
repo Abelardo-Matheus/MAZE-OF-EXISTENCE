@@ -13,7 +13,7 @@ proj_contador = 0;
 estado_cansado_ativo = false;
 ataque_ativo = false;
 tiros_disparados = 0;
-damage = 15;
+dano = 15;
 
 
 

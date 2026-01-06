@@ -19,7 +19,7 @@ sombra = -1;
 veloc_perse = 1;
 vida = 10;
 max_vida = 10;
-
+dano = 50;
 empurrar_dir = 0;
 empurrar_veloc = 0;
 hit = false;

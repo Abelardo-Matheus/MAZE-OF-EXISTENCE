@@ -11,13 +11,13 @@ vvloc = 0;
 sprite_normal = -1;
 sprite_parado = -1;
 veloc = 0.8;
-dano = 1;
+
 dest_x = 0;
 dest_y = 0;
 
 alarm[0] = 1;
 sombra = -1;
-
+dano = 1;
 veloc_perse = 1;
 vida = 10;
 max_vida = vida;

@@ -33,7 +33,7 @@ if (global.level_up == true)
 // Cheat: Level Up Manual com Enter
 if (keyboard_check_pressed(vk_enter)) 
 {
-    level_up();
+    level_upp();
 }
 
 
