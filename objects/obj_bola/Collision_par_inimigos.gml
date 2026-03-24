@@ -1,22 +1,13 @@
-var _damage = damage;
-other.vida -= _damage;
+/// @description Insert description here
+// You can write your code in this editor
 
-var _dir = point_direction(obj_player.x,obj_player.y,other.x,other.y);
-other.empurrar_dir = _dir;
-other.empurrar_veloc = push;
-other.state = scr_inimigo_hit;
-other.alarm[1] = 5;
-other.hit = true;
 
-var _inst = instance_create_layer(x,y,"instances",obj_dano);
-_inst.alvo = other;
-_inst.dano = _damage;
-instance_destroy();
 
-// Dano no inimigo
-with (other) {
-    vida -= _damage; // Reduz a vida do inimigo em 10
-}
-
-// Destrói a bola
-instance_destroy();
+// Inherit the parent event
+event_inherited();
+ja_encostou = true; // Ativa a flag para mudar de fase
+        // --- NOVO: Para o movimento imediatamente ao colidir ---
+        speed = 0; 
+        // Ativa a animação automática do GameMaker a partir do frame 3 atual
+        // Certifique-se de que a velocidade no Sprite Editor não é 0
+        image_speed = 20; 

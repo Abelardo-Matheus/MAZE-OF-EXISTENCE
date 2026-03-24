@@ -119,6 +119,6 @@ function inicializar_tudo()
     ds_grid_add_upgrade_vamp("BOLHAS",     -1,             -1, "Chuva de bolhas.",                    0);
     ds_grid_add_upgrade_vamp("RAIO",       scr_raio,       -1, "Ursinho gigante que bloqueia.",       0);
     ds_grid_add_upgrade_vamp("SAPO",       scr_sapo,       -1, "Pet sapo que engole inimigos.",       0);
-    ds_grid_add_upgrade_vamp("BORBOLETA",  -1,             -1, "Distrai inimigos.",                   0);
+    ds_grid_add_upgrade_vamp("BORBOLETA",  scr_borboleta,  -1, "Distrai inimigos.",                   50);
     ds_grid_add_upgrade_vamp("BOMBA",      scr_bomba,      -1, "Joga bomba aleatoriamente.",          0);
 }

@@ -109,8 +109,8 @@ function scr_bola()
                 _projectile.direction = point_direction(obj_player.x, obj_player.y, _target_enemy.x, _target_enemy.y);
                 _projectile.veloc = _stats.speed;       // GameMaker usa 'speed' nativo para mover automatico
                 _projectile.damage = _stats.damage;
-                _projectile.image_xscale = _stats.size;
-                _projectile.image_yscale = _stats.size;
+                _projectile.image_xscale = _stats.size * 0.2;
+                _projectile.image_yscale = _stats.size * 0.2;
                 _projectile.push_force = _stats.knockback; // Renomeado para evitar conflito com palavra reservada
                 
                 // Aplicação imediata de Knockback (Opcional: pode ser feito na colisão da bala também)
