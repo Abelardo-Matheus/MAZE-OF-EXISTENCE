@@ -1,114 +1,163 @@
-/// @desc Calcula atributos da 'Shuriken' (Orbital)
-/// [O QUE]: Define quantidade, velocidade de rotação, raio da órbita e duração.
-/// [COMO] : Itera níveis aplicando somas e multiplicadores.
-function scr_shuriken_calculate_stats(_level) 
+// ==============================================================================
+// REGIÃO 1: CONFIGURAÇÃO (DADOS E VETOR DE NÍVEIS)
+// ==============================================================================
+#region CONFIGURAÇÃO
+
+/// @desc Retorna a estrutura de dados (Vetor de Skill) da SHURIKEN (Orbital)
+function scr_shuriken_config()
 {
-    // Status Base
-    var _stats = {
-        quantity: 1,            // Quantidade de projéteis
-        rotation_speed: 3,      // Velocidade angular (graus por frame)
-        size: 1.2,              // Escala visual
-        orbit_radius: 100,      // Distância do player
-        duration: 2000,         // Tempo ativo (ms)
-        damage: 10,             // Dano
-        knockback: 0,           // Empurrão
-        cooldown: 3000          // Tempo de espera (ms)
+    return {
+		
+        // --- Status Base (Nível 0 - Antes da primeira coleta) ---
+        // Usamos os nomes exatos definidos na macro DEFAULT_SKILL_STATS
+        stats_base: {
+            damage: 10,             // Dano base
+			sprite_icon: spr_shuriken_icon,
+            rotation_speed: 3,      // Velocidade angular (graus por frame)
+            size: 1.2,              // Escala visual
+            orbit_radius: 100,      // Distância do player
+            duration: 2000,         // Tempo ativo (ms)
+            knockback: 0,           // Empurrão
+            cooldown: 3000,         // Tempo de espera (ms)
+            quantity: 0             // Começa com 0 para não spawm antes do Lvl 1
+        },
+
+        // --- Definição Nível a Nível (Data-Driven) ---
+        // Índice 0 na array = Upgrade que leva a skill para o Nível 1, etc.
+        niveis: [
+            // Nível 1
+            { 
+                desc: "GERA UMA SHURIKEN QUE GIRA AO REDOR DO JOGADOR.", // Descrição inicial
+                upgrade: function(_s) { 
+                    _s.quantity = 1; // Ativa
+                } 
+            },
+            // Nível 2
+            { 
+                desc: "MAIS UMA SHURIKEN GIRANDO (+1 Qtd)", 
+                upgrade: function(_s) { _s.quantity = min(_s.quantity + 1, 10); } 
+            },
+            // Nível 3
+            { 
+                desc: "ROTAÇÃO MAIS RÁPIDA (+0.5 Veloc.)", 
+                upgrade: function(_s) { _s.rotation_speed += 0.5; } 
+            },
+            // Nível 4
+            { 
+                desc: "SHURIKEN GIGANTE (+Tamanho)", 
+                upgrade: function(_s) { _s.size += 0.2; } 
+            },
+            // Nível 5
+            { 
+                desc: "ÓRBITA MAIOR (+Range)", 
+                upgrade: function(_s) { _s.orbit_radius += 20; } 
+            },
+            // Nível 6
+            { 
+                desc: "DURAÇÃO AUMENTADA (+500ms)", 
+                upgrade: function(_s) { _s.duration += 500; } 
+            },
+            // Nível 7 (Ciclo de 7 níveis)
+            { 
+                desc: "DANO E EMPURRÃO AUMENTADOS", 
+                upgrade: function(_s) { _s.damage += 2; _s.knockback += 0.1; } 
+            }
+        ]
     };
-
-    // Modificadores de Nível
-    for (var i = 1; i <= _level; i++) 
-    {
-        switch (i % 7) 
-        {
-            case 1: // Quantidade (+1)
-                _stats.quantity = min(_stats.quantity + 1, 10);
-                global.upgrades_vamp_grid[# Upgrades_vamp.description, 2] = "MAIS UMA SHURIKEN GIRANDO";
-                break;
-
-            case 2: // Velocidade (+0.5)
-                _stats.rotation_speed += 0.5;
-                global.upgrades_vamp_grid[# Upgrades_vamp.description, 2] = "ROTAÇÃO MAIS RÁPIDA";
-                break;
-
-            case 3: // Tamanho (+0.2)
-                _stats.size += 0.2;
-                global.upgrades_vamp_grid[# Upgrades_vamp.description, 2] = "SHURIKEN GIGANTE";
-                break;
-
-            case 4: // Raio (+20px)
-                _stats.orbit_radius += 20;
-                global.upgrades_vamp_grid[# Upgrades_vamp.description, 2] = "ÓRBITA MAIOR";
-                break;
-
-            case 5: // Duração (+500ms)
-                _stats.duration += 500;
-                global.upgrades_vamp_grid[# Upgrades_vamp.description, 2] = "DURAÇÃO AUMENTADA";
-                break;
-            
-            case 6: // Knockback (+0.1)
-                _stats.knockback += 0.1;
-                global.upgrades_vamp_grid[# Upgrades_vamp.description, 2] = "EMPURRA INIMIGOS";
-                break;
-
-            case 0: // Dano (+2)
-                _stats.damage += 2;
-                global.upgrades_vamp_grid[# Upgrades_vamp.description, 2] = "DANO AUMENTADO";
-                break;
-        }
-    }
-
-    return _stats;
 }
-/// @desc Gerencia o Spawn das Shurikens Orbitais
-/// [O QUE]: Verifica o cooldown e cria as shurikens em posições equidistantes ao redor do player.
-/// [COMO] : 
-/// 1. Se já existirem shurikens (instance_exists), não faz nada (espera elas sumirem).
-/// 2. Se não existirem, incrementa timer.
-/// 3. Ao atingir o cooldown, calcula o ângulo de separação (360 / qtd) e cria as instâncias.
-function scr_shuriken() 
+
+#endregion
+
+// ==============================================================================
+// REGIÃO 2: EXECUÇÃO (LÓGICA E SPAWN)
+// ==============================================================================
+#region EXECUÇÃO
+
+/// @desc Executa a lógica da 'Shuriken' (Orbital)
+/// @param _row_index O índice da linha desta skill na grid (recebido do controle)
+function scr_shuriken(_row_index) 
 {
-    // 1. Controle de Estado
-    // Se ainda tem shuriken girando, não conta cooldown
-    if (instance_exists(obj_shuriken)) return;
+    // Sistema de Pausa (centralizado no Step do Player)
+    if (global.level_up) exit; 
 
-    // 2. Obter Stats
-    // Nota: 2 é o índice da SHURIKEN na grid
-    var _current_level = global.upgrades_vamp_grid[# Upgrades_vamp.level, 2]; 
-    var _stats = scr_shuriken_calculate_stats(_current_level); 
+    // OBTÉM O NÍVEL ATUAL CORRETAMENTE BASEADO NA LINHA RECEBIDA
+    var _current_level = global.upgrades_vamp_grid[# Upgrades_vamp.level, _row_index];
+    
+    // Se nível 0, não faz nada (segurança)
+    if (_current_level <= 0) exit;
 
-    // 3. Timer
+    // ========================================================
+    // --- NOVO: CONTROLE DE ESTADO (Anti-Spawm) ---
+    // ========================================================
+    // Se ainda tem shuriken girando, não faz nada (espera elas sumirem).
+    // SUBSTÍTUA 'obj_shuriken' PELO NOME DO SEU OBJETO SHURIKEN
+    if (instance_exists(obj_shuriken)) exit;
+
+
+    // ========================================================
+    // --- 1. UNIFICAÇÃO: Obter Dados e Calcular Stats Finais ---
+    // ========================================================
+    var _config = scr_shuriken_config(); // Carrega os dados puro (Região 1)
+    
+    // Chama a calculadora genérica universal (Passando referências corretas da grid e colunas)
+    // Nota: Certifique-se de que a função 'scr_generic_calculate_stats' já foi criada.
+    var _stats = scr_generic_calculate_stats(_config, _current_level, global.upgrades_vamp_grid, _row_index, Upgrades_vamp.description);
+
+    // ========================================================
+    // --- 2. LÓGICA DO TIMER (Sua lógica Delta_Time permanece aqui) ---
+    // ========================================================
     if (!variable_global_exists("shuriken_timer")) global.shuriken_timer = 0;
     
-    global.shuriken_timer += delta_time / 1000;
+    // delta_time é em microsegundos. Dividir por 1000 converte para milissegundos.
+    global.shuriken_timer += delta_time / 1000; 
 
-    // 4. Spawn
+    // Ativação (Spawm)
     if (global.shuriken_timer >= _stats.cooldown) 
     {
-        global.shuriken_timer = 0;
+        global.shuriken_timer = 0; 
 
-        // Loop de Criação
+        // ========================================================
+        // --- 3. SUA LÓGICA ÚNICA DE SPAWN EQUIDISTANTE (Fica aqui!) ---
+        // ========================================================
+        // SUBSTÍTUA 'obj_player' PELO NOME DO SEU OBJETO JOGADOR
+        if (!instance_exists(obj_player)) exit; 
+        
+        var _player_x = obj_player.x;
+        var _player_y = obj_player.y;
+
+        // Loop pela quantidade calculada universalmente
         for (var i = 0; i < _stats.quantity; i++) 
         {
             // Matemática: Divide 360 graus pela quantidade para espalhar igualmente
             // Ex: 2 shurikens = 0 e 180 graus. 3 shurikens = 0, 120, 240.
             var _start_angle = i * (360 / _stats.quantity); 
             
-            var _shuriken = instance_create_layer(obj_player.x, obj_player.y, "Instances", obj_shuriken);
+            // Cria o Objeto Shuriken
+            var _shuriken = instance_create_layer(_player_x, _player_y, "Instances", obj_shuriken);
             
-            // Passagem de Parâmetros
-            _shuriken.current_angle = _start_angle; // Ângulo individual
-            _shuriken.rotation_speed = _stats.rotation_speed;
-            _shuriken.orbit_radius = _stats.orbit_radius;
-            _shuriken.damage = _stats.damage;
-            _shuriken.push_force = _stats.knockback;
+            // --- Passagem de Parâmetros usa os _stats calculados universalmente ---
+            // Certifique-se de que o objeto 'obj_shuriken' tem essas variáveis no Create
+            _shuriken.current_angle = _start_angle; // Ângulo individual inicial
+            _shuriken.rotation_speed = _stats.rotation_speed; // Velocidade angular
+            _shuriken.orbit_radius = _stats.orbit_radius; // Raio da órbita
+            _shuriken.damage = _stats.damage; // Dano
+            _shuriken.push_force = _stats.knockback; // Knockback
             
-            // Controle de Tempo de Vida
-            _shuriken.duration = _stats.duration;   // Tempo total (ms)
-            _shuriken.life_timer = 0;               // Cronômetro (ms)
+            // Controle de Tempo de Vida (Duração)
+            _shuriken.duration = _stats.duration; // Tempo total (ms)
+            _shuriken.life_timer = 0;             // Cronômetro (ms) - inicia zerado
             
-            // Visual
-            _shuriken.image_xscale = _stats.size;
-            _shuriken.image_yscale = _stats.size;
+            // Escala Visual
+            // Se usar o sistema de escala base que você tem (_shuriken.escala_base)
+            var _escala_final = _stats.size;
+            if (variable_instance_exists(_shuriken, "escala_base")) {
+                _escala_final *= _shuriken.escala_base;
+            }
+            
+            _shuriken.image_xscale = _escala_final;
+            _shuriken.image_yscale = _escala_final;
         }
     }
 }
+
+#endregion

@@ -10,8 +10,8 @@
   "managed": true,
   "overriddenProperties": [],
   "parent": {
-    "name": "LAB_EXCUIDO",
-    "path": "folders/Objects/FASE_UT/LAB_EXCUIDO.yy",
+    "name": "EFEEITOS",
+    "path": "folders/Objects/FASE_VAMP/PODERES/EFEEITOS.yy",
   },
   "parentObjectId": null,
   "persistent": false,

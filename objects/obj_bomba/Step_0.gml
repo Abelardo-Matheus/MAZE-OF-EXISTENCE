@@ -26,7 +26,7 @@ switch (state)
             
             // Transição de Estado
             state = "exploding";
-            sprite_index = spr_explosion;
+            sprite_index = spr_confete;
             image_index = 0;
             image_speed = 1;
             

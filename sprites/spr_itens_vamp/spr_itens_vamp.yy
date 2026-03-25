@@ -29,8 +29,8 @@
   "nineSlice": null,
   "origin": 4,
   "parent": {
-    "name": "PODERES",
-    "path": "folders/Sprites/PODERES.yy",
+    "name": "sprite_icon",
+    "path": "folders/Sprites/PODERES/sprite_icon.yy",
   },
   "preMultiplyAlpha": false,
   "sequence": {

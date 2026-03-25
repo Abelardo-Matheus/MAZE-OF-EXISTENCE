@@ -10,7 +10,11 @@ image_xscale = escala;
 image_yscale = escala;
 script_execute(state);
 
-
+if dest_x < x{
+	image_xscale = -escala;
+}else{
+	image_xscale = escala
+}
 if (vida <= 0) {
 	remover_inimigo_por_id(global.current_sala, inimigo_id);
 	var _xp = instance_create_layer(x, y, "instances", obj_xp_um);

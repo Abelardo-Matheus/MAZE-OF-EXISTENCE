@@ -3,14 +3,16 @@
 /// [COMO] :
 /// 1. Define 'timer_going' (tempo que ele viaja antes de voltar).
 /// 2. Cria 'hit_list' para garantir que o bumerangue não acerte o mesmo inimigo 60 vezes por segundo.
-
+escala_base = 0.1;
+image_xscale = escala_base;
+image_yscale = escala_base;
 // --- Configurações de Voo ---
 timer_going = 40;       // Duração do voo de ida (em frames). Aprox 0.6 seg.
 return_speed_mult = 2.5; // Multiplicador de velocidade na volta (para alcançar o player)
 push = 1;
 // --- Controle de Colisão ---
 hit_list = ds_list_create(); // Lista de IDs de inimigos já atingidos neste voo
-
+loop_animacao_ativo = false;
 // --- Valores Padrão (Caso o script falhe em passar algum) ---
 if (!variable_instance_exists(id, "damage")) damage = 10;
 if (!variable_instance_exists(id, "move_speed")) move_speed = 5;

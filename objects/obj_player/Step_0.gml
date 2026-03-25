@@ -150,8 +150,45 @@ if (alarm[ALARM_INVENCIBILIDADE] > 0) {
 if (piscando_timer > 0) piscando_timer--;
 else { piscando_alpha = (piscando_alpha == 1) ? 0 : 1; piscando_timer = 20; }
 
-// Executa Upgrades Passivos
-var _qtd_upgrades = ds_list_size(global.active_upgrades);
-for (var i = 0; i < _qtd_upgrades; i++) {
-    script_execute(global.active_upgrades[| i]);
+/// @description Loop de Execução de Upgrades e Itens
+
+// --- 1. Executa Upgrades Ativos (ex: Bola, Bomba) ---
+var _upgrades_grid = global.upgrades_vamp_grid;
+var _upgrades_count = ds_grid_height(_upgrades_grid);
+
+for (var i = 0; i < _upgrades_count; i++)
+    {
+    var _level = _upgrades_grid[# Upgrades_vamp.level, i];
+    
+    // Se nível > 0, tentamos executar
+    if (_level > 0) {
+        var _script = _upgrades_grid[# Upgrades_vamp.Script, i];
+        
+        // Verifica se o script existe e é uma função válida
+        if (_script != -1 && script_exists(_script)) {
+            // --- CONEXÃO UNIFICADA ---
+            // Executa o script passando 'i' (o índice da linha) como argumento 0.
+            script_execute(_script, i); 
+        }
+    }
+}
+
+// --- 2. Executa Itens Passivos (ex: Pena) ---
+var _itens_grid = global.itens_vamp_grid;
+var _itens_count = ds_grid_height(_itens_grid);
+
+for (var k = 0; k < _itens_count; k++)
+{
+    var _level_item = _itens_grid[# Itens_vamp.level, k];
+    
+    // Se nível > 0, tentamos executar
+    if (_level_item > 0) {
+        var _script_item = _itens_grid[# Itens_vamp.Script, k];
+        
+        if (_script_item != -1 && script_exists(_script_item)) {
+            // --- CONEXÃO UNIFICADA ---
+            // Executa o script do item passando 'k' como argumento.
+            script_execute(_script_item, k);
+        }
+    }
 }

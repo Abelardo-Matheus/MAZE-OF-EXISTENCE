@@ -1,128 +1,128 @@
-/// @desc Calcula os atributos da 'Bola' baseado no nível
-/// [O QUE]: Define os status base e aplica os modificadores acumulativos de cada nível. Também atualiza a descrição do upgrade na Grid.
-/// [COMO] : Itera de 1 até o nível atual, aplicando bônus matemáticos (multiplicadores ou somas) e definindo o texto da UI.
-function scr_ball_calculate_stats(_level) 
+/// @desc Retorna a estrutura de dados (Vetor de Skill) da BOLA
+function scr_bola_config()
 {
-    // --- Status Base (Nível 0) ---
-    var _stats = {
-        damage: 10,             // Dano base
-        cooldown: 5000,         // Tempo em ms (5 segundos)
-        size: 1,                // Escala do sprite
-        speed: 8,               // Velocidade de movimento
-        projectile_count: 1,    // Quantidade de projéteis
-        knockback: 0            // Força de empurrão
+    return {
+        // --- Status Base ---
+        stats_base: {
+            damage: 10,
+            sprite_icon: spr_bola_icon,
+            cooldown: 5000, 
+            size: 1,
+            speed: 8,
+            projectile_count: 0, 
+            knockback: 0
+        },
+
+        // ========================================================
+        // --- NOVO: DADOS DA EVOLUÇÃO ---
+        // ========================================================
+        evolucao: {
+            nivel: 15, // Nível em que a evolução acontece
+            sprite_icon: spr_bola_icon_evol, // SUBSTITUA pelo seu novo ícone!
+            desc: "EVOLUÇÃO (NV 15): A BOLA AGORA QUICA NOS INIMIGOS!" // Texto único
+        },
+
+        // --- Definição Nível a Nível (O ciclo infinito) ---
+        niveis: [
+            { desc: "JOGA UMA BOLA QUE PERSEGUE INIMIGOS.\nATIRAR + DANO.", upgrade: function(_s) { _s.projectile_count = 1; _s.damage *= 1.10; _s.damage += global.ataque; } },
+            { desc: "DISPARO MAIS RÁPIDO (+5%)", upgrade: function(_s) { _s.speed *= 1.05; } },
+            { desc: "FREQUÊNCIA AUMENTADA EM 25% (-Cooldown)", upgrade: function(_s) { _s.cooldown *= 0.75; } },
+            { desc: "EMPURRA MAIS OS INIMIGOS", upgrade: function(_s) { _s.knockback += 0.01; } },
+            { desc: "MAIS 1 BOLA ATIRADA", upgrade: function(_s) { _s.projectile_count += 1; } },
+            { desc: "MEGA UPGRADE: BOLAS GIGANTES E MORTAIS", upgrade: function(_s) { _s.damage *= 2; _s.size *= 1.5; _s.speed *= 1.2; } }
+        ]
     };
-
-    // --- Cálculo de Nível (Acumulativo) ---
-    for (var i = 1; i <= _level; i++) 
-    {
-        // Otimização: Usamos switch no resto da divisão para criar padrões repetitivos de upgrade
-        switch (i % 6) 
-        {
-            case 5: // Níveis 5, 11, 17... (+1 Projétil)
-                _stats.projectile_count += 1;
-                global.upgrades_vamp_grid[# Upgrades_vamp.description, 0] = "MAIS 1 BOLA ATIRADA";
-                break;
-
-            case 2: // Níveis 2, 8, 14... (+5% Velocidade)
-                _stats.speed *= 1.05;
-                global.upgrades_vamp_grid[# Upgrades_vamp.description, 0] = "DISPARO MAIS RÁPIDO";
-                break;
-
-            case 3: // Níveis 3, 9, 15... (-25% Cooldown)
-                _stats.cooldown *= 0.75;
-                global.upgrades_vamp_grid[# Upgrades_vamp.description, 0] = "FREQUÊNCIA AUMENTADA EM 25%";
-                break;
-
-            case 1: // Níveis 1, 7, 13... (+10% Dano + Base)
-                _stats.damage *= 1.10;
-                _stats.damage += global.ataque; // Adiciona ataque base do player
-                global.upgrades_vamp_grid[# Upgrades_vamp.description, 0] = "AUMENTO DE 10% DE DANO";
-                break;
-
-            case 4: // Níveis 4, 10, 16... (+Knockback)
-                _stats.knockback += 0.01;
-                global.upgrades_vamp_grid[# Upgrades_vamp.description, 0] = "EMPURRA MAIS OS INIMIGOS";
-                break;
-                
-            // case 0: (Múltiplos de 6) - Pode adicionar um "Mega Upgrade" aqui se quiser
-        }
-    }
-
-    return _stats;
 }
 
-/// @desc Executa a lógica da 'Bola' (Cooldown e Disparo)
-/// [O QUE]: Gerencia o temporizador, seleciona inimigos aleatórios na tela e cria os projéteis.
-/// [COMO] : 
-/// 1. Obtém os stats atuais chamando a função de config.
-/// 2. Incrementa o timer global (em milissegundos).
-/// 3. Se o timer estourar, cria uma lista de todos os inimigos, sorteia alvos e dispara.
-function scr_bola() 
+/// @desc Executa a lógica da 'Bola' NORMAL (Níveis 1 ao 14)
+function scr_bola(_row_index) 
 {
-    // 1. Obter Nível e Stats
-    // Nota: 0 é o índice da linha da BOLA na sua grid (conforme seu código anterior)
-    var _current_level = global.upgrades_vamp_grid[# Upgrades_vamp.level, 0]; 
-    var _stats = scr_ball_calculate_stats(_current_level); 
+    if (global.level_up) exit; 
 
-    // 2. Gerenciamento do Timer (Cooldown)
+    var _current_level = global.upgrades_vamp_grid[# Upgrades_vamp.level, _row_index];
+    if (_current_level <= 0) exit;
+
+    var _config = scr_bola_config(); 
+    var _stats = scr_generic_calculate_stats(_config, _current_level, global.upgrades_vamp_grid, _row_index, Upgrades_vamp.description);
+
+    // Se chegou no nível 15, chama a função da bola que quica!
+    if (_current_level >= 15) {
+        scr_bola_evolvida(_stats);
+        exit; 
+    }
+
     if (!variable_global_exists("ball_timer")) global.ball_timer = 0;
-
-    // delta_time é em microsegundos. Dividir por 1000 converte para milissegundos.
     global.ball_timer += delta_time / 1000; 
 
-    // 3. Disparo
     if (global.ball_timer >= _stats.cooldown) 
     {
-        global.ball_timer = 0; // Reseta timer
-
-        // --- Sistema de Alvo (Targeting) ---
+        global.ball_timer = 0; 
         var _all_enemies_list = ds_list_create();
+        with (par_inimigos) { ds_list_add(_all_enemies_list, id); }
         
-        // Coleta todos os inimigos ativos
-        with (par_inimigos) 
-        {
-            ds_list_add(_all_enemies_list, id);
-        }
-        
-        var _total_enemies = ds_list_size(_all_enemies_list);
-        
-        // Define quantos tiros vão sair (mínimo entre status ou inimigos disponíveis)
-        var _shots_to_fire = min(_stats.projectile_count, _total_enemies);
+        var _shots_to_fire = min(_stats.projectile_count, ds_list_size(_all_enemies_list));
 
-        // Loop de Disparo
         for (var i = 0; i < _shots_to_fire; i++) 
         {
-            // Sorteia um índice da lista
             var _random_index = irandom(ds_list_size(_all_enemies_list) - 1);
             var _target_enemy = _all_enemies_list[| _random_index];
-            
-            // Remove da lista para não atirar no mesmo cara 2 vezes
             ds_list_delete(_all_enemies_list, _random_index); 
 
             if (instance_exists(_target_enemy)) 
             {
-                // Criação do Projétil
                 var _projectile = instance_create_layer(obj_player.x, obj_player.y, "Instances", obj_bola);
-                
-                // Configuração do Projétil
                 _projectile.direction = point_direction(obj_player.x, obj_player.y, _target_enemy.x, _target_enemy.y);
-                _projectile.veloc = _stats.speed;       // GameMaker usa 'speed' nativo para mover automatico
+                _projectile.veloc = _stats.speed; 
                 _projectile.damage = _stats.damage;
                 _projectile.image_xscale = _stats.size * 0.2;
                 _projectile.image_yscale = _stats.size * 0.2;
-                _projectile.push_force = _stats.knockback; // Renomeado para evitar conflito com palavra reservada
+                _projectile.push_force = _stats.knockback; 
                 
-                // Aplicação imediata de Knockback (Opcional: pode ser feito na colisão da bala também)
-                with (_target_enemy) 
-                {
-                    var _knock_dir = point_direction(obj_player.x, obj_player.y, x, y);
-                    motion_add(_knock_dir, _stats.knockback);
-                }
+                _projectile.pode_quicar = false; // Bola normal não quica
             }
         }
+        ds_list_destroy(_all_enemies_list);
+    }
+}
 
-        // Limpeza de Memória Obrigatória
+/// @desc Executa a lógica da 'Bola' EVOLVIDA (Nível 15 para sempre)
+function scr_bola_evolvida(_stats) 
+{
+    if (!variable_global_exists("ball_timer")) global.ball_timer = 0;
+    global.ball_timer += delta_time / 1000; 
+
+    if (global.ball_timer >= _stats.cooldown) 
+    {
+        global.ball_timer = 0; 
+        var _all_enemies_list = ds_list_create();
+        with (par_inimigos) { ds_list_add(_all_enemies_list, id); }
+        
+        var _shots_to_fire = min(_stats.projectile_count, ds_list_size(_all_enemies_list));
+
+        for (var i = 0; i < _shots_to_fire; i++) 
+        {
+            var _random_index = irandom(ds_list_size(_all_enemies_list) - 1);
+            var _target_enemy = _all_enemies_list[| _random_index];
+            ds_list_delete(_all_enemies_list, _random_index); 
+
+            if (instance_exists(_target_enemy)) 
+            {
+                var _projectile = instance_create_layer(obj_player.x, obj_player.y, "Instances", obj_bola);
+                _projectile.direction = point_direction(obj_player.x, obj_player.y, _target_enemy.x, _target_enemy.y);
+                _projectile.veloc = _stats.speed; 
+                
+                // Usa o Dano Infinito (que já foi calculado e acumulado) e dá um boost extra!
+                _projectile.damage = _stats.damage * 1.5; 
+                _projectile.image_xscale = _stats.size * 0.2;
+                _projectile.image_yscale = _stats.size * 0.2;
+                _projectile.push_force = _stats.knockback; 
+                
+                // Mágica ativada para o obj_bola bater e voltar
+                _projectile.pode_quicar = true; 
+                _projectile.quicadas_restantes = 3; 
+                _projectile.inimigos_atingidos = ds_list_create(); 
+            }
+        }
         ds_list_destroy(_all_enemies_list);
     }
 }

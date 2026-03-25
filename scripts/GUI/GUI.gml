@@ -269,3 +269,80 @@ function mini_mapa_bebe() {
     draw_set_color(c_white);
     draw_set_font(fnt_menu_op); // Restaura fonte se necessário
 }
+/// @desc Função de debug interativo para posições X e Y na tela.
+/// @param {real} _base_x A posição X base (ex: _card_x)
+/// @param {real} _base_y A posição Y base (ex: _desc_y)
+/// @returns {struct} Um struct contendo os valores finais {x, y}
+function scr_debug_posicao_ui(_base_x, _base_y) 
+{
+    // Variáveis estáticas
+    static _debug_ativo = false;
+    static _x_offset = 0;    // Offset do X começa em 0
+    static _y_offset = -500; // Offset do Y começa onde você já estava testando
+    static _ultimo_tempo = 0; 
+
+    // Garante que o teclado seja lido apenas 1x por frame, mesmo dentro do loop
+    if (current_time - _ultimo_tempo > 5) 
+    {
+        _ultimo_tempo = current_time; 
+
+        // 1. Liga/Desliga com a tecla 'P'
+        if (keyboard_check_pressed(ord("P"))) 
+        {
+            _debug_ativo = !_debug_ativo;
+            
+            if (_debug_ativo) {
+                show_debug_message("=== [DEBUG UI ATIVADO] ===");
+                show_debug_message("-> Setas Cima/Baixo para mover o Y");
+                show_debug_message("-> Setas Esquerda/Direita para mover o X");
+                show_debug_message("-> ENTER para imprimir o código final.");
+            } else {
+                show_debug_message("=== [DEBUG UI DESATIVADO] ===");
+            }
+        }
+
+        // 2. Lógica de movimento (X e Y)
+        if (_debug_ativo) 
+        {
+            var _speed = keyboard_check(vk_shift) ? 10 : 2;
+
+            // Movimento Y
+            if (keyboard_check(vk_up))   _y_offset -= _speed;
+            if (keyboard_check(vk_down)) _y_offset += _speed;
+            
+            // Movimento X
+            if (keyboard_check(vk_left))  _x_offset -= _speed;
+            if (keyboard_check(vk_right)) _x_offset += _speed;
+
+            // 3. Confirma e Imprime (ENTER)
+            if (keyboard_check_pressed(vk_enter)) 
+            {
+                _debug_ativo = false;
+                
+                var _sinal_x = (_x_offset >= 0) ? " + " : " - ";
+                var _sinal_y = (_y_offset >= 0) ? " + " : " - ";
+                
+                show_debug_message("---------------------------------------------------");
+                show_debug_message("CÓDIGO FINAL GERADO! Substitua sua linha por:");
+                show_debug_message("draw_text_colour_outline_escalado(" + _sinal_x + string(abs(_x_offset)) + "," + _sinal_y + string(abs(_y_offset)) + ", TEXTO, 3, c_white, 7, 30, 300, escala, escala);");
+                show_debug_message("---------------------------------------------------");
+            }
+        }
+    }
+
+    // --- Aviso visual na tela ---
+    if (_debug_ativo) 
+    {
+        draw_set_color(c_red);
+        draw_set_halign(fa_left);
+        draw_set_valign(fa_top);
+        draw_text(10, 10, "DEBUG UI ATIVO! Offset X: " + string(_x_offset) + " | Offset Y: " + string(_y_offset));
+        draw_set_color(c_white); 
+    }
+
+    // Retorna as duas posições finais empacotadas num Struct
+    return {
+        x: _base_x + _x_offset,
+        y: _base_y + _y_offset
+    };
+}

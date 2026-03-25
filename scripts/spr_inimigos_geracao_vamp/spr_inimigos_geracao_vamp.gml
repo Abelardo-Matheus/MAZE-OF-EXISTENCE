@@ -23,7 +23,7 @@ function init_night_waves() {
     global.night_waves = [
         // --- ONDA 0 (Começa no minuto 0 do jogo) ---
         [3, [ 
-            [obj_amoeba, global.level_player, 1.0, 2.0], // Spawna a cada 2 segundos
+            [obj_esqueleto, global.level_player, 0.12, 0.1], // Spawna a cada 2 segundos
             [obj_amoeba_azul, global.level_player * 1.5, 2.0, 3.5] // Spawna a cada 3.5 segundos
         ]],
         
