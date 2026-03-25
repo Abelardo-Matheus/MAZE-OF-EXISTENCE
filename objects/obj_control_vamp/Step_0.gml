@@ -51,6 +51,7 @@ if (_chunk_x_atual != global.ultimo_bloco[0] || _chunk_y_atual != global.ultimo_
     // Chama as funções de geração para o bloco atual e vizinhos
     gerar_estruturas(obj_estrutura, quantidade_estruturas, distancia_minima);
     gerar_estruturas(obj_poste, 5, 100);
+	gerar_estruturas(obj_secondary_boss, 20, 100);
     gerar_estruturas(obj_grupo_inimigos, 10, 100);
     gerar_estruturas(par_npc_vendedor_um, 10, 100);
     

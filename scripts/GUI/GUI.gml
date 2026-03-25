@@ -109,13 +109,28 @@ function mini_mapa_vamp() {
         var _size = ds_list_size(_list);
 
         for (var i = 0; i < _size; i++) {
-            var _data = _list[| i]; // [x, y, ?, ?, sprite, nome]
+            var _data = _list[| i]; 
             
-            // Dados da entidade
+            // Dados da entidade (Básicos)
             var _ent_x = _data[0];
             var _ent_y = _data[1];
-            var _sprite = _data[4];
-            var _name   = _data[5];
+            
+            // Variáveis seguras (Iniciadas com valores padrão caso seja a lista de inimigos)
+            var _sprite = noone;
+            var _name = "Inimigos";
+            var _custom_scale = 1; // Escala padrão é 1
+
+            // ========================================================
+            // VERIFICA SE É A LISTA DE ESTRUTURAS (QUE TEM MAIS DADOS)
+            // ========================================================
+            if (array_length(_data) > 3) {
+                _sprite = _data[4];
+                _name   = _data[5];
+                _custom_scale = _data[6]; // Extrai a escala do metadado
+            } else {
+                // Se for grupo de inimigos (array curta), força a usar a sprite de inimigo
+                _sprite = spr_grupoini_mini_map;
+            }
 
             // Verifica distância
             var _dist = point_distance(_ent_x, _ent_y, obj_player.x, obj_player.y);
@@ -131,13 +146,26 @@ function mini_mapa_vamp() {
 
                 // Escala visual baseada na distância
                 var _size_factor = clamp(1 - (_dist / _max_dist), 0.6, 1);
-                var _radius = 1 * _size_factor; // Tamanho base 1
+                
+                // ========================================================
+                // CÁLCULOS DO RAIO E ÁREA DE HOVER
+                // ========================================================
+                // Aplica a escala customizada no tamanho final do desenho
+                var _radius = 1 * _size_factor * _custom_scale; 
+
+                // Garante que a área clicável do mouse seja de pelo menos 20 pixels
+                var _area_hover = max(10, _radius * 10);
 
                 // Verifica Hover
-                // Multiplicamos o raio por um valor maior para facilitar o mouse over
-                if (point_distance(_mx, _my, _draw_x, _draw_y) < (_radius * 20)) {
+                if (point_distance(_mx, _my, _draw_x, _draw_y) < _area_hover) {
                     _hover_text = _name;
-                    _radius *= 2.5; // Aumenta ao passar o mouse
+                    
+                    // Se o ícone for muito pequeno (ex: Boss com 0.1), ele cresce bem mais no hover
+                    if (_custom_scale < 1) {
+                        _radius *= 3;   
+                    } else {
+                        _radius *= 2.5; // Comportamento normal para o resto
+                    }
                 }
 
                 // Desenha Sprite ou Ponto
@@ -147,7 +175,7 @@ function mini_mapa_vamp() {
                     var _blink = 0.5 + 0.5 * sin(current_time / 200);
                     draw_set_color(c_red);
                     draw_set_alpha(_blink);
-                    draw_circle(_draw_x, _draw_y, 6, false);
+                    draw_circle(_draw_x, _draw_y, 6 * _custom_scale, false); 
                     draw_set_alpha(1);
                 }
             }

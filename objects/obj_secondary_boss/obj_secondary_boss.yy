@@ -1,18 +1,17 @@
 {
   "resourceType": "GMObject",
   "resourceVersion": "1.0",
-  "name": "par_npc_vendedor_um",
+  "name": "obj_secondary_boss",
   "eventList": [
     {"resourceType":"GMEvent","resourceVersion":"1.0","name":"","collisionObjectId":null,"eventNum":0,"eventType":0,"isDnD":false,},
     {"resourceType":"GMEvent","resourceVersion":"1.0","name":"","collisionObjectId":null,"eventNum":0,"eventType":3,"isDnD":false,},
-    {"resourceType":"GMEvent","resourceVersion":"1.0","name":"","collisionObjectId":null,"eventNum":64,"eventType":8,"isDnD":false,},
     {"resourceType":"GMEvent","resourceVersion":"1.0","name":"","collisionObjectId":{"name":"obj_player","path":"objects/obj_player/obj_player.yy",},"eventNum":0,"eventType":4,"isDnD":false,},
   ],
   "managed": true,
   "overriddenProperties": [],
   "parent": {
-    "name": "NPCS",
-    "path": "folders/Objects/FASE_VAMP/NPCS.yy",
+    "name": "INIMIGOS_GRUPOS",
+    "path": "folders/Objects/FASE_VAMP/ESTRUTURAS/INIMIGOS_GRUPOS.yy",
   },
   "parentObjectId": null,
   "persistent": false,
@@ -31,8 +30,8 @@
   "properties": [],
   "solid": true,
   "spriteId": {
-    "name": "vendedora_um",
-    "path": "sprites/vendedora_um/vendedora_um.yy",
+    "name": "spr_totem_boss",
+    "path": "sprites/spr_totem_boss/spr_totem_boss.yy",
   },
   "spriteMaskId": null,
   "visible": true,

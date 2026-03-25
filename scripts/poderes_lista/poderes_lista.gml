@@ -292,7 +292,7 @@ function inicializar_tudo()
     ds_grid_add_upgrade_vamp("RAIO",       scr_lightning_config,   scr_raio,       -1, 0);
     ds_grid_add_upgrade_vamp("SAPO",       scr_sapo_config,       scr_sapo,       -1, 0);
     ds_grid_add_upgrade_vamp("BORBOLETA",   scr_butterfly_config,   scr_borboleta,  -1, 0);
-    ds_grid_add_upgrade_vamp("BOMBA",      scr_bomb_config,      scr_bomba,      -1, 14);
+    ds_grid_add_upgrade_vamp("BOMBA",      scr_bomb_config,      scr_bomba,      -1, 0);
 
 
     // ========================================================

@@ -102,6 +102,7 @@ function gerar_estruturas_para_bloco(bx, by, obj_struct, quantidade_estruturas, 
             // Definição de Metadados (Nome e Sprite)
             var _spr = noone;
             var _nome = "Outro";
+			var _escala = 1;
 
             // Switch é mais limpo que if/else if
             switch (obj_struct)
@@ -122,10 +123,15 @@ function gerar_estruturas_para_bloco(bx, by, obj_struct, quantidade_estruturas, 
                     _spr = spr_vendedor; 
                     _nome = "Vendedor"; 
                     break;
+				case obj_secondary_boss: 
+                    _spr = spr_boss_mini_map; 
+                    _nome = "BOSS"; 
+                    _escala = 0.03; // <--- SÓ O BOSS RECEBE A ESCALA REDUZIDA
+                    break;
             }
 
             // Salva na lista global para persistência
-            ds_list_add(global.posicoes_estruturas, [_pos_x, _pos_y, _seed, obj_struct, _spr, _nome]);
+            ds_list_add(global.posicoes_estruturas, [_pos_x, _pos_y, _seed, obj_struct, _spr, _nome, _escala]);
             _estruturas_geradas++;
         }
         _tentativas++;
@@ -144,30 +150,34 @@ function recriar_estruturas()
     {
         var _info = global.posicoes_estruturas[| i];
         
-        // Extração legível dos dados
-        var _px = _info[0];
-        var _py = _info[1];
-        var _seed = _info[2];
-        var _obj = _info[3];
-        // _spr e _nome estão guardados no índice 4 e 5 se precisar usar
+        // Extração exata baseada na ordem que salvamos: 
+        // [0:x, 1:y, 2:seed, 3:obj, 4:spr, 5:nome, 6:escala]
+        var _px     = _info[0];
+        var _py     = _info[1];
+        var _seed   = _info[2];
+        var _obj    = _info[3];
+        var _spr    = _info[4]; 
+        var _nome   = _info[5]; 
+        var _escala = _info[6]; 
 
+        // Cria a instância
         var _inst = instance_create_depth(_px, _py, 0, _obj);
+        
+        // Reaplicação direta e automática (Adeus if/else gigante!)
         _inst.seed = _seed;
         
-        // Reaplicação de propriedades visuais
-        if (_obj == obj_estrutura) {
-            _inst.sprite_index = spr_casa_mini_map;
-            _inst.nome = "Casa";
-        } else if (_obj == obj_poste) {
-            _inst.sprite_index = spr_poste_mini_map;
-            _inst.nome = "Poste";
-        } else if (_obj == obj_grupo_inimigos) {
-            _inst.sprite_index = spr_grupoini_mini_map;
-            _inst.nome = "Grupo Inimigos";
+        if (_spr != noone) {
+            _inst.sprite_index = _spr;
         }
+        
+        _inst.nome = _nome;
+        
+        // APLICA A ESCALA AQUI! O Boss vai ficar com 0.1 e os outros com 1.
+        _inst.image_xscale = _escala;
+        _inst.image_yscale = _escala;
     }
 
-    // Recria Grupos de Inimigos (Separado conforme original)
+    // Recria Grupos de Inimigos (Mantido exatamente como o seu)
     var _total_grupos = ds_list_size(global.posicoes_grupos_inimigos);
     for (var i = 0; i < _total_grupos; i++) 
     {
