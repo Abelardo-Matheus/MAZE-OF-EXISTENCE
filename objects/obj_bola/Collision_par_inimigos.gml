@@ -1,13 +1,17 @@
-/// @description Insert description here
-// You can write your code in this editor
+// 1. Dá o dano e Knockback
+other.vida -= damage;
 
+var _dir = point_direction(obj_player.x, obj_player.y, other.x, other.y);
+other.empurrar_dir = _dir;
+other.empurrar_veloc = push; // Note que no script vc chama de push_force
+other.state = scr_inimigo_hit;
+other.alarm[1] = 5;
+other.hit = true;
 
+var _inst = instance_create_layer(x, y, "Instances", obj_dano);
+_inst.alvo = other;
+_inst.dano = damage;
 
-// Inherit the parent event
-event_inherited();
-ja_encostou = true; // Ativa a flag para mudar de fase
-        // --- NOVO: Para o movimento imediatamente ao colidir ---
-        speed = 0; 
-        // Ativa a animação automática do GameMaker a partir do frame 3 atual
-        // Certifique-se de que a velocidade no Sprite Editor não é 0
-        image_speed = 20; 
+// 2. Estoura e some imediatamente!
+// Se tiver um obj_explosao_visual, você pode criá-lo aqui antes de destruir
+instance_destroy();

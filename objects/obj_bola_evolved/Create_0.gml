@@ -4,10 +4,7 @@ push = 1;
 veloc = 0;
 /// @description Inicializar variáveis de animação e movimento
 
-escala_base = 1;
-// Garante que comece no tamanho certo
-image_xscale = escala_base;
-image_yscale = escala_base;
+
 // --- Configurações de Animação (Fase 1) ---
 // Velocidade da animação manual do frame 0 ao 3
 velocidade_aparecer = 0.2; 
@@ -24,3 +21,8 @@ alvo = noone; // Variável para guardar o inimigo alvo
 if (instance_exists(par_inimigos)) {
     alvo = instance_nearest(x, y, par_inimigos);
 }
+qtd_bolinhas = 4;
+eh_filho = false; // Por padrão, a bola principal NÃO é filha
+estado = "voando";
+timer_efeito = 0;
+anim_direcao = 1;
