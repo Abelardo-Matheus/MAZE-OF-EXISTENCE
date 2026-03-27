@@ -118,7 +118,7 @@ function mini_mapa_vamp() {
             // Variáveis seguras (Iniciadas com valores padrão caso seja a lista de inimigos)
             var _sprite = noone;
             var _name = "Inimigos";
-            var _custom_scale = 1; // Escala padrão é 1
+            var _custom_scale = 1; // NOVA VARIÁVEL: Escala padrão é 1
 
             // ========================================================
             // VERIFICA SE É A LISTA DE ESTRUTURAS (QUE TEM MAIS DADOS)
@@ -148,9 +148,8 @@ function mini_mapa_vamp() {
                 var _size_factor = clamp(1 - (_dist / _max_dist), 0.6, 1);
                 
                 // ========================================================
-                // CÁLCULOS DO RAIO E ÁREA DE HOVER
+                // APLICA A ESCALA CUSTOMIZADA NO RAIO FINAL DO DESENHO
                 // ========================================================
-                // Aplica a escala customizada no tamanho final do desenho
                 var _radius = 1 * _size_factor * _custom_scale; 
 
                 // Garante que a área clicável do mouse seja de pelo menos 20 pixels
@@ -177,6 +176,71 @@ function mini_mapa_vamp() {
                     draw_set_alpha(_blink);
                     draw_circle(_draw_x, _draw_y, 6 * _custom_scale, false); 
                     draw_set_alpha(1);
+                }
+            }
+        }
+    }
+
+    // ========================================================
+    // --- RENDERIZAÇÃO DO MARCADOR (spr_locate) ---
+    // ========================================================
+    if (instance_exists(obj_seta)) {
+        var _alvo_x = obj_seta.alvo_x;
+        var _alvo_y = obj_seta.alvo_y;
+        var _dist_alvo = point_distance(_alvo_x, _alvo_y, obj_player.x, obj_player.y);
+        
+        if (_dist_alvo <= _max_dist) {
+            var _draw_alvo_x = _center_x + (_alvo_x - obj_player.x) * _scale;
+            var _draw_alvo_y = _center_y + (_alvo_y - obj_player.y) * _scale;
+
+            _draw_alvo_x = clamp(_draw_alvo_x, _map_x, _map_x + _w);
+            _draw_alvo_y = clamp(_draw_alvo_y, _map_y, _map_y + _h);
+
+            var _blink_alvo = 0.7 + 0.3 * sin(current_time / 150);
+            
+            draw_sprite_ext(spr_locate, 0, _draw_alvo_x, _draw_alvo_y, 0.04, 0.04, 0, c_white, _blink_alvo);
+
+            if (point_distance(_mx, _my, _draw_alvo_x, _draw_alvo_y) < 20) {
+                _hover_text = "Destino Marcado";
+            }
+        }
+    }
+
+    // ========================================================
+    // --- SISTEMA DE MARCAÇÃO (WAYPOINT) COM DIREITO ---
+    // ========================================================
+    if (global.minimap_expandido) {
+        if (mouse_check_button_pressed(mb_right) && point_in_rectangle(_mx, _my, _map_x, _map_y, _map_x + _w, _map_y + _h)) {
+            
+            var _clicou_no_marcador = false;
+
+            // 1. Verifica se a seta existe e se o clique foi em cima dela
+            if (instance_exists(obj_seta)) {
+                var _draw_alvo_x = _center_x + (obj_seta.alvo_x - obj_player.x) * _scale;
+                var _draw_alvo_y = _center_y + (obj_seta.alvo_y - obj_player.y) * _scale;
+                _draw_alvo_x = clamp(_draw_alvo_x, _map_x, _map_x + _w);
+                _draw_alvo_y = clamp(_draw_alvo_y, _map_y, _map_y + _h);
+
+                // Se a distância for menor que 20, destrói!
+                if (point_distance(_mx, _my, _draw_alvo_x, _draw_alvo_y) < 20) {
+                    instance_destroy(obj_seta);
+                    _clicou_no_marcador = true;
+                    _hover_text = undefined;
+                }
+            }
+
+            // 2. Se NÃO clicou no marcador, cria ou move para o novo lugar
+            if (!_clicou_no_marcador) {
+                var _mundo_x = ((_mx - _center_x) / _scale) + obj_player.x;
+                var _mundo_y = ((_my - _center_y) / _scale) + obj_player.y;
+
+                if (instance_exists(obj_seta)) {
+                    obj_seta.alvo_x = _mundo_x;
+                    obj_seta.alvo_y = _mundo_y;
+                } else {
+                    var _seta = instance_create_layer(obj_player.x, obj_player.y, "Instances", obj_seta);
+                    _seta.alvo_x = _mundo_x;
+                    _seta.alvo_y = _mundo_y;
                 }
             }
         }
