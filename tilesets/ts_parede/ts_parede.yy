@@ -139,7 +139,7 @@
   "out_tilevborder": 1,
   "parent": {
     "name": "Tile Sets",
-    "path": "folders/Tile Sets.yy",
+    "path": "folders/Sprites/BLOCOS/Tile Sets.yy",
   },
   "spriteId": {
     "name": "spr_tiles_parede",

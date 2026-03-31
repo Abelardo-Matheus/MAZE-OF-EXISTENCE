@@ -4,7 +4,7 @@
   "name": "obj_chao_grama_vamp",
   "eventList": [
     {"resourceType":"GMEvent","resourceVersion":"1.0","name":"","collisionObjectId":null,"eventNum":0,"eventType":0,"isDnD":false,},
-    {"resourceType":"GMEvent","resourceVersion":"1.0","name":"","collisionObjectId":null,"eventNum":0,"eventType":3,"isDnD":false,},
+    {"resourceType":"GMEvent","resourceVersion":"1.0","name":"","collisionObjectId":null,"eventNum":0,"eventType":8,"isDnD":false,},
   ],
   "managed": true,
   "overriddenProperties": [],
@@ -29,8 +29,8 @@
   "properties": [],
   "solid": false,
   "spriteId": {
-    "name": "spr_grama_vamp",
-    "path": "sprites/spr_grama_vamp/spr_grama_vamp.yy",
+    "name": "spr_grama_vamp182",
+    "path": "sprites/spr_grama_vamp182/spr_grama_vamp182.yy",
   },
   "spriteMaskId": null,
   "visible": true,

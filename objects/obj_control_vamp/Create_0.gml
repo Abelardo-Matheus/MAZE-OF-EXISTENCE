@@ -9,7 +9,7 @@
 global.map_vamp = true;
 global.map_bebe = false;
 
-
+inicializar_gerador_mundo();
 // Inicializa sistema de ondas
 init_night_waves();
 
