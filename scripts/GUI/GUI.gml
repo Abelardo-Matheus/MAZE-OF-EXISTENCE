@@ -438,3 +438,40 @@ function scr_debug_posicao_ui(_base_x, _base_y)
         y: _base_y + _y_offset
     };
 }
+
+function draw_fps(){
+	
+	// ========================================================
+// DESENHA O FPS NO CANTO DA TELA (Draw GUI)
+// ========================================================
+
+// 1. Configura o alinhamento do texto para o canto superior esquerdo
+draw_set_halign(fa_left);
+draw_set_valign(fa_top);
+
+// 2. Define uma margem para o texto não ficar colado na borda do monitor
+var _margem = 15;
+
+// 3. Monta o texto. 
+// 'fps' é o limite do jogo (ex: 60). 
+// 'fps_real' é o quanto o seu PC realmente está aguentando processar (ex: 2000).
+var _texto_fps = "FPS: " + string(fps) + " / Real: " + string(fps_real);
+
+// 4. EFEITO DE SOMBRA (Muito importante!)
+// Desenha o texto de preto um pouquinho pro lado para você conseguir ler 
+// mesmo se o personagem estiver na neve ou num fundo branco.
+draw_set_color(c_black);
+draw_text(_margem + 2, _margem + 2, _texto_fps);
+
+// 5. TEXTO PRINCIPAL
+// Desenha o texto principal por cima, em verde limão
+draw_set_color(c_lime);
+draw_text(_margem, _margem, _texto_fps);
+
+// 6. FAXINA (Boas Práticas)
+// Reseta a cor e o alinhamento para o padrão, para não bugar 
+// o desenho de outros objetos ou textos no jogo!
+draw_set_color(c_white);
+draw_set_halign(fa_left);
+draw_set_valign(fa_top);
+}

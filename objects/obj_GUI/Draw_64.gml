@@ -190,3 +190,5 @@ else if (global.map_vamp)
 {
     mini_mapa_vamp();
 }
+
+draw_fps();

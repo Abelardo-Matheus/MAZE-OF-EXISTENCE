@@ -13,7 +13,10 @@
     "name": "INIMIGOS_GRUPOS",
     "path": "folders/Objects/FASE_VAMP/ESTRUTURAS/INIMIGOS_GRUPOS.yy",
   },
-  "parentObjectId": null,
+  "parentObjectId": {
+    "name": "obj_par_cenario",
+    "path": "objects/obj_par_cenario/obj_par_cenario.yy",
+  },
   "persistent": false,
   "physicsAngularDamping": 0.1,
   "physicsDensity": 0.5,

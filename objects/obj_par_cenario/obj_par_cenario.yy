@@ -2,15 +2,12 @@
   "resourceType": "GMObject",
   "resourceVersion": "1.0",
   "name": "obj_par_cenario",
-  "eventList": [
-    {"resourceType":"GMEvent","resourceVersion":"1.0","name":"","collisionObjectId":null,"eventNum":0,"eventType":0,"isDnD":false,},
-    {"resourceType":"GMEvent","resourceVersion":"1.0","name":"","collisionObjectId":null,"eventNum":0,"eventType":3,"isDnD":false,},
-  ],
+  "eventList": [],
   "managed": true,
   "overriddenProperties": [],
   "parent": {
-    "name": "CASA",
-    "path": "folders/Objects/FASE_BEBE_ALL/CENARIO/CASA.yy",
+    "name": "CONTROL",
+    "path": "folders/Objects/FASE_VAMP/CONTROL.yy",
   },
   "parentObjectId": null,
   "persistent": false,

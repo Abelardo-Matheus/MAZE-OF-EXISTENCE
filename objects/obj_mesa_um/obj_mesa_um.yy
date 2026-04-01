@@ -10,8 +10,8 @@
     "path": "folders/Objects/FASE_BEBE_ALL/CENARIO/CASA.yy",
   },
   "parentObjectId": {
-    "name": "obj_par_cenario",
-    "path": "objects/obj_par_cenario/obj_par_cenario.yy",
+    "name": "obj_par_cenario_casa",
+    "path": "objects/obj_par_cenario_casa/obj_par_cenario_casa.yy",
   },
   "persistent": false,
   "physicsAngularDamping": 0.1,

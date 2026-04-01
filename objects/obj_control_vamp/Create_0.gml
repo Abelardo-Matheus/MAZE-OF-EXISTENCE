@@ -41,3 +41,4 @@ if (global.sair)
     // Reseta a flag para impedir que isso rode novamente
     global.sair = false;
 }
+

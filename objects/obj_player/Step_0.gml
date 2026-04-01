@@ -1,5 +1,5 @@
 /// @description Lógica Principal (Step) ORGANIZADA
-
+depth = -y;
 // ========================================================
 // 1. INPUTS DE SISTEMA (Abrir/Fechar Menus)
 // ========================================================

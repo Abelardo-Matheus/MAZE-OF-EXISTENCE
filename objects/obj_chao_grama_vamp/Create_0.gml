@@ -1,7 +1,9 @@
 // Desliga a animação para não ficar piscando
 image_speed = 0;
 
-image_index = choose(0 ,0 ,0 , 0 ,0 , 1, 2, 3);
+
+    // Os outros 30% de chance caem aqui: Sorteia de 10 a 64
+    image_index = irandom_range(0, 64);
 
 // Cria uma lista vazia para guardar os detalhes
 detalhes = [];

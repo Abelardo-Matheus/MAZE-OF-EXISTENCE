@@ -242,8 +242,8 @@ function scr_personagem_dash_tuto(){
 }
 
 function scr_player_colisao_tuto(){
-if (place_meeting(x + hveloc, y, obj_parede_invi) or place_meeting(x + hveloc, y, obj_par_cenario)) {
-    while (!place_meeting(x + sign(hveloc), y, obj_parede_invi) && !place_meeting(x + sign(hveloc), y, obj_par_cenario)) {
+if (place_meeting(x + hveloc, y, obj_parede_invi) or place_meeting(x + hveloc, y, obj_par_cenario_casa)) {
+    while (!place_meeting(x + sign(hveloc), y, obj_parede_invi) && !place_meeting(x + sign(hveloc), y, obj_par_cenario_casa)) {
         x += sign(hveloc);
     }
     hveloc = 0;
@@ -251,8 +251,8 @@ if (place_meeting(x + hveloc, y, obj_parede_invi) or place_meeting(x + hveloc, y
 
 x += hveloc;
 
-if (place_meeting(x, y + vveloc, obj_parede_invi) or place_meeting(x, y + vveloc, obj_par_cenario)) {
-    while (!place_meeting(x, y + sign(vveloc), obj_parede_invi) && !place_meeting(x, y + sign(vveloc), obj_par_cenario)) {
+if (place_meeting(x, y + vveloc, obj_parede_invi) or place_meeting(x, y + vveloc, obj_par_cenario_casa)) {
+    while (!place_meeting(x, y + sign(vveloc), obj_parede_invi) && !place_meeting(x, y + sign(vveloc), obj_par_cenario_casa)) {
         y += sign(vveloc);
     }
     vveloc = 0;

@@ -29,8 +29,8 @@
   "properties": [],
   "solid": false,
   "spriteId": {
-    "name": "spr_grama_vamp182",
-    "path": "sprites/spr_grama_vamp182/spr_grama_vamp182.yy",
+    "name": "spr_grama_vamp_tini",
+    "path": "sprites/spr_grama_vamp_tini/spr_grama_vamp_tini.yy",
   },
   "spriteMaskId": null,
   "visible": true,
