@@ -1,3 +1,4 @@
+depth = -y;
 // 1. Só roda a lógica se o boss ainda NÃO foi invocado e se o jogador existe
 if (!boss_invocado && instance_exists(obj_player)) 
 {

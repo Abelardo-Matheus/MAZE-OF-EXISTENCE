@@ -1,3 +1,4 @@
+depth = -y;
 if(global.level_up == true){
 	alarm[0]++;
 	image_speed = 0;

@@ -31,7 +31,7 @@
   "physicsShapePoints": [],
   "physicsStartAwake": true,
   "properties": [],
-  "solid": true,
+  "solid": false,
   "spriteId": {
     "name": "spr_totem_boss",
     "path": "sprites/spr_totem_boss/spr_totem_boss.yy",

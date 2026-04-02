@@ -1,7 +1,7 @@
 // ==========================================
 // EVENTO STEP - Foco total na Interação
 // ==========================================
-
+depth = -y
 // Segurança: Garante que não vai dar erro se o player morrer ou não existir
 if (instance_exists(obj_player)) 
 {

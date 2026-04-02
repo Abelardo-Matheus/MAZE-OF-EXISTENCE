@@ -31,8 +31,8 @@
   "nineSlice": null,
   "origin": 4,
   "parent": {
-    "name": "CENARIO_VAMP",
-    "path": "folders/Sprites/CENARIO_VAMP.yy",
+    "name": "ESTRUTURAS",
+    "path": "folders/Sprites/ESTRUTURAS.yy",
   },
   "preMultiplyAlpha": false,
   "sequence": {

@@ -2,9 +2,9 @@
   "resourceType": "GMSprite",
   "resourceVersion": "1.0",
   "name": "spr_arco_baixo",
-  "bbox_bottom": 12,
+  "bbox_bottom": 10,
   "bbox_left": 0,
-  "bbox_right": 10,
+  "bbox_right": 12,
   "bbox_top": 0,
   "bboxMode": 0,
   "collisionKind": 1,
@@ -22,7 +22,7 @@
   ],
   "gridX": 0,
   "gridY": 0,
-  "height": 13,
+  "height": 11,
   "HTile": false,
   "layers": [
     {"resourceType":"GMImageLayer","resourceVersion":"1.0","name":"1ea522a6-326e-4229-bbe3-50fbbaf2f0af","blendMode":0,"displayName":"default","isLocked":false,"opacity":100.0,"visible":true,},
@@ -80,5 +80,5 @@
   },
   "type": 0,
   "VTile": false,
-  "width": 11,
+  "width": 13,
 }

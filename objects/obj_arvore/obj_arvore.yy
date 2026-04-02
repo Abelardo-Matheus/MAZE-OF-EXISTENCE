@@ -34,8 +34,8 @@
   "properties": [],
   "solid": true,
   "spriteId": {
-    "name": "spr_arvore181",
-    "path": "sprites/spr_arvore181/spr_arvore181.yy",
+    "name": "spr_arvore_florest",
+    "path": "sprites/spr_arvore_florest/spr_arvore_florest.yy",
   },
   "spriteMaskId": null,
   "visible": true,

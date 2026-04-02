@@ -11,7 +11,7 @@ function inicializar_gerador_mundo()
     if (!variable_global_exists("posicoes_pedras"))     global.posicoes_pedras = ds_list_create(); 
     if (!variable_global_exists("posicoes_bichos"))     global.posicoes_bichos = ds_list_create(); 
     if (!variable_global_exists("posicoes_grupos_inimigos")) global.posicoes_grupos_inimigos = ds_list_create(); 
-
+	if (!variable_global_exists("posicoes_monstros")) global.posicoes_monstros = ds_list_create();
     // Mapas de Controle
     if (!variable_global_exists("blocos_gerados"))       global.blocos_gerados = ds_map_create(); 
     if (!variable_global_exists("blocos_gerados_grupo")) global.blocos_gerados_grupo = ds_map_create(); 
@@ -111,34 +111,34 @@ function gerenciar_mundo_procedural()
         var _meu_bioma = global.mapa_biomas[? _bloco_id];
 
         // ========================================================
-        // O MODULADOR DE BIOMAS (Edite as regras do seu mundo aqui)
+        // O MODULADOR DE BIOMAS
         // ========================================================
         switch (_meu_bioma) 
         {
             case "floresta":
-                // 10 a 100 árvores, distância 50. Insetos rolando soltos.
                 gerar_cobertura_cenario(_bx, _by, obj_arvore, irandom_range(200, 250), global.posicoes_arvores, 1);
                 gerar_cobertura_cenario(_bx, _by, obj_rock, irandom_range(5, 20), global.posicoes_pedras, 50);
                 gerar_fauna_para_bloco(_bx, _by, irandom_range(5, 15));
+                gerar_monstros_para_bloco(_bx, _by, _meu_bioma, 200); // <-- NOVA CHAMADA AQUI
                 break;
 
             case "cidade":
-                // Casas, Postes, Vendedores. (Sem árvores ou bichos)
                 gerar_estruturas_para_bloco(_bx, _by, obj_estrutura, irandom_range(4, 10), 300);
                 gerar_estruturas_para_bloco(_bx, _by, obj_poste, irandom_range(3, 6), 200);
                 gerar_estruturas_para_bloco(_bx, _by, par_npc_vendedor_um, 1, 400);
+                gerar_monstros_para_bloco(_bx, _by, _meu_bioma, 300); // <-- NOVA CHAMADA AQUI
                 break;
 
             case "floresta_negra":
-                // Foco em spawners de inimigos. Um pouco de floresta morta/tensa.
                 gerar_estruturas_para_bloco(_bx, _by, obj_grupo_inimigos, irandom_range(3, 8), 400);
                 gerar_cobertura_cenario(_bx, _by, obj_arvore, irandom_range(30, 60), global.posicoes_arvores, 100);
+                gerar_monstros_para_bloco(_bx, _by, _meu_bioma, 200); // <-- NOVA CHAMADA AQUI
                 break;
 
             case "vazia":
-                // Área tensa: Apenas Boss e muita, muita pedra ao redor.
                 gerar_estruturas_para_bloco(_bx, _by, obj_secondary_boss, 1, 1000); 
                 gerar_cobertura_cenario(_bx, _by, obj_rock, irandom_range(50, 100), global.posicoes_pedras, 50);
+                gerar_monstros_para_bloco(_bx, _by, _meu_bioma, 500); // <-- NOVA CHAMADA AQUI
                 break;
         }
 
@@ -183,23 +183,56 @@ function gerar_estruturas_para_bloco(bx, by, obj_struct, quantidade_estruturas, 
             randomize(); 
             var _seed = random_get_seed();
             
-            // INJEÇÃO DE SEED
-            var _nova_est = instance_create_depth(_pos_x, _pos_y, 0, obj_struct, { seed: _seed });
+            // =====================================================
+            // MÁGICA DOS FILHOS: Decide qual casa é ANTES de nascer!
+            // =====================================================
+            var _obj_a_criar = obj_struct;
 
-            var _spr = noone; var _nome = "Outro"; var _escala = 1;
-
-            switch (obj_struct) {
-                case obj_estrutura: _spr = spr_casa_mini_map; _nome = "Casa"; break;
-                case obj_poste: _spr = spr_poste_mini_map; _nome = "Poste"; break;
-                case obj_grupo_inimigos: _spr = spr_grupoini_mini_map; _nome = "Grupo Inimigos"; break;
-                case par_npc_vendedor_um: _spr = spr_vendedor; _nome = "Vendedor"; break;
-                case obj_secondary_boss: _spr = spr_boss_mini_map; _nome = "BOSS"; _escala = 0.03; break;
+            if (obj_struct == obj_estrutura) 
+            {
+                var _objetos_casas = [obj_casa_1, obj_casa_2, obj_casa_3, obj_casa_4];
+                var _indice = abs(_seed) mod array_length(_objetos_casas);
+                _obj_a_criar = _objetos_casas[_indice];
             }
 
-            _nova_est.image_xscale = _escala;
-            _nova_est.image_yscale = _escala;
+            // INJEÇÃO DE SEED DIRETO NO OBJETO FILHO!
+            // O objeto nasce e usa a escala que estiver definida dentro dele mesmo (seu próprio Create)
+            var _nova_est = instance_create_depth(_pos_x, _pos_y, 0, _obj_a_criar, { seed: _seed });
 
-            ds_list_add(global.posicoes_estruturas, [_pos_x, _pos_y, _seed, obj_struct, _spr, _nome, _escala]);
+            var _spr = noone; 
+            var _nome = "Outro"; 
+
+            // Continua usando o obj_struct original só para decidir o ícone do minimapa
+            switch (obj_struct) {
+                case obj_estrutura:       _spr = spr_casa_mini_map;      _nome = "Casa"; break;
+                case obj_poste:           _spr = spr_poste_mini_map;     _nome = "Poste"; break;
+                case obj_grupo_inimigos:  _spr = spr_grupoini_mini_map;  _nome = "Grupo Inimigos"; break;
+                case par_npc_vendedor_um: _spr = spr_vendedor;           _nome = "Vendedor"; break;
+                case obj_secondary_boss:  _spr = spr_boss_mini_map;      _nome = "BOSS"; break;
+            }
+
+            // =====================================================
+            // NORMALIZAÇÃO DA ESCALA DO MINIMAPA
+            // =====================================================
+            var _escala_minimapa = 1;
+            
+            if (_spr != noone) 
+            {
+                // Defina aqui o tamanho base que TODOS os ícones devem ter no minimapa!
+                // Ex: Se colocar 64, todos os sprites vão ser redimensionados para parecerem ter 64 pixels.
+                var _tamanho_alvo = 10; 
+                
+                var _largura_real = sprite_get_width(_spr);
+                
+                // Evita divisão por zero
+                if (_largura_real > 0) {
+                    _escala_minimapa = _tamanho_alvo / _largura_real;
+                }
+            }
+
+            // IMPORTANTE: Salva a `_escala_minimapa` normalizada na lista
+            ds_list_add(global.posicoes_estruturas, [_pos_x, _pos_y, _seed, _obj_a_criar, _spr, _nome, _escala_minimapa]);
+            
             instance_deactivate_object(_nova_est);
             _estruturas_geradas++;
         }

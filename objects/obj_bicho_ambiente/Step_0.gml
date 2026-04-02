@@ -12,10 +12,12 @@ if (tempo_estado <= 0)
         tempo_estado = irandom_range(60, 180);
         dir_movimento += random_range(-45, 45); 
         vel_atual = vel_maxima;
+		image_speed = 1;
     } 
     else 
     {
         estado = "parado";
+		image_speed = 0;
         tempo_estado = irandom_range(30, 90);
         vel_atual = 0;
     }

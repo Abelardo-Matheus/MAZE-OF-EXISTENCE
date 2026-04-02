@@ -35,24 +35,24 @@ var _obter_dados_linha = function(_bioma_esq_ou_cima, _bioma_dir_ou_baixo) {
         case "floresta_cidade": _ind = irandom_range(66, 70); _flip = -1; break;
 
         // --- FLORESTA E VAZIA ---
-        case "floresta_vazia": _ind = 46; _flip = 1; break;
-        case "vazia_floresta": _ind = 46; _flip = -1; break;
+        case "floresta_vazia": _ind = irandom_range(75, 79); _flip = 1; break;
+        case "vazia_floresta": _ind = irandom_range(75, 79); _flip = -1; break;
 
         // --- FLORESTA E FLORESTA NEGRA ---
-        case "floresta_floresta_negra": _ind = 46; _flip = 1; break;
-        case "floresta_negra_floresta": _ind = 46; _flip = -1; break;
+        case "floresta_floresta_negra": _ind =  irandom_range(71, 74); _flip = 1; break;
+        case "floresta_negra_floresta": _ind =  irandom_range(71, 74); _flip = -1; break;
 
         // --- CIDADE E VAZIA ---
-        case "cidade_vazia": _ind = 46; _flip = 1; break;
-        case "vazia_cidade": _ind = 46; _flip = -1; break;
+        case "cidade_vazia": _ind = irandom_range(80, 83); _flip = 1; break;
+        case "vazia_cidade": _ind = irandom_range(80, 83); _flip = -1; break;
 
         // --- CIDADE E FLORESTA NEGRA ---
-        case "cidade_floresta_negra": _ind = 46; _flip = 1; break;
-        case "floresta_negra_cidade": _ind = 46; _flip = -1; break;
+        case "cidade_floresta_negra": _ind = irandom_range(84, 87); _flip = 1; break;
+        case "floresta_negra_cidade": _ind = irandom_range(84, 87); _flip = -1; break;
 
         // --- VAZIA E FLORESTA NEGRA ---
-        case "vazia_floresta_negra": _ind = 46; _flip = 1; break;
-        case "floresta_negra_vazia": _ind = 46; _flip = -1; break;
+        case "vazia_floresta_negra": _ind = irandom_range(88, 91); _flip = 1; break;
+        case "floresta_negra_vazia": _ind = irandom_range(88, 91); _flip = -1; break;
     }
     
     return [_ind, _flip];
@@ -107,7 +107,7 @@ for (var _xx = _start_x; _xx <= _end_x; _xx += _tile_size)
         var _ind_real = 1;
         switch (_bioma_real) {
             case "floresta":       _ind_real = irandom_range(1, 31); break;
-            case "vazia":          _ind_real = irandom_range(1, 36); break;
+            case "vazia":          _ind_real = irandom_range(62, 63); break;
             case "cidade":         _ind_real = irandom_range(32, 37); break;
             case "floresta_negra": _ind_real = irandom_range(64, 65); break;
         }
