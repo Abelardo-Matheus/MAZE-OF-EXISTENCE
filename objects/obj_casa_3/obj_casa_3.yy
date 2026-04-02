@@ -10,8 +10,8 @@
     "path": "folders/Objects/FASE_VAMP/ESTRUTURAS/CASA.yy",
   },
   "parentObjectId": {
-    "name": "obj_par_cenario",
-    "path": "objects/obj_par_cenario/obj_par_cenario.yy",
+    "name": "obj_estrutura",
+    "path": "objects/obj_estrutura/obj_estrutura.yy",
   },
   "persistent": false,
   "physicsAngularDamping": 0.1,

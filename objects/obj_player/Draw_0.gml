@@ -7,7 +7,7 @@
 /// 4. Se 'desenha_botao' for true, desenha o ícone piscando acima da cabeça.
 
 // 1. Sombra
-draw_sprite_ext(spr_sombra, 0, x, y + 20, 0.8, 0.8, 0, c_white, 1);
+draw_sprite_ext(spr_sombra, 0, x, y + 15, 0.8, 0.8, 0, c_white, 1);
 
 // 2. Player4
 draw_self();

@@ -69,19 +69,19 @@ function mini_mapa_vamp() {
         _w = 1000; _h = 800;
         _map_x = (_gw - _w) / 2;
         _map_y = (_gh - _h) / 2;
-        _scale = 0.02;
-        _max_dist = 30000;
+        _scale = 0.2;
+        _max_dist = 9000;
     } else {
         _w = 220; _h = 200;
         _map_x = _gw - _w - 40;
         _map_y = _gh - _h - 40;
-        _scale = 0.008;
-        _max_dist = 14000;
+        _scale = 0.02;
+        _max_dist = 9000;
     }
 
-    // --- Renderização do Fundo ---
+    // --- Renderização do Fundo Base ---
     var _c_border = c_black;
-    var _c_bg = make_color_rgb(174, 91, 28); // Marrom
+    var _c_bg = make_color_rgb(174, 91, 28); // Marrom (Fundo padrão onde não tem bioma)
     
     draw_set_color(_c_border);
     draw_rectangle(_map_x - 4, _map_y - 4, _map_x + _w + 4, _map_y + _h + 4, false);
@@ -89,10 +89,68 @@ function mini_mapa_vamp() {
     draw_set_color(_c_bg);
     draw_rectangle(_map_x, _map_y, _map_x + _w, _map_y + _h, false);
 
-    // --- Renderização do Player (Centro) ---
     var _center_x = _map_x + _w / 2;
     var _center_y = _map_y + _h / 2;
-    
+
+    // ========================================================
+    // NOVO: PINTANDO OS BIOMAS NO MINIMAPA
+    // ========================================================
+    // Descobre quais blocos estão visíveis no raio do minimapa agora
+    var _start_bx = floor((obj_player.x - _max_dist) / global.tamanho_bloco);
+    var _end_bx = ceil((obj_player.x + _max_dist) / global.tamanho_bloco);
+    var _start_by = floor((obj_player.y - _max_dist) / global.tamanho_bloco);
+    var _end_by = ceil((obj_player.y + _max_dist) / global.tamanho_bloco);
+
+    // Variável para checar o mapa
+    var _mapa_valido = variable_global_exists("mapa_biomas");
+
+    if (_mapa_valido) {
+        for (var bx = _start_bx; bx <= _end_bx; bx++) {
+            for (var by = _start_by; by <= _end_by; by++) {
+                
+                var _bloco_id = string(bx) + "," + string(by);
+                var _bioma = global.mapa_biomas[? _bloco_id];
+
+                if (!is_undefined(_bioma)) {
+                    // Define as cores para cada bioma (Ajuste como preferir!)
+                    var _cor_bioma = _c_bg; 
+                    switch (_bioma) {
+                        case "floresta":       _cor_bioma = make_color_rgb(34, 139, 34); break;   // Verde Floresta
+                        case "cidade":         _cor_bioma = make_color_rgb(105, 105, 105); break; // Cinza
+                        case "floresta_negra": _cor_bioma = make_color_rgb(30, 20, 40); break;    // Roxo/Verde muito escuro
+                        case "vazia":          _cor_bioma = make_color_rgb(194, 178, 128); break; // Cor de Areia/Deserto
+                    }
+
+                    // Calcula onde o bloco começa e termina no mundo real
+                    var _wx1 = bx * global.tamanho_bloco;
+                    var _wy1 = by * global.tamanho_bloco;
+                    var _wx2 = _wx1 + global.tamanho_bloco;
+                    var _wy2 = _wy1 + global.tamanho_bloco;
+
+                    // Projeta isso para as coordenadas da tela (Minimapa)
+                    var _dx1 = _center_x + (_wx1 - obj_player.x) * _scale;
+                    var _dy1 = _center_y + (_wy1 - obj_player.y) * _scale;
+                    var _dx2 = _center_x + (_wx2 - obj_player.x) * _scale;
+                    var _dy2 = _center_y + (_wy2 - obj_player.y) * _scale;
+
+                    // Clampa (corta) os cantos para não desenhar fora da caixinha preta do minimapa
+                    _dx1 = clamp(_dx1, _map_x, _map_x + _w);
+                    _dy1 = clamp(_dy1, _map_y, _map_y + _h);
+                    _dx2 = clamp(_dx2, _map_x, _map_x + _w);
+                    _dy2 = clamp(_dy2, _map_y, _map_y + _h);
+
+                    // Desenha o quadrado colorido se ele for visível
+                    if (_dx2 > _dx1 && _dy2 > _dy1) {
+                        draw_set_color(_cor_bioma);
+                        draw_rectangle(_dx1, _dy1, _dx2, _dy2, false);
+                    }
+                }
+            }
+        }
+    }
+    // ========================================================
+
+    // --- Renderização do Player (Centro) ---
     draw_set_color(c_blue);
     draw_circle(_center_x, _center_y, 3, false);
 
@@ -438,6 +496,7 @@ function scr_debug_posicao_ui(_base_x, _base_y)
         y: _base_y + _y_offset
     };
 }
+
 
 function draw_fps(){
 	

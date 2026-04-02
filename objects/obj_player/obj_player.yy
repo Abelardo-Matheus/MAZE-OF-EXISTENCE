@@ -33,7 +33,7 @@
   "physicsShapePoints": [],
   "physicsStartAwake": true,
   "properties": [],
-  "solid": false,
+  "solid": true,
   "spriteId": {
     "name": "spr_player_direita",
     "path": "sprites/spr_player_direita/spr_player_direita.yy",

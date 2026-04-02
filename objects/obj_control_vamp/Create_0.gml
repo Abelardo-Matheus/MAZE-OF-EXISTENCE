@@ -19,10 +19,6 @@ alarm[0] = 0;
 //Inicializa grid de poderes
 inicializar_tudo();
 
-// --- Parâmetros de Geração (Procedural) ---
-spaw_timer = 10;            // Timer para controle de spawn
-distancia_minima = 200;     // Raio mínimo entre estruturas
-quantidade_estruturas = 8;  // Limite de estruturas neste mapa
 
 // --- Lógica de Retorno (Transição de Sala) ---
 // Verifica se o jogador está "saindo" de um interior para este mapa

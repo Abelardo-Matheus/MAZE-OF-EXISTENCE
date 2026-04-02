@@ -1,93 +1,266 @@
-// ============================================================================
-// SCRIPT: scr_gerador_mundo
-// DESCRIÇÃO: Gerencia a criação procedural de estruturas (Chunks) e o chão infinito.
-// ============================================================================
+/// @desc Inicialização e Lógica de Geração Procedural por Chunks com BIOMAS
 
-/// @desc Inicializa as variáveis necessárias para o gerador (Chame no Create do seu Controlador)
+// ============================================================================
+// 1. INICIALIZAÇÃO GERAL (Coloque no Create do Controlador)
+// ============================================================================
 function inicializar_gerador_mundo() 
 {
-	if (!variable_global_exists("posicoes_bichos")) {
-    global.posicoes_bichos = ds_list_create(); 
-}
+    // Listas de Posições (Memória do Jogo)
+    if (!variable_global_exists("posicoes_estruturas")) global.posicoes_estruturas = ds_list_create(); 
+    if (!variable_global_exists("posicoes_arvores"))    global.posicoes_arvores = ds_list_create(); 
+    if (!variable_global_exists("posicoes_pedras"))     global.posicoes_pedras = ds_list_create(); 
+    if (!variable_global_exists("posicoes_bichos"))     global.posicoes_bichos = ds_list_create(); 
+    if (!variable_global_exists("posicoes_grupos_inimigos")) global.posicoes_grupos_inimigos = ds_list_create(); 
 
-    if (!variable_global_exists("ultimo_bloco")) {
-        global.ultimo_bloco = [infinity, infinity]; 
-    }
+    // Mapas de Controle
+    if (!variable_global_exists("blocos_gerados"))       global.blocos_gerados = ds_map_create(); 
+    if (!variable_global_exists("blocos_gerados_grupo")) global.blocos_gerados_grupo = ds_map_create(); 
     
-    if (!variable_global_exists("ultimo_tile")) {
-        global.ultimo_tile = [infinity, infinity]; 
-    }
+    // NOVO: Mapa para guardar qual Bioma pertence a qual bloco
+    if (!variable_global_exists("mapa_biomas"))          global.mapa_biomas = ds_map_create(); 
 
-    // ==========================================
-    // NOVO: Fila de processamento para zerar o lag
-    // ==========================================
-    if (!variable_global_exists("fila_de_chunks")) {
-        global.fila_de_chunks = []; 
+    // Fila de Processamento
+    if (!variable_global_exists("fila_de_chunks"))       global.fila_de_chunks = []; 
+
+    global.tamanho_bloco = 4000; 
+    global.ultimo_bloco = [infinity, infinity]; 
+    global.ultimo_tile = [infinity, infinity]; 
+    
+    // Profiling (Debug)
+    if (!variable_global_exists("debug_tempo_total")) global.debug_tempo_total = 0;
+}
+
+// ============================================================================
+// 2. SISTEMA DE BIOMAS (Caminhada Aleatória para Áreas Irregulares)
+// ============================================================================
+function definir_bioma_do_cluster(start_bx, start_by)
+{
+    var _id_inicial = string(start_bx) + "," + string(start_by);
+    
+    // Se o bloco já tem um bioma, ignoramos
+    if (ds_map_exists(global.mapa_biomas, _id_inicial)) return;
+
+    // Sorteia um bioma e o tamanho da área (2 a 8 blocos)
+    var _tipos_biomas = ["floresta", "cidade", "vazia", "floresta_negra"]; // ADICIONE NOVOS AQUI
+    var _bioma_escolhido = _tipos_biomas[irandom(array_length(_tipos_biomas) - 1)];
+    var _tamanho_cluster = irandom_range(2, 8);
+
+    var _cx = start_bx;
+    var _cy = start_by;
+
+    // Faz a "Caminhada Aleatória" pintando os blocos
+    for (var i = 0; i < _tamanho_cluster; i++) 
+    {
+        var _cluster_id = string(_cx) + "," + string(_cy);
+        
+        // Só pinta se o bloco ainda não tiver dono
+        if (!ds_map_exists(global.mapa_biomas, _cluster_id)) {
+            global.mapa_biomas[? _cluster_id] = _bioma_escolhido;
+        }
+
+        // Anda para um lado aleatório para pintar o próximo bloco na próxima rodada do loop
+        var _direcao = choose(0, 1, 2, 3);
+        if (_direcao == 0) _cx += 1;
+        else if (_direcao == 1) _cx -= 1;
+        else if (_direcao == 2) _cy += 1;
+        else if (_direcao == 3) _cy -= 1;
     }
 }
 
-
-/// @desc Roda a lógica de geração de mundo (Chame no STEP do Player ou Controlador)
+// ============================================================================
+// 3. GERENCIADOR DO MUNDO (Coloque no Step do Controlador)
+// ============================================================================
 function gerenciar_mundo_procedural() 
 {
-    // Segurança: Só roda se o player existir
     if (!instance_exists(obj_player)) return;
 
-    // ========================================================
-    // 1. SISTEMA DE CHUNKS (Descobre em qual bloco o player está)
-    // ========================================================
     var _chunk_x_atual = floor(obj_player.x / global.tamanho_bloco);
     var _chunk_y_atual = floor(obj_player.y / global.tamanho_bloco);
 
-    // Só roda se o jogador MUDOU de bloco (entrou em uma nova área)
     if (_chunk_x_atual != global.ultimo_bloco[0] || _chunk_y_atual != global.ultimo_bloco[1]) 
     {
-        // Em vez de gerar os 9 blocos de uma vez dando lag, nós colocamos eles na "Fila"
         for (var bx = _chunk_x_atual - 1; bx <= _chunk_x_atual + 1; bx++) 
         {
             for (var by = _chunk_y_atual - 1; by <= _chunk_y_atual + 1; by++) 
             {
+                // NOVO: Antes de mandar para a fila, garante que essa região tem um bioma
+                definir_bioma_do_cluster(bx, by);
                 array_push(global.fila_de_chunks, [bx, by]);
             }
         }
-
-        // Atualiza a memória
         global.ultimo_bloco[0] = _chunk_x_atual;
         global.ultimo_bloco[1] = _chunk_y_atual;
     }
 
-    // ========================================================
-    // 2. O SEGREDO DO ZERO LAG: PROCESSA APENAS 1 BLOCO POR FRAME!
-    // ========================================================
+    // PROCESSAMENTO DA FILA (Onde a mágica da separação acontece)
     if (array_length(global.fila_de_chunks) > 0)
     {
-        // Pega o primeiro bloco da fila e tira ele do array (array_shift)
         var _bloco_da_vez = array_shift(global.fila_de_chunks);
         var _bx = _bloco_da_vez[0];
         var _by = _bloco_da_vez[1];
-
-        // Gera as estruturas DIRETAMENTE e SOMENTE para este bloco
-		
-        gerar_estruturas_para_bloco(_bx, _by, obj_estrutura, 10, 100);
-        gerar_estruturas_para_bloco(_bx, _by, obj_poste, 5, 100);
-        gerar_estruturas_para_bloco(_bx, _by, obj_secondary_boss, 2, 100); 
-        gerar_estruturas_para_bloco(_bx, _by, obj_grupo_inimigos, 10, 100);
-        gerar_estruturas_para_bloco(_bx, _by, par_npc_vendedor_um, 2, 100);
-		gerar_fauna_para_bloco(_bx, _by, 1000);
         
+        var _bloco_id = string(_bx) + "," + string(_by);
+        
+        // Se o bloco já foi gerado fisicamente, pula pro próximo
+        if (ds_map_exists(global.blocos_gerados, "check_" + _bloco_id)) return;
+        ds_map_add(global.blocos_gerados, "check_" + _bloco_id, true);
 
+        var _tempo_inicio = get_timer();
 
-		// Gerar Árvores
-		gerar_cobertura_cenario(_bx, _by, obj_arvore, 1000, global.posicoes_arvores);
+        // Descobre qual é o bioma deste bloco exato
+        var _meu_bioma = global.mapa_biomas[? _bloco_id];
 
-		// Gerar Pedras
-		gerar_cobertura_cenario(_bx, _by, obj_rock, 200, global.posicoes_pedras);
+        // ========================================================
+        // O MODULADOR DE BIOMAS (Edite as regras do seu mundo aqui)
+        // ========================================================
+        switch (_meu_bioma) 
+        {
+            case "floresta":
+                // 10 a 100 árvores, distância 50. Insetos rolando soltos.
+                gerar_cobertura_cenario(_bx, _by, obj_arvore, irandom_range(200, 250), global.posicoes_arvores, 1);
+                gerar_cobertura_cenario(_bx, _by, obj_rock, irandom_range(5, 20), global.posicoes_pedras, 50);
+                gerar_fauna_para_bloco(_bx, _by, irandom_range(5, 15));
+                break;
 
+            case "cidade":
+                // Casas, Postes, Vendedores. (Sem árvores ou bichos)
+                gerar_estruturas_para_bloco(_bx, _by, obj_estrutura, irandom_range(4, 10), 300);
+                gerar_estruturas_para_bloco(_bx, _by, obj_poste, irandom_range(3, 6), 200);
+                gerar_estruturas_para_bloco(_bx, _by, par_npc_vendedor_um, 1, 400);
+                break;
+
+            case "floresta_negra":
+                // Foco em spawners de inimigos. Um pouco de floresta morta/tensa.
+                gerar_estruturas_para_bloco(_bx, _by, obj_grupo_inimigos, irandom_range(3, 8), 400);
+                gerar_cobertura_cenario(_bx, _by, obj_arvore, irandom_range(30, 60), global.posicoes_arvores, 100);
+                break;
+
+            case "vazia":
+                // Área tensa: Apenas Boss e muita, muita pedra ao redor.
+                gerar_estruturas_para_bloco(_bx, _by, obj_secondary_boss, 1, 1000); 
+                gerar_cobertura_cenario(_bx, _by, obj_rock, irandom_range(50, 100), global.posicoes_pedras, 50);
+                break;
+        }
+
+        global.debug_tempo_total = (get_timer() - _tempo_inicio) / 1000;
     }
 }
 
 // ============================================================================
-// FUNÇÃO PARA GERAR BICHINHOS PELO MAPA (ZERO LAG)
+// 4. FUNÇÃO DE ESTRUTURAS
+// ============================================================================
+function gerar_estruturas_para_bloco(bx, by, obj_struct, quantidade_estruturas, distancia_minima) 
+{
+    var _bloco_id = "struct_" + object_get_name(obj_struct) + "_" + string(bx) + "," + string(by);
+    if (ds_map_exists(global.blocos_gerados, _bloco_id)) return;
+    ds_map_add(global.blocos_gerados, _bloco_id, true);
+
+    var _centro_x = (bx + 0.5) * global.tamanho_bloco;
+    var _centro_y = (by + 0.5) * global.tamanho_bloco;
+
+    var _estruturas_geradas = 0;
+    var _tentativas = 0;
+    var _max_tentativas = quantidade_estruturas * 3; 
+
+    while (_estruturas_geradas < quantidade_estruturas && _tentativas < _max_tentativas) 
+    {
+        var _pos_x = _centro_x + random_range(-global.tamanho_bloco / 2 + 100, global.tamanho_bloco / 2 - 100);
+        var _pos_y = _centro_y + random_range(-global.tamanho_bloco / 2 + 100, global.tamanho_bloco / 2 - 100);
+        var _posicao_valida = true;
+
+        var _total_estruturas = ds_list_size(global.posicoes_estruturas);
+        for (var j = 0; j < _total_estruturas; j++) 
+        {
+            var _info = global.posicoes_estruturas[| j];
+            if (point_distance(_pos_x, _pos_y, _info[0], _info[1]) < distancia_minima) 
+            {
+                _posicao_valida = false; break;
+            }
+        }
+        
+        if (_posicao_valida) 
+        {
+            randomize(); 
+            var _seed = random_get_seed();
+            
+            // INJEÇÃO DE SEED
+            var _nova_est = instance_create_depth(_pos_x, _pos_y, 0, obj_struct, { seed: _seed });
+
+            var _spr = noone; var _nome = "Outro"; var _escala = 1;
+
+            switch (obj_struct) {
+                case obj_estrutura: _spr = spr_casa_mini_map; _nome = "Casa"; break;
+                case obj_poste: _spr = spr_poste_mini_map; _nome = "Poste"; break;
+                case obj_grupo_inimigos: _spr = spr_grupoini_mini_map; _nome = "Grupo Inimigos"; break;
+                case par_npc_vendedor_um: _spr = spr_vendedor; _nome = "Vendedor"; break;
+                case obj_secondary_boss: _spr = spr_boss_mini_map; _nome = "BOSS"; _escala = 0.03; break;
+            }
+
+            _nova_est.image_xscale = _escala;
+            _nova_est.image_yscale = _escala;
+
+            ds_list_add(global.posicoes_estruturas, [_pos_x, _pos_y, _seed, obj_struct, _spr, _nome, _escala]);
+            instance_deactivate_object(_nova_est);
+            _estruturas_geradas++;
+        }
+        _tentativas++;
+    }
+}
+
+// ============================================================================
+// 5. FUNÇÃO DE CENÁRIO 
+// ============================================================================
+function gerar_cobertura_cenario(bx, by, obj, quantidade, lista_global, dist_minima) 
+{
+    var _bloco_id = "cenario_" + object_get_name(obj) + "_" + string(bx) + "," + string(by);
+    if (ds_map_exists(global.blocos_gerados, _bloco_id)) return;
+    ds_map_add(global.blocos_gerados, _bloco_id, true);
+
+    var _inicio_x = bx * global.tamanho_bloco;
+    var _inicio_y = by * global.tamanho_bloco;
+
+    var _celulas_por_lado = ceil(sqrt(quantidade));
+    if (_celulas_por_lado == 0) return; // Segurança
+    
+    var _tamanho_celula = global.tamanho_bloco / _celulas_por_lado;
+
+    for (var i = 0; i < _celulas_por_lado; i++) 
+    {
+        for (var j = 0; j < _celulas_por_lado; j++) 
+        {
+            if (random(100) < 80) 
+            {
+                var _pos_x = _inicio_x + (i * _tamanho_celula) + random_range(50, _tamanho_celula - 50);
+                var _pos_y = _inicio_y + (j * _tamanho_celula) + random_range(50, _tamanho_celula - 50);
+                var _pode_criar = true;
+
+                var _total_estruturas = ds_list_size(global.posicoes_estruturas);
+                for (var k = 0; k < _total_estruturas; k++) 
+                {
+                    var _info = global.posicoes_estruturas[| k];
+                    if (point_distance(_pos_x, _pos_y, _info[0], _info[1]) < dist_minima) 
+                    {
+                        _pode_criar = false; break; 
+                    }
+                }
+
+                if (_pode_criar) 
+                {
+                    var _seed = abs((_pos_x * 73856093) ^ (_pos_y * 19349663));
+                    
+                    // INJEÇÃO DE SEED
+                    var _inst = instance_create_depth(_pos_x, _pos_y, 0, obj, { seed: _seed });
+
+                    ds_list_add(lista_global, [_pos_x, _pos_y, _seed, 1]);
+                    instance_deactivate_object(_inst); 
+                }
+            }
+        }
+    }
+}
+
+// ============================================================================
+// 6. FUNÇÃO DE BICHOS
 // ============================================================================
 function gerar_fauna_para_bloco(bx, by, quantidade_tentativas) 
 {
@@ -98,8 +271,6 @@ function gerar_fauna_para_bloco(bx, by, quantidade_tentativas)
     var _inicio_x = bx * global.tamanho_bloco;
     var _inicio_y = by * global.tamanho_bloco;
 
-    randomize(); 
-
     for (var i = 0; i < quantidade_tentativas; i++) 
     {
         var _pos_x = _inicio_x + random(global.tamanho_bloco);
@@ -108,52 +279,25 @@ function gerar_fauna_para_bloco(bx, by, quantidade_tentativas)
         var _seed = abs((_pos_x * 73856) ^ (_pos_y * 19349));
         random_set_seed(_seed);
 
-        // ========================================================
-        // TABELA DE PORCENTAGEM DOS INSETOS
-        // ========================================================
         var _chance = random(100);
-        var _spr_escolhido = spr_ant; 
-        var _velocidade_base = 0.5;
-        var _escala_base = 0.2;
+        var _spr = spr_ant; 
+        var _vel = 0.5;
+        var _esc = 0.2;
 
-        if (_chance < 50) {
-            // 50% de chance: FORMIGA
-            _spr_escolhido = spr_ant;
-            _velocidade_base = 0.5;
-            _escala_base = random_range(0.15, 0.25);
-        } 
-        else if (_chance < 80) {
-            // 30% de chance: BESOURO (50 a 80)
-            _spr_escolhido = spr_besouro; 
-            _velocidade_base = 0.3;
-            _escala_base = random_range(0.3, 0.4);
-        } 
-        else if (_chance < 95) {
-            // 15% de chance: BARATA (80 a 95)
-            _spr_escolhido = spr_barata; 
-            _velocidade_base = 1.2;
-            _escala_base = random_range(0.2, 0.3);
-        } 
-        else {
-            // 5% de chance: ESCORPIÃO RARO (95 a 100)
-            _spr_escolhido = spr_escorpiao; 
-            _velocidade_base = 0.8;
-            _escala_base = random_range(0.4, 0.5);
-        }
+        if (_chance < 50)      { _spr = spr_ant; _vel = 0.5; _esc = random_range(0.15, 0.25); } 
+        else if (_chance < 80) { _spr = spr_besouro; _vel = 0.3; _esc = random_range(0.3, 0.4); } 
+        else if (_chance < 95) { _spr = spr_barata; _vel = 1.2; _esc = random_range(0.2, 0.3); } 
+        else                   { _spr = spr_escorpiao; _vel = 0.8; _esc = random_range(0.4, 0.5); }
 
-        // --- Criação da Instância ---
-        var _novo_bicho = instance_create_depth(_pos_x, _pos_y, 0, obj_bicho_ambiente);
-        
-        _novo_bicho.sprite_index = _spr_escolhido;
-        _novo_bicho.seed = _seed;
-        _novo_bicho.vel_maxima = _velocidade_base;
-        _novo_bicho.image_xscale = _escala_base;
-        _novo_bicho.image_yscale = _escala_base;
+        // INJEÇÃO DE SEED
+        var _bicho = instance_create_depth(_pos_x, _pos_y, 0, obj_bicho_ambiente, { seed: _seed });
+        _bicho.sprite_index = _spr; 
+        _bicho.vel_maxima = _vel;
+        _bicho.image_xscale = _esc; 
+        _bicho.image_yscale = _esc;
 
-        // Salva na lista (importante para o save/load)
-        ds_list_add(global.posicoes_bichos, [_pos_x, _pos_y, _seed, _spr_escolhido]);
-
+        ds_list_add(global.posicoes_bichos, [_pos_x, _pos_y, _seed, _spr]);
         randomize(); 
-        instance_deactivate_object(_novo_bicho);
+        instance_deactivate_object(_bicho); 
     }
 }

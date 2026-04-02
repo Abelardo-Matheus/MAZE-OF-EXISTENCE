@@ -37,6 +37,7 @@ if (keyboard_check_pressed(vk_enter))
 }
 
 
+gerenciar_mundo_procedural();
 
 gerenciar_mundo_procedural();
 
