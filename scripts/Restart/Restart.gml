@@ -126,25 +126,3 @@ function reset_global_variables()
     global.inimigo_id_count = 0; 
 }
 
-function recriar_estruturas() {
-    // 1. Destrói as estruturas antigas se elas existirem (Evita Memory Leak!)
-    if (variable_global_exists("grid_itens") && ds_exists(global.grid_itens, ds_type_grid)) {
-        ds_grid_destroy(global.grid_itens);
-    }
-    
-    if (variable_global_exists("upgrades_vamp_list") && ds_exists(global.upgrades_vamp_list, ds_type_list)) {
-        ds_list_destroy(global.upgrades_vamp_list);
-    }
-
-    // 2. Recria o Inventário (Substitua os números pelo tamanho do seu inventário)
-    global.grid_itens = ds_grid_create(Infos.Height, 21); // Exemplo: Colunas de Info, 21 slots
-    ds_grid_clear(global.grid_itens, -1); // Limpa tudo com -1 (Vazio)
-    
-    // 3. Recria a lista do Dealer de Level Up
-    global.upgrades_vamp_list = ds_list_create();
-    
-    // 4. Recria o Banco de Dados de Itens
-    criar_lista_itens_padronizados();
-    
-    show_debug_message("Estruturas de dados recriadas com sucesso!");
-}
