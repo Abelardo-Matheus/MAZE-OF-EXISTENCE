@@ -11,8 +11,8 @@
   "managed": true,
   "overriddenProperties": [],
   "parent": {
-    "name": "NPCS",
-    "path": "folders/Objects/FASE_VAMP/NPCS.yy",
+    "name": "NPC",
+    "path": "folders/Objects/FASE_BEBE_ALL/NPC.yy",
   },
   "parentObjectId": {
     "name": "obj_par_cenario",

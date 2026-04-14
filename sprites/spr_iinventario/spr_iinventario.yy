@@ -4,7 +4,7 @@
   "name": "spr_iinventario",
   "bbox_bottom": 378,
   "bbox_left": 0,
-  "bbox_right": 578,
+  "bbox_right": 585,
   "bbox_top": 2,
   "bboxMode": 0,
   "collisionKind": 1,

@@ -9,7 +9,7 @@
   "overriddenProperties": [],
   "parent": {
     "name": "PETS",
-    "path": "folders/Objects/FASE_VAMP/PETS.yy",
+    "path": "folders/Objects/FASE_BEBE_ALL/PETS.yy",
   },
   "parentObjectId": null,
   "persistent": false,

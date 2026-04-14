@@ -1,5 +1,80 @@
-/// @func inventory_find_empty_slot()
-/// @desc Retorna o índice do primeiro slot vazio na mochila ou -1 se estiver cheia
+/// @desc Conta a quantidade total de um item específico no inventário
+function inventory_count_item(_item_id) {
+    var _total = 0;
+    var _grid_height = ds_grid_height(global.grid_itens);
+    
+    // Varre apenas os slots principais (ignorando equipamento, se o craft não usar item equipado)
+    for (var i = 0; i < obj_inventario.total_slots; i++) {
+        if (global.grid_itens[# Infos.item, i] == _item_id) {
+            _total += global.grid_itens[# Infos.quantidade, i];
+        }
+    }
+    return _total;
+}
+
+/// @desc Atualiza a lista de crafts baseada nos itens atuais
+function atualizar_crafts_disponiveis() {
+    ds_list_clear(obj_inventario.crafts_disponiveis);
+    
+    var _total_receitas = array_length(global.receitas_craft);
+    
+    // Verifica cada receita do jogo
+    for (var i = 0; i < _total_receitas; i++) {
+        var _receita = global.receitas_craft[i];
+        var _pode_fazer = true;
+        
+        // Verifica se o player tem a quantidade exigida de TODOS os ingredientes
+        var _total_ingredientes = array_length(_receita.ingredientes);
+        for (var j = 0; j < _total_ingredientes; j++) {
+            var _req = _receita.ingredientes[j];
+            
+            if (inventory_count_item(_req.item) < _req.qtd) {
+                _pode_fazer = false;
+                break; // Se faltou 1 ingrediente, já cancela essa receita e vai pra próxima
+            }
+        }
+        
+        // Se passou em todos os testes, adiciona na lista de disponíveis!
+        if (_pode_fazer) {
+            ds_list_add(obj_inventario.crafts_disponiveis, i); // Salva o ÍNDICE da receita
+        }
+    }
+}
+/// @desc Remove uma quantidade específica de um item do inventário
+function inventory_remove_item(_item_id, _qtd_remover) {
+    var _grid = global.grid_itens;
+    var _total_slots = ds_grid_height(_grid);
+    var _falta_remover = _qtd_remover;
+
+    // Varre o inventário (ignorando itens equipados)
+    for (var i = 0; i < obj_inventario.total_slots; i++) {
+        
+        // Achou um slot com o item que precisamos remover
+        if (_grid[# Infos.item, i] == _item_id) {
+            var _qtd_no_slot = _grid[# Infos.quantidade, i];
+            
+            // Se o slot tem MAIS ou IGUAL ao que precisamos remover
+            if (_qtd_no_slot >= _falta_remover) {
+                _grid[# Infos.quantidade, i] -= _falta_remover;
+                
+                // Se a quantidade zerou, o item acabou, então limpa o slot
+                if (_grid[# Infos.quantidade, i] <= 0) {
+                    inventory_clear_slot(i);
+                }
+                
+                _falta_remover = 0;
+                break; // Terminou de remover, sai do loop!
+            } 
+            // Se o slot tem MENOS do que precisamos (ex: pede 3, mas só tem 2)
+            else {
+                _falta_remover -= _qtd_no_slot;
+                inventory_clear_slot(i); 
+            }
+        }
+    }
+}
+
+
 function inventory_find_empty_slot() {
     var _grid = global.grid_itens;
     var _total_slots = ds_grid_height(_grid);
@@ -220,6 +295,82 @@ function inventory_use_item(_slot) {
     }
 }
 
+/// @desc Instancia um item físico vindo direto da Database (Para monstros e baús)
+function criar_drop_especifico(_pos_x, _pos_y, _nome_item, _quantidade, _raridade) {
+    
+    // 1. Sorteio de falha (0 a 100). Se a raridade for 20, tem 20% de chance de não dropar nada.
+    if (random(100) < _raridade) return;
+
+    // 2. Busca os dados do item na Database (usando aquela função que criamos)
+    var _item_data = buscar_dados_por_nome(_nome_item);
+
+    // Segurança: Se o nome estiver errado, cancela
+    if (_item_data == undefined) {
+        show_debug_message("ERRO AO DROPAR: O item '" + _nome_item + "' não existe na database!");
+        return;
+    }
+
+    // 3. Cria o objeto físico no mundo (A mesma lógica do seu inventory_drop_item!)
+    var _inst = instance_create_layer(_pos_x, _pos_y, "Instances_itens", obj_item);
+
+    // 4. Transfere os dados da DATABASE para o Objeto criado
+    // [0:spr, 1:nome, 2:desc, 3:cura, 4:dano, 5:arm, 6:vel, 7:img_idx, 8:tipo, 9:preco, 10:qtd]
+    _inst.sprite_index = _item_data[0];
+    _inst.image_index  = _item_data[7]; 
+    _inst.nome         = _item_data[1];
+    _inst.descricao    = _item_data[2];
+    _inst.cura         = _item_data[3];
+    _inst.dano         = _item_data[4];
+    _inst.armadura     = _item_data[5];
+    _inst.velocidade   = _item_data[6];
+    _inst.tipo         = _item_data[8];
+    _inst.ind          = _item_data[7];
+    _inst.preco        = _item_data[9];
+    
+    // A quantidade injetada é a que você pediu no argumento da função!
+    _inst.quantidade   = _quantidade; 
+
+    // 5. Configura dados de Persistência (Igualzinho ao seu código)
+    _inst.sala_x = global.current_sala[0];
+    _inst.sala_y = global.current_sala[1];
+    _inst.pos_x  = _pos_x;
+    _inst.pos_y  = _pos_y;
+    
+    // Define profundidade para o item não bugar por cima do player
+    _inst.depth = -_pos_y; // Uma técnica clássica de depth
+    _inst.prof  = _inst.depth; 
+    _inst.profundidade = _inst.depth;
+
+    // 6. Salva o item no sistema de persistência (ds_map da sala)
+    salvar_item(_inst.sala_x, _inst.sala_y, _pos_x, _pos_y, _inst);
+}
+// ==========================================
+// FUNÇÕES AUXILIARES DO SISTEMA DE CRAFTING
+// ==========================================
+
+/// @desc Retorna um array com o [sprite, image_index] do material
+function crafting_get_item_dados(_item_id) {
+    switch (_item_id) {
+        case itens_craft.madeira:       return [spr_itens_craft, 0];
+        case itens_craft.pedra:         return [spr_itens_craft, 1];
+        case itens_craft.erva_vermelha: return [spr_itens_craft, 2];
+        case itens_craft.frasco_vazio:  return [spr_itens_craft, 3];
+        case itens_craft.barra_ferro:   return [spr_itens_craft, 4];
+        case itens_craft.couro:         return [spr_itens_craft, 5];
+        default: return [noone, 0];
+    }
+}
+/// @desc Verifica se o jogador tem TODOS os ingredientes para uma receita
+function player_has_all_ingredients(_receita) {
+    var _total_ingredientes = array_length(_receita.ingredientes);
+    for (var j = 0; j < _total_ingredientes; j++) {
+        var _req = _receita.ingredientes[j];
+        if (inventory_count_item(_req.item) < _req.qtd) {
+            return false; // Faltou um ingrediente
+        }
+    }
+    return true; // Passou em todos os testes
+}
 /// @desc Desenha os status e o sprite do player no menu de inventário
 function draw_player_stats_panel(_x, _y) {
     // Pega a escala da instância atual (obj_inventario)
@@ -276,3 +427,4 @@ function draw_player_stats_panel(_x, _y) {
     // Resetar cor para não afetar outros desenhos
     draw_set_color(c_white);
 }
+

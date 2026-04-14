@@ -11,7 +11,7 @@
   "overriddenProperties": [],
   "parent": {
     "name": "COLETAVEIS",
-    "path": "folders/Objects/FASE_VAMP/COLETAVEIS.yy",
+    "path": "folders/Objects/FASE_BEBE_ALL/COLETAVEIS.yy",
   },
   "parentObjectId": {
     "name": "obj_par_cenario",

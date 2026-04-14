@@ -9,7 +9,7 @@
   "overriddenProperties": [],
   "parent": {
     "name": "CASA",
-    "path": "folders/Objects/FASE_VAMP/ESTRUTURAS/CASA.yy",
+    "path": "folders/Objects/FASE_BEBE_ALL/CENARIO/ESTRUTURAS/CASA.yy",
   },
   "parentObjectId": {
     "name": "obj_estrutura",

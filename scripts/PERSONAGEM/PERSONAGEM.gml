@@ -115,7 +115,7 @@ function scr_personagem_dash() {
 }
 
 // ------------------------------------------------------------------------------
-// 3. ESTADO: ATAQUE (ESPADA)
+// 3. ESTADO: ATAQUE (ESPADA) - MODIFICADO PARA USAR UM ÚNICO OBJETO ROTACIONADO
 // ------------------------------------------------------------------------------
 function scr_ataque_player() {
     hveloc = 0; // Trava movimento
@@ -135,16 +135,34 @@ function scr_ataque_player() {
         
         var _xx = x;
         var _yy = y;
+        var _angle = 0; // Ângulo padrão (direita)
         
-        // Ajuste da posição da hitbox
+        // Ajuste da posição e DEFINIÇÃO DO ÂNGULO baseado na direção
         switch (dir) {
-            case 0: _xx += 20; break; // Direita
-            case 1: _yy -= 20; break; // Cima
-            case 2: _xx -= 20; break; // Esquerda
-            case 3: _yy += 20; break; // Baixo
+            case 0: // Direita
+                _xx += 20;
+                _angle = 0;
+                break;
+            case 1: // Cima
+                _yy -= 20;
+                _angle = 90; // Gira 90 graus para cima
+                break;
+            case 2: // Esquerda
+                _xx -= 20;
+                _angle = 180; // Gira 180 graus para a esquerda
+                break;
+            case 3: // Baixo
+                _yy += 20;
+                _angle = 270; // Gira 270 graus para baixo
+                break;
         }
         
+        // Cria a hitbox única e define seu ângulo de rotação
         var _hitbox = instance_create_layer(_xx, _yy, "Instances", obj_hibox_ataque);
+        
+        // Define o ângulo da sprite/máscara da hitbox
+        _hitbox.image_angle = _angle; 
+        
         _hitbox.dano = global.ataque;
         _hitbox.pode_matar_fantasma = global.mata_fantasma;
     }
@@ -155,7 +173,6 @@ function scr_ataque_player() {
         state = scr_personagem_andando;
     }
 }
-
 // ------------------------------------------------------------------------------
 // 4. ESTADO: ARCO E FLECHA
 // ------------------------------------------------------------------------------

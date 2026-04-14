@@ -12,7 +12,7 @@
   "overriddenProperties": [],
   "parent": {
     "name": "INIMIGOS_GRUPOS",
-    "path": "folders/Objects/FASE_VAMP/ESTRUTURAS/INIMIGOS_GRUPOS.yy",
+    "path": "folders/Objects/FASE_BEBE_ALL/CENARIO/ESTRUTURAS/INIMIGOS_GRUPOS.yy",
   },
   "parentObjectId": {
     "name": "obj_par_cenario",

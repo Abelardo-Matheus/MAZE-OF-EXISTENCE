@@ -1,4 +1,32 @@
 depth = -y
+
+// ==========================================
+// EFEITO DE PISCAR (Vermelho)
+// ==========================================
+if (tempo_piscar > 0) {
+    tempo_piscar--; // Diminui o timer
+    
+    // Faz o objeto piscar vermelho
+    image_blend = c_red; 
+} else {
+    // Volta a cor normal quando o timer acaba
+    image_blend = c_white; 
+}
+
+
+// ==========================================
+// EFEITO DE BALANÇAR (Shake)
+// ==========================================
+if (tempo_balancar > 0) {
+    tempo_balancar--; // Diminui o timer
+    
+    // A função sin() cria uma onda matemática perfeita para fazer o objeto ir para a esquerda e direita
+    // O '* 10' no final é a força do balanço (aumente se quiser que entorte mais)
+    image_angle = angulo_original + (sin(tempo_balancar) * 10);
+} else {
+    // Garante que o objeto fique reto quando terminar de balançar
+    image_angle = angulo_original; 
+}
 if (instance_exists(obj_player)) {
     
     // ==========================================

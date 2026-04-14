@@ -11,7 +11,7 @@
   "overriddenProperties": [],
   "parent": {
     "name": "EFEEITOS",
-    "path": "folders/Objects/FASE_VAMP/PODERES/EFEEITOS.yy",
+    "path": "folders/Objects/FASE_BEBE_ALL/PODERES/EFEEITOS.yy",
   },
   "parentObjectId": null,
   "persistent": false,

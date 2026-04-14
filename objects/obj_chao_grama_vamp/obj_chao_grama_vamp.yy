@@ -9,8 +9,8 @@
   "managed": true,
   "overriddenProperties": [],
   "parent": {
-    "name": "FASE_VAMP",
-    "path": "folders/Objects/FASE_VAMP.yy",
+    "name": "FASE_BEBE_ALL",
+    "path": "folders/Objects/FASE_BEBE_ALL.yy",
   },
   "parentObjectId": null,
   "persistent": false,

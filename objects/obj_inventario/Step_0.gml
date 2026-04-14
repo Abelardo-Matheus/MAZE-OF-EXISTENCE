@@ -62,10 +62,71 @@ for (var i = 0; i < _grid_height; i++) {
         }
     }
 }
+// ==========================================
+// LÓGICA DE CLIQUE NO CRAFTING (COM SCROLL E CONSUMO)
+// ==========================================
+if (mouse_check_button_pressed(mb_left) && cooldown_timer == 0) {
+    
+    if (!variable_instance_exists(id, "craft_scroll")) craft_scroll = 0;
+    var _receitas_total = array_length(global.receitas_craft);
+    var _max_visiveis = 3;
+    var _fim_loop = min(_receitas_total, craft_scroll + _max_visiveis);
 
+    for (var i = craft_scroll; i < _fim_loop; i++) {
+        
+        var _posicao_na_tela = i - craft_scroll;
+        var _cx = inventory_x + craft_box_x;
+        var _cy = inventory_y + craft_box_y + (_posicao_na_tela * (craft_pane_height + craft_buffer));
+        
+        var _bx = _cx + craft_pane_width - craft_btn_w - 15;
+        var _by = _cy + (craft_pane_height / 2) - (craft_btn_h / 2);
 
+        // Se clicou em cima do botão...
+        if (point_in_rectangle(_mx, _my, _bx, _by, _bx + craft_btn_w, _by + craft_btn_h)) {
+            
+            var _receita = global.receitas_craft[i];
+            
+            // Só faz o item se tiver os ingredientes
+            if (player_has_all_ingredients(_receita)) {
+                cooldown_timer = 10;
+                
+                // 1. Remove os ingredientes do inventário
+                var _total_reqs = array_length(_receita.ingredientes);
+                for (var j = 0; j < _total_reqs; j++) {
+                    var _req = _receita.ingredientes[j];
+                    // Consome o item!
+                    inventory_remove_item(_req.item, _req.qtd); 
+                }
+                
+                // 2. Busca os atributos completos na Database usando o sprite e index da receita!
+                var _dados_completos = buscar_dados_do_item(_receita.spr_resultado, _receita.idx_resultado);
 
-
-
-
-
+                if (_dados_completos != undefined) {
+                    // 3. Adiciona no inventário puxando a vida, dano e armadura corretos da Database!
+                    adicionar_item_invent(
+                        _receita.resultado,            // O ID do item (enum)
+                        _receita.qtd_resultado,        // Quantidade que o craft gera
+                        _dados_completos[0],           // Sprite
+                        _dados_completos[1],           // Nome
+                        _dados_completos[2],           // Descrição
+                        -1, -1, -1, -1,                // Posições no mundo (ignorado, pois vai direto pra mochila)
+                        _dados_completos[4],           // Dano
+                        _dados_completos[5],           // Armadura
+                        _dados_completos[6],           // Velocidade
+                        _dados_completos[3],           // Cura
+                        _dados_completos[8],           // Tipo ("arma", "uso", etc)
+                        _dados_completos[7],           // Index da imagem
+                        _dados_completos[9]            // Preço
+                    );
+                } else {
+                    // Segurança: Se por algum motivo o item não existir na database, avisa no console
+                    show_debug_message("ERRO DE CRAFT: Item não encontrado na Database! Spr: " + string(_receita.spr_resultado) + " Idx: " + string(_receita.idx_resultado));
+                }
+                
+                // 4. Atualiza a lista (os ingredientes sumiram, a lista precisa atualizar!)
+                atualizar_crafts_disponiveis(); 
+            }
+            break; // Já clicou num botão, para o loop
+        }
+    }
+}

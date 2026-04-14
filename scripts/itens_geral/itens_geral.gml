@@ -93,6 +93,8 @@ function comprar_item_loja(_slot_index) {
     global.item_selecionado_venda = -1;
 }
 
+
+
 /// @desc Função ÚNICA para criar drops aleatórios baseados no tipo
 /// @arg pos_x
 /// @arg pos_y
@@ -196,6 +198,10 @@ function criar_item_aleatorio_passivos_pe(_x, _y, _prof, _rar) {
     criar_drop_aleatorio(_x, _y, _prof, _rar, "bota");
 }
 
+function criar_item_aleatorio_material(_x, _y, _prof, _rar) {
+    criar_drop_aleatorio(_x, _y, _prof, _rar, "material");
+}
+
 // ========================================================
 // SISTEMA DE SALVAMENTO E PERSISTÊNCIA (Recriar Itens)
 // ========================================================
@@ -244,7 +250,38 @@ function salvar_item(_sala_x, _sala_y, _pos_x, _pos_y, _inst) {
     
     ds_list_add(_lista, _dados);
 }
+/// @desc Dá um item ao jogador buscando TODOS os status automaticamente pelo Nome
+function dar_item_ao_jogador(_nome_item, _quantidade, _enum_id = -1) {
+    
+    // Puxa toda a matriz do item (Spr, Nome, Desc, Dano, etc)
+    var _dados = buscar_dados_por_nome(_nome_item);
 
+    if (_dados != undefined) {
+        
+        // Se você não passar o Enum, ele usa o próprio nome como ID para conseguir empilhar itens repetidos
+        var _id_item = (_enum_id != -1) ? _enum_id : _nome_item;
+
+        adicionar_item_invent(
+            _id_item,           // _item (ID para empilhar)
+            _quantidade,        // _quantidade
+            _dados[0],          // _sprite
+            _dados[1],          // _nome
+            _dados[2],          // _descricao
+            -1, -1, -1, -1,     // Posições no mapa (Ignoradas aqui)
+            _dados[4],          // _dano
+            _dados[5],          // _armadura
+            _dados[6],          // _velocidade
+            _dados[3],          // _cura
+            _dados[8],          // _tipo ("uso", "arma", etc)
+            _dados[7],          // _ind (image_index)
+            _dados[9]           // _preco
+        );
+        
+    } else {
+        // Se você digitar o nome errado, o jogo avisa no Output!
+        show_debug_message("ERRO: O item '" + string(_nome_item) + "' não foi encontrado na Database!");
+    }
+}
 function recriar_item_dropado(_sala_x, _sala_y) {
     var _sala_id = string(_sala_x) + "_" + string(_sala_y);
 
@@ -280,50 +317,117 @@ function recriar_item_dropado(_sala_x, _sala_y) {
     }
 }
 
+
 // ========================================================
-// DATABASE DE ITENS
+// DATABASE DE ITENS DO JOGO
 // ========================================================
 
+/// @desc Cria a lista global com todos os itens do jogo e seus atributos
 function criar_lista_itens_padronizados() {
+    
+    // Se a lista já existir, destrói para recriar (evita vazamento de memória)
+    if (variable_global_exists("lista_itens")) {
+        ds_list_destroy(global.lista_itens);
+    }
+    
     global.lista_itens = ds_list_create();
 
-    // Função auxiliar local para adicionar itens de forma mais limpa
-    // Ordem: [spr, nome, desc, cura, dano, arm, vel, img_idx, tipo, preco, qtd]
-    var add = function(_arr) {
+    // ========================================================
+    // FUNÇÃO ADD OTIMIZADA (Com Argumentos Opcionais)
+    // ========================================================
+    // Os primeiros 6 argumentos são obrigatórios.
+    // Os outros (_cura, _dano, etc) já começam com -1. Se você não preencher, o GameMaker preenche com -1 sozinho!
+    var add = function(_spr, _nome, _desc, _img_idx, _tipo, _preco, _cura = -1, _dano = -1, _arm = -1, _vel = -1, _qtd = 1) {
+        
+        // Monta o array na ORDEM EXATA que o seu sistema antigo de drop espera:
+        // [0:spr, 1:nome, 2:desc, 3:cura, 4:dano, 5:arm, 6:vel, 7:img_idx, 8:tipo, 9:preco, 10:qtd]
+        var _arr = [
+            _spr, _nome, _desc, _cura, _dano, _arm, _vel, _img_idx, _tipo, _preco, _qtd
+        ];
+        
         ds_list_add(global.lista_itens, _arr);
     };
 
+    // ========================================================
+    // INSERÇÃO DE ITENS (Muito mais limpo e legível!)
+    // ========================================================
+
     // --- CONSUMÍVEIS (USO) ---
-    add([spr_itens_invent_consumiveis, "Maçã",     "Recupera 10 de vida.", 10, -1, -1, -1, 1, "uso", 10, 1]);
-    add([spr_itens_invent_consumiveis, "Uva",      "Recupera 10 de vida.", 10, -1, -1, -1, 3, "uso", 12, 1]);
-    add([spr_itens_invent_consumiveis, "Banana",   "Recupera 13 de vida.", 13, -1, -1, -1, 2, "uso", 15, 1]);
-    add([spr_itens_invent_consumiveis, "Batata",   "Recupera 20 de vida.", 20, -1, -1, -1, 0, "uso", 20, 1]);
-    add([spr_itens_invent_consumiveis, "Leite",    "Recupera 30 de vida.", 30, -1, -1, -1, 5, "uso", 35, 1]);
-    add([spr_itens_invent_consumiveis, "Vitamina", "Recupera 50 de vida.", 50, -1, -1, -1, 4, "uso", 50, 1]);
+    // Ordem preenchida: Spr, Nome, Desc, Index, Tipo, Preço, Cura
+    add(spr_itens_invent_consumiveis, "Maçã",     "Recupera 10 de vida.", 1, "uso", 10, 10);
+    add(spr_itens_invent_consumiveis, "Uva",      "Recupera 10 de vida.", 3, "uso", 12, 10);
+    add(spr_itens_invent_consumiveis, "Banana",   "Recupera 13 de vida.", 2, "uso", 15, 13);
+    add(spr_itens_invent_consumiveis, "Batata",   "Recupera 20 de vida.", 0, "uso", 20, 20);
+    add(spr_itens_invent_consumiveis, "Leite",    "Recupera 30 de vida.", 5, "uso", 35, 30);
+    add(spr_itens_invent_consumiveis, "Vitamina", "Recupera 50 de vida.", 4, "uso", 50, 50);
 
     // --- ARMADURAS ---
-    add([spr_itens_invent_passivo_armadura, "Cobertor",          "Proteção básica. Defesa +1",     -1, -1, 1, -1, 0, "armadura", 10,  1]);
-    add([spr_itens_invent_passivo_armadura, "Armadura de Papelão","Proteção média. Defesa +2",      -1, -1, 2, -1, 1, "armadura", 20,  1]);
-    add([spr_itens_invent_passivo_armadura, "Toalha Enrolada",   "Proteção confortável. Defesa +3",-1, -1, 3, -1, 2, "armadura", 30,  1]);
-    add([spr_itens_invent_passivo_armadura, "Capa de Chuva",     "Resistente à água. Defesa +4",   -1, -1, 4, -1, 3, "armadura", 40,  1]);
-    add([spr_itens_invent_passivo_armadura, "Casaco Almofadado", "Muito fofo. Defesa +5",           -1, -1, 5, -1, 4, "armadura", 50,  1]);
-    add([spr_itens_invent_passivo_armadura, "Armadura de Travesseiro","Proteção suprema. Defesa +6",-1, -1, 6, -1, 5, "armadura", 60,  1]);
-    add([spr_itens_invent_passivo_armadura, "Capa de Super-Herói","Sinta-se poderoso. Defesa +7",   -1, -1, 7, -1, 6, "armadura", 100, 1]);
+    // Ordem preenchida: Spr, Nome, Desc, Index, Tipo, Preço, (pula cura), (pula dano), Armadura
+    add(spr_itens_invent_passivo_armadura, "Cobertor",                "Proteção básica. Defesa +1.",      0, "armadura", 10,  -1, -1, 1);
+    add(spr_itens_invent_passivo_armadura, "Armadura de Papelão",     "Proteção média. Defesa +2.",       1, "armadura", 20,  -1, -1, 2);
+    add(spr_itens_invent_passivo_armadura, "Toalha Enrolada",         "Proteção confortável. Defesa +3.", 2, "armadura", 30,  -1, -1, 3);
+    add(spr_itens_invent_passivo_armadura, "Capa de Chuva",           "Resistente à água. Defesa +4.",    3, "armadura", 40,  -1, -1, 4);
+    add(spr_itens_invent_passivo_armadura, "Casaco Almofadado",       "Muito fofo. Defesa +5.",           4, "armadura", 50,  -1, -1, 5);
+    add(spr_itens_invent_passivo_armadura, "Armadura de Travesseiro", "Proteção suprema. Defesa +6.",     5, "armadura", 60,  -1, -1, 6);
+    add(spr_itens_invent_passivo_armadura, "Capa de Super-Herói",     "Sinta-se poderoso. Defesa +7.",    6, "armadura", 100, -1, -1, 7);
 
     // --- ARMAS ---
-    add([spr_itens_invent_passivo_armas, "Graveto",            "É só um graveto. Dano +2",       -1, 2, -1, -1, 0, "arma", 5,  1]);
-    add([spr_itens_invent_passivo_armas, "Vassoura",           "Limpa o chão e inimigos. Dano +4",-1, 4, -1, -1, 1, "arma", 10, 1]);
-    add([spr_itens_invent_passivo_armas, "Espada de Plástico", "Não corta muito. Dano +5",       -1, 5, -1, -1, 2, "arma", 15, 1]);
-    add([spr_itens_invent_passivo_armas, "Espada de Madeira",  "Treinamento básico. Dano +7",    -1, 7, -1, -1, 3, "arma", 25, 1]);
-    add([spr_itens_invent_passivo_armas, "Espada Dourada",     "Brilha muito. Dano +9",          -1, 9, -1, -1, 4, "arma", 50, 1]);
-    add([spr_itens_invent_passivo_armas, "Mata-Fantasma",      "Especializada. Dano +9",         -1, 9, -1, -1, 5, "arma", 60, 1]);
+    // Ordem preenchida: Spr, Nome, Desc, Index, Tipo, Preço, (pula cura), Dano
+    add(spr_itens_invent_passivo_armas, "Graveto",            "É só um graveto. Dano +2.",         0, "arma", 5,  -1, 2);
+    add(spr_itens_invent_passivo_armas, "Vassoura",           "Limpa o chão e inimigos. Dano +4.", 1, "arma", 10, -1, 4);
+    add(spr_itens_invent_passivo_armas, "Espada de Plástico", "Não corta muito. Dano +5.",         2, "arma", 15, -1, 5);
+    add(spr_itens_invent_passivo_armas, "Espada de Madeira",  "Treinamento básico. Dano +7.",      3, "arma", 25, -1, 7);
+    add(spr_itens_invent_passivo_armas, "Espada Dourada",     "Brilha muito. Dano +9.",            4, "arma", 50, -1, 9);
+    add(spr_itens_invent_passivo_armas, "Mata-Fantasma",      "Especializada. Dano +9.",           5, "arma", 60, -1, 9);
 
     // --- BOTAS ---
-    add([spr_itens_invent_passivo_pe, "Sapato Velho",       "Já viu dias melhores. Vel +1",   -1, -1, -1, 1, 0, "bota", 5,  1]);
-    add([spr_itens_invent_passivo_pe, "Tênis Rasgado",      "Ainda serve. Vel +2",            -1, -1, -1, 2, 1, "bota", 10, 1]);
-    add([spr_itens_invent_passivo_pe, "Meias Novas",        "Escorregam bem. Vel +3",         -1, -1, -1, 3, 6, "bota", 15, 1]);
-    add([spr_itens_invent_passivo_pe, "Sapato Social",      "Elegância. Vel +4",              -1, -1, -1, 4, 5, "bota", 25, 1]);
-    add([spr_itens_invent_passivo_pe, "Tênis de Corrida",   "Feito para correr. Vel +5",      -1, -1, -1, 5, 4, "bota", 30, 1]);
-    add([spr_itens_invent_passivo_pe, "Skate",              "Radical! Vel +6",                -1, -1, -1, 6, 3, "bota", 40, 1]);
-    add([spr_itens_invent_passivo_pe, "Patins",             "Velocidade máxima. Vel +7",      -1, -1, -1, 7, 2, "bota", 60, 1]);
+    // Ordem preenchida: Spr, Nome, Desc, Index, Tipo, Preço, (pula cura), (pula dano), (pula armadura), Vel
+    add(spr_itens_invent_passivo_pe, "Sapato Velho",     "Já viu dias melhores. Vel +1.", 0, "bota", 5,  -1, -1, -1, 1);
+    add(spr_itens_invent_passivo_pe, "Tênis Rasgado",    "Ainda serve. Vel +2.",          1, "bota", 10, -1, -1, -1, 2);
+    add(spr_itens_invent_passivo_pe, "Meias Novas",      "Escorregam bem. Vel +3.",       6, "bota", 15, -1, -1, -1, 3);
+    add(spr_itens_invent_passivo_pe, "Sapato Social",    "Elegância. Vel +4.",            5, "bota", 25, -1, -1, -1, 4);
+    add(spr_itens_invent_passivo_pe, "Tênis de Corrida", "Feito para correr. Vel +5.",    4, "bota", 30, -1, -1, -1, 5);
+    add(spr_itens_invent_passivo_pe, "Skate",            "Radical! Vel +6.",              3, "bota", 40, -1, -1, -1, 6);
+    add(spr_itens_invent_passivo_pe, "Patins",           "Velocidade máxima. Vel +7.",    2, "bota", 60, -1, -1, -1, 7);
+
+    // --- MATERIAIS DE CRAFT (NOVO) ---
+    // Ordem preenchida: Spr, Nome, Desc, Index, Tipo, Preço (o resto vira -1 automático)
+    add(spr_itens_craft, "Madeira",       "Material essencial para construções.", 0, "material", 2);
+    add(spr_itens_craft, "Pedra",         "Material bruto e duro.",               1, "material", 2);
+    add(spr_itens_craft, "Erva Vermelha", "Planta com propriedades medicinais.",  2, "material", 4);
+    add(spr_itens_craft, "Frasco Vazio",  "Usado para guardar líquidos.",         3, "material", 5);
+    add(spr_itens_craft, "Barra de Ferro","Ferro fundido, ótimo para armas.",     4, "material", 15);
+    add(spr_itens_craft, "Couro",         "Pele resistente para armaduras.",      5, "material", 10);
+	
+
+}
+	/// @desc Busca todos os atributos do item na Database baseando-se no sprite e index
+function buscar_dados_do_item(_spr, _idx) {
+    var _tamanho = ds_list_size(global.lista_itens);
+    
+    // Varre a database inteira procurando o item que tem esse sprite e esse frame
+    for (var i = 0; i < _tamanho; i++) {
+        var _item_data = global.lista_itens[| i];
+        
+        // _item_data[0] é o Sprite e _item_data[7] é o image_index
+        if (_item_data[0] == _spr && _item_data[7] == _idx) {
+            return _item_data; // Retorna o array completo com dano, armadura, etc!
+        }
+    }
+    
+    return undefined; // Retorna vazio se não achar
+}
+/// @desc Busca todos os atributos do item na Database baseando-se no NOME
+function buscar_dados_por_nome(_nome) {
+    var _tamanho = ds_list_size(global.lista_itens);
+    
+    for (var i = 0; i < _tamanho; i++) {
+        var _item_data = global.lista_itens[| i];
+        
+        // _item_data[1] é onde fica salvo o NOME do item na sua lista_itens!
+        if (_item_data[1] == _nome) {
+            return _item_data; 
+        }
+    }
+    return undefined; 
 }

@@ -11,7 +11,7 @@
   "overriddenProperties": [],
   "parent": {
     "name": "CENARIO",
-    "path": "folders/Objects/FASE_VAMP/ESTRUTURAS/CENARIO.yy",
+    "path": "folders/Objects/FASE_BEBE_ALL/CENARIO/ESTRUTURAS/CENARIO.yy",
   },
   "parentObjectId": {
     "name": "obj_par_cenario",

@@ -11,7 +11,7 @@
   "overriddenProperties": [],
   "parent": {
     "name": "PODERES",
-    "path": "folders/Objects/FASE_VAMP/PODERES.yy",
+    "path": "folders/Objects/FASE_BEBE_ALL/PODERES.yy",
   },
   "parentObjectId": {
     "name": "par_poder_arremessavel",

@@ -7,12 +7,13 @@
     {"resourceType":"GMEvent","resourceVersion":"1.0","name":"","collisionObjectId":{"name":"obj_player","path":"objects/obj_player/obj_player.yy",},"eventNum":0,"eventType":4,"isDnD":false,},
     {"resourceType":"GMEvent","resourceVersion":"1.0","name":"","collisionObjectId":{"name":"par_inimigos","path":"objects/par_inimigos/par_inimigos.yy",},"eventNum":0,"eventType":4,"isDnD":false,},
     {"resourceType":"GMEvent","resourceVersion":"1.0","name":"","collisionObjectId":null,"eventNum":0,"eventType":3,"isDnD":false,},
+    {"resourceType":"GMEvent","resourceVersion":"1.0","name":"","collisionObjectId":{"name":"obj_hibox_ataque","path":"objects/obj_hibox_ataque/obj_hibox_ataque.yy",},"eventNum":0,"eventType":4,"isDnD":false,},
   ],
   "managed": true,
   "overriddenProperties": [],
   "parent": {
     "name": "CENARIO",
-    "path": "folders/Objects/FASE_VAMP/ESTRUTURAS/CENARIO.yy",
+    "path": "folders/Objects/FASE_BEBE_ALL/CENARIO/ESTRUTURAS/CENARIO.yy",
   },
   "parentObjectId": {
     "name": "obj_par_cenario",
