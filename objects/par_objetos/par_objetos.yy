@@ -1,21 +1,24 @@
 {
   "resourceType": "GMObject",
   "resourceVersion": "1.0",
-  "name": "obj_estrutura",
+  "name": "par_objetos",
   "eventList": [
     {"resourceType":"GMEvent","resourceVersion":"1.0","name":"","collisionObjectId":null,"eventNum":0,"eventType":0,"isDnD":false,},
     {"resourceType":"GMEvent","resourceVersion":"1.0","name":"","collisionObjectId":{"name":"obj_player","path":"objects/obj_player/obj_player.yy",},"eventNum":0,"eventType":4,"isDnD":false,},
     {"resourceType":"GMEvent","resourceVersion":"1.0","name":"","collisionObjectId":{"name":"par_inimigos","path":"objects/par_inimigos/par_inimigos.yy",},"eventNum":0,"eventType":4,"isDnD":false,},
     {"resourceType":"GMEvent","resourceVersion":"1.0","name":"","collisionObjectId":null,"eventNum":0,"eventType":3,"isDnD":false,},
-    {"resourceType":"GMEvent","resourceVersion":"1.0","name":"","collisionObjectId":null,"eventNum":0,"eventType":8,"isDnD":false,},
+    {"resourceType":"GMEvent","resourceVersion":"1.0","name":"","collisionObjectId":{"name":"obj_hibox_ataque","path":"objects/obj_hibox_ataque/obj_hibox_ataque.yy",},"eventNum":0,"eventType":4,"isDnD":false,},
   ],
   "managed": true,
   "overriddenProperties": [],
   "parent": {
-    "name": "CASA",
-    "path": "folders/Objects/FASE_BEBE_ALL/CENARIO/ESTRUTURAS/CASA.yy",
+    "name": "CENARIO",
+    "path": "folders/Objects/FASE_BEBE_ALL/CENARIO/ESTRUTURAS/CENARIO.yy",
   },
-  "parentObjectId": null,
+  "parentObjectId": {
+    "name": "obj_par_cenario",
+    "path": "objects/obj_par_cenario/obj_par_cenario.yy",
+  },
   "persistent": false,
   "physicsAngularDamping": 0.1,
   "physicsDensity": 0.5,
@@ -31,10 +34,7 @@
   "physicsStartAwake": true,
   "properties": [],
   "solid": true,
-  "spriteId": {
-    "name": "spr_casa",
-    "path": "sprites/spr_casa/spr_casa.yy",
-  },
+  "spriteId": null,
   "spriteMaskId": null,
   "visible": true,
 }

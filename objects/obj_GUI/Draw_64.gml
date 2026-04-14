@@ -15,23 +15,26 @@ if (global.level_up == true)
     draw_set_alpha(1);
     
     // ========================================================
+    // --- TEXTO: AVISO DE NÍVEIS ACUMULADOS (NOVO!) ---
+    // ========================================================
+    if (variable_global_exists("levels_pendentes") && global.levels_pendentes > 1) {
+        draw_set_font(fnt_nomes_up); 
+        draw_set_halign(fa_center);
+        draw_set_valign(fa_top);
+        var _aviso = "Niveis Acumulados: " + string(global.levels_pendentes);
+        draw_text_colour_outline(_gui_w / 2, 50, _aviso, 4, c_yellow, 8, 100, 100);
+    }
+    
+    // ========================================================
     // --- 2. Configurações Visuais e Proteção ---
     // ========================================================
     // Otimização: Cache do tamanho da lista sorteada
     var _options_count = ds_list_size(global.upgrades_vamp_list);
     
-    // ==============================================================================
-    // --- DEBUG: SE NÃO APARECER NADA, OLHE O OUTPUT (CONSOLE) DO GAMEMAKER ---
-    // ==============================================================================
-    // Se imprimir 0, sua função 'level_upp' não está sorteando cartas.
-    // show_debug_message("DEBUG Level Up: Cartas Sorteadas = " + string(_options_count));
-    // ==============================================================================
-
     // Se não houver opções, não desenha nada (para evitar erros) e sai
     if (_options_count <= 0) exit; 
 
     // Configurações de tamanho do HUD de fundo
-    // SUBSTÍTUA 'spr_level_up_hud' pelo sprite de fundo da carta
     var _sprite_h = sprite_get_height(spr_level_up_hud);
     var _sprite_w = sprite_get_width(spr_level_up_hud);
     
@@ -51,28 +54,24 @@ if (global.level_up == true)
     // ========================================================
     for (var i = 0; i < _options_count; i++) 
     {
-        // Pega o Struct de dados sorteado (Gerado dinamicamente no level_upp unificado)
+        // Pega o Struct de dados sorteado
         var _card_data = global.upgrades_vamp_list[| i];
         
         // --- PROTEÇÃO CONTRA CRASH ---
-        // Se você não atualizou o 'level_upp' para sortear Structs, o código antigo 
-        // [TIPO, ID] quebrará aqui. Este IF verifica se é o formato novo.
         if (!is_struct(_card_data)) 
         {
-            // show_debug_message("DEBUG ERRO: Carta "+string(i)+" não é um Struct. Atualize seu 'level_upp'!");
             continue; // Pula esta carta para não dar crash
         }
 
         // --------------------------------------------------------
         // --- A. EXTRAÇÃO DE DADOS (ESTILO DATA-DRIVEN) ---
         // --------------------------------------------------------
-        // Pegamos tudo direto do Struct sorteado, sem ler grids agora.
         var _name          = _card_data.nome;
-        var _desc          = _card_data.description; // Texto do PRÓXIMO nível
-        var _next_lvl      = _card_data.next_level;       // Novo nível
-        var _sprite_icon   = _card_data.sprite;        // Sprite individual (ex: spr_icon_bola)
-        var _type          = _card_data.type;        // 0 = Upgrade, 1 = Item
-        var _row_index     = _card_data.id_grid;   // Linha real da grid (para aplicar level)
+        var _desc          = _card_data.description; 
+        var _next_lvl      = _card_data.next_level;       
+        var _sprite_icon   = _card_data.sprite;        
+        var _type          = _card_data.type;        
+        var _row_index     = _card_data.id_grid;   
 
         // Posicionamento X da carta i
         var _card_x = _start_x + (_sprite_w + _padding_x) * i;
@@ -99,18 +98,34 @@ if (global.level_up == true)
             _icon_y_offset = -8;   // Sobe o ícone
             _text_y_offset = 65;   // Sobe o texto do nome
             
-            // --- Clique Esquerdo ---
+            // ====================================================
+            // --- Clique Esquerdo (LÓGICA DE FILA ATUALIZADA) ---
+            // ====================================================
             if (mouse_check_button_pressed(mb_left)) 
             {
-                // APLICAÇÃO DO LEVEL UP (Unificado e sem bugs)
+                // 1. APLICAÇÃO DO LEVEL UP NA ARMA/ITEM
                 if (_type == 0) { // ARMA
                     global.upgrades_vamp_grid[# Upgrades_vamp.level, _row_index] += 1;
                 } else { // ITEM
                     global.itens_vamp_grid[# Itens_vamp.level, _row_index] += 1;
                 }
 
-                // Fecha Menu
-                global.level_up = false;
+                // 2. GERENCIA A FILA DE LEVEL UPS PENDENTES
+                if (variable_global_exists("levels_pendentes")) {
+                    global.levels_pendentes -= 1;
+                    
+                    if (global.levels_pendentes > 0) {
+                        // Sorteia cartas novas imediatamente para o próximo level!
+                        level_upp(); 
+                    } else {
+                        // Fila acabou, fecha o menu
+                        global.level_up = false;
+                        global.levels_pendentes = 0;
+                    }
+                } else {
+                    // Fallback caso a variável não exista (fecha o menu normal)
+                    global.level_up = false;
+                }
                 
                 // break sai do loop para evitar cliques duplos indesejados
                 break; 
@@ -127,9 +142,7 @@ if (global.level_up == true)
         // --- 2. Ícone Individual ---
         var _icon_final_y = _center_y - (_sprite_h / 4) + _icon_y_offset;
         
-        // Segurança: Verifica se o sprite existe
         if (sprite_exists(_sprite_icon)) {
-            // Ajuste Y do ícone para centralizar melhor (pode precisar de ajuste dependendo do seu sprite)
             draw_sprite_ext(_sprite_icon, 0, _card_x, _icon_final_y, _current_scale * 2, _current_scale * 2, 0, c_white, _current_alpha);
         }
         
@@ -138,22 +151,18 @@ if (global.level_up == true)
         draw_set_halign(fa_center);
         draw_set_valign(fa_middle);
 
-        // NOME DA SKILL + NOVO NÍVEL
-        draw_set_font(fnt_nomes_up); // SUBSTÍTUA pela sua fonte de nome
+        // NOME DA SKILL
+        draw_set_font(fnt_nomes_up); 
         var _name_display = _name ;
         draw_text_colour_outline(_card_x, _center_y - (_sprite_h/2) - _text_y_offset, _name_display, 4, c_white, 8, 100, 100);
         
-        // DESCRIÇÃO (Texto do bônus do próximo nível)
-        draw_set_font(fnt_descricao); // SUBSTÍTUA pela sua fonte de descrição
+        // NÍVEL E DESCRIÇÃO
+        draw_set_font(fnt_descricao); 
         var _desc_y = _center_y + (_sprite_h / 4) - 90;
         
-		 
-	
-	draw_text_colour_outline_escalado(_card_x - 2, _desc_y - 90, string(_next_lvl), 3, c_white, 7, 30, 300, _current_scale*2, _current_scale*2);
-    draw_text_colour_outline_escalado(_card_x, _desc_y, _desc, 3, c_white, 7, 30, 300, _current_scale, _current_scale);
+        draw_text_colour_outline_escalado(_card_x - 2, _desc_y - 90, string(_next_lvl), 3, c_white, 7, 30, 300, _current_scale*2, _current_scale*2);
+        draw_text_colour_outline_escalado(_card_x, _desc_y, _desc, 3, c_white, 7, 30, 300, _current_scale, _current_scale);
     }
-    
-    // alarm[0]++;  // Mantido se necessário
     
     exit; // Sai para não desenhar o resto da GUI normal
 }

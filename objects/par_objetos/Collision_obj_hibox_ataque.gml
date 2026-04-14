@@ -1,0 +1,13 @@
+vida -= 10;
+show_debug_message(vida);
+quantis = choose(1, 2, 3, 4, 5, 6);
+
+// --- ATIVA OS EFEITOS VISUAIS ---
+tempo_piscar = 8;   // Quantidade de frames que vai ficar piscando
+tempo_balancar = 15; // Quantidade de frames que vai ficar balançando
+// --------------------------------
+
+if (vida <= 0) {
+    criar_drop_especifico(x, y, "Madeira", quantis, 0);
+    instance_destroy();
+}

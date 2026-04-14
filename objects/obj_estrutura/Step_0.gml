@@ -6,7 +6,7 @@ depth = -y
 if (instance_exists(obj_player)) 
 {
     // point_distance é mais rápido que distance_to_point e instance_nearest juntos!
-    if (point_distance(x, y, obj_player.x, obj_player.y) <= 100) 
+    if (point_distance(x, y, obj_player.x, obj_player.y) <= 400) 
     {
         // Marca que o jogador está na porta
         obj_player.proximo_de_estrutura = true;

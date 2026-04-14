@@ -62,8 +62,21 @@ function scr_personagem_andando() {
 
     // --- Transição de Estados (Ataque e Dash) ---
     
+    // --- Transição de Estados (Ataque e Dash) ---
+    
     // Ataque (Botão Esquerdo)
     if (mouse_check_button_pressed(mb_left)) {
+        
+        // =======================================================
+        // NOVO: Calcula a direção do mouse e atualiza o 'dir'
+        // =======================================================
+        var _dir_mouse = point_direction(x, y, mouse_x, mouse_y);
+        
+        // Converte os 360 graus do mouse para as 4 direções (0, 1, 2, 3)
+        dir = round(_dir_mouse / 90);
+        if (dir == 4) dir = 0; // Corrige o ângulo de 360º para virar 0 (Direita)
+        // =======================================================
+
         if (global.armamento == Armamentos.espada) {
             image_index = 0;
             atacando = false; // Reseta flag de hitbox
@@ -177,13 +190,15 @@ function scr_ataque_player() {
 // 4. ESTADO: ARCO E FLECHA
 // ------------------------------------------------------------------------------
 function scr_personagem_arco() {
-    hveloc = 0; // Trava movimento
+   hveloc = 0; // Trava movimento
     vveloc = 0;
 
     var _dir_mouse = point_direction(x, y, mouse_x, mouse_y);
     
-    // Atualiza a direção do olhar baseado no mouse
-    dir = floor((_dir_mouse + 45) / 90);
+    // Atualiza a direção do olhar baseado no mouse (MATEMÁTICA CORRIGIDA)
+    dir = round(_dir_mouse / 90);
+    if (dir == 4) dir = 0; 
+    
     // Mantém o sprite parado na direção correta enquanto mira
     switch (dir) {
         case 0: sprite_index = spr_player_direita_parado; break;

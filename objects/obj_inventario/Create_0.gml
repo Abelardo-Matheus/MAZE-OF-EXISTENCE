@@ -226,6 +226,8 @@ dar_item_ao_jogador("Madeira", 5, itens_craft.madeira);
 dar_item_ao_jogador("Pedra", 5, itens_craft.pedra);
 dar_item_ao_jogador("Erva Vermelha", 5, itens_craft.erva_vermelha);
 dar_item_ao_jogador("Frasco Vazio", 5, itens_craft.frasco_vazio);
+dar_item_ao_jogador("Couro", 5, itens_craft.couro);
+dar_item_ao_jogador("Barra de Ferro", 5, itens_craft.barra_ferro);
 
 // Atualiza a lista pra UI saber que ganhamos itens
 atualizar_crafts_disponiveis();

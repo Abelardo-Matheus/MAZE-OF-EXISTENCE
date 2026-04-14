@@ -71,7 +71,7 @@ if (global.estamina <= 0 && !andar) {
 }
 // --- Morte ---
 if (global.vida <= 0) {
-    game_restart();
+    //game_restart();
 }
 
 // --- Sanidade e Luz ---
@@ -104,13 +104,30 @@ global.sanidade = clamp(global.sanidade, 0, 100);
 // 5. INTERAÇÃO E VISUAL
 // ========================================================
 
-// --- Troca de Armas ---
-if (mouse_wheel_up() && dir_alfa <= 0) { global.armamento++; dir_alfa = 1; desenha_arma = true; }
-if (mouse_wheel_down() && dir_alfa <= 0) { global.armamento--; dir_alfa = 1; desenha_arma = true; }
-if (global.armamento >= Armamentos.Altura) global.armamento = 0;
-else if (global.armamento < 0) global.armamento = Armamentos.Altura - 1;
-if (desenha_arma) { dir_alfa -= 0.02; if (dir_alfa <= 0) { dir_alfa = 0; desenha_arma = false; } }
+// --- Troca de Armas (Teclas 1 e 2) ---
 
+// Tecla 1 para Espada
+if (keyboard_check_pressed(ord("1"))) { 
+    global.armamento = Armamentos.espada; // Ou o valor numérico que você usa, ex: 0
+    dir_alfa = 1; 
+    desenha_arma = true; 
+}
+
+// Tecla 2 para Arco
+if (keyboard_check_pressed(ord("2"))) { 
+    global.armamento = Armamentos.arco;   // Ou o valor numérico que você usa, ex: 1
+    dir_alfa = 1; 
+    desenha_arma = true; 
+}
+
+// Lógica de fade-out do desenho da arma na tela (Mantida igual ao seu original)
+if (desenha_arma) { 
+    dir_alfa -= 0.02; 
+    if (dir_alfa <= 0) { 
+        dir_alfa = 0; 
+        desenha_arma = false; 
+    } 
+}
 // --- Coletar Itens e NPC ---
 var _item_perto = instance_nearest(x, y, obj_item);
 var _npc = instance_nearest(x, y, par_npc_vendedor_um);

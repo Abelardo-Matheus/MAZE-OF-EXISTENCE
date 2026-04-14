@@ -16,8 +16,8 @@
     "path": "folders/Objects/FASE_BEBE_ALL/CENARIO/ESTRUTURAS/CENARIO.yy",
   },
   "parentObjectId": {
-    "name": "obj_par_cenario",
-    "path": "objects/obj_par_cenario/obj_par_cenario.yy",
+    "name": "par_objetos",
+    "path": "objects/par_objetos/par_objetos.yy",
   },
   "persistent": false,
   "physicsAngularDamping": 0.1,

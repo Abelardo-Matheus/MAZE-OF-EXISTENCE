@@ -27,39 +27,20 @@ global.critico = 0;
 global.upgrades_vamp_list = ds_list_create(); // Lista que guardará as opções sorteadas
 global.upgrade_num = 4; // Quantidade de opções que aparecem na tela (3 ou 4)
 
-/// @desc Processa a subida de nível e gera opções
-/// [O QUE]: Aumenta o nível, recalcula vida/dano e sorteia 3 opções misturando Armas e Itens.
-/// [COMO] :
-/// 1. Incrementa nível e atualiza arrays de status (vida, estamina, dano).
-/// 2. Cria um "Pool" (lista temporária) e joga dentro dele todas as Armas e Itens disponíveis.
-/// 3. Embaralha o Pool e escolhe os primeiros X itens para exibir na tela.
-/// @desc Executa a lógica de level up, sorteando upgrades e atualizando status do player.
+// ============================================================================
+// 1. FUNÇÃO DE ABRIR O MENU DE CARTAS (Modificada)
+// ============================================================================
 function level_upp() 
 {
-    global.level_up = true; // Ativa flag para pausar a lógica do jogo
-    global.level_player += 1; // Incrementa o nível do jogador
+    global.level_up = true; // Ativa flag para pausar a lógica do jogo e abrir o menu
 
     // ============================================================
-    // PARTE 1: ATUALIZAÇÃO DE STATUS DO JOGADOR (Matemática Pura)
+    // SORTEIO DE CARTAS (Dealer System - Data-Driven INFINITO)
     // ============================================================
-    var _prev_lvl = global.level_player - 1;
-    var _curr_lvl = global.level_player;
-
-    global.vida_max_calc[_curr_lvl]     = global.vida_max_calc[_prev_lvl] + (_curr_lvl * 0.8);
-    global.max_estamina_calc[_curr_lvl] = global.max_estamina_calc[_prev_lvl] + 5;
-    global.dano_base[_curr_lvl]         = global.dano_base[_prev_lvl] * 1.1;
-
-    global.vida_max = global.vida_max_calc[_curr_lvl];
-    global.max_estamina = global.max_estamina_calc[_curr_lvl];
-    global.ataque = global.dano_base[_curr_lvl];
-
-    // ============================================================
-    // PARTE 2: SORTEIO DE CARTAS (Dealer System - Data-Driven INFINITO)
-    // ============================================================
-    
     ds_list_clear(global.upgrades_vamp_list);
     var _pool = ds_list_create();
-// ========================================================
+
+    // ========================================================
     // --- Sub-Part A: Coleta ARMAS (Upgrades Ativos) candidatos ---
     // ========================================================
     var _grid_weapons = global.upgrades_vamp_grid;
@@ -109,8 +90,8 @@ function level_upp()
             
             var _card_info = {
                 nome: _grid_weapons[# Upgrades_vamp.Name, i],
-                sprite: _sprite_final, // <-- Agora usa a variável que escolheu o ícone
-                description: _desc_final, // <-- Agora usa a variável que escolheu a descrição
+                sprite: _sprite_final,
+                description: _desc_final, 
                 next_level: _next_level,
                 type: 0, 
                 id_grid: i 
@@ -135,8 +116,6 @@ function level_upp()
             var _curr_lvl_item = _grid_items[# Itens_vamp.level, k];
             var _item_data = _config_scr_item();
             var _max_lvl_item = array_length(_item_data.niveis);
-            
-            // REMOVIDO A TRAVA DE MAX LEVEL AQUI
             
             var _next_level_item = _curr_lvl_item + 1;
             
@@ -175,33 +154,59 @@ function level_upp()
     }
 
     ds_list_destroy(_pool);
-    
-    // show_debug_message("Dealer Sorteou: "+string(ds_list_size(global.upgrades_vamp_list))+" cartas de um pool de "+string(_pool_size)+" opções.");
 }
 
-/// @desc Adiciona XP e verifica Level Up
+
+// ============================================================================
+// 2. FUNÇÃO AUXILIAR DE MATEMÁTICA (Separada para organização)
+// ============================================================================
+function aplicar_status_level() {
+    var _prev_lvl = global.level_player - 1;
+    var _curr_lvl = global.level_player;
+
+    global.vida_max_calc[_curr_lvl]     = global.vida_max_calc[_prev_lvl] + (_curr_lvl * 0.8);
+    global.max_estamina_calc[_curr_lvl] = global.max_estamina_calc[_prev_lvl] + 5;
+    global.dano_base[_curr_lvl]         = global.dano_base[_prev_lvl] * 1.1;
+
+    global.vida_max = global.vida_max_calc[_curr_lvl];
+    global.max_estamina = global.max_estamina_calc[_curr_lvl];
+    global.ataque = global.dano_base[_curr_lvl];
+}
+
+
+// ============================================================================
+// 3. FUNÇÃO DE GANHAR XP (Com sistema de Fila de Level Up)
+// ============================================================================
 function ganhar_xp(_xp_amount) 
 {
     global.xp += _xp_amount;
     
-    // Loop while para garantir que, se ganhar muito XP, suba vários níveis
-    while (true) 
+    // Calcula o max_xp baseado no level atual
+    global.max_xp = global.level_player * 100;
+    
+    // 1. Verifica quantos níveis foram subidos e acumula na fila
+    while (global.xp >= global.max_xp) 
     {
-        global.max_xp = global.level_player * 100; // Curva de XP
+        global.xp -= global.max_xp;
+        global.level_player += 1;
         
-        if (global.xp >= global.max_xp) 
-        {
-            global.xp -= global.max_xp;
-            level_up();
-        } 
-        else 
-        {
-            break; // Sai do loop se não tiver XP suficiente
-        }
+        // Recalcula o max_xp pro PRÓXIMO nível dentro do loop
+        global.max_xp = global.level_player * 100; 
+        
+        // Acumula na fila de upgrades pendentes
+        global.levels_pendentes += 1;
+        
+        // Aplica os bônus matemáticos imediatamente (Vida, Estamina, Dano)
+        aplicar_status_level(); 
+    }
+    
+    // 2. Se subiu de nível e o jogo ainda não está pausado pelo Level Up, abre o menu
+    if (global.levels_pendentes > 0 && global.level_up == false) 
+    {
+        level_upp();
     }
 }
 
-/// @desc Calcula se o ataque atual é crítico
 function calcular_critico() 
 {
     // Chance baseada no nível (ex: Nível 10 = 10% de chance)

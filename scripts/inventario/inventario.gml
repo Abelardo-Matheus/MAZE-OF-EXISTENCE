@@ -191,10 +191,7 @@ function inventory_clear_slot(_slot) {
 /// @func recalculate_player_stats()
 /// @desc Atualiza os atributos do player baseados nos itens equipados
 function recalculate_player_stats() {
-    // 1. Reseta para os valores base (defina seus globais padrão aqui)
-    global.ataque = 10; // Valor base exemplo
-    global.armadura_bebe = 0;
-    global.speed_player = 4; // Valor base exemplo
+
 
     // 2. Soma atributos da ARMA (Slot fixo definido no Create: slot_index_weapon)
     // Nota: Como você está usando variáveis de instância no obj_inventario, 

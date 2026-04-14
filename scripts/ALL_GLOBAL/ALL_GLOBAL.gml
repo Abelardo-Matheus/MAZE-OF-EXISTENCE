@@ -2,6 +2,7 @@ if (!variable_global_exists("enemy_list")) {
     global.enemy_list = ds_list_create(); // Lista para armazenar inimigos
 }
 criar_lista_itens_padronizados();
+global.levels_pendentes = 0; // Quantos upgrades o jogador ainda precisa escolher
 global.debug = true;
 global.max_sanidade = 100;
 global.sanidade = 100;
