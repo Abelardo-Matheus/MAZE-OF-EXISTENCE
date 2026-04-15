@@ -9,7 +9,7 @@ draw_set_alpha(alpha_pulsante);
 
 // Desenha várias bordas para parecer uma linha mais grossa
 for (var i = 0; i < 30; i++) {
-    draw_circle(x, y, distancia_criar - 1 + i, true); // borda falsa com espessura
+    //draw_circle(x, y, distancia_criar - 1 + i, true); // borda falsa com espessura
 	
 }
 

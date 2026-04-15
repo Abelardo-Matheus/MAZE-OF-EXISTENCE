@@ -1,9 +1,6 @@
 /// @desc Inicialização e Lógica de Geração Procedural por Chunks
 /// [O QUE]: Inicializa as estruturas de dados globais (Mapas e Listas) e define as funções de geração de mundo baseada na posição do player.
 
-
-
-
 // ============================================================================
 // FUNÇÃO PRINCIPAL: CHAMA A GERAÇÃO PARA O BLOCO ATUAL E OS 8 VIZINHOS (3x3)
 // ============================================================================
@@ -23,7 +20,9 @@ function gerar_estruturas(obj_struct, quantidade_estruturas, distancia_minima)
     }
 }
 
-
+// ============================================================================
+// FUNÇÃO DE RECONSTRUÇÃO (Load/Retorno)
+// ============================================================================
 function recriar_estruturas() 
 {
     // ==========================================
@@ -42,39 +41,18 @@ function recriar_estruturas()
         var _nome    = _info[5]; 
         var _escala_minimapa = _info[6]; 
 
+        // O objeto nasce e usa sua PRÓPRIA lógica de escala baseada na seed
         var _inst = instance_create_depth(_px, _py, 0, _obj, { seed: _seed });
         
-        var _obj_nome = object_get_name(_obj);
-        
-        // --- CORREÇÃO DOS SPRITES E ESCALAS ---
-        
-        // Se for POSTE: Escala 1
-        if (_obj_nome == "obj_poste") 
-        {
-            _inst.image_xscale = 1;
-            _inst.image_yscale = 1;
-        }
-        // Se for CASA ou ESTRUTURA: Escala 2 (conforme seu código anterior)
-        else if (_obj_nome == "obj_casa_1" || _obj_nome == "obj_casa_2" || 
-                 _obj_nome == "obj_casa_3" || _obj_nome == "obj_casa_4" || 
-                 _obj_nome == "obj_estrutura") 
-        {
-            _inst.image_xscale = 2;
-            _inst.image_yscale = 2;
-        }
-        else 
-        {
-            // Lógica para o BOSS ou outros
-            if (_spr != noone && _obj == obj_secondary_boss) { 
-                _inst.sprite_index = _spr; 
-            }
+        // Tratamento especial APENAS para o Boss se precisar forçar um sprite diferente do minimapa
+        if (_spr != noone && _obj == obj_secondary_boss) { 
+            _inst.sprite_index = _spr; 
         }
 
         _inst.nome = _nome;
-        _inst.escala_mini = _escala_minimapa; 
+        _inst.escala_mini = _escala_minimapa; // Guarda a escala apenas para uso no minimapa
     }
     
-
     // ==========================================
     // 2. Recria as Árvores
     // ==========================================
@@ -82,7 +60,6 @@ function recriar_estruturas()
     for (var i = 0; i < _total_arvores; i++) 
     {
         var _a_info = global.posicoes_arvores[| i];
-        // Ao passar a seed, o Create do obj_arvore vai sortear a escala certa sozinho
         instance_create_depth(_a_info[0], _a_info[1], 0, obj_arvore, { seed: _a_info[2] });
     }
 
@@ -106,6 +83,7 @@ function recriar_estruturas()
         instance_create_depth(_g_info[0], _g_info[1], 0, obj_grupo_inimigos, { seed: _g_info[2] });
     }
 }
+
 // ============================================================================
 // 1. INICIALIZAÇÃO GERAL (Coloque no Create do Controlador)
 // ============================================================================
@@ -117,7 +95,8 @@ function inicializar_gerador_mundo()
     if (!variable_global_exists("posicoes_pedras"))     global.posicoes_pedras = ds_list_create(); 
     if (!variable_global_exists("posicoes_bichos"))     global.posicoes_bichos = ds_list_create(); 
     if (!variable_global_exists("posicoes_grupos_inimigos")) global.posicoes_grupos_inimigos = ds_list_create(); 
-	if (!variable_global_exists("posicoes_monstros")) global.posicoes_monstros = ds_list_create();
+    if (!variable_global_exists("posicoes_monstros")) global.posicoes_monstros = ds_list_create();
+    
     // Mapas de Controle
     if (!variable_global_exists("blocos_gerados"))       global.blocos_gerados = ds_map_create(); 
     if (!variable_global_exists("blocos_gerados_grupo")) global.blocos_gerados_grupo = ds_map_create(); 
@@ -225,26 +204,26 @@ function gerenciar_mundo_procedural()
                 gerar_cobertura_cenario(_bx, _by, obj_arvore, irandom_range(200, 250), global.posicoes_arvores, 1);
                 gerar_cobertura_cenario(_bx, _by, obj_rock, irandom_range(5, 20), global.posicoes_pedras, 50);
                 gerar_fauna_para_bloco(_bx, _by, irandom_range(5, 15));
-                gerar_monstros_para_bloco(_bx, _by, _meu_bioma, 200); // <-- NOVA CHAMADA AQUI
+                gerar_monstros_para_bloco(_bx, _by, _meu_bioma, 200); 
                 break;
 
             case "cidade":
                 gerar_estruturas_para_bloco(_bx, _by, obj_estrutura, irandom_range(4, 10), 300);
                 gerar_estruturas_para_bloco(_bx, _by, obj_poste, irandom_range(3, 6), 200);
                 gerar_estruturas_para_bloco(_bx, _by, par_npc_vendedor_um, 1, 400);
-                gerar_monstros_para_bloco(_bx, _by, _meu_bioma, 300); // <-- NOVA CHAMADA AQUI
+                gerar_monstros_para_bloco(_bx, _by, _meu_bioma, 300); 
                 break;
 
             case "floresta_negra":
                 gerar_estruturas_para_bloco(_bx, _by, obj_grupo_inimigos, irandom_range(3, 8), 400);
                 gerar_cobertura_cenario(_bx, _by, obj_arvore, irandom_range(30, 60), global.posicoes_arvores, 100);
-                gerar_monstros_para_bloco(_bx, _by, _meu_bioma, 200); // <-- NOVA CHAMADA AQUI
+                gerar_monstros_para_bloco(_bx, _by, _meu_bioma, 200); 
                 break;
 
             case "vazia":
                 gerar_estruturas_para_bloco(_bx, _by, obj_secondary_boss, 1, 1000); 
                 gerar_cobertura_cenario(_bx, _by, obj_rock, irandom_range(50, 100), global.posicoes_pedras, 50);
-                gerar_monstros_para_bloco(_bx, _by, _meu_bioma, 500); // <-- NOVA CHAMADA AQUI
+                gerar_monstros_para_bloco(_bx, _by, _meu_bioma, 500); 
                 break;
         }
 
@@ -252,6 +231,9 @@ function gerenciar_mundo_procedural()
     }
 }
 
+// ============================================================================
+// 4. FUNÇÃO DE ESTRUTURAS
+// ============================================================================
 function gerar_estruturas_para_bloco(bx, by, obj_struct, quantidade_estruturas, distancia_minima) 
 {
     var _bloco_id = "struct_" + object_get_name(obj_struct) + "_" + string(bx) + "," + string(by);
@@ -295,26 +277,22 @@ function gerar_estruturas_para_bloco(bx, by, obj_struct, quantidade_estruturas, 
                 _obj_a_criar = _objetos_casas[_indice];
             }
 
-            // CRIAÇÃO: Passamos a seed e configuramos o objeto IMEDIATAMENTE
+            // CRIAÇÃO: Passamos a seed e o objeto se auto-configura no seu próprio Create!
             var _nova_est = instance_create_depth(_pos_x, _pos_y, 0, _obj_a_criar, { seed: _seed });
             
             var _spr = noone; 
             var _nome = "Outro"; 
-            var _escala_mundo = 1; // Escala padrão no jogo
 
+            // Define os dados EXCLUSIVOS PARA O MINIMAPA
             switch (obj_struct) {
-                case obj_estrutura:       _spr = spr_casa_mini_map;      _nome = "Casa"; _escala_mundo = 2; break;
-                case obj_poste:           _spr = spr_poste_mini_map;     _nome = "Poste" ; break;
+                case obj_estrutura:       _spr = spr_casa_mini_map;      _nome = "Casa"; break;
+                case obj_poste:           _spr = spr_poste_mini_map;     _nome = "Poste"; break;
                 case obj_grupo_inimigos:  _spr = spr_grupoini_mini_map;  _nome = "Grupo Inimigos"; break;
                 case par_npc_vendedor_um: _spr = spr_vendedor;           _nome = "Vendedor"; break;
-                case obj_secondary_boss:  _spr = spr_boss_mini_map;      _nome = "BOSS"; _escala_mundo = 0.03; break;
+                case obj_secondary_boss:  _spr = spr_boss_mini_map;      _nome = "BOSS"; break;
             }
 
-            // FORÇA A ESCALA NO MUNDO (Igual o antigo fazia)
-            _nova_est.image_xscale = _escala_mundo;
-            _nova_est.image_yscale = _escala_mundo;
-
-            // CÁLCULO DA ESCALA DO MINIMAPA
+            // CÁLCULO DA ESCALA DO MINIMAPA (Não afeta o objeto real)
             var _escala_minimapa = 1;
             if (_spr != noone) {
                 var _tamanho_alvo = 10; 
@@ -322,7 +300,7 @@ function gerar_estruturas_para_bloco(bx, by, obj_struct, quantidade_estruturas, 
                 if (_largura_real > 0) _escala_minimapa = _tamanho_alvo / _largura_real;
             }
 
-            // SALVA TUDO (Incluindo o objeto real criado para o recriar_estruturas não bugar)
+            // SALVA TUDO
             ds_list_add(global.posicoes_estruturas, [_pos_x, _pos_y, _seed, _obj_a_criar, _spr, _nome, _escala_minimapa]);
             
             instance_deactivate_object(_nova_est);
@@ -332,6 +310,9 @@ function gerar_estruturas_para_bloco(bx, by, obj_struct, quantidade_estruturas, 
     }
 }
 
+// ============================================================================
+// 5. FUNÇÃO DE CENÁRIO 
+// ============================================================================
 function gerar_cobertura_cenario(bx, by, obj, quantidade, lista_global, dist_minima) 
 {
     var _bloco_id = "cenario_" + object_get_name(obj) + "_" + string(bx) + "," + string(by);
@@ -342,6 +323,8 @@ function gerar_cobertura_cenario(bx, by, obj, quantidade, lista_global, dist_min
     var _inicio_y = by * global.tamanho_bloco;
 
     var _celulas_por_lado = ceil(sqrt(quantidade));
+    if (_celulas_por_lado == 0) return; // Segurança
+    
     var _tamanho_celula = global.tamanho_bloco / _celulas_por_lado;
 
     for (var i = 0; i < _celulas_por_lado; i++) 
@@ -353,12 +336,15 @@ function gerar_cobertura_cenario(bx, by, obj, quantidade, lista_global, dist_min
                 var _pos_x = _inicio_x + (i * _tamanho_celula) + random_range(50, _tamanho_celula - 50);
                 var _pos_y = _inicio_y + (j * _tamanho_celula) + random_range(50, _tamanho_celula - 50);
 
-                // Checa colisão com estruturas VIPS
                 var _pode_criar = true;
+
+                // Checa colisão com estruturas VIPS
                 var _total_estruturas = ds_list_size(global.posicoes_estruturas);
-                for (var k = 0; k < _total_estruturas; k++) {
+                for (var k = 0; k < _total_estruturas; k++) 
+                {
                     var _info = global.posicoes_estruturas[| k];
-                    if (point_distance(_pos_x, _pos_y, _info[0], _info[1]) < dist_minima) {
+                    if (point_distance(_pos_x, _pos_y, _info[0], _info[1]) < dist_minima) 
+                    {
                         _pode_criar = false; break; 
                     }
                 }
@@ -366,10 +352,12 @@ function gerar_cobertura_cenario(bx, by, obj, quantidade, lista_global, dist_min
                 if (_pode_criar) 
                 {
                     var _seed = abs((_pos_x * 73856093) ^ (_pos_y * 19349663));
+                    
+                    // O objeto nasce e se auto-escala baseado na seed
                     var _inst = instance_create_depth(_pos_x, _pos_y, 0, obj, { seed: _seed });
 
-                    // SALVA A ESCALA REAL (Captura o image_xscale que o Create do objeto gerou)
-                    ds_list_add(lista_global, [_pos_x, _pos_y, _seed, _inst.image_xscale]);
+                    // A escala não é mais salva! Apenas Posição e Seed importam.
+                    ds_list_add(lista_global, [_pos_x, _pos_y, _seed]);
 
                     instance_deactivate_object(_inst); 
                 }
@@ -377,8 +365,9 @@ function gerar_cobertura_cenario(bx, by, obj, quantidade, lista_global, dist_min
         }
     }
 }
+
 // ============================================================================
-// 6. FUNÇÃO DE BICHOS
+// 6. FUNÇÃO DE BICHOS (A fauna usa a mesma lógica, mantida igual por segurança)
 // ============================================================================
 function gerar_fauna_para_bloco(bx, by, quantidade_tentativas) 
 {
@@ -407,10 +396,11 @@ function gerar_fauna_para_bloco(bx, by, quantidade_tentativas)
         else if (_chance < 95) { _spr = spr_barata; _vel = 1.2; _esc = random_range(0.2, 0.3); } 
         else                   { _spr = spr_escorpiao; _vel = 0.8; _esc = random_range(0.4, 0.5); }
 
-        // INJEÇÃO DE SEED
         var _bicho = instance_create_depth(_pos_x, _pos_y, 0, obj_bicho_ambiente, { seed: _seed });
         _bicho.sprite_index = _spr; 
         _bicho.vel_maxima = _vel;
+        
+        // A fauna ainda escala aqui porque ela é um objeto genérico que muda de tipo (formiga, barata)
         _bicho.image_xscale = _esc; 
         _bicho.image_yscale = _esc;
 

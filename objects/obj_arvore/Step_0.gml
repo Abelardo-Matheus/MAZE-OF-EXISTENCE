@@ -49,7 +49,7 @@ if (instance_exists(obj_player)) {
         
         // Verifica se está atrás (Y menor)
         if (obj_player.y < y) {
-            image_alpha = 0.5; // Fica transparente
+            image_alpha = 0.2; // Fica transparente
             solid = false;     // Tira a colisão
         } 
         else {

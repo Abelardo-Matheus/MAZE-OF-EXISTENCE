@@ -1,7 +1,8 @@
 randomize();
 image_index = irandom_range(1, 3);
-image_xscale = 3;
-image_yscale = 3;
+escale = irandom_range(2, 6);
+image_xscale = escale;
+image_yscale = escale;
 depth = -y;
 
 vida = 100;

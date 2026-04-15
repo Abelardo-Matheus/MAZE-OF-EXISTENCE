@@ -12,8 +12,7 @@ else if (image_index == 2) {
 else if (image_index == 3) {
     quantis = irandom_range(4, 6);
 }
-// Se image_index for 0, quantis continuará sendo -1
-escala = 4;
-image_xscale =  escala;
-image_yscale =  escala;
+escale = irandom_range(4, 7);
+image_xscale = escale;
+image_yscale = escale;
 depth = -y;
