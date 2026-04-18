@@ -1,5 +1,5 @@
+depth = -y
 var distancia_player = point_distance(x, y, obj_player.x, obj_player.y);
-
 
 if (distancia_player < distancia_criar) { // só spawna se o player estiver a menos de 2000 pixels
     if (inimigos_spawnados < quantidade_total) {

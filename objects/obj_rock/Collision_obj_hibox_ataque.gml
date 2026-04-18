@@ -12,7 +12,7 @@ if (vida <= 0) {
     // Rola um "dado" de 1 a 100
     var _sorteio = irandom_range(1, 100);
     
-    if (_sorteio <= 10) { 
+    if (_sorteio <= 5) { 
         // Caiu 1 (1% de chance): Sorte grande! Dropa Ferro.
         criar_drop_especifico(x, y, "Barra de Ferro", quantis, 0); // Lembre de usar o nome exato do item na sua database!
     } else { 

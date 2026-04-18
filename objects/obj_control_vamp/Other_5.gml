@@ -1,1 +1,1 @@
-audio_pause_sound(snd_musica_fundo_2)
+audio_pause_sound(snd_background_music_adventure)

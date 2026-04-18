@@ -1,1 +1,1 @@
-audio_play_sound(snd_musica_fundo_2, 1 , true);
+audio_play_sound(snd_background_music_adventure, 1 , true);

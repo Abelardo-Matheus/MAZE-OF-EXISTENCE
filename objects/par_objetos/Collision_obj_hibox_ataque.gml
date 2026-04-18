@@ -1,7 +1,7 @@
 vida -= 10;
 show_debug_message(vida);
 quantis = choose(1, 2, 3, 4, 5, 6);
-
+audio_play_sound(snd_damage, 1, false);
 // --- ATIVA OS EFEITOS VISUAIS ---
 tempo_piscar = 8;   // Quantidade de frames que vai ficar piscando
 tempo_balancar = 15; // Quantidade de frames que vai ficar balançando

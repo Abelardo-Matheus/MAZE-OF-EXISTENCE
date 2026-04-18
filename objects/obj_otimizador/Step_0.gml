@@ -10,7 +10,7 @@ var _cam_w = camera_get_view_width(_cam);
 var _cam_h = camera_get_view_height(_cam);
 
 // 3. Define uma margem (em pixels) para os objetos não "pipocarem" do nada na beirada da tela
-var _margem = 300; 
+var _margem = 900; 
 
 // ==========================================
 // A MÁGICA DA OTIMIZAÇÃO

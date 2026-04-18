@@ -33,7 +33,7 @@ global.upgrade_num = 4; // Quantidade de opções que aparecem na tela (3 ou 4)
 function level_upp() 
 {
     global.level_up = true; // Ativa flag para pausar a lógica do jogo e abrir o menu
-
+	audio_play_sound(snd_up, 1 , false);
     // ============================================================
     // SORTEIO DE CARTAS (Dealer System - Data-Driven INFINITO)
     // ============================================================

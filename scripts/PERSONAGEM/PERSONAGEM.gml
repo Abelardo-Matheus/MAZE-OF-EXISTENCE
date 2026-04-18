@@ -32,8 +32,13 @@ function scr_personagem_andando() {
         andar = false;
     }
 
-    // Aplica Movimento
+    // ==========================================
+    // --- APLICA MOVIMENTO E SOM DE PASSO ---
+    // ==========================================
     if (_h_input != 0 || _v_input != 0) {
+        
+        tocar_som_passo();
+
         var _dir_input = point_direction(0, 0, _h_input, _v_input);
         hveloc = lengthdir_x(_speed, _dir_input);
         vveloc = lengthdir_y(_speed, _dir_input);
@@ -45,6 +50,12 @@ function scr_personagem_andando() {
         else if (_v_input < 0) { dir = 1; sprite_index = spr_player_cima; }
         
     } else {
+        parar_som_passo();
+        // ESTÁ PARADO: Para de tocar o som do passo
+        if (audio_is_playing(snd_walk)) {
+            audio_stop_sound(snd_walk);
+        }
+
         hveloc = 0;
         vveloc = 0;
         
@@ -62,20 +73,18 @@ function scr_personagem_andando() {
 
     // --- Transição de Estados (Ataque e Dash) ---
     
-    // --- Transição de Estados (Ataque e Dash) ---
-    
     // Ataque (Botão Esquerdo)
     if (mouse_check_button_pressed(mb_left)) {
         
-        // =======================================================
-        // NOVO: Calcula a direção do mouse e atualiza o 'dir'
-        // =======================================================
+        // --- NOVO: Para o som do passo ao atacar ---
+        if (audio_is_playing(snd_walk)) audio_stop_sound(snd_walk);
+        
+        // Calcula a direção do mouse e atualiza o 'dir'
         var _dir_mouse = point_direction(x, y, mouse_x, mouse_y);
         
         // Converte os 360 graus do mouse para as 4 direções (0, 1, 2, 3)
         dir = round(_dir_mouse / 90);
         if (dir == 4) dir = 0; // Corrige o ângulo de 360º para virar 0 (Direita)
-        // =======================================================
 
         if (global.armamento == Armamentos.espada) {
             image_index = 0;
@@ -90,6 +99,10 @@ function scr_personagem_andando() {
 
     // Dash (Botão Direito)
     if (mouse_check_button_pressed(mb_right) && global.estamina >= 10 && alarm[ALARM_DASH_COOLDOWN] <= 0) {
+        
+        // --- NOVO: Para o som do passo ao dar dash ---
+        if (audio_is_playing(snd_walk)) audio_stop_sound(snd_walk);
+
         global.estamina -= 10;
         alarm[ALARM_ESTAMINA] = 60;
         
@@ -142,40 +155,23 @@ function scr_ataque_player() {
         case 3: sprite_index = spr_player_baixo_parado_atacando; break;
     }
 
-    // Cria Hitbox no momento certo da animação (ex: frame 1)
+    // Cria Hitbox (A Lógica de Dano continua aqui)
     if (image_index >= 1 && !atacando) {
-        atacando = true;
+        atacando = true; 
         
         var _xx = x;
         var _yy = y;
-        var _angle = 0; // Ângulo padrão (direita)
+        var _angle = 0; 
         
-        // Ajuste da posição e DEFINIÇÃO DO ÂNGULO baseado na direção
         switch (dir) {
-            case 0: // Direita
-                _xx += 20;
-                _angle = 0;
-                break;
-            case 1: // Cima
-                _yy -= 20;
-                _angle = 90; // Gira 90 graus para cima
-                break;
-            case 2: // Esquerda
-                _xx -= 20;
-                _angle = 180; // Gira 180 graus para a esquerda
-                break;
-            case 3: // Baixo
-                _yy += 20;
-                _angle = 270; // Gira 270 graus para baixo
-                break;
+            case 0: _xx += 20; _angle = 0;   break;
+            case 1: _yy -= 20; _angle = 90;  break;
+            case 2: _xx -= 20; _angle = 180; break;
+            case 3: _yy += 20; _angle = 270; break;
         }
         
-        // Cria a hitbox única e define seu ângulo de rotação
         var _hitbox = instance_create_layer(_xx, _yy, "Instances", obj_hibox_ataque);
-        
-        // Define o ângulo da sprite/máscara da hitbox
         _hitbox.image_angle = _angle; 
-        
         _hitbox.dano = global.ataque;
         _hitbox.pode_matar_fantasma = global.mata_fantasma;
     }
