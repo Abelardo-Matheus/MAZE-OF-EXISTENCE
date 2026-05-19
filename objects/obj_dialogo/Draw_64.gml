@@ -29,6 +29,10 @@ if (initialized == true)
 	
 	
     draw_set_font(fnt_dialogos);
+    draw_set_halign(fa_left);   // GARANTE ALINHAMENTO À ESQUERDA
+    draw_set_valign(fa_top);    // GARANTE ALINHAMENTO AO TOPO
+    draw_set_alpha(1);
+    draw_set_color(c_white);
 
     // ============================================================
     // PARTE 1: CAIXA DE DIÁLOGO E RETRATO

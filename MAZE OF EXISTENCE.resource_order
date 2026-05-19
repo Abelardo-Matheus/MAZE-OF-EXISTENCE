@@ -16,6 +16,7 @@
     {"name":"GUI","order":1,"path":"folders/Objects/FASE_BEBE_ALL/CONTROLES/GUI.yy",},
     {"name":"IMAGENS","order":3,"path":"folders/Objects/FASE_BEBE_ALL/IMAGENS.yy",},
     {"name":"INIMIGOS","order":4,"path":"folders/Objects/FASE_BEBE_ALL/INIMIGOS.yy",},
+    {"name":"MENU","order":12,"path":"folders/Objects/FASE_BEBE_ALL/MENU.yy",},
     {"name":"NPC","order":7,"path":"folders/Objects/FASE_BEBE_ALL/NPC.yy",},
     {"name":"OBJETOS","order":5,"path":"folders/Objects/FASE_BEBE_ALL/OBJETOS.yy",},
     {"name":"PETS","order":9,"path":"folders/Objects/FASE_BEBE_ALL/PETS.yy",},
@@ -72,6 +73,7 @@
     {"name":"ORC","order":19,"path":"folders/Sprites/INIMIGOS/ORC.yy",},
     {"name":"SLIME","order":18,"path":"folders/Sprites/INIMIGOS/SLIME.yy",},
     {"name":"ITENS","order":3,"path":"folders/Sprites/ITENS.yy",},
+    {"name":"MENU","order":20,"path":"folders/Sprites/MENU.yy",},
     {"name":"NPCS","order":12,"path":"folders/Sprites/NPCS.yy",},
     {"name":"RETRATOS","order":1,"path":"folders/Sprites/NPCS/RETRATOS.yy",},
     {"name":"PETS","order":18,"path":"folders/Sprites/PETS.yy",},
@@ -85,8 +87,6 @@
     {"name":"sprite_icon","order":11,"path":"folders/Sprites/PODERES/sprite_icon.yy",},
     {"name":"TILES","order":13,"path":"folders/Sprites/TILES.yy",},
     {"name":"Timelines","order":8,"path":"folders/Timelines.yy",},
-    {"name":"MENU","order":20,"path":"folders/Sprites/MENU.yy",},
-    {"name":"MENU","order":12,"path":"folders/Objects/FASE_BEBE_ALL/MENU.yy",},
   ],
   "ResourceOrderSettings": [
     {"name":"obj_GUI","order":5,"path":"objects/obj_GUI/obj_GUI.yy",},
@@ -435,5 +435,6 @@
     {"name":"TileSet_grama","order":3,"path":"tilesets/TileSet_grama/TileSet_grama.yy",},
     {"name":"snd_musica_fundo_2","order":4,"path":"sounds/snd_musica_fundo_2/snd_musica_fundo_2.yy",},
     {"name":"spr_player_direita","order":2,"path":"sprites/spr_player_direita/spr_player_direita.yy",},
+    {"name":"obj_tutorial_controller","order":8,"path":"objects/obj_tutorial_controller/obj_tutorial_controller.yy",},
   ],
 }

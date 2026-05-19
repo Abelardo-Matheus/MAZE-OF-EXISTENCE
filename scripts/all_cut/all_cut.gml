@@ -4,14 +4,14 @@ function cutscene_fada1()
 
     _scene
         .set_var(obj_npc_fada, "dig", 3)
-        .move(obj_npc_fada, 0, 200, true, 3)    // Move relativo (+200y)
-        .sound(snd_fala, false)                 // Toca som
-        .scale(obj_npc_fada)                    // Inverte lado
-		.destroy(global.id_parede_um)
-        .wait(1)                                // Espera
-        .create(1825, 735, "Instances_Enemys", obj_amoeba)
+        .move(obj_npc_fada, 0, 200, true, 3)     // Move relativo (+200y para descer)
+        .sound(snd_fala, false)
+        .scale(obj_npc_fada, -3)                // Olha para o player (escala 3 base)
+        .wait(1)
+        .create(obj_npc_fada.x + 200, obj_npc_fada.y, "Instances_Enemys", obj_amoeba)
+        .dialogue("C1")                         // NOVO: Chama o diálogo "C1" e espera terminar
         .move(obj_npc_fada, 800, 0, true, 3)
-        .finish(obj_cutscene)                   // Libera controle (se necessário)
+        .finish(obj_cutscene)
         .run();
 }
 

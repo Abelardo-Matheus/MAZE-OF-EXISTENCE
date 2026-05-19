@@ -1,13 +1,27 @@
-if (!variable_global_exists("enemy_list")) {
-    global.enemy_list = ds_list_create(); // Lista para armazenar inimigos
+/// @desc Inicialização de Variáveis Globais (Garantia de Execução Única)
+
+// Função auxiliar para inicializar listas globais com segurança
+function initialize_global_list(_name) {
+    if (!variable_global_exists(_name)) {
+        variable_global_set(_name, ds_list_create());
+    } else {
+        var _list = variable_global_get(_name);
+        if (ds_exists(_list, ds_type_list)) ds_list_clear(_list);
+        else variable_global_set(_name, ds_list_create());
+    }
 }
-criar_lista_itens_padronizados();
-global.levels_pendentes = 0; // Quantos upgrades o jogador ainda precisa escolher
+
+// --- Listas e Estruturas de Dados ---
+initialize_global_list("enemy_list");
+initialize_global_list("lista_luzes");
+initialize_global_list("active_upgrades");
+
+// --- Configurações de Jogo ---
+global.levels_pendentes = 0;
 global.debug = true;
 global.max_sanidade = 100;
 global.sanidade = 100;
 global.minimap_expandido = false;
-global.lista_luzes = ds_list_create();
 global.map_vamp = true;
 global.map_bebe = true;
 global.pos_x_map = -1;
@@ -17,7 +31,7 @@ global.moedas = 1000;
 global.seed_map = random_get_seed();
 global.estruturas_criadas = false;
 global.vetor_estruturas = [];
-global.dist_aggro_amoeba =  200;
+global.dist_aggro_amoeba = 200;
 global.fase = 0;
 global.dist_desaggro_amoeba = 400;
 global.level_fase = 1;
@@ -58,4 +72,6 @@ global.seed_atual = noone;
 global.coleta = 50;
 global.moving_towards_player = true;
 global.upgrade_num = 4;
-global.active_upgrades = ds_list_create();
+
+// Inicializa catálogo de itens se necessário
+criar_lista_itens_padronizados();

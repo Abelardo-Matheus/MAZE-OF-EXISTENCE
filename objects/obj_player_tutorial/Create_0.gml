@@ -35,3 +35,12 @@ piscando_timer = 30;  // Intervalo de piscada (30 frames, ajustável)
 
 dash_dir = -1;
 dash_veloc = 20;
+global.current_player = id; // Define para o sistema de diálogo saber quem travar
+
+// Inicia o controlador de tutorial com segurança (workaround para erro de indexação)
+var _tuto_obj = asset_get_index("obj_tutorial_controller");
+if (_tuto_obj != -1) {
+    if (!instance_exists(_tuto_obj)) {
+        instance_create_layer(x, y, "Instances", _tuto_obj);
+    }
+}

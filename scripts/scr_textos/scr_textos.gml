@@ -219,6 +219,47 @@ function scr_dialogs()
             dialog_add("Fada", spr_retrato1_fada, 1, 
                 "Espere o que é aquilo?");
             break;
+
+        // ============================================================
+        // TUTORIAL MECÂNICAS
+        // ============================================================
+        case "Tuto_Move":
+            dialog_add("Guia", spr_retrato1_fada, 1, "Bem-vindo ao Labirinto da Existência! Use as teclas WASD ou Setas para se mover.");
+            break;
+        case "Tuto_Interact":
+            dialog_add("Guia", spr_retrato1_fada, 1, "Muito bem! Agora, chegue perto da Fada e pressione 'F' para falar com ela.");
+            break;
+        case "Tuto_Combat":
+            dialog_add("Guia", spr_retrato1_fada, 1, "Cuidado! Uma Amoeba apareceu. Use o Botão Esquerdo do Mouse para atacar com sua espada.");
+            break;
+        case "Tuto_Dash":
+            dialog_add("Guia", spr_retrato1_fada, 1, "Rápido! Use o Botão Direito do Mouse para dar um Dash e escapar do perigo.");
+            break;
+        case "Tuto_Weapon":
+            dialog_add("Guia", spr_retrato1_fada, 1, "Você também tem um arco! Use a Roda do Mouse para trocar de arma.");
+            break;
+        case "Tuto_End":
+            dialog_add("Fada", spr_retrato1_fada, 1, "Você está pronto. Deseja sair do tutorial e enfrentar o mundo real agora?");
+            dialog_option("Sim, ir para fora.", "Sair_Tutorial");
+            dialog_option("Ainda não.", "Ficar_Tutorial");
+            break;
+
+        case "Sair_Tutorial":
+            // Prepara a transição para a Fase Vamp
+            global.fase = 1;
+            global.map_vamp = true;
+            global.map_bebe = false;
+            room_goto(Fase_vamp);
+            break;
+
+        case "Ficar_Tutorial":
+            dialog_add("Fada", spr_retrato1_fada, 1, "Tudo bem, estarei aqui quando você decidir partir.");
+            break;
+
+        case "Tuto_Combat_Win":
+            dialog_add("Fada", spr_retrato1_fada, 1, "Excelente! Você a derrotou com facilidade.");
+            dialog_add("Fada", spr_retrato2_fada, 1, "Mas nem tudo pode ser resolvido com força bruta. No labirinto, saber quando fugir é tão importante quanto saber atacar.");
+            break;
    // --- SEGURANÇA CONTRA ERRO ---
         default:
             // Se o nome não for encontrado, mostra isso para te avisar

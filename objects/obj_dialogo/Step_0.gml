@@ -23,7 +23,11 @@ if(initialized = false){
 			 if(keyboard_check_pressed(ord("E"))){
 			global.dialogo = false;
 			instance_destroy();
-			obj_player.andar = false;
+			
+            // Usa global.current_player para ser compatível com Tutorial/Vampiro
+            if (instance_exists(global.current_player)) {
+                global.current_player.andar = false;
+            }
 			}
 		 }
 		}

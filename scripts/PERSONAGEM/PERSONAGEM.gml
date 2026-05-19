@@ -11,23 +11,19 @@
 // ------------------------------------------------------------------------------
 function scr_personagem_andando() {
     // --- Entradas (Inputs) ---
-    var _left  = keyboard_check(ord("A")) || keyboard_check(vk_left);
-    var _right = keyboard_check(ord("D")) || keyboard_check(vk_right);
-    var _up    = keyboard_check(ord("W")) || keyboard_check(vk_up);
-    var _down  = keyboard_check(ord("S")) || keyboard_check(vk_down);
-    var _run   = keyboard_check(vk_shift);
+    var _in = obter_inputs_jogador();
 
     // --- Cálculo de Velocidade ---
-    var _h_input = _right - _left;
-    var _v_input = _down - _up;
+    var _h_input = _in.direita - _in.esquerda;
+    var _v_input = _in.baixo - _in.cima;
     var _speed   = global.speed_player;
 
     // Sistema de Corrida (Gasta Estamina)
-    if (_run && global.estamina > 0 && (_h_input != 0 || _v_input != 0)) {
-        _speed += 2; // Bônus de velocidade
-        andar = true; // Flag para parar regeneração de estamina
-        global.estamina -= 0.5; // Custo por frame
-        alarm[ALARM_ESTAMINA] = 60; // Delay para voltar a regenerar
+    if (_in.shift && global.estamina > 0 && (_h_input != 0 || _v_input != 0)) {
+        _speed += 2;
+        andar = true;
+        global.estamina -= 0.5;
+        alarm[ALARM_ESTAMINA] = 60;
     } else {
         andar = false;
     }
@@ -36,30 +32,20 @@ function scr_personagem_andando() {
     // --- APLICA MOVIMENTO E SOM DE PASSO ---
     // ==========================================
     if (_h_input != 0 || _v_input != 0) {
-        
         tocar_som_passo();
-
         var _dir_input = point_direction(0, 0, _h_input, _v_input);
         hveloc = lengthdir_x(_speed, _dir_input);
         vveloc = lengthdir_y(_speed, _dir_input);
 
-        // Define direção do olhar (dir) e Sprite de Movimento
         if (_h_input > 0) { dir = 0; sprite_index = spr_player_direita; }
         else if (_h_input < 0) { dir = 2; sprite_index = spr_player_esquerda; }
         else if (_v_input > 0) { dir = 3; sprite_index = spr_player_baixo; }
         else if (_v_input < 0) { dir = 1; sprite_index = spr_player_cima; }
-        
     } else {
         parar_som_passo();
-        // ESTÁ PARADO: Para de tocar o som do passo
-        if (audio_is_playing(snd_walk)) {
-            audio_stop_sound(snd_walk);
-        }
-
         hveloc = 0;
         vveloc = 0;
         
-        // Sprite Parado (mantém a última direção 'dir')
         switch (dir) {
             case 0: sprite_index = spr_player_direita_parado; break;
             case 1: sprite_index = spr_player_cima_parado; break;
@@ -68,27 +54,17 @@ function scr_personagem_andando() {
         }
     }
 
-    // Aplica Colisão Segura
     scr_player_colisao();
 
-    // --- Transição de Estados (Ataque e Dash) ---
-    
-    // Ataque (Botão Esquerdo)
-    if (mouse_check_button_pressed(mb_left)) {
-        
-        // --- NOVO: Para o som do passo ao atacar ---
-        if (audio_is_playing(snd_walk)) audio_stop_sound(snd_walk);
-        
-        // Calcula a direção do mouse e atualiza o 'dir'
+    // --- Transição de Estados ---
+    if (_in.mouse_esq_press) {
+        parar_som_passo();
         var _dir_mouse = point_direction(x, y, mouse_x, mouse_y);
-        
-        // Converte os 360 graus do mouse para as 4 direções (0, 1, 2, 3)
-        dir = round(_dir_mouse / 90);
-        if (dir == 4) dir = 0; // Corrige o ângulo de 360º para virar 0 (Direita)
+        dir = round(_dir_mouse / 90) % 4;
 
         if (global.armamento == Armamentos.espada) {
             image_index = 0;
-            atacando = false; // Reseta flag de hitbox
+            atacando = false;
             state = scr_ataque_player;
         } 
         else if (global.armamento == Armamentos.arco) {
@@ -97,15 +73,10 @@ function scr_personagem_andando() {
         }
     }
 
-    // Dash (Botão Direito)
-    if (mouse_check_button_pressed(mb_right) && global.estamina >= 10 && alarm[ALARM_DASH_COOLDOWN] <= 0) {
-        
-        // --- NOVO: Para o som do passo ao dar dash ---
-        if (audio_is_playing(snd_walk)) audio_stop_sound(snd_walk);
-
+    if (_in.mouse_dir_press && global.estamina >= 10 && alarm[ALARM_DASH_COOLDOWN] <= 0) {
+        parar_som_passo();
         global.estamina -= 10;
         alarm[ALARM_ESTAMINA] = 60;
-        
         dash_dir = point_direction(x, y, mouse_x, mouse_y);
         global.in_dash = true;
         state = scr_personagem_dash;
@@ -292,32 +263,8 @@ function scr_personagem_hit() {
 // ------------------------------------------------------------------------------
 function scr_player_colisao() {
     // Verifica se a parede existe na sala
-    var _parede = (variable_global_exists("sala") && variable_struct_exists(global.sala, "parede")) ? global.sala.parede : obj_parede_bebe;
-
-    var _max_loops = 32; // Limite de segurança para evitar loops infinitos
-
-    // --- Colisão Horizontal ---
-    if (place_meeting(x + hveloc, y, _parede)) {
-        var _loops = 0;
-        // Tenta aproximar do objeto pixel por pixel
-        while (!place_meeting(x + sign(hveloc), y, _parede) && _loops < _max_loops) {
-            x += sign(hveloc);
-            _loops++;
-        }
-        hveloc = 0; // Para o movimento se bateu
-    }
-    x += hveloc; // Aplica o movimento
-
-    // --- Colisão Vertical ---
-    if (place_meeting(x, y + vveloc, _parede)) {
-        var _loops = 0;
-        while (!place_meeting(x, y + sign(vveloc), _parede) && _loops < _max_loops) {
-            y += sign(vveloc);
-            _loops++;
-        }
-        vveloc = 0; // Para o movimento se bateu
-    }
-    y += vveloc; // Aplica o movimento
+    var _parede = (variable_global_exists("sala") && variable_struct_exists(global.sala, "parede")) ? global.sala.parede : obj_wall;
+    aplicar_movimento_com_colisao(hveloc, vveloc, _parede);
 }
 
 // ------------------------------------------------------------------------------

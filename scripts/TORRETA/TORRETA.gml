@@ -14,24 +14,9 @@ function scr_torreta_hit(){
 
 
 function scr_torreta_colisao(){
-if(place_meeting(x + hveloc, y, global.sala.parede)){
-	while !place_meeting(x + sign(hveloc),y,global.sala.parede){
-		x += sign(hveloc);
-	}
-	hveloc = 0;
+    aplicar_movimento_com_colisao(hveloc, vveloc);
 }
 
-
-if(place_meeting(x , y + vveloc, global.sala.parede)){
-	while !place_meeting(x ,y + sign(vveloc),global.sala.parede){
-		y += sign(vveloc);
-	}
-	vveloc = 0;
-}
-// Atualiza a posição do player
-
-
-}
 
 function atirar_torreta(){
 	

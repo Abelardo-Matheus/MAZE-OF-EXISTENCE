@@ -1,6 +1,15 @@
 
 if(global.permitido == true){
     var sala_destino = room_destino;  // Sala que você está indo
+    
+    // Se estiver saindo do tutorial para a Fase_BEBE
+    if (room == Main_tutorial && sala_destino == Fase_BEBE) {
+        // Inicializa o gerador para a fase 1
+        global.fase = 1;
+        room_goto(Fase_BEBE);
+        exit;
+    }
+
 	if(sala_destino == global.templos_salas_pos[0]){
 		global.current_sala = global.templos_salas_pos[0];
 	carregar_sala_templo(sala_destino, room_origem,direcao);

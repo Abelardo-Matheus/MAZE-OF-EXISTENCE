@@ -11,6 +11,7 @@ timer = 0;
 // Variáveis de controle de movimento
 x_dest = -1; 
 y_dest = -1;
+dialogue_started = false;
 
 
 

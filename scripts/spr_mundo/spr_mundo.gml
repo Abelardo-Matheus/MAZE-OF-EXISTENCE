@@ -104,6 +104,14 @@ function inicializar_gerador_mundo()
     // NOVO: Mapa para guardar qual Bioma pertence a qual bloco
     if (!variable_global_exists("mapa_biomas"))          global.mapa_biomas = ds_map_create(); 
 
+    // NOVO: Spatial Hashing para Colisões na Geração (Alta Performance)
+    if (!variable_global_exists("grid_colisao_geracao")) global.grid_colisao_geracao = ds_map_create();
+
+    // NOVO: Spatial Hashing para Entidades do Mundo (Virtualização)
+    if (!variable_global_exists("grid_entidades_mundo")) global.grid_entidades_mundo = ds_map_create();
+    if (!variable_global_exists("instancias_ativas"))    global.instancias_ativas = ds_map_create();
+    if (!variable_global_exists("entidades_mortas"))     global.entidades_mortas = ds_map_create();
+
     // Fila de Processamento
     if (!variable_global_exists("fila_de_chunks"))       global.fila_de_chunks = []; 
 
@@ -113,6 +121,51 @@ function inicializar_gerador_mundo()
     
     // Profiling (Debug)
     if (!variable_global_exists("debug_tempo_total")) global.debug_tempo_total = 0;
+}
+
+/// @desc Registra uma entidade em um bloco específico para virtualização
+function registrar_entidade_no_bloco(_bx, _by, _tipo_lista, _dados) {
+    var _key = string(_bx) + "," + string(_by);
+    if (!ds_map_exists(global.grid_entidades_mundo, _key)) {
+        global.grid_entidades_mundo[? _key] = ds_list_create();
+    }
+    // Formato: [tipo_lista, dados_completos]
+    ds_list_add(global.grid_entidades_mundo[? _key], [_tipo_lista, _dados]);
+}
+
+/// @desc Registra uma posição na grid de colisão da geração
+function registrar_posicao_geracao(_x, _y) {
+    var _gx = floor(_x / 500); // Células de 500px para colisão
+    var _gy = floor(_y / 500);
+    var _key = string(_gx) + "," + string(_gy);
+    
+    if (!ds_map_exists(global.grid_colisao_geracao, _key)) {
+        global.grid_colisao_geracao[? _key] = ds_list_create();
+    }
+    ds_list_add(global.grid_colisao_geracao[? _key], [_x, _y]);
+}
+
+/// @desc Verifica se uma posição conflita com algo já gerado (Spatial Hashing)
+function posicao_conflitante_geracao(_x, _y, _dist_minima) {
+    var _gx = floor(_x / 500);
+    var _gy = floor(_y / 500);
+    
+    // Checa a célula atual e as 8 vizinhas
+    for (var i = -1; i <= 1; i++) {
+        for (var j = -1; j <= 1; j++) {
+            var _key = string(_gx + i) + "," + string(_gy + j);
+            var _list = global.grid_colisao_geracao[? _key];
+            
+            if (!is_undefined(_list)) {
+                var _size = ds_list_size(_list);
+                for (var k = 0; k < _size; k++) {
+                    var _pos = _list[| k];
+                    if (point_distance(_x, _y, _pos[0], _pos[1]) < _dist_minima) return true;
+                }
+            }
+        }
+    }
+    return false;
 }
 
 // ============================================================================
@@ -251,25 +304,14 @@ function gerar_estruturas_para_bloco(bx, by, obj_struct, quantidade_estruturas, 
     {
         var _pos_x = _centro_x + random_range(-global.tamanho_bloco / 2 + 100, global.tamanho_bloco / 2 - 100);
         var _pos_y = _centro_y + random_range(-global.tamanho_bloco / 2 + 100, global.tamanho_bloco / 2 - 100);
-        var _posicao_valida = true;
 
-        var _total_estruturas = ds_list_size(global.posicoes_estruturas);
-        for (var j = 0; j < _total_estruturas; j++) 
-        {
-            var _info = global.posicoes_estruturas[| j];
-            if (point_distance(_pos_x, _pos_y, _info[0], _info[1]) < distancia_minima) 
-            {
-                _posicao_valida = false; break;
-            }
-        }
-        
-        if (_posicao_valida) 
+        // PERFORMANCE: Spatial Hashing em vez de loop global
+        if (!posicao_conflitante_geracao(_pos_x, _pos_y, distancia_minima)) 
         {
             randomize(); 
             var _seed = random_get_seed();
             var _obj_a_criar = obj_struct;
 
-            // Lógica de sorteio de casas (Filhos)
             if (obj_struct == obj_estrutura) 
             {
                 var _objetos_casas = [obj_casa_1, obj_casa_2, obj_casa_3, obj_casa_4];
@@ -277,13 +319,9 @@ function gerar_estruturas_para_bloco(bx, by, obj_struct, quantidade_estruturas, 
                 _obj_a_criar = _objetos_casas[_indice];
             }
 
-            // CRIAÇÃO: Passamos a seed e o objeto se auto-configura no seu próprio Create!
-            var _nova_est = instance_create_depth(_pos_x, _pos_y, 0, _obj_a_criar, { seed: _seed });
-            
             var _spr = noone; 
             var _nome = "Outro"; 
 
-            // Define os dados EXCLUSIVOS PARA O MINIMAPA
             switch (obj_struct) {
                 case obj_estrutura:       _spr = spr_casa_mini_map;      _nome = "Casa"; break;
                 case obj_poste:           _spr = spr_poste_mini_map;     _nome = "Poste"; break;
@@ -292,7 +330,6 @@ function gerar_estruturas_para_bloco(bx, by, obj_struct, quantidade_estruturas, 
                 case obj_secondary_boss:  _spr = spr_boss_mini_map;      _nome = "BOSS"; break;
             }
 
-            // CÁLCULO DA ESCALA DO MINIMAPA (Não afeta o objeto real)
             var _escala_minimapa = 1;
             if (_spr != noone) {
                 var _tamanho_alvo = 10; 
@@ -300,10 +337,12 @@ function gerar_estruturas_para_bloco(bx, by, obj_struct, quantidade_estruturas, 
                 if (_largura_real > 0) _escala_minimapa = _tamanho_alvo / _largura_real;
             }
 
-            // SALVA TUDO
-            ds_list_add(global.posicoes_estruturas, [_pos_x, _pos_y, _seed, _obj_a_criar, _spr, _nome, _escala_minimapa]);
-            
-            instance_deactivate_object(_nova_est);
+            // VIRTUALIZAÇÃO: Apenas salva os dados. O obj_otimizador criará o objeto real.
+            var _dados = [_pos_x, _pos_y, _seed, _obj_a_criar, _spr, _nome, _escala_minimapa];
+            ds_list_add(global.posicoes_estruturas, _dados);
+            registrar_entidade_no_bloco(bx, by, "estrutura", _dados);
+            registrar_posicao_geracao(_pos_x, _pos_y);
+
             _estruturas_geradas++;
         }
         _tentativas++;
@@ -323,9 +362,12 @@ function gerar_cobertura_cenario(bx, by, obj, quantidade, lista_global, dist_min
     var _inicio_y = by * global.tamanho_bloco;
 
     var _celulas_por_lado = ceil(sqrt(quantidade));
-    if (_celulas_por_lado == 0) return; // Segurança
-    
+    if (_celulas_por_lado == 0) return; 
+
     var _tamanho_celula = global.tamanho_bloco / _celulas_por_lado;
+
+    // Identifica o tipo de cenário para a virtualização
+    var _tipo = (obj == obj_arvore) ? "arvore" : "pedra";
 
     for (var i = 0; i < _celulas_por_lado; i++) 
     {
@@ -336,30 +378,16 @@ function gerar_cobertura_cenario(bx, by, obj, quantidade, lista_global, dist_min
                 var _pos_x = _inicio_x + (i * _tamanho_celula) + random_range(50, _tamanho_celula - 50);
                 var _pos_y = _inicio_y + (j * _tamanho_celula) + random_range(50, _tamanho_celula - 50);
 
-                var _pode_criar = true;
-
-                // Checa colisão com estruturas VIPS
-                var _total_estruturas = ds_list_size(global.posicoes_estruturas);
-                for (var k = 0; k < _total_estruturas; k++) 
-                {
-                    var _info = global.posicoes_estruturas[| k];
-                    if (point_distance(_pos_x, _pos_y, _info[0], _info[1]) < dist_minima) 
-                    {
-                        _pode_criar = false; break; 
-                    }
-                }
-
-                if (_pode_criar) 
+                // PERFORMANCE: Spatial Hashing
+                if (!posicao_conflitante_geracao(_pos_x, _pos_y, dist_minima)) 
                 {
                     var _seed = abs((_pos_x * 73856093) ^ (_pos_y * 19349663));
-                    
-                    // O objeto nasce e se auto-escala baseado na seed
-                    var _inst = instance_create_depth(_pos_x, _pos_y, 0, obj, { seed: _seed });
 
-                    // A escala não é mais salva! Apenas Posição e Seed importam.
-                    ds_list_add(lista_global, [_pos_x, _pos_y, _seed]);
-
-                    instance_deactivate_object(_inst); 
+                    // VIRTUALIZAÇÃO: Apenas dados
+                    var _dados = [_pos_x, _pos_y, _seed];
+                    ds_list_add(lista_global, _dados);
+                    registrar_entidade_no_bloco(bx, by, _tipo, _dados);
+                    registrar_posicao_geracao(_pos_x, _pos_y);
                 }
             }
         }
@@ -367,7 +395,7 @@ function gerar_cobertura_cenario(bx, by, obj, quantidade, lista_global, dist_min
 }
 
 // ============================================================================
-// 6. FUNÇÃO DE BICHOS (A fauna usa a mesma lógica, mantida igual por segurança)
+// 6. FUNÇÃO DE BICHOS
 // ============================================================================
 function gerar_fauna_para_bloco(bx, by, quantidade_tentativas) 
 {
@@ -382,30 +410,25 @@ function gerar_fauna_para_bloco(bx, by, quantidade_tentativas)
     {
         var _pos_x = _inicio_x + random(global.tamanho_bloco);
         var _pos_y = _inicio_y + random(global.tamanho_bloco);
-        
+
         var _seed = abs((_pos_x * 73856) ^ (_pos_y * 19349));
         random_set_seed(_seed);
 
         var _chance = random(100);
         var _spr = spr_ant; 
         var _vel = 0.5;
-        var _esc = 0.2;
 
-        if (_chance < 50)      { _spr = spr_ant; _vel = 0.5; _esc = random_range(0.15, 0.25); } 
-        else if (_chance < 80) { _spr = spr_besouro; _vel = 0.3; _esc = random_range(0.3, 0.4); } 
-        else if (_chance < 95) { _spr = spr_barata; _vel = 1.2; _esc = random_range(0.2, 0.3); } 
-        else                   { _spr = spr_escorpiao; _vel = 0.8; _esc = random_range(0.4, 0.5); }
+        if (_chance < 50)      { _spr = spr_ant; _vel = 0.5; } 
+        else if (_chance < 80) { _spr = spr_besouro; _vel = 0.3; } 
+        else if (_chance < 95) { _spr = spr_barata; _vel = 1.2; } 
+        else                   { _spr = spr_escorpiao; _vel = 0.8; }
 
-        var _bicho = instance_create_depth(_pos_x, _pos_y, 0, obj_bicho_ambiente, { seed: _seed });
-        _bicho.sprite_index = _spr; 
-        _bicho.vel_maxima = _vel;
-        
-        // A fauna ainda escala aqui porque ela é um objeto genérico que muda de tipo (formiga, barata)
-        _bicho.image_xscale = _esc; 
-        _bicho.image_yscale = _esc;
+        // VIRTUALIZAÇÃO: Apenas dados
+        var _dados = [_pos_x, _pos_y, _seed, _spr, _vel];
+        ds_list_add(global.posicoes_bichos, _dados);
+        registrar_entidade_no_bloco(bx, by, "fauna", _dados);
+        registrar_posicao_geracao(_pos_x, _pos_y);
 
-        ds_list_add(global.posicoes_bichos, [_pos_x, _pos_y, _seed, _spr]);
         randomize(); 
-        instance_deactivate_object(_bicho); 
     }
 }

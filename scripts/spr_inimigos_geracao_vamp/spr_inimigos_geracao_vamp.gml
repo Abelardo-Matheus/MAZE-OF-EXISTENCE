@@ -10,24 +10,17 @@ function gerar_monstros_para_bloco(bx, by, bioma_atual, dist_minima)
     var _centro_x = (bx + 0.5) * global.tamanho_bloco;
     var _centro_y = (by + 0.5) * global.tamanho_bloco;
 
-    // =================================================================
-    // O SISTEMA DE LEVELING (Anéis de Distância)
-    // =================================================================
     var _distancia_da_origem = point_distance(0, 0, _centro_x, _centro_y);
     var _distancia_por_level = 8000; 
     var _level_da_area = 1 + floor(_distancia_da_origem / _distancia_por_level);
 
-    // =================================================================
-    // CATÁLOGO DE OBJETOS INIMIGOS POR BIOMA (O "Pool")
-    // =================================================================
     var _qtd_base = 0;
-    var _obj_monstro = noone; // Agora guarda o OBJETO real, e não o sprite!
+    var _obj_monstro = noone; 
     
     switch (bioma_atual) 
     {
         case "floresta":
             _qtd_base = irandom_range(3, 6);
-            // Escolhe entre os objetos filhos do par_inimigos específicos daqui
             _obj_monstro = choose(obj_amoeba, obj_amoeba_azul); 
             break;
             
@@ -43,25 +36,18 @@ function gerar_monstros_para_bloco(bx, by, bioma_atual, dist_minima)
             
         case "vazia":
             _qtd_base = irandom_range(1, 3);
-            _obj_monstro = obj_esqueleto; // Na área vazia podemos pôr só os mais chatos
+            _obj_monstro = obj_esqueleto; 
             break;
     }
 
-    // Se não tiver objeto configurado para o bioma, cancela a geração
     if (_obj_monstro == noone) return;
 
-    // =================================================================
-    // APLICAÇÃO DO LEVEL E STATUS
-    // =================================================================
     var _quantidade_final = _qtd_base + floor(_level_da_area / 2);
     var _escala_monstro = 1 + (_level_da_area * 0.15); 
     
     var _hp_calculado = 50 * _level_da_area;
     var _dano_calculado = 5 * _level_da_area;
 
-    // =================================================================
-    // LOOP DE GERAÇÃO FÍSICA
-    // =================================================================
     var _gerados = 0;
     var _tentativas = 0;
     var _max_tentativas = _quantidade_final * 3;
@@ -70,45 +56,25 @@ function gerar_monstros_para_bloco(bx, by, bioma_atual, dist_minima)
     {
         var _pos_x = _centro_x + random_range(-global.tamanho_bloco / 2 + 100, global.tamanho_bloco / 2 - 100);
         var _pos_y = _centro_y + random_range(-global.tamanho_bloco / 2 + 100, global.tamanho_bloco / 2 - 100);
-        var _posicao_valida = true;
 
-        var _total_estruturas = ds_list_size(global.posicoes_estruturas);
-        for (var j = 0; j < _total_estruturas; j++) {
-            var _info = global.posicoes_estruturas[| j];
-            if (point_distance(_pos_x, _pos_y, _info[0], _info[1]) < dist_minima) {
-                _posicao_valida = false; break;
-            }
-        }
-
-        if (_posicao_valida) 
+        // PERFORMANCE: Spatial Hashing
+        if (!posicao_conflitante_geracao(_pos_x, _pos_y, dist_minima)) 
         {
             randomize();
             var _seed = random_get_seed();
 
-            // =====================================================
-            // CRIAÇÃO DO OBJETO FILHO DIRETO
-            // =====================================================
-            // Passamos _obj_monstro na criação. Como ele já tem a sprite dele,
-            // não precisamos mais forçar o sprite_index!
-            var _novo_monstro = instance_create_depth(_pos_x, _pos_y, 0, _obj_monstro, { 
-                seed: _seed,
-                level: _level_da_area,
-                hp_maximo: _hp_calculado,
-                dano_base: _dano_calculado
-            });
+            // VIRTUALIZAÇÃO: Apenas dados
+            var _dados = [_pos_x, _pos_y, _seed, _obj_monstro, _escala_monstro, _hp_calculado, _dano_calculado, _level_da_area];
+            ds_list_add(global.posicoes_monstros, _dados);
+            registrar_entidade_no_bloco(bx, by, "monstro", _dados);
+            registrar_posicao_geracao(_pos_x, _pos_y);
 
-            _novo_monstro.image_xscale = _escala_monstro;
-            _novo_monstro.image_yscale = _escala_monstro;
-
-            // Salva o objeto (_obj_monstro) na memória, para ele dar o load no filho exato depois!
-            ds_list_add(global.posicoes_monstros, [_pos_x, _pos_y, _seed, _obj_monstro, _level_da_area, _escala_monstro]);
-
-            instance_deactivate_object(_novo_monstro);
             _gerados++;
         }
         _tentativas++;
     }
 }
+
 // ===========================================================================
 // SCRIPT: scr_wave_manager
 // DESC: Gerencia ondas de inimigos baseadas no tempo noturno.

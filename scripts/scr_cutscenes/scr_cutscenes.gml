@@ -10,6 +10,10 @@ function cutscene_next_action()
     with (obj_cutscene) 
     {
         action_index++;
+        timer = 0;
+        x_dest = -1;
+        y_dest = -1;
+        dialogue_started = false;
         
         if (action_index >= array_length(cutscene_data)) 
         {
@@ -146,6 +150,23 @@ function action_finish_cutscene(_object_to_unlock)
     cutscene_next_action();
 }
 
+/// @desc Inicia um diálogo e espera ele terminar.
+function action_dialogue(_npc_nome)
+{
+    if (obj_cutscene.dialogue_started == false) 
+    {
+        var _dialogo = instance_create_layer(0, 0, "Instances_dialogo", obj_dialogo);
+        _dialogo.npc_nome = _npc_nome;
+        obj_cutscene.dialogue_started = true;
+    } 
+    
+    // Quando o diálogo terminar (for destruído pelo player apertando E), avançamos
+    if (!instance_exists(obj_dialogo)) 
+    {
+        cutscene_next_action();
+    }
+}
+
 // ============================================================
 // PARTE 3: O CONSTRUTOR (BUILDER)
 // ============================================================
@@ -208,6 +229,13 @@ function CutsceneBuilder() constructor
     static set_var = function(_id, _var_name, _value) 
     {
         array_push(scene_data, [action_set_variable, _id, _var_name, _value]);
+        return self;
+    }
+
+    /// @func dialogue(npc_nome)
+    static dialogue = function(_npc_nome)
+    {
+        array_push(scene_data, [action_dialogue, _npc_nome]);
         return self;
     }
 

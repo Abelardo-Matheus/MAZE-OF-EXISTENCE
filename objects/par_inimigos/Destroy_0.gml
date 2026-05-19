@@ -1,3 +1,8 @@
+// Se este objeto era virtualizado, marca ele como morto permanentemente
+if (variable_instance_exists(id, "virtual_id")) {
+    global.entidades_mortas[? virtual_id] = true;
+}
+
 var index = ds_list_find_index(global.enemy_list, id);
 if (index != -1) {
     ds_list_delete(global.enemy_list, index);
