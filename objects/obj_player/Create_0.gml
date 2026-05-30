@@ -9,12 +9,6 @@
 #macro ALARM_KNOCKBACK 2        // Controla o tempo sendo empurrado
 #macro ALARM_INVENCIBILIDADE 3  // Controla o tempo piscando sem tomar dano
 
-// Enum de Armas (Caso não esteja em um script global)
-enum Armamentos {
-    espada,
-    arco,
-    Altura
-}
 
 // ========================================================
 // 2. VARIÁVEIS GLOBAIS (Persistência)

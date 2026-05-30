@@ -1,7 +1,8 @@
 // 1. Manda o alarme rodar de novo (Otimizado para rodar a cada 20 frames)
 alarm[0] = 20;
 
-if (!instance_exists(obj_player)) exit;
+var _target = instance_exists(global.current_player) ? global.current_player : obj_player;
+if (!instance_exists(_target)) exit;
 
 // 2. Câmera e Margens
 var _cam = view_camera[0];
@@ -87,7 +88,7 @@ while (!is_undefined(_key_inst)) {
     var _inst = global.instancias_ativas[? _key_inst];
     
     if (instance_exists(_inst)) {
-        if (point_distance(_inst.x, _inst.y, obj_player.x, obj_player.y) > _despawn_dist) {
+        if (point_distance(_inst.x, _inst.y, _target.x, _target.y) > _despawn_dist) {
             instance_destroy(_inst);
             array_push(_to_remove, _key_inst);
         }

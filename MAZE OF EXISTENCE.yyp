@@ -526,9 +526,9 @@
     {"id":{"name":"obj_tutorial_controller","path":"objects/obj_tutorial_controller/obj_tutorial_controller.yy",},},
   ],
   "RoomOrderNodes": [
+    {"roomId":{"name":"Fase_vamp","path":"rooms/Fase_vamp/Fase_vamp.yy",},},
     {"roomId":{"name":"Main_tutorial","path":"rooms/Main_tutorial/Main_tutorial.yy",},},
     {"roomId":{"name":"Menu","path":"rooms/Menu/Menu.yy",},},
-    {"roomId":{"name":"Fase_vamp","path":"rooms/Fase_vamp/Fase_vamp.yy",},},
     {"roomId":{"name":"Fase_BEBE","path":"rooms/Fase_BEBE/Fase_BEBE.yy",},},
   ],
   "templateType": "game",

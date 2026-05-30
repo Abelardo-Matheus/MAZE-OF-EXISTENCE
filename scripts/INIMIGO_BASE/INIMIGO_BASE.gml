@@ -68,7 +68,7 @@ function scr_inimigo_andar(){
     }
 }
 
-function scr_inimigo_parada(){
+function scr_inimigo_parado(){
     scr_inimigo_check_player();
     if (variable_instance_exists(id, "sprite_parado")) sprite_index = sprite_parado;
     hveloc = 0;

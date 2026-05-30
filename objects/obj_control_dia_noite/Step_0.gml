@@ -1,1 +1,1 @@
-day_night_cycle_manager();
+day_night_logic();

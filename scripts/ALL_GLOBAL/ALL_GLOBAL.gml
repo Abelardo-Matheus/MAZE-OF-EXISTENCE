@@ -16,7 +16,15 @@ initialize_global_list("enemy_list");
 initialize_global_list("lista_luzes");
 initialize_global_list("active_upgrades");
 
+// --- Definições de Tipos ---
+enum Armamentos {
+    espada,
+    arco,
+    Altura
+}
+
 // --- Configurações de Jogo ---
+global.armamento = Armamentos.espada;
 global.levels_pendentes = 0;
 global.debug = true;
 global.max_sanidade = 100;
@@ -43,6 +51,8 @@ global.slow = obj_slow_bebe;
 global.cor_dano = c_white;
 global.permitido = true;
 global.inimigo_id_count = 0;
+global.enemy_id_counter = 0; // Unifica nomes para compatibilidade
+global.level_player = 1;      // Nível base do jogador
 global.mata_fantasma = false;
 global.current_level = 1;
 global.armadura_bebe = 0;
@@ -72,6 +82,8 @@ global.seed_atual = noone;
 global.coleta = 50;
 global.moving_towards_player = true;
 global.upgrade_num = 4;
+global.timer = 0;
+global.timer_running = true;
 
 // Inicializa catálogo de itens se necessário
 criar_lista_itens_padronizados();

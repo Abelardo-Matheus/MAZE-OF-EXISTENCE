@@ -249,6 +249,9 @@ function scr_dialogs()
             global.fase = 1;
             global.map_vamp = true;
             global.map_bebe = false;
+            
+            // Destrói o diálogo para evitar erro de grid vazia
+            instance_destroy(); 
             room_goto(Fase_vamp);
             break;
 

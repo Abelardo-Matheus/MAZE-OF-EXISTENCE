@@ -12132,14 +12132,14 @@ y += vveloc;
 }
 function scr_escolher_state_inimigo(){
 	scr_inimigo_check_player();
-	prox_state = choose(scr_inimigo_andar,scr_inimigo_parada);
+	prox_state = choose(scr_inimigo_andar,scr_inimigo_parado);
 	
 	if(prox_state = scr_inimigo_andar){
 		state = scr_inimigo_andar;
 		dest_x = irandom_range(0,room_width);
 		dest_y = irandom_range(0,room_height);
-	}else if(prox_state = scr_inimigo_parada){
-		state = scr_inimigo_parada;
+	}else if(prox_state = scr_inimigo_parado){
+		state = scr_inimigo_parado;
 	}
 }
 
@@ -12161,7 +12161,7 @@ function scr_inimigo_andar(){
 	}
 }
 
-function scr_inimigo_parada(){
+function scr_inimigo_parado(){
 	scr_inimigo_check_player();
 }
 

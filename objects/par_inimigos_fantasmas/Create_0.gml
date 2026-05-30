@@ -5,8 +5,8 @@ state = -1;
 prox_state = 0;
 
 
-hvloc = 0;
-vvloc = 0;
+hveloc = 0;
+vveloc = 0;
 
 veloc = 0.8;
 

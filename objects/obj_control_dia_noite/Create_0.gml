@@ -11,11 +11,9 @@ global.time_accelerated = false; // Estado de aceleração (ex: dormir)
 
 // --- Estrutura do Ciclo Dia/Noite ---
 global.day_night_cycle = {
-    // TEMPO: (Segundos * Frames)
-    // Exemplo: 5 minutos = 5 * 60 * 60 (18.000 frames)
-    // Seu valor atual (3 * 60) é igual a 3 SEGUNDOS (útil para debug, muito rápido para gameplay)
-    day_duration:   3 * 60,    
-    night_duration: 3 * 60,    
+    // TEMPO: 5 minutos por fase (300 segundos * 60 FPS)
+    day_duration:   300 * 60,    
+    night_duration: 300 * 60,    
     
     current_cycle: 0,          // Timer progressivo (vai de 0 até a duração)
     is_day: true,              // Flag booleana
