@@ -9,7 +9,7 @@ function scr_rastro_sombrio_config()
             cooldown: 400, 
             duration: 2000, 
             radius: 30,
-            sprite_icon: spr_hitbox_ataque
+            sprite_icon: spr_rastro_icon
         },
         niveis: [
             { desc: "DEIXA POÇAS DE ENERGIA ESCURA NO CHÃO ENQUANTO SE MOVE.", upgrade: function(_s) { _s.damage = 3; } },

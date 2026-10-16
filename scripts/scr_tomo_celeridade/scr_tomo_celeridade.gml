@@ -6,7 +6,7 @@ function scr_tomo_celeridade_config()
     return {
         stats_base: {
             cooldown_reduction: 0,
-            sprite_icon: spr_relogio
+            sprite_icon: spr_tomo_icon
         },
         niveis: [
             { desc: "REDUZ O TEMPO DE RECARGA DAS HABILIDADES (-8%).", upgrade: function(_s) { _s.cooldown_reduction = 0.08; } },

@@ -11,7 +11,7 @@ function scr_adagas_velozes_config()
             speed: 12,
             spread: 10,
             size: 0.8,
-            sprite_icon: spr_flecha
+            sprite_icon: spr_adagas_icon
         },
         niveis: [
             { desc: "DISPARA UMA RAJADA DE ADAGAS NA DIREÇÃO DO OLHAR.", upgrade: function(_s) { _s.quantity = 2; } },

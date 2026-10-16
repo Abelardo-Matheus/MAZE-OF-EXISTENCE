@@ -6,7 +6,7 @@ function scr_anel_amplificador_config()
     return {
         stats_base: {
             area_gain: 0,
-            sprite_icon: spr_bola_icon
+            sprite_icon: spr_anel_icon
         },
         niveis: [
             { desc: "AUMENTA A ÁREA DE EFEITO DOS ATAQUES (+15%).", upgrade: function(_s) { _s.area_gain = 0.15; } },

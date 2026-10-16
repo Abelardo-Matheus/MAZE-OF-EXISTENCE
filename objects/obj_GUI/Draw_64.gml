@@ -95,9 +95,9 @@ if (global.level_up == true)
         {
             // Efeito Visual Hover
             _current_alpha = 1;
-            _current_scale = 1.2; // Aumenta tamanho
-            _icon_y_offset = -8;   // Sobe o ícone
-            _text_y_offset = 65;   // Sobe o texto do nome
+            _current_scale = 1.06; // Aumenta levemente (sem invadir as cartas vizinhas)
+            _icon_y_offset = 0;
+            _text_y_offset = 0;
             
             // ====================================================
             // --- Clique Esquerdo (LÓGICA DE FILA ATUALIZADA) ---
@@ -142,31 +142,64 @@ if (global.level_up == true)
         // --------------------------------------------------------
         
         // --- 1. Fundo da Carta ---
-        draw_sprite_ext(spr_level_up_hud, -1, _card_x, _center_y, _current_scale, _current_scale, 0, c_white, _current_alpha);
-        
-        // --- 2. Ícone Individual ---
-        var _icon_final_y = _center_y - (_sprite_h / 4) + _icon_y_offset;
-        
+        var _sc = _current_scale;
+        draw_sprite_ext(spr_level_up_hud, 0, _card_x, _center_y, _sc, _sc, 0, c_white, _current_alpha);
+
+        // Medidas internas do spr_level_up_hud (pixels do sprite, relativas à origem central 201,344):
+        //  - Quadro do ícone (área verde interna): x 42..360, y 49..344  -> centro (0, -147), 318 x 295
+        //  - Área de texto (parte escura):        x 30..372, y 351..653 -> topo +7, 342 de largura
+        var _box_cx = _card_x;
+        var _box_cy = _center_y - 147 * _sc;
+        var _box_w  = 318 * _sc;
+        var _box_h  = 295 * _sc;
+        var _text_top = _center_y + 7 * _sc;
+        var _text_w   = 300; // largura de quebra de linha (antes da escala)
+
+        // --- 2. Ícone: escala automática para caber no quadro (pixel perfect) ---
         if (sprite_exists(_sprite_icon)) {
-            draw_sprite_ext(_sprite_icon, 0, _card_x, _icon_final_y, _current_scale * 2, _current_scale * 2, 0, c_white, _current_alpha);
+            // Usa a bounding box (pixels visíveis) para centralizar e medir
+            var _bl = sprite_get_bbox_left(_sprite_icon);
+            var _bt = sprite_get_bbox_top(_sprite_icon);
+            var _bw = max(1, sprite_get_bbox_right(_sprite_icon)  - _bl + 1);
+            var _bh = max(1, sprite_get_bbox_bottom(_sprite_icon) - _bt + 1);
+            if (_bw > sprite_get_width(_sprite_icon) || _bh > sprite_get_height(_sprite_icon)) {
+                _bl = 0; _bt = 0;
+                _bw = sprite_get_width(_sprite_icon);
+                _bh = sprite_get_height(_sprite_icon);
+            }
+
+            var _pad = 0.78; // ocupa 78% do quadro
+            var _fit = min((_box_w * _pad) / _bw, (_box_h * _pad) / _bh);
+            if (_fit >= 3) _fit = floor(_fit); // ícones pequenos (pixel art): escala inteira = nítido
+
+            // Centro da bbox -> centro do quadro (independe da origem do sprite)
+            var _bcx = _bl + _bw / 2 - sprite_get_xoffset(_sprite_icon);
+            var _bcy = _bt + _bh / 2 - sprite_get_yoffset(_sprite_icon);
+            var _ix = _box_cx - _bcx * _fit;
+            var _iy = _box_cy - _bcy * _fit + _icon_y_offset;
+
+            draw_sprite_ext(_sprite_icon, 0, _ix, _iy, _fit, _fit, 0, c_white, _current_alpha);
         }
-        
+
         // --- 3. Textos ---
         draw_set_color(c_black);
         draw_set_halign(fa_center);
-        draw_set_valign(fa_middle);
 
-        // NOME DA SKILL
-        draw_set_font(fnt_nomes_up); 
-        var _name_display = _name ;
-        draw_text_colour_outline(_card_x, _center_y - (_sprite_h/2) - _text_y_offset, _name_display, 4, c_white, 8, 100, 100);
-        
-        // NÍVEL E DESCRIÇÃO
-        draw_set_font(fnt_descricao); 
-        var _desc_y = _center_y + (_sprite_h / 4) - 90;
-        
-        draw_text_colour_outline_escalado(_card_x - 2, _desc_y - 90, string(_next_lvl), 3, c_white, 7, 30, 300, _current_scale*2, _current_scale*2);
-        draw_text_colour_outline_escalado(_card_x, _desc_y, _desc, 3, c_white, 7, 30, 300, _current_scale, _current_scale);
+        // NOME DA SKILL (acima da carta)
+        draw_set_font(fnt_nomes_up);
+        draw_set_valign(fa_bottom);
+        draw_text_colour_outline(_card_x, _center_y - 344 * _sc - 6 - _text_y_offset, _name, 4, c_white, 8, 100, 100);
+
+        // NÍVEL (dentro da área de texto)
+        draw_set_font(fnt_descricao);
+        draw_set_valign(fa_top);
+        draw_text_colour_outline_escalado(_card_x, _text_top + 24 * _sc, "Nv. " + string(_next_lvl), 3, c_white, 7, 30, _text_w, 1.6 * _sc, 1.6 * _sc);
+
+        // DESCRIÇÃO (quebra de linha dentro da largura da carta)
+        draw_text_colour_outline_escalado(_card_x, _text_top + 95 * _sc, _desc, 3, c_white, 7, 30, _text_w, _sc, _sc);
+
+        draw_set_valign(fa_top);
+        draw_set_halign(fa_left);
     }
     
     exit; // Sai para não desenhar o resto da GUI normal

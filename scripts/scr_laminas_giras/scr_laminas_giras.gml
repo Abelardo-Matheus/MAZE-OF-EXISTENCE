@@ -12,7 +12,7 @@ function scr_laminas_giras_config()
             radius: 80,
             duration: 3333,
             size: 1,
-            sprite_icon: spr_shuriken_icon
+            sprite_icon: spr_laminas_icon
         },
         niveis: [
             { desc: "LÂMINAS ESPIRITUAIS ORBITAM AO REDOR DO JOGADOR.", upgrade: function(_s) { _s.quantity = 1; } },
