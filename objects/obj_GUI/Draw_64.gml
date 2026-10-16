@@ -198,8 +198,9 @@ if (global.level_up == true)
         // DESCRIÇÃO (quebra de linha dentro da largura da carta)
         draw_text_colour_outline_escalado(_card_x, _text_top + 95 * _sc, _desc, 3, c_white, 7, 30, _text_w, _sc, _sc);
 
-        draw_set_valign(fa_top);
-        draw_set_halign(fa_left);
+        // Restaura o alinhamento que a versão antiga deixava
+        draw_set_valign(fa_middle);
+        draw_set_halign(fa_center);
     }
     
     exit; // Sai para não desenhar o resto da GUI normal

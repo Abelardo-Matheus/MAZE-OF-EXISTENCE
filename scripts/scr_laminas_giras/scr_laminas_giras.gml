@@ -43,7 +43,7 @@ function scr_laminas_giras(_row_index)
 
     if (_timer >= (_stats.cooldown * _cd_mod)) 
     {
-        variable_global_set(_timer_var, 0); 
+        _timer = 0; // reseta o cooldown (antes era sobrescrito no fim da função)
         var _count = _stats.quantity;
         var _area_mod = (variable_global_exists("player_area_mod") ? global.player_area_mod : 1);
         
@@ -63,7 +63,8 @@ function scr_laminas_giras(_row_index)
             _blade.duration_timer = _stats.duration;
             _blade.parent_player = obj_player;
             
-            _blade.Step_0_Custom = function() {
+            // method() vincula a função à lâmina (antes rodava no escopo do obj_player e dava crash)
+            _blade.Step_0_Custom = method(_blade, function() {
                 if (!instance_exists(parent_player)) { instance_destroy(); return; }
                 orbital_angle += orbital_speed;
                 x = parent_player.x + lengthdir_x(orbital_radius, orbital_angle);
@@ -72,7 +73,7 @@ function scr_laminas_giras(_row_index)
                 
                 duration_timer -= delta_time / 1000;
                 if (duration_timer <= 0) instance_destroy();
-            };
+            });
         }
     }
     variable_global_set(_timer_var, _timer);

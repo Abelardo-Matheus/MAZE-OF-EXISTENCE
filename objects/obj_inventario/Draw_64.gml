@@ -41,7 +41,7 @@ for (var _i = 0; _i < _grid_height; _i++) {
     if (_spr != -1) {
         draw_sprite_ext(_spr, _idx, _sx, _sy, scale, scale, 0, c_white, 1);
         if (_qtd > 1) {
-            draw_set_font(fnt_numeros); draw_set_halign(fa_right);
+            draw_set_font(fnt_numeros); draw_set_halign(fa_right); draw_set_valign(fa_bottom); // canto inferior direito do slot
             draw_text_outlined(_sx + slot_width - 5, _sy + slot_height - 5, c_black, c_white, string(_qtd));
         }
     }
@@ -56,7 +56,7 @@ if (selected_item != -1) {
 
 // Detalhes do Item e Stats
 if (selected_slot != -1 && global.grid_itens[# INFOS.ITEM, selected_slot] != -1) {
-    draw_set_font(fnt_nomes_itens); draw_set_halign(fa_left);
+    draw_set_font(fnt_nomes_itens); draw_set_halign(fa_left); draw_set_valign(fa_top);
     draw_text_outlined(inventory_x + text_name_x, inventory_y + text_name_y, c_black, c_white, global.grid_itens[# INFOS.NOME, selected_slot]);
     draw_set_font(fnt_descricao);
     draw_text_ext(inventory_x + text_desc_x, inventory_y + text_desc_y, global.grid_itens[# INFOS.DESCRICAO, selected_slot] + "\nPreço: " + string(global.grid_itens[# INFOS.PRECO, selected_slot]), 20, 300);

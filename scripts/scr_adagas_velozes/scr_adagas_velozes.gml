@@ -44,7 +44,7 @@ function scr_adagas_velozes(_row_index)
 
     if (_timer >= (_stats.cooldown * _cd_mod)) 
     {
-        variable_global_set(_timer_var, 0); 
+        _timer = 0; // reseta o cooldown (antes era sobrescrito no fim da função)
         
         var _base_dir = 270; 
         if (variable_instance_exists(obj_player, "dir")) {

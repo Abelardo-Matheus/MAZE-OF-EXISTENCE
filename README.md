@@ -114,11 +114,11 @@ The game is being developed in **GameMaker Studio 2**, using the following featu
 <br>
 <img src="prints/mundo_aberto.png" width="600">
 
-**City & Forest — houses, trees, wildlife and the Shadow Trail skill**
+**City biome — street lamps, houses and wildlife (new HUD)**
 <br>
 <img src="prints/cidade_floresta.png" width="600">
 
-**New Skill System — level-up choices**
+**New Skill System — level-up cards with new power icons**
 <br>
 <img src="prints/level_up_skills.png" width="600">
 
@@ -303,11 +303,11 @@ O jogo está sendo desenvolvido no **GameMaker Studio 2**, utilizando as seguint
 <br>
 <img src="prints/mundo_aberto.png" width="600">
 
-**Cidade e Floresta — casas, árvores, fauna e a skill Rastro Sombrio**
+**Bioma Cidade — postes, casas e fauna (HUD novo)**
 <br>
 <img src="prints/cidade_floresta.png" width="600">
 
-**Novo sistema de skills — escolha no level up**
+**Novo sistema de skills — cartas de level up com os novos ícones de poderes**
 <br>
 <img src="prints/level_up_skills.png" width="600">
 

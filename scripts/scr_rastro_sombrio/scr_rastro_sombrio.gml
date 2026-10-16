@@ -43,7 +43,7 @@ function scr_rastro_sombrio(_row_index)
 
     if (_timer >= (_stats.cooldown * _cd_mod)) 
     {
-        variable_global_set(_timer_var, 0); 
+        _timer = 0; // reseta o cooldown (antes era sobrescrito no fim da função)
         var _area_mod = (variable_global_exists("player_area_mod") ? global.player_area_mod : 1);
         
         var _trail = instance_create_layer(obj_player.x, obj_player.y, "Instances", asset_get_index("obj_skill_area_effect"));

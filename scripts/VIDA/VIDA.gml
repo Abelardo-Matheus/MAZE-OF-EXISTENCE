@@ -61,5 +61,11 @@ function desenha_barra_vida() {
         _xp_y + sprite_get_yoffset(spr_hud_xp) * _xp_ys,
         _xp_xs, _xp_ys, 0, c_white, _alfa);
 
+    // Mantém o mesmo estado de desenho que a versão antiga deixava
+    // (outros objetos de GUI desenham depois e dependem dele)
+    draw_set_font(fnt_status);
+    draw_set_halign(fa_left);
+    draw_set_valign(fa_middle);
+    draw_set_color(c_black);
     draw_set_alpha(1);
 }
