@@ -16,3 +16,7 @@ light_style = "flicker";
 if (variable_global_exists("lista_luzes") && ds_exists(global.lista_luzes, ds_type_list)) {
     ds_list_add(global.lista_luzes, id);
 }
+
+// Sprite refeito em 64x64: mantém o tamanho no mundo
+image_xscale = sprite_ajuste(sprite_index);
+image_yscale = sprite_ajuste(sprite_index);

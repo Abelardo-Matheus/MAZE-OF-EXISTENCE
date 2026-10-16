@@ -4,7 +4,7 @@
 /// [COMO] :
 /// 1. Define 'timer_going' (tempo que ele viaja antes de voltar).
 /// 2. Cria 'hit_list' para garantir que o bumerangue não acerte o mesmo inimigo 60 vezes por segundo.
-escala_base = 0.1;
+escala_base = 0.1 * sprite_ajuste(sprite_index); // sprite refeito em 64x64
 image_xscale = escala_base;
 image_yscale = escala_base;
 // --- Configurações de Voo ---

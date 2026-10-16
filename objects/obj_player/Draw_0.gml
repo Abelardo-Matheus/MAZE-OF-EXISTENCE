@@ -10,8 +10,9 @@
 // 1. Sombra
 draw_sprite_ext(spr_sombra, 0, x, y + 15, 0.8, 0.8, 0, c_white, 1);
 
-// 2. Player4
-draw_self();
+// 2. Player (sprites de ataque refeitos em 64x64 usam o fator de ajuste)
+var _aj = sprite_ajuste(sprite_index);
+draw_sprite_ext(sprite_index, image_index, x, y, image_xscale * _aj, image_yscale * _aj, image_angle, image_blend, image_alpha);
 
 // 3. Arma (Sobre a cabeça)
 if (desenha_arma) 

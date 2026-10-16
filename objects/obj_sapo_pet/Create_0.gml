@@ -26,7 +26,7 @@ has_hit = false;       // Garante que só dá dano 1 vez por dash
 // --- Cooldown ---
 attack_cooldown_current = 0;
 attack_cooldown_max = 60;
-escala_base = 0.5;
+escala_base = 0.5 * sprite_ajuste(sprite_index); // sprite refeito em 64x64
 // Garante que comece no tamanho certo
 image_xscale = escala_base;
 image_yscale = escala_base;

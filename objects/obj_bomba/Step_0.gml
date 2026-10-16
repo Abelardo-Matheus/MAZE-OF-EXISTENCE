@@ -34,8 +34,8 @@ switch (state)
             // Define escala final da explosão baseada no raio
             // Nota: Certifique-se que 'base_bomb_size' está definido no Create (ex: 64)
             var _final_scale = radius / base_bomb_size;
-            image_xscale = _final_scale*4;
-            image_yscale = _final_scale*4;
+            image_xscale = _final_scale * 4 * sprite_ajuste(spr_confete);
+            image_yscale = _final_scale * 4 * sprite_ajuste(spr_confete);
             
             exploded = false; // Prepara para causar dano no próximo frame
         } 
@@ -56,8 +56,8 @@ switch (state)
             var _base_scale = radius / base_bomb_size;
             var _height_scale = z / 200; 
             
-            image_xscale = _base_scale + _height_scale;
-            image_yscale = _base_scale + _height_scale;
+            image_xscale = (_base_scale + _height_scale) * sprite_ajuste(sprite_index);
+            image_yscale = (_base_scale + _height_scale) * sprite_ajuste(sprite_index);
         }
         break;
 

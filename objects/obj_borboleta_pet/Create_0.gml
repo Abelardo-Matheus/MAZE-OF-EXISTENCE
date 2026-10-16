@@ -6,7 +6,7 @@ velocidade = 0;
 pollen_radius = 0;
 wander_radius = 0;
 pollen_chance = 0;
-escala_base = 0.5;
+escala_base = 0.5 * sprite_ajuste(sprite_index); // sprite refeito em 64x64
 image_xscale = escala_base;
 image_yscale = escala_base;
 // Variáveis internas de movimento

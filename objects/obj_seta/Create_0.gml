@@ -6,6 +6,6 @@ alvo_y = 0;
 // (10 pixels + tamanho da sua sprite para ela aparecer inteira)
 margem = 30;
 
-escala = 0.2;
+escala = 0.2 * sprite_ajuste(sprite_index); // sprite refeito em 64x64
 image_xscale = escala;
 image_yscale = escala;

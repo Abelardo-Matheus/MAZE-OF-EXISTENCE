@@ -147,7 +147,7 @@ function scr_explosao(_row_index)
         // Ajusta escala baseada no raio calculado universalmente
         // Exemplo: Se o sprite original tem 64px de raio, escala = (radius / 64)
         // Você usou radius*3 / 64, mantenho esse padrão aqui, ajustando pela escala base se usar.
-        var _base_sprite_size = sprite_get_width(_vfx.sprite_index) / 2; // Pega o raio do sprite original
+        var _base_sprite_size = sprite_largura_original(_vfx.sprite_index) / 2; // largura de antes do sprite ser refeito // Pega o raio do sprite original
         if (_base_sprite_size <= 0) _base_sprite_size = 32; // Segurança se não tiver sprite
         
         var _scale = _stats.radius / _base_sprite_size; 

@@ -18,3 +18,7 @@ if (!variable_instance_exists(id, "push_force")) push_force = 3;
 // --- Visual ---
 image_speed = 1;     // Velocidade normal da animação
 image_index = 0;     // Garante que comece do frame 0
+
+// Sprite refeito em 64x64: mantém o tamanho no mundo
+image_xscale = sprite_ajuste(sprite_index);
+image_yscale = sprite_ajuste(sprite_index);

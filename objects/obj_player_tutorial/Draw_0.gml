@@ -1,7 +1,8 @@
 // feather disable GM2017
 
 draw_sprite_ext(spr_sombra,0,x,y +24,0.8,0.8,0,c_white,1);
-draw_self();
+var _aj = sprite_ajuste(sprite_index); // sprites de ataque refeitos em 64x64
+draw_sprite_ext(sprite_index, image_index, x, y, image_xscale * _aj, image_yscale * _aj, image_angle, image_blend, image_alpha);
 
 
 	

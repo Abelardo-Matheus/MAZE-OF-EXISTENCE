@@ -42,9 +42,9 @@ else if (estado == "parado_atirando")
             var _tiro = instance_create_layer(x, y, "Instances", obj_bola_evolved);
             
             _tiro.eh_filho = true; 
-            _tiro.escala_base = 0.3;
-            _tiro.image_xscale = 0.3; 
-            _tiro.image_yscale = 0.3;
+            _tiro.escala_base = 0.3 * sprite_ajuste(spr_bola); // sprite refeito em 64x64
+            _tiro.image_xscale = _tiro.escala_base; 
+            _tiro.image_yscale = _tiro.escala_base;
             
             // MÁGICA DOS ÂNGULOS AQUI: Multiplica a distância pelo número da bolinha
             // Ex (4 bolas): 0*90=0, 1*90=90, 2*90=180, 3*90=270...

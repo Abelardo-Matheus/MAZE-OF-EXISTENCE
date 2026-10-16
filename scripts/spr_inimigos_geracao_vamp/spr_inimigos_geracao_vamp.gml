@@ -254,7 +254,7 @@ function spawn_night_enemy(_enemy_data) {
         max_vida = vida; // Atualiza o max_vida também
         
         // Resto das configurações (igual antes)
-        escala = _scale; 
+        escala = _scale * sprite_ajuste(sprite_index); // sprites refeitos em 64x64 mantêm o tamanho
         dist_aggro = 2000;
         dist_desaggro = 2000;
         id_inimigo = _enemy_id;

@@ -61,3 +61,48 @@ function aplicar_movimento_com_colisao(_hveloc, _vveloc, _col_obj = undefined) {
     }
     y += _vveloc;
 }
+
+// ============================================================================
+// AJUSTE DE ESCALA DOS SPRITES REFEITOS (pixel art 64x64)
+// ============================================================================
+/// @desc Fator que mantém o tamanho no mundo dos sprites refeitos em quadro 64x64.
+///       Multiplique a escala que o objeto já usava por este valor. Sprites não refeitos devolvem 1.
+/// @param {Asset.GMSprite} _spr
+function sprite_ajuste(_spr) {
+    switch (_spr) {
+        case spr_player_baixo_parado_atacando: return 1.26562;
+        case spr_player_cima_parado_atacando: return 1.26562;
+        case spr_player_direita_parado_atacando: return 1.26562;
+        case spr_player_esquerda_parado_atacando: return 1.26562;
+        case spr_bola: return 2.8125;
+        case spr_shuriken: return 2.35938;
+        case spr_bulmerangue: return 2.09375;
+        case spr_confete: return 3.4375;
+        case spr_bomba_vamp: return 1.25;
+        case spr_explosion: return 1.60938;
+        case spr_raio: return 3.29687;
+        case spr_borboleta_idle: return 0.98438;
+        case spr_sapo_idle: return 1.65625;
+        case spr_sapo_walk: return 1.65625;
+        case spr_sapo_attack: return 1.65625;
+        case spr_sapo_teleporte: return 1.65625;
+        case spr_sapo_teleporte_inverso: return 1.65625;
+        case spr_esqueleto: return 8.42188;
+        case spr_esqueleto_idle: return 8.42188;
+        case spr_totem_boss: return 9.10938;
+        case spr_seta: return 4.82812;
+        case spr_poste: return 4.5;
+        case spr_vela: return 2.59375;
+        case spr_cerca: return 2.90625;
+        default: return 1;
+    }
+}
+
+/// @desc Largura do sprite antes de ser refeito (para fórmulas que usavam sprite_get_width).
+/// @param {Asset.GMSprite} _spr
+function sprite_largura_original(_spr) {
+    switch (_spr) {
+        case spr_confete: return 267;
+        default: return sprite_get_width(_spr);
+    }
+}

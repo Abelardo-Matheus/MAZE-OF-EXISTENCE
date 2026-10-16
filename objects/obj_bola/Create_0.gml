@@ -5,7 +5,7 @@ push = 1;
 veloc = 0;
 /// @description Inicializar variáveis de animação e movimento
 
-escala_base = 1;
+escala_base = 1 * sprite_ajuste(sprite_index); // sprite refeito em 64x64
 // Garante que comece no tamanho certo
 image_xscale = escala_base;
 image_yscale = escala_base;
