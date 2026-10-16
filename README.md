@@ -34,10 +34,46 @@ The game is divided into two main parts:
     * Find items, power-ups, and NPCs that can help or hinder your journey.
 
 **Current State of the Project:**
-* The player spawns in an infinite map with random structures.
+* The player spawns in an infinite open world split into **biomes** (Forest, City, Empty Lands and Dark Forest).
 * Enemy rooms are generated randomly and infinitely.
-* **Level Up:** Upon leveling up, the player can choose 1 out of 4 basic powers.
+* **Level Up:** Upon leveling up, the player picks an upgrade from a data-driven **skill system** (active and passive skills with up to 5 levels).
 * **Procedural Generation:** Each room is generated with a unique layout; the player can enter and exit at will.
+* **Crafting & Gathering:** Trees and rocks can be broken for resources, which are used in the crafting system.
+* **Interactive Tutorial**, new **main menu** and **sound/music**.
+
+### ✨ What's New (2026 update)
+
+**🌍 Open world & biomes**
+* New biome system: the infinite map is divided into irregular clusters (random walk) of **Forest**, **City**, **Empty Lands** and **Dark Forest**, each with its own scenery, structures and monster spawn rules.
+* New ground rendering (`obj_render_chao`) with grass tiles, plus an object optimizer that only keeps nearby entities active.
+* Procedural **trees and rocks** with varied sizes, and ambient wildlife (ants and bugs).
+* **Breakable trees and rocks**: hit them to collect resources — destroyed objects stay destroyed when you come back.
+* The **City** biome spawns houses, street lamps and merchant NPCs; **Empty Lands** may hide a **secondary boss**; the **Dark Forest** spawns enemy groups.
+
+**⚒️ Crafting**
+* Complete **crafting system** inside the inventory: the game checks your items and lists every recipe you can craft.
+* Inventory fixes: stats are now recalculated correctly when equipping/unequipping, drop rarity fixed, input validation.
+
+**⚔️ New skill system (data-driven)**
+* All skills now live in a central database (`scr_skill_database`) — adding a skill means adding data, not new `if`s.
+* New **active skills**: *Spinning Blades* (orbiting blades), *Shadow Trail* (damage pools where you walk) and *Swift Daggers* (fast projectiles).
+* New **passive skills**: *Amplifier Ring* (+area), *Tome of Celerity* (−cooldown), *Soul Magnet* (+pickup range) and *Feather*.
+* Unified damage system (`scr_damage_system`) for every weapon and skill.
+* **Weapon evolutions**: evolved **Ball** and **Bomb**, plus bow & arrow attacks.
+
+**🐾 Pets & enemies**
+* New **Butterfly pet** that wanders around and releases explosive pollen on enemies (joins the Frog pet).
+* New enemies: **Skeleton**, colored **Amoebas**, and improved enemy AI.
+* **Boss on the minimap** and a guiding **arrow** pointing to objectives.
+* Fixed damage and level-up bugs.
+
+**🎓 Tutorial, menu & sound**
+* Interactive **tutorial** that teaches movement, interaction, combat, dash and weapon switching, then opens a portal to the game.
+* New **main menu** with New Game / Exit buttons.
+* **Sound effects and music**: footsteps, sword and bow attacks, damage, XP pickup, level up, dialogue voices and background music.
+
+**🧹 Code quality**
+* Code cleanup and refactors (inventory, room generation, powers), removal of unused functions and documentation of global arrays.
 
 ### Player Progression:
 * **Baby:** Initial phase with simple enemies and basic skills.
@@ -53,7 +89,10 @@ The game is being developed in **GameMaker Studio 2**, using the following featu
     * Used for game logic, movement, map generation, AI, and progression systems.
 * **Map Generation:**
     * Uses algorithms like **Perlin Noise** and **Cellular Automata** to create procedural mazes.
+    * Chunk-based infinite world with **biomes** defined by random-walk clusters.
     * Interconnected rooms with varied themes depending on the life stage.
+* **Skill System:**
+    * **Data-driven** skills (structs/arrays) with per-level stats, active and passive types.
 * **Enemy System:**
     * Enemies with varied behaviors programmed using **state machines** and **pathfinding systems**.
     * Each phase has unique enemies representing the fears of that life stage.
@@ -63,11 +102,33 @@ The game is being developed in **GameMaker Studio 2**, using the following featu
     * Collectable items with positive or negative effects.
 * **Art & Sound:**
     * Sprites and animations created within the GameMaker sprite editor.
-    * Sound/Music: Currently in development.
+    * Sound effects and background music.
 
 ---
 
 ### 🖼️ Screenshots
+
+<div align="center">
+
+**Open World — Forest biome (2026)**
+<br>
+<img src="prints/mundo_aberto.png" width="600">
+
+**City & Forest — houses, trees, wildlife and the Shadow Trail skill**
+<br>
+<img src="prints/cidade_floresta.png" width="600">
+
+**New Skill System — level-up choices**
+<br>
+<img src="prints/level_up_skills.png" width="600">
+
+**Inventory, Status & Crafting**
+<br>
+<img src="prints/inventario_craft.png" width="600">
+
+</div>
+
+#### Older versions
 
 <div align="center">
 
@@ -162,10 +223,46 @@ O jogo se divide em duas partes principais:
     * Encontra itens, power-ups e NPCs que podem ajudar ou atrapalhar sua jornada.
 
 **Como o projeto está:**
-* Jogador inicia num mapa infinito com estruturas aleatórias.
+* Jogador inicia num mundo aberto infinito dividido em **biomas** (Floresta, Cidade, Terras Vazias e Floresta Negra).
 * Salas de inimigos são geradas aleatoriamente e infinitamente.
-* **Level Up:** Cada nível subido dá um poder ao player (escolha entre 4 opções básicas).
+* **Level Up:** Cada nível subido dá um upgrade do novo **sistema de skills** (habilidades ativas e passivas com até 5 níveis).
 * **Geração Procedural:** Cada casa/sala é gerada com formato único, podendo o jogador entrar e sair quando quiser.
+* **Coleta & Craft:** Árvores e pedras podem ser quebradas para coletar recursos usados no sistema de craft.
+* **Tutorial interativo**, novo **menu principal** e **sons/músicas**.
+
+### ✨ Novidades (atualização 2026)
+
+**🌍 Mundo aberto e biomas**
+* Novo sistema de biomas: o mapa infinito é dividido em áreas irregulares (caminhada aleatória) de **Floresta**, **Cidade**, **Terras Vazias** e **Floresta Negra**, cada uma com cenário, estruturas e spawn de monstros próprios.
+* Novo chão renderizado (`obj_render_chao`) com grama e um otimizador que mantém ativas só as entidades próximas.
+* **Árvores e pedras** procedurais com tamanhos variados e fauna ambiente (formigas e insetos).
+* **Árvores e pedras quebráveis**: bata nelas para coletar recursos — o que foi destruído continua destruído quando você volta.
+* A **Cidade** gera casas, postes e NPCs vendedores; as **Terras Vazias** podem esconder um **boss secundário**; a **Floresta Negra** gera grupos de inimigos.
+
+**⚒️ Craft**
+* **Sistema de craft completo** dentro do inventário: o jogo verifica seus itens e lista todas as receitas que você pode fabricar.
+* Correções no inventário: status recalculados corretamente ao equipar/desequipar, raridade de drop corrigida e validação de entradas.
+
+**⚔️ Novo sistema de skills (data-driven)**
+* Todas as skills agora ficam num banco de dados central (`scr_skill_database`) — adicionar uma skill é só adicionar dados, sem novos `if`s.
+* Novas **skills ativas**: *Lâminas Giras* (lâminas orbitando), *Rastro Sombrio* (poças de dano por onde você passa) e *Adagas Velozes* (projéteis rápidos).
+* Novas **skills passivas**: *Anel Amplificador* (+área), *Tomo da Celeridade* (−cooldown), *Ímã de Almas* (+alcance de coleta) e *Pena*.
+* Sistema de dano unificado (`scr_damage_system`) para todas as armas e skills.
+* **Evolução de armas**: **Bola** e **Bomba** evoluídas, além de ataque com arco e flecha.
+
+**🐾 Pets e inimigos**
+* Novo **pet Borboleta** que voa ao redor e solta pólen explosivo nos inimigos (junto ao pet Sapo).
+* Novos inimigos: **Esqueleto**, **Amoebas** coloridas e IA dos inimigos melhorada.
+* **Boss no mini mapa** e **seta** guiando até os objetivos.
+* Correções de dano e de level up.
+
+**🎓 Tutorial, menu e som**
+* **Tutorial interativo** que ensina movimento, interação, combate, dash e troca de arma, e no final abre um portal para o jogo.
+* Novo **menu principal** com botões Novo Jogo / Sair.
+* **Efeitos sonoros e músicas**: passos, ataques de espada e arco, dano, coleta de XP, level up, vozes de diálogo e música de fundo.
+
+**🧹 Qualidade de código**
+* Limpeza e refatoração (inventário, geração de salas, poderes), remoção de funções não usadas e documentação dos arrays globais.
 
 ### Progressão do Jogador:
 * **Bebê**: Fase inicial, com inimigos simples e habilidades básicas.
@@ -181,7 +278,10 @@ O jogo está sendo desenvolvido no **GameMaker Studio 2**, utilizando as seguint
     * Usada para programar a lógica do jogo, movimentação, geração de mapas, IA e progressão.
 * **Geração de Mapas**:
     * Algoritmos como **Perlin Noise** e **Cellular Automata** para criar labirintos proceduralmente.
+    * Mundo infinito em blocos (chunks) com **biomas** definidos por caminhada aleatória.
     * Salas interconectadas com temas variados.
+* **Sistema de Skills**:
+    * Skills **data-driven** (structs/arrays) com status por nível, ativas e passivas.
 * **Sistema de Inimigos**:
     * Comportamentos variados via **máquinas de estado** e **pathfinding**.
     * Inimigos únicos para cada fase da vida.
@@ -191,11 +291,33 @@ O jogo está sendo desenvolvido no **GameMaker Studio 2**, utilizando as seguint
     * Itens com efeitos positivos ou negativos e poderes especiais.
 * **Design de Arte**:
     * Uso do editor de sprites do GameMaker.
-    * Sons e Músicas: Ainda em desenvolvimento.
+    * Efeitos sonoros e músicas de fundo.
 
 ---
 
 ### 🖼️ Capturas de Tela
+
+<div align="center">
+
+**Mundo aberto — bioma Floresta (2026)**
+<br>
+<img src="prints/mundo_aberto.png" width="600">
+
+**Cidade e Floresta — casas, árvores, fauna e a skill Rastro Sombrio**
+<br>
+<img src="prints/cidade_floresta.png" width="600">
+
+**Novo sistema de skills — escolha no level up**
+<br>
+<img src="prints/level_up_skills.png" width="600">
+
+**Inventário, Status e Craft**
+<br>
+<img src="prints/inventario_craft.png" width="600">
+
+</div>
+
+#### Versões anteriores
 
 <div align="center">
 
