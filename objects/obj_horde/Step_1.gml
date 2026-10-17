@@ -19,7 +19,10 @@ frame += 1;
 _horde_view();
 horde_px = _p.x;
 horde_py = _p.y;
-horde_pr = max(8, (_p.bbox_right - _p.bbox_left) * 0.5);
+// Hitbox do jogador = máscara dele (spr_player_baixo_parado), centrada na bbox
+horde_pcx = (_p.bbox_left + _p.bbox_right) * 0.5;
+horde_pcy = (_p.bbox_top + _p.bbox_bottom) * 0.5;
+horde_pr  = max(8, ((_p.bbox_right - _p.bbox_left) + (_p.bbox_bottom - _p.bbox_top)) * 0.25);
 depth = _p.depth + 1; // horda logo atrás do jogador
 
 var _noite = !global.day_night_cycle.is_day;

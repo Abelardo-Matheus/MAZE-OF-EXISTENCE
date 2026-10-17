@@ -10,8 +10,8 @@ if (tempo_piscar > 0) {
     // Faz o objeto piscar vermelho
     image_blend = c_red; 
 } else {
-    // Volta a cor normal quando o timer acaba
-    image_blend = c_white; 
+    // Volta a cor normal (tom do bioma) quando o timer acaba
+    image_blend = cor_bioma; 
 }
 
 

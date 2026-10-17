@@ -44,8 +44,12 @@ function atualizar_crafts_disponiveis() {
         }
     }
 }
+
 /// @desc Remove uma quantidade específica de um item do inventário
 function inventory_remove_item(_item_id, _qtd_remover) {
+    // Validação de entrada
+    if (_qtd_remover <= 0) return false;
+    
     var _grid = global.grid_itens;
     var _falta_remover = _qtd_remover;
 
@@ -75,6 +79,8 @@ function inventory_remove_item(_item_id, _qtd_remover) {
             }
         }
     }
+    
+    return _falta_remover == 0; // Retorna true se removeu tudo
 }
 
 
@@ -99,7 +105,7 @@ function inventory_find_empty_slot() {
 function inventory_copy_slot(_dest, _src) {
     var _grid = global.grid_itens;
     
-    // Copia coluna por coluna (Item, Quantidade, Sprite, etc.)
+    // Copia cada atributo do item de um slot para outro
     _grid[# INFOS.ITEM,       _dest] = _grid[# INFOS.ITEM,       _src];
     _grid[# INFOS.QUANTIDADE, _dest] = _grid[# INFOS.QUANTIDADE, _src];
     _grid[# INFOS.SPRITE,     _dest] = _grid[# INFOS.SPRITE,     _src];
@@ -123,10 +129,10 @@ function inventory_copy_slot(_dest, _src) {
 function inventory_drop_item(_slot) {
     var _grid = global.grid_itens;
 
-    // 1. Segurança: Se the slot já estiver vazio, não faz nada
+    // 1. Segurança: Se o slot já estiver vazio, não faz nada
     if (_grid[# INFOS.ITEM, _slot] == -1) return;
 
-    // 2. Garante que the player existe para usar a posição dele como origem do drop
+    // 2. Garante que o player existe para usar a posição dele como origem do drop
     if (instance_exists(obj_player)) {
         var _p_x = obj_player.x;
         var _p_y = obj_player.y;
@@ -145,7 +151,6 @@ function inventory_drop_item(_slot) {
         _inst.velocidade   = _grid[# INFOS.VELOCIDADE, _slot];
         _inst.cura         = _grid[# INFOS.CURA, _slot];
         _inst.tipo         = _grid[# INFOS.TIPO, _slot];
-        _inst.ind          = _grid[# INFOS.IMAGE_IND, _slot];
         _inst.preco        = _grid[# INFOS.PRECO, _slot];
 
         // 5. Configura dados de Persistência (Sala e Posição)
@@ -154,8 +159,8 @@ function inventory_drop_item(_slot) {
         _inst.pos_x  = _p_x;
         _inst.pos_y  = _p_y;
         
-        // Define profundidade (opcional, baseado no seu código anterior)
-        _inst.prof = _inst.depth;
+        // Define profundidade
+        _inst.depth = -_pos_y;
 
         // 6. Salva o item no sistema de persistência (ds_map da sala)
         salvar_item(_inst.sala_x, _inst.sala_y, _p_x, _p_y, _inst);
@@ -193,14 +198,14 @@ function inventory_clear_slot(_slot) {
 
 /// @func recalculate_player_stats()
 /// @desc Atualiza os atributos do player baseados nos itens equipados
+/// CORREÇÃO: Agora reseta os valores antes de calcular
 function recalculate_player_stats() {
-
-
-    // 2. Soma atributos da ARMA (Slot fixo definido no Create: slot_index_weapon)
-    // Nota: Como você está usando variáveis de instância no obj_inventario, 
-    // precisamos acessar via global.grid_itens usando índices calculados.
-    // Assumindo: Total Slots (mochila) + 0 = Arma, + 1 = Armadura, + 2 = Bota
+    // ===== RESET DOS STATS ANTES DE RECALCULAR =====
+    global.ataque = 0;  // Valor base de ataque
+    global.armadura_bebe = 0;  // Valor base de armadura
+    global.speed_player = 0;  // Valor base de velocidade
     
+    // Total de slots da mochila (constante)
     var _total_slots = 18; // 6x3, ajuste se seu inventário for maior
     var _slot_arma = _total_slots;
     var _slot_armadura = _total_slots + 1;
@@ -298,10 +303,15 @@ function inventory_use_item(_slot) {
 /// @desc Instancia um item físico vindo direto da Database (Para monstros e baús)
 function criar_drop_especifico(_pos_x, _pos_y, _nome_item, _quantidade, _raridade) {
     
-    // 1. Sorteio de falha (0 a 100). Se a raridade for 20, tem 20% de chance de não dropar nada.
-    if (random(100) < _raridade) return;
+    // Validações de entrada
+    if (_quantidade <= 0) return;
+    if (_raridade < 0 || _raridade > 100) _raridade = 0;
+    
+    // Sorteio de falha: se random(100) for MAIOR que a raridade, não dropa
+    // Raridade 20 = 20% de chance de dropar, 80% de não dropar
+    if (random(100) > _raridade) return;
 
-    // 2. Busca os dados do item na Database (usando aquela função que criamos)
+    // Busca os dados do item na Database
     var _item_data = buscar_dados_por_nome(_nome_item);
 
     // Segurança: Se o nome estiver errado, cancela
@@ -310,10 +320,10 @@ function criar_drop_especifico(_pos_x, _pos_y, _nome_item, _quantidade, _raridad
         return;
     }
 
-    // 3. Cria o objeto físico no mundo (A mesma lógica do seu inventory_drop_item!)
+    // Cria o objeto físico no mundo
     var _inst = instance_create_layer(_pos_x, _pos_y, "Instances_itens", obj_item);
 
-    // 4. Transfere os dados da DATABASE para o Objeto criado
+    // Transfere os dados da DATABASE para o Objeto criado
     // [0:spr, 1:nome, 2:desc, 3:cura, 4:dano, 5:arm, 6:vel, 7:img_idx, 8:tipo, 9:preco, 10:qtd]
     _inst.sprite_index = _item_data[0];
     _inst.image_index  = _item_data[7]; 
@@ -324,26 +334,24 @@ function criar_drop_especifico(_pos_x, _pos_y, _nome_item, _quantidade, _raridad
     _inst.armadura     = _item_data[5];
     _inst.velocidade   = _item_data[6];
     _inst.tipo         = _item_data[8];
-    _inst.ind          = _item_data[7];
     _inst.preco        = _item_data[9];
     
     // A quantidade injetada é a que você pediu no argumento da função!
     _inst.quantidade   = _quantidade; 
 
-    // 5. Configura dados de Persistência (Igualzinho ao seu código)
+    // Configura dados de Persistência
     _inst.sala_x = global.current_sala[0];
     _inst.sala_y = global.current_sala[1];
     _inst.pos_x  = _pos_x;
     _inst.pos_y  = _pos_y;
     
     // Define profundidade para o item não bugar por cima do player
-    _inst.depth = -_pos_y; // Uma técnica clássica de depth
-    _inst.prof  = _inst.depth; 
-    _inst.profundidade = _inst.depth;
+    _inst.depth = -_pos_y;
 
-    // 6. Salva o item no sistema de persistência (ds_map da sala)
+    // Salva o item no sistema de persistência (ds_map da sala)
     salvar_item(_inst.sala_x, _inst.sala_y, _pos_x, _pos_y, _inst);
 }
+
 // ==========================================
 // FUNÇÕES AUXILIARES DO SISTEMA DE CRAFTING
 // ==========================================
@@ -360,6 +368,7 @@ function crafting_get_item_dados(_item_id) {
         default: return [noone, 0];
     }
 }
+
 /// @desc Verifica se o jogador tem TODOS os ingredientes para uma receita
 function player_has_all_ingredients(_receita) {
     var _total_ingredientes = array_length(_receita.ingredientes);
@@ -371,6 +380,7 @@ function player_has_all_ingredients(_receita) {
     }
     return true; // Passou em todos os testes
 }
+
 /// @desc Desenha os status e o sprite do player no menu de inventário
 function draw_player_stats_panel(_x, _y) {
     // Pega a escala da instância atual (obj_inventario)

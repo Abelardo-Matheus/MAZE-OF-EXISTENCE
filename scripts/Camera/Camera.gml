@@ -1,4 +1,43 @@
 // feather disable GM2017
+
+// ==========================================
+// LIMITES DO ZOOM E QUADRADO DE SPAWN
+// ==========================================
+// Zoom máximo (largura da câmera). Era 1280 * 4 = 5120: com a tela tão aberta o jogo
+// desenhava e simulava área demais e o FPS caía. 2560 = 2x a visão base.
+#macro CAMERA_ZOOM_MAX_W        2560
+// Quadrado fixo (centrado na câmera) onde os inimigos da noite nascem e "teleportam".
+// O lado é SEMPRE maior que o zoom máximo, então o spawn nunca aparece dentro da tela,
+// e não muda quando o jogador mexe no zoom.
+#macro SPAWN_QUADRADO_MARGEM    192
+#macro SPAWN_QUADRADO_LADO      (CAMERA_ZOOM_MAX_W + SPAWN_QUADRADO_MARGEM * 2)
+
+/// @function spawn_quadrado_atualizar()
+/// @description Recalcula os limites do quadrado de spawn em volta do centro da câmera.
+function spawn_quadrado_atualizar() {
+    var _cx = global.cmx + global.cmw * 0.5;
+    var _cy = global.cmy + global.cmh * 0.5;
+    var _h  = SPAWN_QUADRADO_LADO * 0.5;
+    global.spawn_x0 = _cx - _h;
+    global.spawn_y0 = _cy - _h;
+    global.spawn_x1 = _cx + _h;
+    global.spawn_y1 = _cy + _h;
+}
+
+/// @function spawn_ponto_quadrado()
+/// @description Sorteia um ponto na borda do quadrado de spawn.
+/// Resultado em global.spawn_px / global.spawn_py.
+function spawn_ponto_quadrado() {
+    spawn_quadrado_atualizar();
+    var _t = random(1);
+    switch (irandom(3)) {
+        case 0: global.spawn_px = lerp(global.spawn_x0, global.spawn_x1, _t); global.spawn_py = global.spawn_y0; break; // cima
+        case 1: global.spawn_px = lerp(global.spawn_x0, global.spawn_x1, _t); global.spawn_py = global.spawn_y1; break; // baixo
+        case 2: global.spawn_px = global.spawn_x0; global.spawn_py = lerp(global.spawn_y0, global.spawn_y1, _t); break; // esquerda
+        default: global.spawn_px = global.spawn_x1; global.spawn_py = lerp(global.spawn_y0, global.spawn_y1, _t); break; // direita
+    }
+}
+
 function zoom() {
     // --- Configurações (Constantes Locais) ---
     var _zoom_speed_base = 50;       
@@ -8,7 +47,7 @@ function zoom() {
     
     // Limites de Tamanho
     var _min_w = 740;
-    var _max_w = 1280 * 4;
+    var _max_w = CAMERA_ZOOM_MAX_W; // antes: 1280 * 4 (FPS caía no zoom máximo)
 	
     var _debug_max_w = 1280 * 10; // Limite absurdo só para o modo Debug
 

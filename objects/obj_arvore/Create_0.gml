@@ -14,3 +14,7 @@ vida = 100;
 tempo_piscar = 0;
 tempo_balancar = 0;
 angulo_original = image_angle; // Salva o ângulo inicial para ele voltar ao normal depois
+
+// Tom da arvore conforme o bioma (neve = congelada, deserto = seca...)
+cor_bioma = terreno_cor_objeto(x, y, "arvore");
+image_blend = cor_bioma;

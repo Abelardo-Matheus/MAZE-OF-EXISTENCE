@@ -1,8 +1,8 @@
 // feather disable GM2017
 /// @desc scr_horde_config — Ajustes da horda noturna (Fase_vamp)
 /// [O QUE]: Constantes e ganchos do sistema de horda. É o ÚNICO arquivo que você precisa
-///          mexer para balancear. Os inimigos continuam sendo definidos em global.night_waves
-///          (spr_inimigos_geracao_vamp) e nos eventos Create de cada objeto inimigo.
+///          mexer para balancear. Os inimigos e as rondas da noite ficam em scr_rondas_noite
+///          e nos eventos Create de cada objeto inimigo.
 /// [COMO] : A horda lê vida/dano/velocidade/sprite/comportamento direto do Create do objeto
 ///          (instância-protótipo criada uma única vez por tipo), então nada é duplicado aqui.
 
@@ -21,11 +21,11 @@
 // ---------------------------------------------------------------------------
 // DENSIDADE (estilo Vampire Survivors)
 // ---------------------------------------------------------------------------
-#macro HORDE_GRUPO_POR_SPAWN   3      // cada spawn de global.night_waves vira um grupinho de N
+#macro HORDE_GRUPO_POR_SPAWN   3      // (sem uso) o tamanho do grupo agora vem de "grupo" em scr_rondas_noite
 #macro HORDE_GRUPO_ESPALHAR    40     // raio do grupinho
-#macro HORDE_ENXAME_INTERVALO  40     // segundos entre cercos em anel (0 = desliga)
+#macro HORDE_ENXAME_INTERVALO  0      // cerco automático extra (s); 0 = só os anéis definidos nas rondas
 #macro HORDE_ENXAME_QTD        60     // inimigos no anel
-#macro HORDE_WRAP_BORDA        64     // igual ao "teleporte" do obj_par_inimigos à noite
+#macro HORDE_WRAP_BORDA        64     // (sem uso) o teleporte agora usa o quadrado de spawn: SPAWN_QUADRADO_LADO em Camera.gml
 #macro HORDE_SOME_AO_AMANHECER true
 #macro HORDE_AMANHECER_POR_FRAME 15
 
@@ -41,7 +41,10 @@
 // ---------------------------------------------------------------------------
 // XP
 // ---------------------------------------------------------------------------
-#macro HORDE_GEM_MAX           600    // gemas no chão; acima disso o XP soma numa gema existente
+#macro HORDE_GEM_MAX           1500   // gemas no chão; acima disso o XP soma na gema mais próxima
+#macro HORDE_GEM_JUNTAR_RAIO   48     // gema que cai a menos disso de outra se junta a ela (soma o XP)
+#macro HORDE_GEM_ESCALA        3      // tamanho da gema de valor base (= image_xscale do obj_xp_um)
+#macro HORDE_GEM_ESCALA_MAX    2.2    // gemas muito valiosas crescem até 2.2x o tamanho base
 #macro HORDE_XP_BASE           20     // = base_xp do obj_xp_um
 #macro HORDE_XP_POR_LVL        0      // obj_xp_um pretendia lvl*10, mas o bônus nunca era aplicado
 #macro HORDE_GEM_VELOC         4      // = spd do obj_xp_um
@@ -52,7 +55,7 @@
 
 /// Inimigos que continuam sendo instâncias reais (comportamento complexo, ex.: atiram).
 function horde_instance_only(_obj) {
-    return (_obj == obj_esqueleto_arqueiro);
+    return (_obj == obj_esqueleto_arqueiro || _obj == obj_olho_vazio);
 }
 
 /// Inimigos que se dividem ao morrer (antigo Step do obj_amoeba_laranja).
@@ -91,6 +94,17 @@ function horde_on_player_hit(_player, _dano, _from_x, _from_y) {
         _inst.dano = _dano;
         _inst.cor  = c_red;
     }
+}
+
+/// Colisão arma -> inimigo-instância: true = ignorar este inimigo.
+/// Fantasmas especiais (par_inimigos_fantasmas) só levam dano com o item global.mata_fantasma.
+/// _sempre_fantasma = true para a espada, que já trata eles no evento Collision_par_inimigos_fantasmas.
+function inimigo_colisao_ignorar(_inst, _sempre_fantasma = false) {
+    if (!instance_exists(_inst) || _inst.vida <= 0) return true;
+    var _obj = _inst.object_index;
+    var _fantasma = (_obj == par_inimigos_fantasmas) || object_is_ancestor(_obj, par_inimigos_fantasmas);
+    if (!_fantasma) return false;
+    return _sempre_fantasma || !global.mata_fantasma;
 }
 
 /// Chamado a cada inimigo da horda que morre (XP e divisão são tratados pelo sistema).

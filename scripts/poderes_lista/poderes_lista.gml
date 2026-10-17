@@ -289,23 +289,23 @@ function inicializar_tudo()
     // Adicione novos Upgrades aqui (Nível começa 0, Descrição vazia "")
     // A ordem de chamada define o índice da linha automaticamente. FIM DO BUG HARDCODE.
     // Nota: A Bola está começando no nível 5 para os seus testes!
-    ds_grid_add_upgrade_vamp("BOLA",       scr_bola_config,       scr_bola,       -1, 50);
-    ds_grid_add_upgrade_vamp("EXPLOSÃO",   scr_explosion_config,   scr_explosao,   -1, 50);
-    ds_grid_add_upgrade_vamp("SHURIKEN",   scr_shuriken_config,   scr_shuriken,   -1, 50);
-    ds_grid_add_upgrade_vamp("BUMERANGUE", scr_boomerang_config, scr_bumerangue, -1, 50);
-    ds_grid_add_upgrade_vamp("LÂMINAS",    scr_laminas_giras_config, scr_laminas_giras, -1, 50);
-    ds_grid_add_upgrade_vamp("RASTRO",     scr_rastro_sombrio_config, scr_rastro_sombrio, -1, 50);
-    ds_grid_add_upgrade_vamp("ADAGAS",     scr_adagas_velozes_config, scr_adagas_velozes, -1, 50);
+    ds_grid_add_upgrade_vamp("BOLA",       scr_bola_config,       scr_bola,       -1, 0);
+    ds_grid_add_upgrade_vamp("EXPLOSÃO",   scr_explosion_config,   scr_explosao,   -1, 0);
+    ds_grid_add_upgrade_vamp("SHURIKEN",   scr_shuriken_config,   scr_shuriken,   -1, 0);
+    ds_grid_add_upgrade_vamp("BUMERANGUE", scr_boomerang_config, scr_bumerangue, -1, 0);
+    ds_grid_add_upgrade_vamp("LÂMINAS",    scr_laminas_giras_config, scr_laminas_giras, -1, 0);
+    ds_grid_add_upgrade_vamp("RASTRO",     scr_rastro_sombrio_config, scr_rastro_sombrio, -1, 0);
+    ds_grid_add_upgrade_vamp("ADAGAS",     scr_adagas_velozes_config, scr_adagas_velozes, -1, 0);
 
     
     // Habilidades sem config/script ainda
-    ds_grid_add_upgrade_vamp("ORBE",       -1, -1, -1, 50);
-    ds_grid_add_upgrade_vamp("BOLHAS",     -1, -1, -1, 50);
+    ds_grid_add_upgrade_vamp("ORBE",       -1, -1, -1, 0);
+    ds_grid_add_upgrade_vamp("BOLHAS",     -1, -1, -1, 0);
     
-    ds_grid_add_upgrade_vamp("RAIO",       scr_lightning_config,   scr_raio,       -1, 50);
-    ds_grid_add_upgrade_vamp("SAPO",       scr_sapo_config,       scr_sapo,       -1, 50);
-    ds_grid_add_upgrade_vamp("BORBOLETA",   scr_butterfly_config,   scr_borboleta,  -1, 50);
-    ds_grid_add_upgrade_vamp("BOMBA",      scr_bomb_config,      scr_bomba,      -1, 50);
+    ds_grid_add_upgrade_vamp("RAIO",       scr_lightning_config,   scr_raio,       -1, 0);
+    ds_grid_add_upgrade_vamp("SAPO",       scr_sapo_config,       scr_sapo,       -1, 0);
+    ds_grid_add_upgrade_vamp("BORBOLETA",   scr_butterfly_config,   scr_borboleta,  -1, 0);
+    ds_grid_add_upgrade_vamp("BOMBA",      scr_bomb_config,      scr_bomba,      -1, 0);
 
 
     // ========================================================

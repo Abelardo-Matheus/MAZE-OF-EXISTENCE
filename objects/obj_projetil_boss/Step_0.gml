@@ -2,6 +2,16 @@
 // feather disable GM1049
 // feather disable GM2017
 // feather disable GM1063
+// --- Bosses da infância (scr_boss_infancia) ---
+if (espera > 0) {
+    espera -= 1;
+    if (espera <= 0) { direction = point_direction(x, y, alvo_x, alvo_y); speed = spd_apos; }
+}
+if (gira == -1) image_angle = direction; else if (gira > 0) image_angle += gira;
+if (vida_frames > 0) {
+    vida_frames -= 1;
+    if (vida_frames <= 0) { instance_destroy(); exit; }
+}
 
 if(real(seguidor)){
 // feather disable once GM1041

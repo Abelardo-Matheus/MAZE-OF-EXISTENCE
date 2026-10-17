@@ -120,6 +120,10 @@ function inicializar_gerador_mundo()
     if (!variable_global_exists("fila_de_chunks"))       global.fila_de_chunks = []; 
 
     global.tamanho_bloco = 4000; 
+
+    // NOVO: semente do clima (temperatura/umidade) que decide os biomas
+    if (!variable_global_exists("semente_terreno")) global.semente_terreno = irandom_range(1, 9999);
+    terreno_inicializar();
     global.ultimo_bloco = [infinity, infinity]; 
     global.ultimo_tile = [infinity, infinity]; 
     
@@ -179,12 +183,16 @@ function definir_bioma_do_cluster(_start_bx, _start_by)
 {
     var _id_inicial = string(_start_bx) + "," + string(_start_by);
     
+    // O jogador sempre começa numa floresta
+    if (!ds_map_exists(global.mapa_biomas, "0,0")) global.mapa_biomas[? "0,0"] = "floresta";
+
     // Se o bloco já tem um bioma, ignoramos
     if (ds_map_exists(global.mapa_biomas, _id_inicial)) return;
 
-    // Sorteia um bioma e o tamanho da área (2 a 8 blocos)
-    var _tipos_biomas = ["floresta", "cidade", "vazia", "floresta_negra"]; // ADICIONE NOVOS AQUI
-    var _bioma_escolhido = _tipos_biomas[irandom(array_length(_tipos_biomas) - 1)];
+    // O bioma vem do CLIMA da região (script TERRENO): neve longe do deserto,
+    // pântano perto da floresta etc. Biomas: floresta, cidade, vazia, floresta_negra,
+    // deserto, neve, pantano, vulcanico, prado, cristalino
+    var _bioma_escolhido = terreno_escolher_bioma(_start_bx, _start_by);
     var _tamanho_cluster = irandom_range(2, 8);
 
     var _cx = _start_bx;
@@ -281,6 +289,47 @@ function gerenciar_mundo_procedural()
                 gerar_estruturas_para_bloco(_bx, _by, obj_secondary_boss, 1, 1000); 
                 gerar_cobertura_cenario(_bx, _by, obj_rock, irandom_range(50, 100), global.posicoes_pedras, 50);
                 gerar_monstros_para_bloco(_bx, _by, _meu_bioma, 500); 
+                break;
+
+            // ---------------- BIOMAS NOVOS ----------------
+            case "deserto":
+                gerar_cobertura_cenario(_bx, _by, obj_rock, irandom_range(20, 40), global.posicoes_pedras, 80);
+                gerar_cobertura_cenario(_bx, _by, obj_arvore, irandom_range(5, 15), global.posicoes_arvores, 150);
+                gerar_fauna_para_bloco(_bx, _by, irandom_range(4, 10));
+                gerar_monstros_para_bloco(_bx, _by, _meu_bioma, 400);
+                break;
+
+            case "neve":
+                gerar_cobertura_cenario(_bx, _by, obj_arvore, irandom_range(40, 80), global.posicoes_arvores, 100);
+                gerar_cobertura_cenario(_bx, _by, obj_rock, irandom_range(10, 25), global.posicoes_pedras, 80);
+                gerar_monstros_para_bloco(_bx, _by, _meu_bioma, 300);
+                break;
+
+            case "pantano":
+                gerar_cobertura_cenario(_bx, _by, obj_arvore, irandom_range(80, 120), global.posicoes_arvores, 60);
+                gerar_estruturas_para_bloco(_bx, _by, obj_grupo_inimigos, irandom_range(1, 3), 400);
+                gerar_fauna_para_bloco(_bx, _by, irandom_range(5, 12));
+                gerar_monstros_para_bloco(_bx, _by, _meu_bioma, 250);
+                break;
+
+            case "vulcanico":
+                gerar_cobertura_cenario(_bx, _by, obj_rock, irandom_range(40, 80), global.posicoes_pedras, 60);
+                gerar_cobertura_cenario(_bx, _by, obj_arvore, irandom_range(5, 15), global.posicoes_arvores, 150);
+                gerar_estruturas_para_bloco(_bx, _by, obj_grupo_inimigos, irandom_range(2, 5), 400);
+                gerar_monstros_para_bloco(_bx, _by, _meu_bioma, 300);
+                break;
+
+            case "prado":
+                gerar_cobertura_cenario(_bx, _by, obj_arvore, irandom_range(15, 30), global.posicoes_arvores, 120);
+                gerar_cobertura_cenario(_bx, _by, obj_rock, irandom_range(3, 8), global.posicoes_pedras, 80);
+                gerar_fauna_para_bloco(_bx, _by, irandom_range(15, 25));
+                gerar_monstros_para_bloco(_bx, _by, _meu_bioma, 400);
+                break;
+
+            case "cristalino":
+                gerar_cobertura_cenario(_bx, _by, obj_rock, irandom_range(30, 60), global.posicoes_pedras, 70);
+                gerar_estruturas_para_bloco(_bx, _by, obj_grupo_inimigos, irandom_range(1, 3), 400);
+                gerar_monstros_para_bloco(_bx, _by, _meu_bioma, 350);
                 break;
         }
 

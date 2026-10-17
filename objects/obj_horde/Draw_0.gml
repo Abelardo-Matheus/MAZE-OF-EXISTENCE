@@ -17,7 +17,7 @@ if (gem_count > 0 && gem_sprite != -1) {
     for (_k = 0; _k < gem_count; _k++) {
         _px = gem_x[_k]; _py = gem_y[_k];
         if (_px < _x0 || _py < _y0 || _px > _x1 || _py > _y1) continue;
-        draw_sprite_ext(gem_sprite, _gsub, _px, _py, 3, 3, 0, c_white, 1);
+        draw_sprite_ext(gem_sprite, _gsub, _px, _py, gem_s[_k], gem_s[_k], 0, c_white, 1); // maior = mais XP somado
     }
 }
 

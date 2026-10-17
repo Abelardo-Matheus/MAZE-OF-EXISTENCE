@@ -10,8 +10,8 @@ if (tempo_piscar > 0) {
     // Faz o objeto piscar vermelho
     image_blend = c_red; 
 } else {
-    // Volta a cor normal quando o timer acaba
-    image_blend = c_white; 
+    // Volta a cor normal quando o timer acaba (pedras usam o tom do bioma)
+    image_blend = variable_instance_exists(id, "cor_bioma") ? cor_bioma : c_white; 
 }
 
 

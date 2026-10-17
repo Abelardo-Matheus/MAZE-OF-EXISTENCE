@@ -114,13 +114,8 @@ function mini_mapa_vamp() {
 
                 if (!is_undefined(_bioma)) {
                     // Define as cores para cada bioma (Ajuste como preferir!)
-                    var _cor_bioma = _c_bg; 
-                    switch (_bioma) {
-                        case "floresta":       _cor_bioma = make_color_rgb(34, 139, 34); break;   // Verde Floresta
-                        case "cidade":         _cor_bioma = make_color_rgb(105, 105, 105); break; // Cinza
-                        case "floresta_negra": _cor_bioma = make_color_rgb(30, 20, 40); break;    // Roxo/Verde muito escuro
-                        case "vazia":          _cor_bioma = make_color_rgb(194, 178, 128); break; // Cor de Areia/Deserto
-                    }
+                    // Cor de cada bioma vem do script TERRENO (inclui os biomas novos)
+                    var _cor_bioma = terreno_cor_minimapa(_bioma);
 
                     // Calcula onde o bloco começa e termina no mundo real
                     var _wx1 = _bx * global.tamanho_bloco;

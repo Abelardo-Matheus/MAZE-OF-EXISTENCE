@@ -44,9 +44,8 @@ function reset_level_data()
     gerar_inimigos_e_itens_para_o_nivel(global.salas_geradas, global.level_fase);
     
     // Móveis e Decoração
-    furniture_generate_positions(global.salas_geradas, global.salas_com_escrivaninha, 3);
-    furniture_generate_positions(global.salas_geradas, global.salas_com_geladeira, 1, "cozinha");
-    furniture_generate_positions(global.salas_geradas, global.salas_com_guarda_roupa, 1, "quarto");
+    // Mobília organizada por cômodo (scr_casa_moveis): substitui geladeira/guarda-roupa/escrivaninha soltos
+    casa_gerar_moveis(global.salas_geradas);
     create_escada_porao_em_fundos(global.salas_geradas);
     
 
@@ -107,6 +106,7 @@ function reset_global_variables()
     global.salas_com_slow         = _reset_map(global.salas_com_slow);
     global.salas_com_paredes      = _reset_map(global.salas_com_paredes);
     global.salas_com_fantasma     = _reset_map(global.salas_com_fantasma);
+    global.salas_com_moveis       = _reset_map(variable_global_exists("salas_com_moveis") ? global.salas_com_moveis : -1);
 
     // --- Limpeza de DS Lists ---
     if (ds_exists(global.room_positions, ds_type_list)) {

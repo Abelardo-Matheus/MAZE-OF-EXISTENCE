@@ -25,6 +25,8 @@ draw_set_color(c_white);
 draw_set_halign(fa_left);
 draw_set_valign(fa_top);
 
+rondas_desenhar_gui(); // aviso "NOITE X - RONDA Y" / "ELITE!" (scr_rondas_noite)
+
 if (HORDE_DEBUG) {
     draw_text(8, 120, "Horda: " + string(alive) + "  Gemas: " + string(gem_count) + "  FPS real: " + string(floor(fps_real)) + "  [F9: +500]");
 }

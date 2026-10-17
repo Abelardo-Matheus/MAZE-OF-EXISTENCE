@@ -1,9 +1,7 @@
 // feather disable GM2017
-image_xscale = global._cell_size / sprite_get_width(sprite_index)*3;
-image_yscale = global._cell_size / sprite_get_height(sprite_index)*3;
+// Sprite novo já está na escala do jogo (1 pixel = 1 pixel, grade de 64).
+// A casa agora usa obj_movel_abre (scr_casa_moveis); este objeto ficou só por compatibilidade.
+image_xscale = 1;
+image_yscale = 1;
+image_speed = 0;
 aberto = false;
-
-
-
-
-

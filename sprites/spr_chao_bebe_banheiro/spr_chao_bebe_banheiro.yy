@@ -4,7 +4,7 @@
   "name": "spr_chao_bebe_banheiro",
   "bbox_bottom": 63,
   "bbox_left": 0,
-  "bbox_right": 66,
+  "bbox_right": 63,
   "bbox_top": 0,
   "bboxMode": 0,
   "collisionKind": 1,
@@ -14,6 +14,7 @@
   "For3D": false,
   "frames": [
     {"resourceType":"GMSpriteFrame","resourceVersion":"1.1","name":"0824336d-8f36-4417-8ed2-b041a9267d67",},
+    {"resourceType":"GMSpriteFrame","resourceVersion":"1.1","name":"35978b64-c470-44b9-be69-d5901abf817e",},
   ],
   "gridX": 0,
   "gridY": 0,
@@ -23,7 +24,7 @@
     {"resourceType":"GMImageLayer","resourceVersion":"1.0","name":"6297ed2c-2533-49db-a76d-913d22880362","blendMode":0,"displayName":"default","isLocked":false,"opacity":100.0,"visible":true,},
   ],
   "nineSlice": null,
-  "origin": 4,
+  "origin": 9,
   "parent": {
     "name": "FASE_BEBE",
     "path": "folders/Sprites/FASE_BEBE.yy",
@@ -43,7 +44,7 @@
     "events": {"resourceType":"KeyframeStore<MessageEventKeyframe>","resourceVersion":"1.0","Keyframes":[],},
     "eventStubScript": null,
     "eventToFunction": {},
-    "length": 1.0,
+    "length": 2.0,
     "lockOrigin": false,
     "moments": {"resourceType":"KeyframeStore<MomentsEventKeyframe>","resourceVersion":"1.0","Keyframes":[],},
     "playback": 1,
@@ -54,12 +55,13 @@
     "timeUnits": 1,
     "tracks": [
       {"resourceType":"GMSpriteFramesTrack","resourceVersion":"1.0","name":"frames","builtinName":0,"events":[],"inheritsTrackColour":true,"interpolation":1,"isCreationTrack":false,"keyframes":{"resourceType":"KeyframeStore<SpriteFrameKeyframe>","resourceVersion":"1.0","Keyframes":[
-            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"0824336d-8f36-4417-8ed2-b041a9267d67","path":"sprites/spr_chao_bebe_banheiro/spr_chao_bebe_banheiro.yy",},},},"Disabled":false,"id":"c2139e83-0031-43a9-b616-efe01cdcde13","IsCreationKey":false,"Key":0.0,"Length":1.0,"Stretch":false,},
+            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"0824336d-8f36-4417-8ed2-b041a9267d67","path":"sprites/spr_chao_bebe_banheiro/spr_chao_bebe_banheiro.yy",},},},"Disabled":false,"id":"90b8cee6-16e3-4301-b0aa-3826e112a355","IsCreationKey":false,"Key":0.0,"Length":1.0,"Stretch":false,},
+            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"35978b64-c470-44b9-be69-d5901abf817e","path":"sprites/spr_chao_bebe_banheiro/spr_chao_bebe_banheiro.yy",},},},"Disabled":false,"id":"08dd291f-0654-4c97-92d9-2ed449369997","IsCreationKey":false,"Key":1.0,"Length":1.0,"Stretch":false,},
           ],},"modifiers":[],"spriteId":null,"trackColour":0,"tracks":[],"traits":0,},
     ],
     "visibleRange": null,
     "volume": 1.0,
-    "xorigin": 33,
+    "xorigin": 32,
     "yorigin": 32,
   },
   "swatchColours": null,
@@ -70,5 +72,5 @@
   },
   "type": 0,
   "VTile": false,
-  "width": 67,
+  "width": 64,
 }

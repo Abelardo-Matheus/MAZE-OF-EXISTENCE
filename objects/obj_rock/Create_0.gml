@@ -17,3 +17,7 @@ escale = irandom_range(4, 7);
 image_xscale = escale;
 image_yscale = escale;
 depth = -y;
+
+// Tom da pedra conforme o bioma
+cor_bioma = terreno_cor_objeto(x, y, "pedra");
+image_blend = cor_bioma;

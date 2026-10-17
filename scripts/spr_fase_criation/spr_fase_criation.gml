@@ -23,8 +23,11 @@ global.destino_templo = noone;
 global.origem_templo = noone;
 
 // --- PREVENÇÃO DE CRASHES (JARDIM E TEMPLO) ---
-global.sala_jardim = [];      // Inicializa como array vazio para validações de tipo (Feather)
-global.templos_salas_pos = [];   // Inicializa array vazio
+/// @desc Armazena as salas do jardim para evitar crashes
+global.sala_jardim = [];
+
+/// @desc Armazena as posições dos templos criados
+global.templos_salas_pos = [];
 // ----------------------------------------------
 
 global.sala_boss_brocolis = [];
@@ -61,6 +64,7 @@ global.salas_com_escada_porao   = ds_map_create();
 global.sala_com_item_drop       = ds_map_create();
 global.salas_com_geladeira      = ds_map_create();
 global.salas_com_guarda_roupa   = ds_map_create();
+global.salas_com_moveis         = ds_map_create(); // mobília da casa (scr_casa_moveis)
 
 /// @desc Gerencia a criação inicial de inimigos e itens
 function gerar_inimigos_e_itens_para_o_nivel(_salas_geradas, _level) {
@@ -68,7 +72,7 @@ function gerar_inimigos_e_itens_para_o_nivel(_salas_geradas, _level) {
     var _quantidade_itens = 2 + _level;
     
     criar_inimigos_em_salas_aleatorias_alet(_salas_geradas);
-    create_slow_em_salas_aleatorias(_salas_geradas, 3, _quantidade_itens);
+    create_slow_em_salas_aleatorias(_salas_geradas, _quantidade_inimigos, _quantidade_itens);
 }
 
 // ============================================================================
@@ -107,33 +111,6 @@ function recriar_pontos_na_sala_atual(_current_sala) {
     } 
 }
 
-function create_pontos_em_salas_aleatorias(_salas_geradas, _quantidade_salas, _quantidade_pontos) {
-    var _salas_selecionadas = [];
-
-    // Selecionar salas aleatórias
-    for (var _i = 0; _i < _quantidade_salas; _i++) {
-        var _sala_aleatoria = 0;
-        do {
-            _sala_aleatoria = _salas_geradas[irandom(array_length(_salas_geradas) - 1)];
-        } until (!array_contains(_salas_selecionadas, _sala_aleatoria));
-
-        array_push(_salas_selecionadas, _sala_aleatoria);
-    }
-
-    // Criar pontos nas salas selecionadas
-    for (var _i = 0; _i < array_length(_salas_selecionadas); _i++) {
-        var _sala = _salas_selecionadas[_i];
-        var _sala_id = string(_sala[0]) + "_" + string(_sala[1]);
-        var _lista_pontos = ds_list_create();
-
-        for (var _j = 0; _j < _quantidade_pontos; _j++) {
-            var _ponto_x = irandom_range(128, room_width - 128);
-            var _ponto_y = irandom_range(128, room_height - 128);
-            ds_list_add(_lista_pontos, [_ponto_x, _ponto_y]);
-        }
-        ds_map_add(global.salas_com_pontos, _sala_id, _lista_pontos);
-    }
-}
 #endregion
 
 // ============================================================================
@@ -893,7 +870,7 @@ function criar_inimigos_em_salas_aleatorias_alet(_salas_geradas) {
             _inst.inimigo_id = _inimigo_id;
             _inst.max_vida = 10 + (_lvl * 2);
             
-            _salvar_inimigo(_lista_inimigos, _inimigo_id, _itype, _ix, _iy, _inst.vida, _inst.dano, _inst.veloc_perse, _inst.dist_aggro, _inst.dist_desaggro, _inst.escala, _inst.veloc, _inst.max_vida);
+    //_salvar_inimigo(_lista_inimigos, _inimigo_id, _itype, _ix, _iy, _inst.vida, _inst.dano, _inst.veloc_perse, _inst.dist_aggro, _inst.dist_desaggro, _inst.escala, _inst.veloc, _inst.max_vida);
         }
 
         // Criar médios
@@ -914,7 +891,7 @@ function criar_inimigos_em_salas_aleatorias_alet(_salas_geradas) {
             _inst.inimigo_id = _inimigo_id;
             _inst.max_vida = 20 + (_lvl * 3);
 
-            _salvar_inimigo(_lista_inimigos, _inimigo_id, _itype, _ix, _iy, _inst.vida, _inst.dano, _inst.veloc_perse, _inst.dist_aggro, _inst.dist_desaggro, _inst.escala, _inst.veloc, _inst.max_vida);
+    //_salvar_inimigo(_lista_inimigos, _inimigo_id, _itype, _ix, _iy, _inst.vida, _inst.dano, _inst.veloc_perse, _inst.dist_aggro, _inst.dist_desaggro, _inst.escala, _inst.veloc, _inst.max_vida);
         }
 
         // Criar difíceis
@@ -935,7 +912,7 @@ function criar_inimigos_em_salas_aleatorias_alet(_salas_geradas) {
             _inst.inimigo_id = _inimigo_id;
             _inst.max_vida = 30 + (_lvl * 5);
 
-            _salvar_inimigo(_lista_inimigos, _inimigo_id, _itype, _ix, _iy, _inst.vida, _inst.dano, _inst.veloc_perse, _inst.dist_aggro, _inst.dist_desaggro, _inst.escala, _inst.veloc, _inst.max_vida);
+    //_salvar_inimigo(_lista_inimigos, _inimigo_id, _itype, _ix, _iy, _inst.vida, _inst.dano, _inst.veloc_perse, _inst.dist_aggro, _inst.dist_desaggro, _inst.escala, _inst.veloc, _inst.max_vida);
         }
 
         ds_map_add(global.salas_com_inimigos, _sala_id, _lista_inimigos);
@@ -1060,12 +1037,6 @@ function gera_salas_procedurais(_num_salas) {
         }
     }
     return _salas;
-}
-
-function cria_salas_e_objetos(_maze_width, _maze_height, _maze, _cell_size) {
-    criar_chao_room_inteira(global._maze_width, global._maze_height, global._maze);
-    criar_paredes_borda(global._maze_width, global._maze_height, global._maze);
-    criar_paredes_intances(global._maze_width, global._maze_height, global._maze, global._cell_size);
 }
 
 // ============================================================================
@@ -1231,6 +1202,8 @@ function recriar_bosses() {
         global.sala_boss_brocolis = global.sala;
         instance_create_layer(global.room_width / 2 + 32, global.room_height / 2, "Layer_Player", obj_boss_brocolis);
     }
+    // Couve (cozinha), Bicho-Papão (quarto) e Livro de Dever de Casa — scr_boss_infancia
+    boss_infancia_spawnar();
 }
 
 function carregar_sala(_sala_atual, _sala_origem_array) {
@@ -1239,29 +1212,29 @@ function carregar_sala(_sala_atual, _sala_origem_array) {
     global.current_sala = _sala_atual;
     global.sala_passada = _sala_origem_array;
     
-    cria_salas_e_objetos(real(global._maze_width), real(global._maze_height), global._maze, real(global._cell_size));
-    
+    criar_chao_room_inteira(real(global._maze_width), real(global._maze_height), global._maze);
+    criar_paredes_borda(real(global._maze_width), real(global._maze_height), global._maze);
+	criar_paredes_intances(real(global._maze_width), real(global._maze_height), global._maze, global._cell_size);
+	
     var _salas = is_array(global.salas_geradas) ? global.salas_geradas : [];
     criar_portas_gerais(_sala_atual, _salas);
     recriar_pontos_na_sala_atual(global.current_sala);
     
     // Recriar mobílias
-    furniture_respawn_in_room(_sala_atual, global.salas_com_escrivaninha);
-    furniture_respawn_in_room(_sala_atual, global.salas_com_geladeira);
-    furniture_respawn_in_room(_sala_atual, global.salas_com_guarda_roupa);
+    casa_recriar_moveis(_sala_atual); // móveis + tapetes do cômodo (scr_casa_moveis)
     
     recriar_inimigos_na_sala_atual(global.current_sala);
     recriar_slow_na_sala_atual(global.current_sala);
     recriar_escada_na_sala_atual(global.current_sala);
-    recriar_item_dropado(global.current_sala[0], global.current_sala[1]);
+    //recriar_item_dropado(global.current_sala[0], global.current_sala[1]);
     recriar_inimigos_na_sala_atual_alet(global.current_sala);
     recriar_bosses();
-    sala_tuto(); 
+    //sala_tuto(); 
 }
 
 function carregar_sala_templo(_sala_atual, _sala_origem_array, _direcao) {
     clear_room(); 
-    carregar_templo(_direcao);
+    carregar_sala_templo(_direcao);
     global.sala_passada = _sala_origem_array;
     global.current_sala = _sala_atual;
     
@@ -1282,12 +1255,6 @@ function criar_random_pontos(_quantidade) {
         } until (!position_meeting(_ponto_x, _ponto_y, obj_wall_carne) || _tentativas >= _max_tentativas);
         
         instance_create_layer(_ponto_x, _ponto_y, "instances", obj_pontos);
-    }
-}
-
-function sala_tuto() {
-    if (global.current_sala[0] == 0 && global.current_sala[1] == 0) {
-        instance_create_layer(global.room_width / 2, global.room_height / 2, "instances", obj_setas);
     }
 }
 

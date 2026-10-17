@@ -97,6 +97,14 @@ function horde_pull_circle(_x, _y, _r, _force, _min_dist = 10) {
     return _n;
 }
 
+/// XP no chão SEM criar instância (pool de gemas do obj_horde, com junção automática).
+/// Retorna false se não há obj_horde na sala (outras fases): aí use o obj_xp_um normal.
+function horde_xp_drop(_x, _y, _valor) {
+    if (!instance_exists(obj_horde)) return false;
+    with (obj_horde) _horde_gem_drop(_x, _y, _valor);
+    return true;
+}
+
 function horde_count() {
     return instance_exists(obj_horde) ? obj_horde.alive : 0;
 }
@@ -145,9 +153,11 @@ function inimigos_alvos(_x, _y, _range, _max = -1, _modo = "perto", _na_tela = f
     // 1) Inimigos-instância (arqueiros, monstros dos chunks, chefes de grupo...)
     with (obj_par_inimigos) {
         if (vida <= 0) continue;
-        if (_na_tela && (x < _cx0 || x > _cx1 || y < _cy0 || y > _cy1)) continue;
-        var _d2i = sqr(x - _x) + sqr(y - _y);
-        if (_d2i <= _r2) _alvo_considerar(_sel, x, y, id, -1, _d2i);
+        // Mira no centro da máscara (corpo), não na origem do sprite (pé)
+        var _bx = (bbox_left + bbox_right) * 0.5, _by = (bbox_top + bbox_bottom) * 0.5;
+        if (_na_tela && (_bx < _cx0 || _bx > _cx1 || _by < _cy0 || _by > _cy1)) continue;
+        var _d2i = sqr(_bx - _x) + sqr(_by - _y);
+        if (_d2i <= _r2) _alvo_considerar(_sel, _bx, _by, id, -1, _d2i);
     }
 
     // 2) Horda (só olha as células do hash dentro do alcance)
@@ -156,8 +166,9 @@ function inimigos_alvos(_x, _y, _range, _max = -1, _modo = "perto", _na_tela = f
             var _n = _horde_collect_circle(_x, _y, _range);
             for (var _k = 0; _k < _n; _k++) {
                 var _j = qbuf[_k];
-                if (_na_tela && (ex[_j] < _cx0 || ex[_j] > _cx1 || ey[_j] < _cy0 || ey[_j] > _cy1)) continue;
-                _alvo_considerar(_sel, ex[_j], ey[_j], noone, euid[_j], qd2[_k]);
+                var _hy = ey[_j] + ecy[_j]; // centro do corpo
+                if (_na_tela && (ex[_j] < _cx0 || ex[_j] > _cx1 || _hy < _cy0 || _hy > _cy1)) continue;
+                _alvo_considerar(_sel, ex[_j], _hy, noone, euid[_j], qd2[_k]);
             }
         }
     }
@@ -176,8 +187,8 @@ function inimigo_posicao(_alvo) {
     if (is_undefined(_alvo) || !is_struct(_alvo)) return undefined;
     if (_alvo.inst != noone) {
         if (!instance_exists(_alvo.inst)) return undefined;
-        _alvo.x = _alvo.inst.x;
-        _alvo.y = _alvo.inst.y;
+        _alvo.x = (_alvo.inst.bbox_left + _alvo.inst.bbox_right) * 0.5;
+        _alvo.y = (_alvo.inst.bbox_top + _alvo.inst.bbox_bottom) * 0.5;
         return _alvo;
     }
     if (!instance_exists(obj_horde)) return undefined;
@@ -186,7 +197,7 @@ function inimigo_posicao(_alvo) {
         var _s = _horde_slot_of(_alvo.uid);
         if (_s >= 0 && ehp[_s] > 0) {
             _alvo.x = ex[_s];
-            _alvo.y = ey[_s];
+            _alvo.y = ey[_s] + ecy[_s];
             _ok = true;
         }
     }
@@ -197,14 +208,22 @@ function inimigo_posicao(_alvo) {
 
 #region ---------- SPAWN (chamado pelo sistema de ondas) ----------
 
-/// Recebe um item de global.night_waves: [objeto, mult_vida, escala, intervalo].
-/// Cria um grupinho de HORDE_GRUPO_POR_SPAWN inimigos na borda da câmera.
+/// Recebe um pedido de scr_rondas_noite: { obj, qtd, mult } (ver rondas_spec).
+/// Cria um grupinho de "qtd" inimigos na borda do quadrado de spawn.
 /// Retorna false se o objeto deve continuar sendo instância (ver horde_instance_only).
-function horde_spawn_wave_enemy(_enemy_data) {
-    if (!instance_exists(obj_horde) || horde_instance_only(_enemy_data[0])) return false;
+function horde_spawn_ronda(_spec) {
+    if (!instance_exists(obj_horde) || horde_instance_only(_spec.obj)) return false;
     with (obj_horde) {
-        var _type = _horde_type_get(_enemy_data[0], _enemy_data[1], _enemy_data[2]);
-        _horde_spawn_group(_type, HORDE_GRUPO_POR_SPAWN);
+        _horde_spawn_group(_horde_ronda_tipo(_spec.obj, _spec.mult), _spec.qtd);
+    }
+    return true;
+}
+
+/// Evento "anel" das rondas: cerca o jogador com "qtd" inimigos.
+function horde_spawn_anel(_spec) {
+    if (!instance_exists(obj_horde) || horde_instance_only(_spec.obj)) return false;
+    with (obj_horde) {
+        _horde_enxame_iniciar(_horde_ronda_tipo(_spec.obj, _spec.mult), _spec.qtd);
     }
     return true;
 }
