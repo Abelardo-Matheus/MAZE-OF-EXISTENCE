@@ -49,8 +49,7 @@ function reset_level_data()
     furniture_generate_positions(global.salas_geradas, global.salas_com_guarda_roupa, 1, "quarto");
     create_escada_porao_em_fundos(global.salas_geradas);
     
-    // Pontos de interesse
-    create_pontos_em_salas_aleatorias(global.salas_geradas, 10, 5); 
+
     
     // Estruturas Especiais (Templos, Jardins, Escuridão)
     criar_templo_e_jardim(global.current_sala, global.salas_geradas);
@@ -64,8 +63,7 @@ function reset_level_data()
     // Carrega a sala inicial
     carregar_sala(global.current_sala, global.current_sala);
     
-    // Prepara sala de tutorial (se necessário)
-    sala_tuto();
+
     
     // Reseta Minimapa
     global.minimap = [];

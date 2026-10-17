@@ -22,22 +22,29 @@ function gerar_monstros_para_bloco(_bx, _by, _bioma_atual, _dist_minima)
     {
         case "floresta":
             _qtd_base = irandom_range(3, 6);
-            _obj_monstro = choose(obj_amoeba, obj_amoeba_azul); 
+            // slimes + cogumelos disfarcados
+            _obj_monstro = choose(obj_amoeba, obj_amoeba_azul, obj_cogumelo, obj_cogumelo_venenoso); 
             break;
             
         case "cidade":
             _qtd_base = irandom_range(5, 10);
-            _obj_monstro = choose(obj_amoeba_laranja, obj_amoeba_rosa);
+            // slimes + ratos de esgoto + morcegos
+            _obj_monstro = choose(obj_amoeba_laranja, obj_amoeba_rosa, obj_rato, obj_rato_gigante, obj_morcego);
             break;
             
         case "floresta_negra":
             _qtd_base = irandom_range(8, 15);
-            _obj_monstro = choose(obj_esqueleto, obj_inimigo_fantasma);
+            // familia dos esqueletos + familia dos fantasmas + morcego vampiro
+            _obj_monstro = choose(
+                obj_esqueleto, obj_esqueleto_guerreiro, obj_esqueleto_arqueiro, obj_esqueleto_corredor,
+                obj_inimigo_fantasma, obj_fantasma_azul, obj_fantasma_verde, obj_fantasma_vermelho,
+                obj_morcego_vampiro
+            );
             break;
             
         case "vazia":
             _qtd_base = irandom_range(1, 3);
-            _obj_monstro = obj_esqueleto; 
+            _obj_monstro = choose(obj_esqueleto, obj_esqueleto_guerreiro, obj_olho_vazio, obj_fantasma_vermelho); 
             break;
     }
 
@@ -102,21 +109,27 @@ function init_night_waves() {
         // --- ONDA 0 (Começa no minuto 0 do jogo) ---
         [3, [ 
             [obj_esqueleto, global.level_player, 0.12, 0.1], // Spawna a cada 2 segundos
-            [obj_amoeba_azul, global.level_player * 1.5, 2.0, 3.5] // Spawna a cada 3.5 segundos
+            [obj_amoeba_azul, global.level_player * 1.5, 2.0, 3.5], // Spawna a cada 3.5 segundos
+            [obj_morcego, global.level_player, 1.0, 4.0]             // morcegos em zigue-zague
         ]],
         
         // --- ONDA 1 (Começa no minuto 1 do jogo) ---
         [4, [
-            [obj_amoeba_laranja, global.level_player * 2.0, 1.2, 1.5]
+            [obj_amoeba_laranja, global.level_player * 2.0, 1.2, 1.5],
+            [obj_esqueleto_corredor, global.level_player, 1.0, 3.0]  // esqueletos rapidos
         ]],
 
         // --- ONDA 2 (Começa no minuto 3 do jogo) ---
         [5, [
              [obj_amoeba_azul, global.level_player * 3, 1.5, 1.0],
-             [obj_amoeba_laranja, global.level_player * 1, 1.0, 2.5]
+             [obj_amoeba_laranja, global.level_player * 1, 1.0, 2.5],
+             [obj_fantasma_azul, global.level_player, 1.0, 3.0],
+             [obj_esqueleto_arqueiro, global.level_player, 1.0, 5.0]
         ]],
 		 [6, [
              [obj_amoeba, global.level_player * 3, 3, 0.5],
+             [obj_fantasma_vermelho, global.level_player * 1.5, 1.0, 4.0],
+             [obj_esqueleto_guerreiro, global.level_player * 1.5, 1.0, 6.0]
             
         ]]
     ];

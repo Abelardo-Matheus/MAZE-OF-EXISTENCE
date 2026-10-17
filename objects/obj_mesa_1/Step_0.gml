@@ -15,6 +15,7 @@ var _inst = instance_nearest(x,y,obj_player);
 			var _item_y = self.y; // Posição Y do jogador
 		criar_item_aleatorio_passivos_pe(_item_x-_index_w,_item_y-_index_h+25,depth,1);
 		furniture_update_state(x, y, global.current_sala, global.salas_com_escrivaninha, true);
+		
 		}
 	}
 

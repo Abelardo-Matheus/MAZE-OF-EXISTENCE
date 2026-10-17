@@ -46,6 +46,27 @@ function furniture_save_state(_room_coords, _global_map, _object_type) {
     }
 }
 
+// --- FUNÇÃO 2: ATUALIZAR ESTADO (Save State) ---
+// Marca qualquer mobília como aberta/fechada no mapa global
+function furniture_update_state(_x, _y, _current_sala_coords, _global_map, _is_open) {
+    var _sala_id = get_room_id(_current_sala_coords);
+
+    if (ds_map_exists(_global_map, _sala_id)) {
+        var _list_points = ds_map_find_value(_global_map, _sala_id);
+
+
+        for (var i = 0; i < ds_list_size(_list_points); i++) {
+            var _data = ds_list_find_value(_list_points, i);
+
+            // Encontra a mobília pela posição X e Y
+            if (_data[0] == _x && _data[1] == _y) {
+                _data[2] = _is_open; // Atualiza o estado
+                ds_list_replace(_list_points, i, _data);
+                break;
+			}
+		}
+	}
+}
 // --- FUNÇÃO 3: GERADOR DE POSIÇÕES (Procedural) ---
 // Define onde ficarão as mobílias em cada sala pela primeira vez
 function furniture_generate_positions(_salas_geradas, _global_map, _qtd_max, _tipo_especifico = "qualquer") {
