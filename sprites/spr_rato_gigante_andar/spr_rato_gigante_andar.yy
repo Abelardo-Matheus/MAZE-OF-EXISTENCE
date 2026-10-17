@@ -28,8 +28,8 @@
   "nineSlice": null,
   "origin": 9,
   "parent": {
-    "name": "NOVOS",
-    "path": "folders/Sprites/INIMIGOS/NOVOS.yy",
+    "name": "RATO GIGANTE",
+    "path": "folders/Sprites/INIMIGOS/RATO GIGANTE.yy",
   },
   "preMultiplyAlpha": false,
   "sequence": {
@@ -57,10 +57,10 @@
     "timeUnits": 1,
     "tracks": [
       {"resourceType":"GMSpriteFramesTrack","resourceVersion":"1.0","name":"frames","builtinName":0,"events":[],"inheritsTrackColour":true,"interpolation":1,"isCreationTrack":false,"keyframes":{"resourceType":"KeyframeStore<SpriteFrameKeyframe>","resourceVersion":"1.0","Keyframes":[
-            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"6036e27a-db15-4367-9f44-1ff53fb58dcf","path":"sprites/spr_rato_gigante_andar/spr_rato_gigante_andar.yy",},},},"Disabled":false,"id":"2064dcf9-fc95-4607-b825-113663cd289a","IsCreationKey":false,"Key":0.0,"Length":1.0,"Stretch":false,},
-            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"d0f57efd-04fc-49ca-98de-7280829a72d1","path":"sprites/spr_rato_gigante_andar/spr_rato_gigante_andar.yy",},},},"Disabled":false,"id":"9f8a71e7-21af-4476-bcba-152ab855024e","IsCreationKey":false,"Key":1.0,"Length":1.0,"Stretch":false,},
-            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"30d2f7bf-14da-4133-bba8-9b7c05477ff1","path":"sprites/spr_rato_gigante_andar/spr_rato_gigante_andar.yy",},},},"Disabled":false,"id":"56bea1d4-be2d-4057-81a7-3cc48ce8d835","IsCreationKey":false,"Key":2.0,"Length":1.0,"Stretch":false,},
-            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"1bb86c0f-c42d-435d-ae21-19ae979def1c","path":"sprites/spr_rato_gigante_andar/spr_rato_gigante_andar.yy",},},},"Disabled":false,"id":"b4a48a74-b25c-4673-9c7b-08887c0d0cee","IsCreationKey":false,"Key":3.0,"Length":1.0,"Stretch":false,},
+            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"6036e27a-db15-4367-9f44-1ff53fb58dcf","path":"sprites/spr_rato_gigante_andar/spr_rato_gigante_andar.yy",},},},"Disabled":false,"id":"9a359ba0-b0a5-41cf-91e6-3e57274e13fd","IsCreationKey":false,"Key":0.0,"Length":1.0,"Stretch":false,},
+            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"d0f57efd-04fc-49ca-98de-7280829a72d1","path":"sprites/spr_rato_gigante_andar/spr_rato_gigante_andar.yy",},},},"Disabled":false,"id":"ac4fb2ef-6b13-4383-8972-20ef3c58e6fb","IsCreationKey":false,"Key":1.0,"Length":1.0,"Stretch":false,},
+            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"30d2f7bf-14da-4133-bba8-9b7c05477ff1","path":"sprites/spr_rato_gigante_andar/spr_rato_gigante_andar.yy",},},},"Disabled":false,"id":"ebc95bc3-75ff-4470-9b7b-26a4f6278b72","IsCreationKey":false,"Key":2.0,"Length":1.0,"Stretch":false,},
+            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"1bb86c0f-c42d-435d-ae21-19ae979def1c","path":"sprites/spr_rato_gigante_andar/spr_rato_gigante_andar.yy",},},},"Disabled":false,"id":"60f986d2-8a11-44bf-8df5-0af487d50570","IsCreationKey":false,"Key":3.0,"Length":1.0,"Stretch":false,},
           ],},"modifiers":[],"spriteId":null,"trackColour":0,"tracks":[],"traits":0,},
     ],
     "visibleRange": null,

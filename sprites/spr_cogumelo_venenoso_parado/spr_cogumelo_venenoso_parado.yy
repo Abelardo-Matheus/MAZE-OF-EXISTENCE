@@ -26,8 +26,8 @@
   "nineSlice": null,
   "origin": 9,
   "parent": {
-    "name": "NOVOS",
-    "path": "folders/Sprites/INIMIGOS/NOVOS.yy",
+    "name": "COGUMELO VENENOSO",
+    "path": "folders/Sprites/INIMIGOS/COGUMELO VENENOSO.yy",
   },
   "preMultiplyAlpha": false,
   "sequence": {
@@ -55,8 +55,8 @@
     "timeUnits": 1,
     "tracks": [
       {"resourceType":"GMSpriteFramesTrack","resourceVersion":"1.0","name":"frames","builtinName":0,"events":[],"inheritsTrackColour":true,"interpolation":1,"isCreationTrack":false,"keyframes":{"resourceType":"KeyframeStore<SpriteFrameKeyframe>","resourceVersion":"1.0","Keyframes":[
-            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"ffb6b08b-80d6-4981-8da7-bba1fce67418","path":"sprites/spr_cogumelo_venenoso_parado/spr_cogumelo_venenoso_parado.yy",},},},"Disabled":false,"id":"8b8c1b83-32dd-4b65-9157-3122aac18eef","IsCreationKey":false,"Key":0.0,"Length":1.0,"Stretch":false,},
-            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"7b831f61-d317-40aa-8717-c949d2deedfc","path":"sprites/spr_cogumelo_venenoso_parado/spr_cogumelo_venenoso_parado.yy",},},},"Disabled":false,"id":"cfdbf857-0fe8-46fc-8e82-024cdaf5b70c","IsCreationKey":false,"Key":1.0,"Length":1.0,"Stretch":false,},
+            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"ffb6b08b-80d6-4981-8da7-bba1fce67418","path":"sprites/spr_cogumelo_venenoso_parado/spr_cogumelo_venenoso_parado.yy",},},},"Disabled":false,"id":"5f3da583-ada7-4694-aa33-2b4f8f755061","IsCreationKey":false,"Key":0.0,"Length":1.0,"Stretch":false,},
+            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"7b831f61-d317-40aa-8717-c949d2deedfc","path":"sprites/spr_cogumelo_venenoso_parado/spr_cogumelo_venenoso_parado.yy",},},},"Disabled":false,"id":"3b784208-8d00-40fe-bed0-7076dcee109f","IsCreationKey":false,"Key":1.0,"Length":1.0,"Stretch":false,},
           ],},"modifiers":[],"spriteId":null,"trackColour":0,"tracks":[],"traits":0,},
     ],
     "visibleRange": null,

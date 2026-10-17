@@ -29,8 +29,8 @@
   "nineSlice": null,
   "origin": 9,
   "parent": {
-    "name": "NOVOS",
-    "path": "folders/Sprites/INIMIGOS/NOVOS.yy",
+    "name": "ESQUELETO GUERREIRO",
+    "path": "folders/Sprites/INIMIGOS/ESQUELETO GUERREIRO.yy",
   },
   "preMultiplyAlpha": false,
   "sequence": {
@@ -58,11 +58,11 @@
     "timeUnits": 1,
     "tracks": [
       {"resourceType":"GMSpriteFramesTrack","resourceVersion":"1.0","name":"frames","builtinName":0,"events":[],"inheritsTrackColour":true,"interpolation":1,"isCreationTrack":false,"keyframes":{"resourceType":"KeyframeStore<SpriteFrameKeyframe>","resourceVersion":"1.0","Keyframes":[
-            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"9ecc8052-9763-4325-a509-951e4e3f4651","path":"sprites/spr_esqueleto_guerreiro_parado/spr_esqueleto_guerreiro_parado.yy",},},},"Disabled":false,"id":"4b472c84-38c8-4faa-a176-fd892b3b0897","IsCreationKey":false,"Key":0.0,"Length":1.0,"Stretch":false,},
-            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"8463a72b-02c3-4324-97fd-ef25d5eb732b","path":"sprites/spr_esqueleto_guerreiro_parado/spr_esqueleto_guerreiro_parado.yy",},},},"Disabled":false,"id":"a3fd9754-e415-4c7e-b39d-d38cc4e6e15c","IsCreationKey":false,"Key":1.0,"Length":1.0,"Stretch":false,},
-            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"06ab7f95-d88d-4a8e-a832-77b44c2f1369","path":"sprites/spr_esqueleto_guerreiro_parado/spr_esqueleto_guerreiro_parado.yy",},},},"Disabled":false,"id":"cb99abeb-0df6-4f35-aa4e-cee753bcc55f","IsCreationKey":false,"Key":2.0,"Length":1.0,"Stretch":false,},
-            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"dbce47b6-0489-4b7d-a807-a95696ecb1b1","path":"sprites/spr_esqueleto_guerreiro_parado/spr_esqueleto_guerreiro_parado.yy",},},},"Disabled":false,"id":"43c2e5eb-86d9-4dad-bcbf-72051d1bbfce","IsCreationKey":false,"Key":3.0,"Length":1.0,"Stretch":false,},
-            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"7533c48e-4453-4e8c-8f61-a2d50e0113ab","path":"sprites/spr_esqueleto_guerreiro_parado/spr_esqueleto_guerreiro_parado.yy",},},},"Disabled":false,"id":"0ce31c5d-efac-4902-b546-05c9f41a2b83","IsCreationKey":false,"Key":4.0,"Length":1.0,"Stretch":false,},
+            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"9ecc8052-9763-4325-a509-951e4e3f4651","path":"sprites/spr_esqueleto_guerreiro_parado/spr_esqueleto_guerreiro_parado.yy",},},},"Disabled":false,"id":"eb4a9191-e1cd-4466-8a06-e196c2b7755e","IsCreationKey":false,"Key":0.0,"Length":1.0,"Stretch":false,},
+            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"8463a72b-02c3-4324-97fd-ef25d5eb732b","path":"sprites/spr_esqueleto_guerreiro_parado/spr_esqueleto_guerreiro_parado.yy",},},},"Disabled":false,"id":"6e5e1093-627c-4d75-a554-ffe888e1f89d","IsCreationKey":false,"Key":1.0,"Length":1.0,"Stretch":false,},
+            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"06ab7f95-d88d-4a8e-a832-77b44c2f1369","path":"sprites/spr_esqueleto_guerreiro_parado/spr_esqueleto_guerreiro_parado.yy",},},},"Disabled":false,"id":"cb72f83e-c072-48c9-8a89-d01f2a2f2a85","IsCreationKey":false,"Key":2.0,"Length":1.0,"Stretch":false,},
+            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"dbce47b6-0489-4b7d-a807-a95696ecb1b1","path":"sprites/spr_esqueleto_guerreiro_parado/spr_esqueleto_guerreiro_parado.yy",},},},"Disabled":false,"id":"0929de89-64b5-4beb-b8e4-df6a270fb237","IsCreationKey":false,"Key":3.0,"Length":1.0,"Stretch":false,},
+            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"7533c48e-4453-4e8c-8f61-a2d50e0113ab","path":"sprites/spr_esqueleto_guerreiro_parado/spr_esqueleto_guerreiro_parado.yy",},},},"Disabled":false,"id":"a206dc20-ce98-4984-b139-9e359d5f1b56","IsCreationKey":false,"Key":4.0,"Length":1.0,"Stretch":false,},
           ],},"modifiers":[],"spriteId":null,"trackColour":0,"tracks":[],"traits":0,},
     ],
     "visibleRange": null,

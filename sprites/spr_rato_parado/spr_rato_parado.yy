@@ -26,8 +26,8 @@
   "nineSlice": null,
   "origin": 9,
   "parent": {
-    "name": "NOVOS",
-    "path": "folders/Sprites/INIMIGOS/NOVOS.yy",
+    "name": "RATO",
+    "path": "folders/Sprites/INIMIGOS/RATO.yy",
   },
   "preMultiplyAlpha": false,
   "sequence": {
@@ -55,8 +55,8 @@
     "timeUnits": 1,
     "tracks": [
       {"resourceType":"GMSpriteFramesTrack","resourceVersion":"1.0","name":"frames","builtinName":0,"events":[],"inheritsTrackColour":true,"interpolation":1,"isCreationTrack":false,"keyframes":{"resourceType":"KeyframeStore<SpriteFrameKeyframe>","resourceVersion":"1.0","Keyframes":[
-            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"79f4d58f-5927-4c6e-8f48-1a34c02fb3e8","path":"sprites/spr_rato_parado/spr_rato_parado.yy",},},},"Disabled":false,"id":"5dba5153-7421-498d-b6f3-b8f13fe3da6f","IsCreationKey":false,"Key":0.0,"Length":1.0,"Stretch":false,},
-            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"60ac7f4a-3aa6-429d-89ec-94dcea3fc6c1","path":"sprites/spr_rato_parado/spr_rato_parado.yy",},},},"Disabled":false,"id":"63ee4f8c-e332-4735-9cb0-e460cd66a005","IsCreationKey":false,"Key":1.0,"Length":1.0,"Stretch":false,},
+            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"79f4d58f-5927-4c6e-8f48-1a34c02fb3e8","path":"sprites/spr_rato_parado/spr_rato_parado.yy",},},},"Disabled":false,"id":"a3737698-7615-4e43-8d80-4b162eed735d","IsCreationKey":false,"Key":0.0,"Length":1.0,"Stretch":false,},
+            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"60ac7f4a-3aa6-429d-89ec-94dcea3fc6c1","path":"sprites/spr_rato_parado/spr_rato_parado.yy",},},},"Disabled":false,"id":"8956b6d1-c125-4db9-a3a4-54bff28ca137","IsCreationKey":false,"Key":1.0,"Length":1.0,"Stretch":false,},
           ],},"modifiers":[],"spriteId":null,"trackColour":0,"tracks":[],"traits":0,},
     ],
     "visibleRange": null,

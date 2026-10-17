@@ -2,7 +2,8 @@
 // MORCEGO
 // Cenario: cidade (noite)
 // Morcego que voa em zigue-zague em volta do jogador.
-event_inherited();
+event_inherited();      // pai: obj_par_inimigos
+inimigo_ia_criar();     // valores padrao da IA (script IA_INIMIGOS)
 
 sprite_normal = spr_morcego_andar;
 sprite_parado = spr_morcego_parado;
@@ -19,4 +20,4 @@ atravessa = true;
 voa = true;
 sombra_largura = 22;
 
-inimigo_novo_aplicar_nivel();
+inimigo_ia_nivel();

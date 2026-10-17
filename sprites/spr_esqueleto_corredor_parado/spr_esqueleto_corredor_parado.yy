@@ -29,8 +29,8 @@
   "nineSlice": null,
   "origin": 9,
   "parent": {
-    "name": "NOVOS",
-    "path": "folders/Sprites/INIMIGOS/NOVOS.yy",
+    "name": "ESQUELETO CORREDOR",
+    "path": "folders/Sprites/INIMIGOS/ESQUELETO CORREDOR.yy",
   },
   "preMultiplyAlpha": false,
   "sequence": {
@@ -58,11 +58,11 @@
     "timeUnits": 1,
     "tracks": [
       {"resourceType":"GMSpriteFramesTrack","resourceVersion":"1.0","name":"frames","builtinName":0,"events":[],"inheritsTrackColour":true,"interpolation":1,"isCreationTrack":false,"keyframes":{"resourceType":"KeyframeStore<SpriteFrameKeyframe>","resourceVersion":"1.0","Keyframes":[
-            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"fbd5f6bb-074a-4275-984a-c0dd0eff0d2c","path":"sprites/spr_esqueleto_corredor_parado/spr_esqueleto_corredor_parado.yy",},},},"Disabled":false,"id":"05cf0b8c-f0c8-464e-8183-d282d0dcd732","IsCreationKey":false,"Key":0.0,"Length":1.0,"Stretch":false,},
-            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"0f8a7925-c057-41bc-b419-f6d12e2546ce","path":"sprites/spr_esqueleto_corredor_parado/spr_esqueleto_corredor_parado.yy",},},},"Disabled":false,"id":"eeb720ac-d272-4bfc-84df-6acca9e42086","IsCreationKey":false,"Key":1.0,"Length":1.0,"Stretch":false,},
-            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"146c6c0c-ee2c-4e50-8585-72af7a0ded32","path":"sprites/spr_esqueleto_corredor_parado/spr_esqueleto_corredor_parado.yy",},},},"Disabled":false,"id":"249b86d7-c9ef-4cf1-a725-cd4e461ab9f8","IsCreationKey":false,"Key":2.0,"Length":1.0,"Stretch":false,},
-            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"6a0c5868-1592-438d-a712-b8339f6cafb0","path":"sprites/spr_esqueleto_corredor_parado/spr_esqueleto_corredor_parado.yy",},},},"Disabled":false,"id":"2f4bfb0a-bf8e-4f3e-9372-707cb950477a","IsCreationKey":false,"Key":3.0,"Length":1.0,"Stretch":false,},
-            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"2938f11f-3827-4907-a553-8f593884b0b0","path":"sprites/spr_esqueleto_corredor_parado/spr_esqueleto_corredor_parado.yy",},},},"Disabled":false,"id":"e3bf5cd4-e4af-43e9-b5a1-64be279b66fb","IsCreationKey":false,"Key":4.0,"Length":1.0,"Stretch":false,},
+            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"fbd5f6bb-074a-4275-984a-c0dd0eff0d2c","path":"sprites/spr_esqueleto_corredor_parado/spr_esqueleto_corredor_parado.yy",},},},"Disabled":false,"id":"04d71b96-1481-42f6-b971-b75df662c5d0","IsCreationKey":false,"Key":0.0,"Length":1.0,"Stretch":false,},
+            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"0f8a7925-c057-41bc-b419-f6d12e2546ce","path":"sprites/spr_esqueleto_corredor_parado/spr_esqueleto_corredor_parado.yy",},},},"Disabled":false,"id":"3404968f-9947-4a67-94eb-94608d3f1c3c","IsCreationKey":false,"Key":1.0,"Length":1.0,"Stretch":false,},
+            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"146c6c0c-ee2c-4e50-8585-72af7a0ded32","path":"sprites/spr_esqueleto_corredor_parado/spr_esqueleto_corredor_parado.yy",},},},"Disabled":false,"id":"b2df8e8a-c179-4eef-8429-3fbfe3205bc7","IsCreationKey":false,"Key":2.0,"Length":1.0,"Stretch":false,},
+            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"6a0c5868-1592-438d-a712-b8339f6cafb0","path":"sprites/spr_esqueleto_corredor_parado/spr_esqueleto_corredor_parado.yy",},},},"Disabled":false,"id":"b1e9a75b-6970-430a-a61e-29468a1555e8","IsCreationKey":false,"Key":3.0,"Length":1.0,"Stretch":false,},
+            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"2938f11f-3827-4907-a553-8f593884b0b0","path":"sprites/spr_esqueleto_corredor_parado/spr_esqueleto_corredor_parado.yy",},},},"Disabled":false,"id":"71244884-c0eb-4c26-8720-1b13c0f720ba","IsCreationKey":false,"Key":4.0,"Length":1.0,"Stretch":false,},
           ],},"modifiers":[],"spriteId":null,"trackColour":0,"tracks":[],"traits":0,},
     ],
     "visibleRange": null,

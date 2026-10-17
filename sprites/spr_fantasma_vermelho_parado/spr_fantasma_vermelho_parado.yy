@@ -28,8 +28,8 @@
   "nineSlice": null,
   "origin": 9,
   "parent": {
-    "name": "NOVOS",
-    "path": "folders/Sprites/INIMIGOS/NOVOS.yy",
+    "name": "FANTASMA VERMELHO",
+    "path": "folders/Sprites/INIMIGOS/FANTASMA VERMELHO.yy",
   },
   "preMultiplyAlpha": false,
   "sequence": {
@@ -57,10 +57,10 @@
     "timeUnits": 1,
     "tracks": [
       {"resourceType":"GMSpriteFramesTrack","resourceVersion":"1.0","name":"frames","builtinName":0,"events":[],"inheritsTrackColour":true,"interpolation":1,"isCreationTrack":false,"keyframes":{"resourceType":"KeyframeStore<SpriteFrameKeyframe>","resourceVersion":"1.0","Keyframes":[
-            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"749b17da-3419-4deb-a009-9d52befe03cb","path":"sprites/spr_fantasma_vermelho_parado/spr_fantasma_vermelho_parado.yy",},},},"Disabled":false,"id":"47f871c2-b970-400b-ad53-9f1f11323344","IsCreationKey":false,"Key":0.0,"Length":1.0,"Stretch":false,},
-            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"3d88466a-cb9f-40b0-bc2c-9d1e0e106047","path":"sprites/spr_fantasma_vermelho_parado/spr_fantasma_vermelho_parado.yy",},},},"Disabled":false,"id":"92a02e66-2455-4694-b603-108ef19650ab","IsCreationKey":false,"Key":1.0,"Length":1.0,"Stretch":false,},
-            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"f69043cd-1412-425b-8626-84ba497409f2","path":"sprites/spr_fantasma_vermelho_parado/spr_fantasma_vermelho_parado.yy",},},},"Disabled":false,"id":"9ee1a80c-05d4-4f36-be1c-e56ddb2e3a7d","IsCreationKey":false,"Key":2.0,"Length":1.0,"Stretch":false,},
-            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"6c3c4b4c-2810-4cff-980e-d42d81e5f877","path":"sprites/spr_fantasma_vermelho_parado/spr_fantasma_vermelho_parado.yy",},},},"Disabled":false,"id":"4dff153b-a018-45b7-8b3c-174f7df331ec","IsCreationKey":false,"Key":3.0,"Length":1.0,"Stretch":false,},
+            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"749b17da-3419-4deb-a009-9d52befe03cb","path":"sprites/spr_fantasma_vermelho_parado/spr_fantasma_vermelho_parado.yy",},},},"Disabled":false,"id":"e4da3982-3f93-4363-bed4-bf9402f1d4e5","IsCreationKey":false,"Key":0.0,"Length":1.0,"Stretch":false,},
+            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"3d88466a-cb9f-40b0-bc2c-9d1e0e106047","path":"sprites/spr_fantasma_vermelho_parado/spr_fantasma_vermelho_parado.yy",},},},"Disabled":false,"id":"519ef379-207a-4935-b67b-9c4f2deb7c0f","IsCreationKey":false,"Key":1.0,"Length":1.0,"Stretch":false,},
+            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"f69043cd-1412-425b-8626-84ba497409f2","path":"sprites/spr_fantasma_vermelho_parado/spr_fantasma_vermelho_parado.yy",},},},"Disabled":false,"id":"19d3ecaa-5bd1-4bc2-8ce7-49cb4e64409e","IsCreationKey":false,"Key":2.0,"Length":1.0,"Stretch":false,},
+            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"6c3c4b4c-2810-4cff-980e-d42d81e5f877","path":"sprites/spr_fantasma_vermelho_parado/spr_fantasma_vermelho_parado.yy",},},},"Disabled":false,"id":"b5342f36-3d2b-4e26-9a1b-d0f1ff83c277","IsCreationKey":false,"Key":3.0,"Length":1.0,"Stretch":false,},
           ],},"modifiers":[],"spriteId":null,"trackColour":0,"tracks":[],"traits":0,},
     ],
     "visibleRange": null,

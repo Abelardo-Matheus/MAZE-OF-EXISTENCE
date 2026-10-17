@@ -2,7 +2,8 @@
 // ESQUELETO CORREDOR
 // Cenario: floresta negra / noite
 // Esqueleto sombrio de olhos vermelhos: fragil e muito rapido.
-event_inherited();
+event_inherited();      // pai: obj_par_inimigos
+inimigo_ia_criar();     // valores padrao da IA (script IA_INIMIGOS)
 
 sprite_normal = spr_esqueleto_corredor_andar;
 sprite_parado = spr_esqueleto_corredor_parado;
@@ -16,4 +17,4 @@ dist_aggro = 260;
 dist_desaggro = 500;
 sombra_largura = 24;
 
-inimigo_novo_aplicar_nivel();
+inimigo_ia_nivel();

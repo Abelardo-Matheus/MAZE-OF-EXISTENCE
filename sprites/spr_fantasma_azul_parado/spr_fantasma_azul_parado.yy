@@ -28,8 +28,8 @@
   "nineSlice": null,
   "origin": 9,
   "parent": {
-    "name": "NOVOS",
-    "path": "folders/Sprites/INIMIGOS/NOVOS.yy",
+    "name": "FANTASMA AZUL",
+    "path": "folders/Sprites/INIMIGOS/FANTASMA AZUL.yy",
   },
   "preMultiplyAlpha": false,
   "sequence": {
@@ -57,10 +57,10 @@
     "timeUnits": 1,
     "tracks": [
       {"resourceType":"GMSpriteFramesTrack","resourceVersion":"1.0","name":"frames","builtinName":0,"events":[],"inheritsTrackColour":true,"interpolation":1,"isCreationTrack":false,"keyframes":{"resourceType":"KeyframeStore<SpriteFrameKeyframe>","resourceVersion":"1.0","Keyframes":[
-            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"ea1a5f55-76b2-4c85-a24a-5217b87e9bf2","path":"sprites/spr_fantasma_azul_parado/spr_fantasma_azul_parado.yy",},},},"Disabled":false,"id":"79859e35-1eda-49fe-a4f1-90622c932877","IsCreationKey":false,"Key":0.0,"Length":1.0,"Stretch":false,},
-            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"56c31a7f-446f-46cc-81cc-5ce8e44ecee5","path":"sprites/spr_fantasma_azul_parado/spr_fantasma_azul_parado.yy",},},},"Disabled":false,"id":"4f8cfe66-490b-4caf-84e1-f1b7ec950e8f","IsCreationKey":false,"Key":1.0,"Length":1.0,"Stretch":false,},
-            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"aa5349f6-ffec-4262-917f-f6e7ee8b2c74","path":"sprites/spr_fantasma_azul_parado/spr_fantasma_azul_parado.yy",},},},"Disabled":false,"id":"4cd4a267-100e-44b0-b4b1-8f3845be055c","IsCreationKey":false,"Key":2.0,"Length":1.0,"Stretch":false,},
-            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"5093eab0-2175-4e48-860a-b4975d826bf9","path":"sprites/spr_fantasma_azul_parado/spr_fantasma_azul_parado.yy",},},},"Disabled":false,"id":"83186dbb-ec75-483b-b6ac-eb52ca6973a8","IsCreationKey":false,"Key":3.0,"Length":1.0,"Stretch":false,},
+            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"ea1a5f55-76b2-4c85-a24a-5217b87e9bf2","path":"sprites/spr_fantasma_azul_parado/spr_fantasma_azul_parado.yy",},},},"Disabled":false,"id":"ff159465-c2ba-4b5d-b11a-faddd09fc8e9","IsCreationKey":false,"Key":0.0,"Length":1.0,"Stretch":false,},
+            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"56c31a7f-446f-46cc-81cc-5ce8e44ecee5","path":"sprites/spr_fantasma_azul_parado/spr_fantasma_azul_parado.yy",},},},"Disabled":false,"id":"010cac78-0a39-45a9-8fce-b67c795fffec","IsCreationKey":false,"Key":1.0,"Length":1.0,"Stretch":false,},
+            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"aa5349f6-ffec-4262-917f-f6e7ee8b2c74","path":"sprites/spr_fantasma_azul_parado/spr_fantasma_azul_parado.yy",},},},"Disabled":false,"id":"35dcca99-9a28-4b82-8627-ee6a3ca8da23","IsCreationKey":false,"Key":2.0,"Length":1.0,"Stretch":false,},
+            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"5093eab0-2175-4e48-860a-b4975d826bf9","path":"sprites/spr_fantasma_azul_parado/spr_fantasma_azul_parado.yy",},},},"Disabled":false,"id":"14f8459b-1284-4d5a-b87d-789363a29fb6","IsCreationKey":false,"Key":3.0,"Length":1.0,"Stretch":false,},
           ],},"modifiers":[],"spriteId":null,"trackColour":0,"tracks":[],"traits":0,},
     ],
     "visibleRange": null,

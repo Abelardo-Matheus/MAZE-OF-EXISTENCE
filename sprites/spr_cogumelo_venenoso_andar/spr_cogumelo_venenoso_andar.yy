@@ -28,8 +28,8 @@
   "nineSlice": null,
   "origin": 9,
   "parent": {
-    "name": "NOVOS",
-    "path": "folders/Sprites/INIMIGOS/NOVOS.yy",
+    "name": "COGUMELO VENENOSO",
+    "path": "folders/Sprites/INIMIGOS/COGUMELO VENENOSO.yy",
   },
   "preMultiplyAlpha": false,
   "sequence": {
@@ -57,10 +57,10 @@
     "timeUnits": 1,
     "tracks": [
       {"resourceType":"GMSpriteFramesTrack","resourceVersion":"1.0","name":"frames","builtinName":0,"events":[],"inheritsTrackColour":true,"interpolation":1,"isCreationTrack":false,"keyframes":{"resourceType":"KeyframeStore<SpriteFrameKeyframe>","resourceVersion":"1.0","Keyframes":[
-            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"acfcede9-1099-44cb-8516-42716bf3b1ce","path":"sprites/spr_cogumelo_venenoso_andar/spr_cogumelo_venenoso_andar.yy",},},},"Disabled":false,"id":"d08ab4ad-2344-4bcf-bccb-abc36e850b8b","IsCreationKey":false,"Key":0.0,"Length":1.0,"Stretch":false,},
-            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"08f074be-4c16-48d3-a2ae-b0b0b664319d","path":"sprites/spr_cogumelo_venenoso_andar/spr_cogumelo_venenoso_andar.yy",},},},"Disabled":false,"id":"525514e6-5a02-42e3-86fa-3c08ad508091","IsCreationKey":false,"Key":1.0,"Length":1.0,"Stretch":false,},
-            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"f8c23492-9eed-4131-9c43-7b620585546b","path":"sprites/spr_cogumelo_venenoso_andar/spr_cogumelo_venenoso_andar.yy",},},},"Disabled":false,"id":"eef74786-f3ea-4a5f-afc8-795e1af40eb0","IsCreationKey":false,"Key":2.0,"Length":1.0,"Stretch":false,},
-            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"c0675f0a-01a0-4a1f-817d-f0dbe6a9767f","path":"sprites/spr_cogumelo_venenoso_andar/spr_cogumelo_venenoso_andar.yy",},},},"Disabled":false,"id":"0cf36189-b811-49d3-a1a1-c40dc486fd90","IsCreationKey":false,"Key":3.0,"Length":1.0,"Stretch":false,},
+            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"acfcede9-1099-44cb-8516-42716bf3b1ce","path":"sprites/spr_cogumelo_venenoso_andar/spr_cogumelo_venenoso_andar.yy",},},},"Disabled":false,"id":"8ba5e4b5-a63f-43ac-8fe1-6e9397a17401","IsCreationKey":false,"Key":0.0,"Length":1.0,"Stretch":false,},
+            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"08f074be-4c16-48d3-a2ae-b0b0b664319d","path":"sprites/spr_cogumelo_venenoso_andar/spr_cogumelo_venenoso_andar.yy",},},},"Disabled":false,"id":"2bb17f5f-4f71-4424-829a-85c58778de95","IsCreationKey":false,"Key":1.0,"Length":1.0,"Stretch":false,},
+            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"f8c23492-9eed-4131-9c43-7b620585546b","path":"sprites/spr_cogumelo_venenoso_andar/spr_cogumelo_venenoso_andar.yy",},},},"Disabled":false,"id":"383d35cb-57be-4ca6-bf3b-d3cd3b413ef3","IsCreationKey":false,"Key":2.0,"Length":1.0,"Stretch":false,},
+            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"c0675f0a-01a0-4a1f-817d-f0dbe6a9767f","path":"sprites/spr_cogumelo_venenoso_andar/spr_cogumelo_venenoso_andar.yy",},},},"Disabled":false,"id":"eefcc196-a17a-484f-85c0-63500eb4d7ce","IsCreationKey":false,"Key":3.0,"Length":1.0,"Stretch":false,},
           ],},"modifiers":[],"spriteId":null,"trackColour":0,"tracks":[],"traits":0,},
     ],
     "visibleRange": null,

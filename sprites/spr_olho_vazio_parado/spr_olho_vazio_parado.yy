@@ -28,8 +28,8 @@
   "nineSlice": null,
   "origin": 9,
   "parent": {
-    "name": "NOVOS",
-    "path": "folders/Sprites/INIMIGOS/NOVOS.yy",
+    "name": "OLHO VAZIO",
+    "path": "folders/Sprites/INIMIGOS/OLHO VAZIO.yy",
   },
   "preMultiplyAlpha": false,
   "sequence": {
@@ -57,10 +57,10 @@
     "timeUnits": 1,
     "tracks": [
       {"resourceType":"GMSpriteFramesTrack","resourceVersion":"1.0","name":"frames","builtinName":0,"events":[],"inheritsTrackColour":true,"interpolation":1,"isCreationTrack":false,"keyframes":{"resourceType":"KeyframeStore<SpriteFrameKeyframe>","resourceVersion":"1.0","Keyframes":[
-            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"8ca837b6-0961-4a94-9aa2-f7c267961ee9","path":"sprites/spr_olho_vazio_parado/spr_olho_vazio_parado.yy",},},},"Disabled":false,"id":"aaefb6eb-27f2-487a-ac1a-4f7a5aea3c96","IsCreationKey":false,"Key":0.0,"Length":1.0,"Stretch":false,},
-            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"4d58dd1a-4b18-4951-bcaa-0d74bbcf290b","path":"sprites/spr_olho_vazio_parado/spr_olho_vazio_parado.yy",},},},"Disabled":false,"id":"85c99f8c-80b7-4428-aa16-4e2498fa5d88","IsCreationKey":false,"Key":1.0,"Length":1.0,"Stretch":false,},
-            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"42861b7d-96df-4dfa-9457-1e05df513775","path":"sprites/spr_olho_vazio_parado/spr_olho_vazio_parado.yy",},},},"Disabled":false,"id":"fdbd25ca-293b-41ca-99e9-cef24492eb2a","IsCreationKey":false,"Key":2.0,"Length":1.0,"Stretch":false,},
-            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"61d209d5-f493-4b9a-bb44-f6775bae5a5f","path":"sprites/spr_olho_vazio_parado/spr_olho_vazio_parado.yy",},},},"Disabled":false,"id":"852ae32a-de8d-4525-ace1-95e047e4598a","IsCreationKey":false,"Key":3.0,"Length":1.0,"Stretch":false,},
+            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"8ca837b6-0961-4a94-9aa2-f7c267961ee9","path":"sprites/spr_olho_vazio_parado/spr_olho_vazio_parado.yy",},},},"Disabled":false,"id":"58509912-1afb-462e-a2ac-357f19cf0c7c","IsCreationKey":false,"Key":0.0,"Length":1.0,"Stretch":false,},
+            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"4d58dd1a-4b18-4951-bcaa-0d74bbcf290b","path":"sprites/spr_olho_vazio_parado/spr_olho_vazio_parado.yy",},},},"Disabled":false,"id":"6aef2c88-ac2c-465b-9b23-4f08df8bff44","IsCreationKey":false,"Key":1.0,"Length":1.0,"Stretch":false,},
+            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"42861b7d-96df-4dfa-9457-1e05df513775","path":"sprites/spr_olho_vazio_parado/spr_olho_vazio_parado.yy",},},},"Disabled":false,"id":"a6d4bed7-c320-407e-a519-cc18c3cf9871","IsCreationKey":false,"Key":2.0,"Length":1.0,"Stretch":false,},
+            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"61d209d5-f493-4b9a-bb44-f6775bae5a5f","path":"sprites/spr_olho_vazio_parado/spr_olho_vazio_parado.yy",},},},"Disabled":false,"id":"6e291f78-8fa9-434a-a922-ab345ef649dc","IsCreationKey":false,"Key":3.0,"Length":1.0,"Stretch":false,},
           ],},"modifiers":[],"spriteId":null,"trackColour":0,"tracks":[],"traits":0,},
     ],
     "visibleRange": null,

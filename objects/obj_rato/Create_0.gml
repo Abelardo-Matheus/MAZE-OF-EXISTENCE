@@ -2,7 +2,8 @@
 // RATO
 // Cenario: cidade
 // Rato de esgoto: pouca vida, muito rapido.
-event_inherited();
+event_inherited();      // pai: obj_par_inimigos
+inimigo_ia_criar();     // valores padrao da IA (script IA_INIMIGOS)
 
 sprite_normal = spr_rato_andar;
 sprite_parado = spr_rato_parado;
@@ -16,4 +17,4 @@ dist_aggro = 240;
 dist_desaggro = 480;
 sombra_largura = 36;
 
-inimigo_novo_aplicar_nivel();
+inimigo_ia_nivel();

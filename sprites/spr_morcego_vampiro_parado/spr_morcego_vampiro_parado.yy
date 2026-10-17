@@ -26,8 +26,8 @@
   "nineSlice": null,
   "origin": 9,
   "parent": {
-    "name": "NOVOS",
-    "path": "folders/Sprites/INIMIGOS/NOVOS.yy",
+    "name": "MORCEGO VAMPIRO",
+    "path": "folders/Sprites/INIMIGOS/MORCEGO VAMPIRO.yy",
   },
   "preMultiplyAlpha": false,
   "sequence": {
@@ -55,8 +55,8 @@
     "timeUnits": 1,
     "tracks": [
       {"resourceType":"GMSpriteFramesTrack","resourceVersion":"1.0","name":"frames","builtinName":0,"events":[],"inheritsTrackColour":true,"interpolation":1,"isCreationTrack":false,"keyframes":{"resourceType":"KeyframeStore<SpriteFrameKeyframe>","resourceVersion":"1.0","Keyframes":[
-            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"3e104dcd-3183-4854-9325-77b0c4f4f110","path":"sprites/spr_morcego_vampiro_parado/spr_morcego_vampiro_parado.yy",},},},"Disabled":false,"id":"643f8391-5152-46f5-a0fd-05228b3410e3","IsCreationKey":false,"Key":0.0,"Length":1.0,"Stretch":false,},
-            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"f976fe0a-d273-485b-841b-f29d23cd0cd8","path":"sprites/spr_morcego_vampiro_parado/spr_morcego_vampiro_parado.yy",},},},"Disabled":false,"id":"1adc96d5-cd2d-4d24-99d8-80ad859afb8a","IsCreationKey":false,"Key":1.0,"Length":1.0,"Stretch":false,},
+            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"3e104dcd-3183-4854-9325-77b0c4f4f110","path":"sprites/spr_morcego_vampiro_parado/spr_morcego_vampiro_parado.yy",},},},"Disabled":false,"id":"973b8c7d-759f-46be-b3a2-c51521f939c4","IsCreationKey":false,"Key":0.0,"Length":1.0,"Stretch":false,},
+            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"f976fe0a-d273-485b-841b-f29d23cd0cd8","path":"sprites/spr_morcego_vampiro_parado/spr_morcego_vampiro_parado.yy",},},},"Disabled":false,"id":"5929a58d-eb54-4ec6-89c0-091dea4d8b36","IsCreationKey":false,"Key":1.0,"Length":1.0,"Stretch":false,},
           ],},"modifiers":[],"spriteId":null,"trackColour":0,"tracks":[],"traits":0,},
     ],
     "visibleRange": null,

@@ -2,7 +2,8 @@
 // ESQUELETO ARQUEIRO
 // Cenario: floresta negra
 // Mantem distancia e atira flechas de osso.
-event_inherited();
+event_inherited();      // pai: obj_par_inimigos
+inimigo_ia_criar();     // valores padrao da IA (script IA_INIMIGOS)
 
 sprite_normal = spr_esqueleto_arqueiro_andar;
 sprite_parado = spr_esqueleto_arqueiro_parado;
@@ -23,4 +24,4 @@ dano_tiro = 10;
 vel_tiro = 4.5;
 altura_tiro = 34;
 
-inimigo_novo_aplicar_nivel();
+inimigo_ia_nivel();

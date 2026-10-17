@@ -2,7 +2,8 @@
 // FANTASMA VERMELHO
 // Cenario: floresta negra / vazio
 // Fantasma raivoso em chamas: treme e da um bote rapido no jogador.
-event_inherited();
+event_inherited();      // pai: obj_par_inimigos
+inimigo_ia_criar();     // valores padrao da IA (script IA_INIMIGOS)
 
 sprite_normal = spr_fantasma_vermelho_andar;
 sprite_parado = spr_fantasma_vermelho_parado;
@@ -20,4 +21,4 @@ voa = true;
 transparencia = 0.85;
 sombra_largura = 30;
 
-inimigo_novo_aplicar_nivel();
+inimigo_ia_nivel();

@@ -28,8 +28,8 @@
   "nineSlice": null,
   "origin": 9,
   "parent": {
-    "name": "NOVOS",
-    "path": "folders/Sprites/INIMIGOS/NOVOS.yy",
+    "name": "MORCEGO VAMPIRO",
+    "path": "folders/Sprites/INIMIGOS/MORCEGO VAMPIRO.yy",
   },
   "preMultiplyAlpha": false,
   "sequence": {
@@ -57,10 +57,10 @@
     "timeUnits": 1,
     "tracks": [
       {"resourceType":"GMSpriteFramesTrack","resourceVersion":"1.0","name":"frames","builtinName":0,"events":[],"inheritsTrackColour":true,"interpolation":1,"isCreationTrack":false,"keyframes":{"resourceType":"KeyframeStore<SpriteFrameKeyframe>","resourceVersion":"1.0","Keyframes":[
-            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"0ac82144-2b0b-496e-af29-fd21458c81c1","path":"sprites/spr_morcego_vampiro_andar/spr_morcego_vampiro_andar.yy",},},},"Disabled":false,"id":"3f7a0e5b-56c5-448e-bc0d-4f9e4f969548","IsCreationKey":false,"Key":0.0,"Length":1.0,"Stretch":false,},
-            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"a26fa5c5-9c62-463a-974d-5022e5c64569","path":"sprites/spr_morcego_vampiro_andar/spr_morcego_vampiro_andar.yy",},},},"Disabled":false,"id":"18701c73-6b27-4911-9b36-a673560ee84c","IsCreationKey":false,"Key":1.0,"Length":1.0,"Stretch":false,},
-            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"9fbb05f7-2f7b-4f8d-b41c-9b5b1a6c1854","path":"sprites/spr_morcego_vampiro_andar/spr_morcego_vampiro_andar.yy",},},},"Disabled":false,"id":"7aec1a1b-a852-491b-9d7b-c84a61e4edd8","IsCreationKey":false,"Key":2.0,"Length":1.0,"Stretch":false,},
-            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"a8ae7292-681c-4a3a-8e31-da63594e5ccd","path":"sprites/spr_morcego_vampiro_andar/spr_morcego_vampiro_andar.yy",},},},"Disabled":false,"id":"944aba78-4ea3-49f9-b20b-b3bf7c7a582e","IsCreationKey":false,"Key":3.0,"Length":1.0,"Stretch":false,},
+            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"0ac82144-2b0b-496e-af29-fd21458c81c1","path":"sprites/spr_morcego_vampiro_andar/spr_morcego_vampiro_andar.yy",},},},"Disabled":false,"id":"190249b9-772c-4ffc-b15b-dc60bf68d0ef","IsCreationKey":false,"Key":0.0,"Length":1.0,"Stretch":false,},
+            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"a26fa5c5-9c62-463a-974d-5022e5c64569","path":"sprites/spr_morcego_vampiro_andar/spr_morcego_vampiro_andar.yy",},},},"Disabled":false,"id":"10a98834-fa10-4b28-9310-e1b0070e52a3","IsCreationKey":false,"Key":1.0,"Length":1.0,"Stretch":false,},
+            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"9fbb05f7-2f7b-4f8d-b41c-9b5b1a6c1854","path":"sprites/spr_morcego_vampiro_andar/spr_morcego_vampiro_andar.yy",},},},"Disabled":false,"id":"87c2bfb9-9fec-4173-a445-4e60b13625bd","IsCreationKey":false,"Key":2.0,"Length":1.0,"Stretch":false,},
+            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"a8ae7292-681c-4a3a-8e31-da63594e5ccd","path":"sprites/spr_morcego_vampiro_andar/spr_morcego_vampiro_andar.yy",},},},"Disabled":false,"id":"fb42725d-659c-48c1-a708-23e5e8034443","IsCreationKey":false,"Key":3.0,"Length":1.0,"Stretch":false,},
           ],},"modifiers":[],"spriteId":null,"trackColour":0,"tracks":[],"traits":0,},
     ],
     "visibleRange": null,

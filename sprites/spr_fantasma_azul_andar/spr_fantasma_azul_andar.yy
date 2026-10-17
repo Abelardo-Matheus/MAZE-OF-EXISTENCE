@@ -28,8 +28,8 @@
   "nineSlice": null,
   "origin": 9,
   "parent": {
-    "name": "NOVOS",
-    "path": "folders/Sprites/INIMIGOS/NOVOS.yy",
+    "name": "FANTASMA AZUL",
+    "path": "folders/Sprites/INIMIGOS/FANTASMA AZUL.yy",
   },
   "preMultiplyAlpha": false,
   "sequence": {
@@ -57,10 +57,10 @@
     "timeUnits": 1,
     "tracks": [
       {"resourceType":"GMSpriteFramesTrack","resourceVersion":"1.0","name":"frames","builtinName":0,"events":[],"inheritsTrackColour":true,"interpolation":1,"isCreationTrack":false,"keyframes":{"resourceType":"KeyframeStore<SpriteFrameKeyframe>","resourceVersion":"1.0","Keyframes":[
-            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"de492de6-688c-41ff-8f89-df7a3130e427","path":"sprites/spr_fantasma_azul_andar/spr_fantasma_azul_andar.yy",},},},"Disabled":false,"id":"2e519023-91bf-417d-9c3d-444829a2a1b9","IsCreationKey":false,"Key":0.0,"Length":1.0,"Stretch":false,},
-            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"f4af9d20-7447-4eb1-90f1-702bd8ad5417","path":"sprites/spr_fantasma_azul_andar/spr_fantasma_azul_andar.yy",},},},"Disabled":false,"id":"b41d5037-481d-4308-9592-9be64a7bc8ff","IsCreationKey":false,"Key":1.0,"Length":1.0,"Stretch":false,},
-            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"78f81494-9dfe-4490-bd99-9ac917f28519","path":"sprites/spr_fantasma_azul_andar/spr_fantasma_azul_andar.yy",},},},"Disabled":false,"id":"0860d4f4-56e6-4ce0-b7c5-5b45bf675da0","IsCreationKey":false,"Key":2.0,"Length":1.0,"Stretch":false,},
-            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"b649e648-ff94-493d-a724-feb4ff366846","path":"sprites/spr_fantasma_azul_andar/spr_fantasma_azul_andar.yy",},},},"Disabled":false,"id":"e296f84b-6709-4aad-b58f-6c5c39b6533d","IsCreationKey":false,"Key":3.0,"Length":1.0,"Stretch":false,},
+            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"de492de6-688c-41ff-8f89-df7a3130e427","path":"sprites/spr_fantasma_azul_andar/spr_fantasma_azul_andar.yy",},},},"Disabled":false,"id":"db35fc5f-0274-4188-b328-134ba8ea156c","IsCreationKey":false,"Key":0.0,"Length":1.0,"Stretch":false,},
+            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"f4af9d20-7447-4eb1-90f1-702bd8ad5417","path":"sprites/spr_fantasma_azul_andar/spr_fantasma_azul_andar.yy",},},},"Disabled":false,"id":"3d44e386-5ec3-4480-8f85-694726d52104","IsCreationKey":false,"Key":1.0,"Length":1.0,"Stretch":false,},
+            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"78f81494-9dfe-4490-bd99-9ac917f28519","path":"sprites/spr_fantasma_azul_andar/spr_fantasma_azul_andar.yy",},},},"Disabled":false,"id":"bf45263a-6816-4245-a0ef-bca4fd2d2ea7","IsCreationKey":false,"Key":2.0,"Length":1.0,"Stretch":false,},
+            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"b649e648-ff94-493d-a724-feb4ff366846","path":"sprites/spr_fantasma_azul_andar/spr_fantasma_azul_andar.yy",},},},"Disabled":false,"id":"d3b79f70-868c-4625-a799-f3a9a622e9e6","IsCreationKey":false,"Key":3.0,"Length":1.0,"Stretch":false,},
           ],},"modifiers":[],"spriteId":null,"trackColour":0,"tracks":[],"traits":0,},
     ],
     "visibleRange": null,

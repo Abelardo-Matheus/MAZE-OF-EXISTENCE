@@ -2,7 +2,8 @@
 // FANTASMA VERDE
 // Cenario: floresta negra (pantano)
 // Fantasma do pantano coberto de musgo: lento, resistente e bate forte.
-event_inherited();
+event_inherited();      // pai: obj_par_inimigos
+inimigo_ia_criar();     // valores padrao da IA (script IA_INIMIGOS)
 
 sprite_normal = spr_fantasma_verde_andar;
 sprite_parado = spr_fantasma_verde_parado;
@@ -19,4 +20,4 @@ voa = true;
 transparencia = 0.8;
 sombra_largura = 32;
 
-inimigo_novo_aplicar_nivel();
+inimigo_ia_nivel();

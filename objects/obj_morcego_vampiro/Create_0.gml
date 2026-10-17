@@ -2,7 +2,8 @@
 // MORCEGO VAMPIRO
 // Cenario: floresta negra
 // Morcego vampiro: zigue-zague e recupera vida ao morder.
-event_inherited();
+event_inherited();      // pai: obj_par_inimigos
+inimigo_ia_criar();     // valores padrao da IA (script IA_INIMIGOS)
 
 sprite_normal = spr_morcego_vampiro_andar;
 sprite_parado = spr_morcego_vampiro_parado;
@@ -20,4 +21,4 @@ voa = true;
 roubo_vida = 1;
 sombra_largura = 24;
 
-inimigo_novo_aplicar_nivel();
+inimigo_ia_nivel();

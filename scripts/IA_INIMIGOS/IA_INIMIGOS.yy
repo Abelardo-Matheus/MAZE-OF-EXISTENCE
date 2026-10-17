@@ -1,7 +1,7 @@
 {
   "resourceType": "GMScript",
   "resourceVersion": "1.0",
-  "name": "INIMIGOS_NOVOS",
+  "name": "IA_INIMIGOS",
   "isCompatibility": false,
   "isDnD": false,
   "parent": {

@@ -2,7 +2,8 @@
 // RATO GIGANTE
 // Cenario: cidade
 // Ratazana gigante com cicatriz: prepara e da investidas.
-event_inherited();
+event_inherited();      // pai: obj_par_inimigos
+inimigo_ia_criar();     // valores padrao da IA (script IA_INIMIGOS)
 
 sprite_normal = spr_rato_gigante_andar;
 sprite_parado = spr_rato_gigante_parado;
@@ -17,4 +18,4 @@ dist_desaggro = 500;
 comportamento = "investida";
 sombra_largura = 46;
 
-inimigo_novo_aplicar_nivel();
+inimigo_ia_nivel();

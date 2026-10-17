@@ -26,8 +26,8 @@
   "nineSlice": null,
   "origin": 9,
   "parent": {
-    "name": "NOVOS",
-    "path": "folders/Sprites/INIMIGOS/NOVOS.yy",
+    "name": "COGUMELO",
+    "path": "folders/Sprites/INIMIGOS/COGUMELO.yy",
   },
   "preMultiplyAlpha": false,
   "sequence": {
@@ -55,8 +55,8 @@
     "timeUnits": 1,
     "tracks": [
       {"resourceType":"GMSpriteFramesTrack","resourceVersion":"1.0","name":"frames","builtinName":0,"events":[],"inheritsTrackColour":true,"interpolation":1,"isCreationTrack":false,"keyframes":{"resourceType":"KeyframeStore<SpriteFrameKeyframe>","resourceVersion":"1.0","Keyframes":[
-            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"7a51e93d-eb37-4549-88f3-4b552f1eb3a1","path":"sprites/spr_cogumelo_parado/spr_cogumelo_parado.yy",},},},"Disabled":false,"id":"0e4e60dd-792d-4311-8428-974dd701e681","IsCreationKey":false,"Key":0.0,"Length":1.0,"Stretch":false,},
-            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"b844325f-5d8e-4f05-a2e2-0d1c530cd398","path":"sprites/spr_cogumelo_parado/spr_cogumelo_parado.yy",},},},"Disabled":false,"id":"1d70a17d-6cce-423a-87b4-f0326331106c","IsCreationKey":false,"Key":1.0,"Length":1.0,"Stretch":false,},
+            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"7a51e93d-eb37-4549-88f3-4b552f1eb3a1","path":"sprites/spr_cogumelo_parado/spr_cogumelo_parado.yy",},},},"Disabled":false,"id":"67b63d6f-7556-4b90-a5fe-623f2ddb7b71","IsCreationKey":false,"Key":0.0,"Length":1.0,"Stretch":false,},
+            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"b844325f-5d8e-4f05-a2e2-0d1c530cd398","path":"sprites/spr_cogumelo_parado/spr_cogumelo_parado.yy",},},},"Disabled":false,"id":"8144e1f8-8169-4900-b534-4331ee15cfe5","IsCreationKey":false,"Key":1.0,"Length":1.0,"Stretch":false,},
           ],},"modifiers":[],"spriteId":null,"trackColour":0,"tracks":[],"traits":0,},
     ],
     "visibleRange": null,

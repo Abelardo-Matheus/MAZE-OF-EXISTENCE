@@ -28,8 +28,8 @@
   "nineSlice": null,
   "origin": 9,
   "parent": {
-    "name": "NOVOS",
-    "path": "folders/Sprites/INIMIGOS/NOVOS.yy",
+    "name": "FANTASMA VERMELHO",
+    "path": "folders/Sprites/INIMIGOS/FANTASMA VERMELHO.yy",
   },
   "preMultiplyAlpha": false,
   "sequence": {
@@ -57,10 +57,10 @@
     "timeUnits": 1,
     "tracks": [
       {"resourceType":"GMSpriteFramesTrack","resourceVersion":"1.0","name":"frames","builtinName":0,"events":[],"inheritsTrackColour":true,"interpolation":1,"isCreationTrack":false,"keyframes":{"resourceType":"KeyframeStore<SpriteFrameKeyframe>","resourceVersion":"1.0","Keyframes":[
-            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"d5b7cbe2-d566-4ad2-9e10-247138b60f96","path":"sprites/spr_fantasma_vermelho_andar/spr_fantasma_vermelho_andar.yy",},},},"Disabled":false,"id":"50200db3-136d-4db2-b8f3-35064ce59238","IsCreationKey":false,"Key":0.0,"Length":1.0,"Stretch":false,},
-            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"8273f806-951a-43c2-a7bf-d41436d05500","path":"sprites/spr_fantasma_vermelho_andar/spr_fantasma_vermelho_andar.yy",},},},"Disabled":false,"id":"e46dc970-7ef5-4587-9d5b-1db2b7ef462b","IsCreationKey":false,"Key":1.0,"Length":1.0,"Stretch":false,},
-            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"30f9b7d8-dfcc-4147-9365-38194f638759","path":"sprites/spr_fantasma_vermelho_andar/spr_fantasma_vermelho_andar.yy",},},},"Disabled":false,"id":"fb407bd5-d06a-4ed5-8d8b-2206a6a6f2fc","IsCreationKey":false,"Key":2.0,"Length":1.0,"Stretch":false,},
-            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"ed2f6fc6-1b78-42f5-92fe-a5989d938f36","path":"sprites/spr_fantasma_vermelho_andar/spr_fantasma_vermelho_andar.yy",},},},"Disabled":false,"id":"c249467c-1121-45fa-8a18-c3efd7bf45cc","IsCreationKey":false,"Key":3.0,"Length":1.0,"Stretch":false,},
+            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"d5b7cbe2-d566-4ad2-9e10-247138b60f96","path":"sprites/spr_fantasma_vermelho_andar/spr_fantasma_vermelho_andar.yy",},},},"Disabled":false,"id":"bb276d41-dde5-4792-8308-92c04f56f009","IsCreationKey":false,"Key":0.0,"Length":1.0,"Stretch":false,},
+            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"8273f806-951a-43c2-a7bf-d41436d05500","path":"sprites/spr_fantasma_vermelho_andar/spr_fantasma_vermelho_andar.yy",},},},"Disabled":false,"id":"e9a57b8d-7593-48ed-98b4-5badeee2d030","IsCreationKey":false,"Key":1.0,"Length":1.0,"Stretch":false,},
+            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"30f9b7d8-dfcc-4147-9365-38194f638759","path":"sprites/spr_fantasma_vermelho_andar/spr_fantasma_vermelho_andar.yy",},},},"Disabled":false,"id":"076ef6d9-f3f8-4728-a6c9-a1d36a43e0a4","IsCreationKey":false,"Key":2.0,"Length":1.0,"Stretch":false,},
+            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"ed2f6fc6-1b78-42f5-92fe-a5989d938f36","path":"sprites/spr_fantasma_vermelho_andar/spr_fantasma_vermelho_andar.yy",},},},"Disabled":false,"id":"466b467b-e940-4638-b5ea-8fabc3719e67","IsCreationKey":false,"Key":3.0,"Length":1.0,"Stretch":false,},
           ],},"modifiers":[],"spriteId":null,"trackColour":0,"tracks":[],"traits":0,},
     ],
     "visibleRange": null,

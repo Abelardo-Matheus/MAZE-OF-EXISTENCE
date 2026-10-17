@@ -2,7 +2,8 @@
 // OLHO VAZIO
 // Cenario: vazio
 // Olho flutuante com tentaculos: mantem distancia e dispara orbes.
-event_inherited();
+event_inherited();      // pai: obj_par_inimigos
+inimigo_ia_criar();     // valores padrao da IA (script IA_INIMIGOS)
 
 sprite_normal = spr_olho_vazio_andar;
 sprite_parado = spr_olho_vazio_parado;
@@ -25,4 +26,4 @@ vel_tiro = 3;
 altura_tiro = 32;
 sombra_largura = 30;
 
-inimigo_novo_aplicar_nivel();
+inimigo_ia_nivel();

@@ -10,8 +10,8 @@
   "managed": true,
   "overriddenProperties": [],
   "parent": {
-    "name": "INIMIGOS_NOVOS",
-    "path": "folders/Objects/INIMIGOS_NOVOS.yy",
+    "name": "PROJETEIS",
+    "path": "folders/Objects/FASE_BEBE_ALL/INIMIGOS/PROJETEIS.yy",
   },
   "parentObjectId": null,
   "persistent": false,

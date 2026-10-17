@@ -28,8 +28,8 @@
   "nineSlice": null,
   "origin": 9,
   "parent": {
-    "name": "NOVOS",
-    "path": "folders/Sprites/INIMIGOS/NOVOS.yy",
+    "name": "FANTASMA VERDE",
+    "path": "folders/Sprites/INIMIGOS/FANTASMA VERDE.yy",
   },
   "preMultiplyAlpha": false,
   "sequence": {
@@ -57,10 +57,10 @@
     "timeUnits": 1,
     "tracks": [
       {"resourceType":"GMSpriteFramesTrack","resourceVersion":"1.0","name":"frames","builtinName":0,"events":[],"inheritsTrackColour":true,"interpolation":1,"isCreationTrack":false,"keyframes":{"resourceType":"KeyframeStore<SpriteFrameKeyframe>","resourceVersion":"1.0","Keyframes":[
-            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"47ab4ae0-5149-42f6-bad1-7f895bd5258a","path":"sprites/spr_fantasma_verde_parado/spr_fantasma_verde_parado.yy",},},},"Disabled":false,"id":"14dfd059-4ede-48d2-b338-016304b8d97b","IsCreationKey":false,"Key":0.0,"Length":1.0,"Stretch":false,},
-            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"186ae312-3e84-47e2-abe2-96141a3a211f","path":"sprites/spr_fantasma_verde_parado/spr_fantasma_verde_parado.yy",},},},"Disabled":false,"id":"1a3f5ece-dc03-4043-81e1-d922e1a3c44b","IsCreationKey":false,"Key":1.0,"Length":1.0,"Stretch":false,},
-            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"dfddf4bf-4206-4e5b-9ff4-d1f6317288f8","path":"sprites/spr_fantasma_verde_parado/spr_fantasma_verde_parado.yy",},},},"Disabled":false,"id":"0ea01e24-9df4-4acc-99fe-b65a85701e39","IsCreationKey":false,"Key":2.0,"Length":1.0,"Stretch":false,},
-            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"7bc299ce-ebfe-41f3-9a2d-528df887c33a","path":"sprites/spr_fantasma_verde_parado/spr_fantasma_verde_parado.yy",},},},"Disabled":false,"id":"c3f812bc-5c19-49e3-821b-e2eb485e5de9","IsCreationKey":false,"Key":3.0,"Length":1.0,"Stretch":false,},
+            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"47ab4ae0-5149-42f6-bad1-7f895bd5258a","path":"sprites/spr_fantasma_verde_parado/spr_fantasma_verde_parado.yy",},},},"Disabled":false,"id":"07f5f652-062e-42cf-9f4c-cbe60164010d","IsCreationKey":false,"Key":0.0,"Length":1.0,"Stretch":false,},
+            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"186ae312-3e84-47e2-abe2-96141a3a211f","path":"sprites/spr_fantasma_verde_parado/spr_fantasma_verde_parado.yy",},},},"Disabled":false,"id":"f6acde42-3a02-4c1e-825d-80a0b38af334","IsCreationKey":false,"Key":1.0,"Length":1.0,"Stretch":false,},
+            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"dfddf4bf-4206-4e5b-9ff4-d1f6317288f8","path":"sprites/spr_fantasma_verde_parado/spr_fantasma_verde_parado.yy",},},},"Disabled":false,"id":"18cdc7f9-7a1b-450c-b36c-676f33d5c753","IsCreationKey":false,"Key":2.0,"Length":1.0,"Stretch":false,},
+            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"7bc299ce-ebfe-41f3-9a2d-528df887c33a","path":"sprites/spr_fantasma_verde_parado/spr_fantasma_verde_parado.yy",},},},"Disabled":false,"id":"eaac21d7-46a0-4b97-9a47-0f47ab1c8a7d","IsCreationKey":false,"Key":3.0,"Length":1.0,"Stretch":false,},
           ],},"modifiers":[],"spriteId":null,"trackColour":0,"tracks":[],"traits":0,},
     ],
     "visibleRange": null,

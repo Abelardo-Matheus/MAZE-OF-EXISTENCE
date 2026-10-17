@@ -26,8 +26,8 @@
   "nineSlice": null,
   "origin": 9,
   "parent": {
-    "name": "NOVOS",
-    "path": "folders/Sprites/INIMIGOS/NOVOS.yy",
+    "name": "RATO GIGANTE",
+    "path": "folders/Sprites/INIMIGOS/RATO GIGANTE.yy",
   },
   "preMultiplyAlpha": false,
   "sequence": {
@@ -55,8 +55,8 @@
     "timeUnits": 1,
     "tracks": [
       {"resourceType":"GMSpriteFramesTrack","resourceVersion":"1.0","name":"frames","builtinName":0,"events":[],"inheritsTrackColour":true,"interpolation":1,"isCreationTrack":false,"keyframes":{"resourceType":"KeyframeStore<SpriteFrameKeyframe>","resourceVersion":"1.0","Keyframes":[
-            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"d1fcf832-3015-4956-80b2-393d6df9ed0c","path":"sprites/spr_rato_gigante_parado/spr_rato_gigante_parado.yy",},},},"Disabled":false,"id":"9e9305b9-b879-4e80-835a-b68cb7908eb6","IsCreationKey":false,"Key":0.0,"Length":1.0,"Stretch":false,},
-            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"a65936f1-1543-4e9a-96a3-dcf997a1770d","path":"sprites/spr_rato_gigante_parado/spr_rato_gigante_parado.yy",},},},"Disabled":false,"id":"6658aa95-d6b8-4cf1-9e9b-886501acc0b6","IsCreationKey":false,"Key":1.0,"Length":1.0,"Stretch":false,},
+            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"d1fcf832-3015-4956-80b2-393d6df9ed0c","path":"sprites/spr_rato_gigante_parado/spr_rato_gigante_parado.yy",},},},"Disabled":false,"id":"32de70a6-cc65-4d83-a719-31743f58aafc","IsCreationKey":false,"Key":0.0,"Length":1.0,"Stretch":false,},
+            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"a65936f1-1543-4e9a-96a3-dcf997a1770d","path":"sprites/spr_rato_gigante_parado/spr_rato_gigante_parado.yy",},},},"Disabled":false,"id":"49e0aad6-303d-4ab4-9b14-06b304cb2f0b","IsCreationKey":false,"Key":1.0,"Length":1.0,"Stretch":false,},
           ],},"modifiers":[],"spriteId":null,"trackColour":0,"tracks":[],"traits":0,},
     ],
     "visibleRange": null,

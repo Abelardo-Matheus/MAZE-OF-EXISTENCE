@@ -29,8 +29,8 @@
   "nineSlice": null,
   "origin": 9,
   "parent": {
-    "name": "NOVOS",
-    "path": "folders/Sprites/INIMIGOS/NOVOS.yy",
+    "name": "ESQUELETO ARQUEIRO",
+    "path": "folders/Sprites/INIMIGOS/ESQUELETO ARQUEIRO.yy",
   },
   "preMultiplyAlpha": false,
   "sequence": {
@@ -58,11 +58,11 @@
     "timeUnits": 1,
     "tracks": [
       {"resourceType":"GMSpriteFramesTrack","resourceVersion":"1.0","name":"frames","builtinName":0,"events":[],"inheritsTrackColour":true,"interpolation":1,"isCreationTrack":false,"keyframes":{"resourceType":"KeyframeStore<SpriteFrameKeyframe>","resourceVersion":"1.0","Keyframes":[
-            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"758f42e9-61ea-43ec-973f-416674a712b6","path":"sprites/spr_esqueleto_arqueiro_parado/spr_esqueleto_arqueiro_parado.yy",},},},"Disabled":false,"id":"367829da-7629-4547-aaea-7ebd8df3d5c6","IsCreationKey":false,"Key":0.0,"Length":1.0,"Stretch":false,},
-            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"cf4bce57-16a0-449b-89e5-a908b54f74c8","path":"sprites/spr_esqueleto_arqueiro_parado/spr_esqueleto_arqueiro_parado.yy",},},},"Disabled":false,"id":"2c118dad-68bd-4961-9f3b-e6fdbf196ba3","IsCreationKey":false,"Key":1.0,"Length":1.0,"Stretch":false,},
-            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"e0aa9f66-3287-4f2a-8a63-67a96ff9d56f","path":"sprites/spr_esqueleto_arqueiro_parado/spr_esqueleto_arqueiro_parado.yy",},},},"Disabled":false,"id":"017fcdda-a477-4c07-bf8f-2c1862c534e9","IsCreationKey":false,"Key":2.0,"Length":1.0,"Stretch":false,},
-            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"b55130d6-2188-497c-ab7f-b8f1c69656df","path":"sprites/spr_esqueleto_arqueiro_parado/spr_esqueleto_arqueiro_parado.yy",},},},"Disabled":false,"id":"2345723a-832e-415a-a0ee-4b284325b39f","IsCreationKey":false,"Key":3.0,"Length":1.0,"Stretch":false,},
-            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"83122645-c835-42bf-81b6-ccffc6f75274","path":"sprites/spr_esqueleto_arqueiro_parado/spr_esqueleto_arqueiro_parado.yy",},},},"Disabled":false,"id":"c3793c54-a6d8-4cb1-b95f-d75814fa1a6f","IsCreationKey":false,"Key":4.0,"Length":1.0,"Stretch":false,},
+            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"758f42e9-61ea-43ec-973f-416674a712b6","path":"sprites/spr_esqueleto_arqueiro_parado/spr_esqueleto_arqueiro_parado.yy",},},},"Disabled":false,"id":"d19b7273-19ac-46d7-8acd-66bf563cf29f","IsCreationKey":false,"Key":0.0,"Length":1.0,"Stretch":false,},
+            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"cf4bce57-16a0-449b-89e5-a908b54f74c8","path":"sprites/spr_esqueleto_arqueiro_parado/spr_esqueleto_arqueiro_parado.yy",},},},"Disabled":false,"id":"226616a3-fede-43fa-b578-feb5af357b7a","IsCreationKey":false,"Key":1.0,"Length":1.0,"Stretch":false,},
+            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"e0aa9f66-3287-4f2a-8a63-67a96ff9d56f","path":"sprites/spr_esqueleto_arqueiro_parado/spr_esqueleto_arqueiro_parado.yy",},},},"Disabled":false,"id":"176444c4-2bc4-40a0-a4c3-750aa6b8ca47","IsCreationKey":false,"Key":2.0,"Length":1.0,"Stretch":false,},
+            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"b55130d6-2188-497c-ab7f-b8f1c69656df","path":"sprites/spr_esqueleto_arqueiro_parado/spr_esqueleto_arqueiro_parado.yy",},},},"Disabled":false,"id":"09795854-5d7f-4cc4-8ba6-877f189db680","IsCreationKey":false,"Key":3.0,"Length":1.0,"Stretch":false,},
+            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"83122645-c835-42bf-81b6-ccffc6f75274","path":"sprites/spr_esqueleto_arqueiro_parado/spr_esqueleto_arqueiro_parado.yy",},},},"Disabled":false,"id":"ced1b84f-3112-4977-9f3d-fff67aa3a493","IsCreationKey":false,"Key":4.0,"Length":1.0,"Stretch":false,},
           ],},"modifiers":[],"spriteId":null,"trackColour":0,"tracks":[],"traits":0,},
     ],
     "visibleRange": null,

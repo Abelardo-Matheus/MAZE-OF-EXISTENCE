@@ -2,7 +2,8 @@
 // COGUMELO
 // Cenario: floresta
 // Cogumelo disfarcado: fica parado ate o jogador chegar perto e entao pula atras dele.
-event_inherited();
+event_inherited();      // pai: obj_par_inimigos
+inimigo_ia_criar();     // valores padrao da IA (script IA_INIMIGOS)
 
 sprite_normal = spr_cogumelo_andar;
 sprite_parado = spr_cogumelo_parado;
@@ -17,4 +18,4 @@ dist_desaggro = 380;
 comportamento = "emboscada";
 sombra_largura = 34;
 
-inimigo_novo_aplicar_nivel();
+inimigo_ia_nivel();

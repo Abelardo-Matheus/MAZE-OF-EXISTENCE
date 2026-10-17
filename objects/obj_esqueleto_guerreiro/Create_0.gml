@@ -2,7 +2,8 @@
 // ESQUELETO GUERREIRO
 // Cenario: floresta negra / vazio
 // Esqueleto com elmo e escudo: lento, mas aguenta muito dano.
-event_inherited();
+event_inherited();      // pai: obj_par_inimigos
+inimigo_ia_criar();     // valores padrao da IA (script IA_INIMIGOS)
 
 sprite_normal = spr_esqueleto_guerreiro_andar;
 sprite_parado = spr_esqueleto_guerreiro_parado;
@@ -16,4 +17,4 @@ dist_aggro = 220;
 dist_desaggro = 450;
 sombra_largura = 26;
 
-inimigo_novo_aplicar_nivel();
+inimigo_ia_nivel();

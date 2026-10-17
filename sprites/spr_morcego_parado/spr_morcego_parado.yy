@@ -26,8 +26,8 @@
   "nineSlice": null,
   "origin": 9,
   "parent": {
-    "name": "NOVOS",
-    "path": "folders/Sprites/INIMIGOS/NOVOS.yy",
+    "name": "MORCEGO",
+    "path": "folders/Sprites/INIMIGOS/MORCEGO.yy",
   },
   "preMultiplyAlpha": false,
   "sequence": {
@@ -55,8 +55,8 @@
     "timeUnits": 1,
     "tracks": [
       {"resourceType":"GMSpriteFramesTrack","resourceVersion":"1.0","name":"frames","builtinName":0,"events":[],"inheritsTrackColour":true,"interpolation":1,"isCreationTrack":false,"keyframes":{"resourceType":"KeyframeStore<SpriteFrameKeyframe>","resourceVersion":"1.0","Keyframes":[
-            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"1ada72cc-438e-4106-827a-efdabf066200","path":"sprites/spr_morcego_parado/spr_morcego_parado.yy",},},},"Disabled":false,"id":"1e94ea8b-2e23-48fc-b2cd-a9a22ea12c0c","IsCreationKey":false,"Key":0.0,"Length":1.0,"Stretch":false,},
-            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"3501cc8b-dc47-478b-99fe-cd9910823fdd","path":"sprites/spr_morcego_parado/spr_morcego_parado.yy",},},},"Disabled":false,"id":"c9447386-6878-44b0-ac5f-14e2499b35df","IsCreationKey":false,"Key":1.0,"Length":1.0,"Stretch":false,},
+            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"1ada72cc-438e-4106-827a-efdabf066200","path":"sprites/spr_morcego_parado/spr_morcego_parado.yy",},},},"Disabled":false,"id":"20805637-9b71-47c6-8e44-722ad3a1601b","IsCreationKey":false,"Key":0.0,"Length":1.0,"Stretch":false,},
+            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"3501cc8b-dc47-478b-99fe-cd9910823fdd","path":"sprites/spr_morcego_parado/spr_morcego_parado.yy",},},},"Disabled":false,"id":"3cc48a48-7827-43e8-ac60-2f8daa3ceae3","IsCreationKey":false,"Key":1.0,"Length":1.0,"Stretch":false,},
           ],},"modifiers":[],"spriteId":null,"trackColour":0,"tracks":[],"traits":0,},
     ],
     "visibleRange": null,
