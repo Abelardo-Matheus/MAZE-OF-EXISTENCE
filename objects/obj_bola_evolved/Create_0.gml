@@ -19,11 +19,9 @@ alvo = noone; // Variável para guardar o inimigo alvo
 
 // Encontra o inimigo mais próximo ao nascer
 // Certifique-se de que 'obj_par_inimigos' é o objeto pai correto
-if (instance_exists(obj_par_inimigos)) {
-    alvo = instance_nearest(x, y, obj_par_inimigos);
-}
+alvo = inimigo_mais_proximo(x, y); // instância ou horda
 qtd_bolinhas = 4;
 eh_filho = false; // Por padrão, a bola principal NÃO é filha
 estado = "voando";
 timer_efeito = 0;
-anim_direcao = 1;
+anim_direcao = 1;

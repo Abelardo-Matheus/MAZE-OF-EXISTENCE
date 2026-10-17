@@ -29,6 +29,9 @@ if (!has_damaged && radius > 0) {
     
     // Destrói a lista temporária
     ds_list_destroy(_hit_list);
+
+    // HORDA: dano em área (sem empurrão, como acima)
+    horde_damage_circle(x, y, radius, damage, 0);
 }
 
 // 2. Feedback Visual e Destruição
@@ -38,4 +41,4 @@ image_alpha -= 0.05;
 // Quando sumir totalmente, destrói o objeto
 if (image_alpha <= 0) {
     instance_destroy();
-}
+}

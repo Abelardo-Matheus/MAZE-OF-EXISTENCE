@@ -54,3 +54,6 @@ if (reset_hit_timer >= 500)
     ds_list_clear(hit_list);
     reset_hit_timer = 0;
 }
+
+// HORDA: mesma regra do Collision_par_inimigos (hit_list é limpa a cada 500 ms acima)
+horde_hit_instance(id, damage, push_force, obj_player.x, obj_player.y, hit_list);

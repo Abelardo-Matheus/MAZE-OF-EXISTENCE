@@ -236,6 +236,10 @@ function process_night_waves() {
 /// @function spawn_night_enemy(enemy_data)
 // O argumento agora representa os dados de UM inimigo da lista, não da onda inteira.
 function spawn_night_enemy(_enemy_data) {
+    // HORDA: inimigos comuns da noite viram dados no obj_horde (sem instância).
+    // Só continuam como instância os listados em horde_instance_only (ex.: arqueiro).
+    if (horde_spawn_wave_enemy(_enemy_data)) return;
+
     // Extrai dados (os índices continuam os mesmos dentro do sub-array)
     var _obj_to_spawn = _enemy_data[0];
     var _hp_multiplier = _enemy_data[1];
@@ -278,4 +282,4 @@ function spawn_night_enemy(_enemy_data) {
 
     // Adiciona à lista global
     ds_list_add(global.enemy_list, _enemy_id);
-}
+}

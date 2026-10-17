@@ -1,4 +1,18 @@
 // feather disable GM2017
+// HORDA: mesmo comportamento do Collision_par_inimigos
+if (eh_filho) {
+    if (horde_hit_instance(id, damage, push, obj_player.x, obj_player.y, -1, 1) > 0) {
+        instance_destroy();
+        exit;
+    }
+} else if (estado == "voando") {
+    if (horde_hit_instance(id, damage, push, obj_player.x, obj_player.y, -1, 1) > 0) {
+        estado = "parado_atirando";
+        speed = 0;
+        image_speed = 0;
+        image_index = 2;
+    }
+}
 // ========================================================
 // ESTADO 1: ENQUANTO ESTÁ VOANDO ATÉ O INIMIGO
 // ========================================================
@@ -61,4 +75,4 @@ else if (estado == "parado_atirando")
     if (timer_efeito >= 120) {
         instance_destroy();
     }
-}
+}

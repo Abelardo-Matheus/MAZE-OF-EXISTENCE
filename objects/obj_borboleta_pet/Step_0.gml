@@ -52,13 +52,14 @@ if (hspeed != 0) {
 // ========================================================
 // 3. LÓGICA DE SOLTAR PÓLEN
 // ========================================================
-var _enemy_near = instance_nearest(x, y, obj_par_inimigos); 
+// Mira universal (instâncias + horda)
+var _enemy_near = inimigo_mais_proximo(x, y, 70);
 
-if (_enemy_near != noone && distance_to_object(_enemy_near) < 50) {
+if (_enemy_near != undefined) {
     // Chance por frame de soltar pólen
     if (random(1) < pollen_chance) {
         var _pollen = instance_create_layer(x, y, "Instances", obj_butterfly_pollen);
         _pollen.damage = damage;
         _pollen.radius = pollen_radius;
     }
-}
+}

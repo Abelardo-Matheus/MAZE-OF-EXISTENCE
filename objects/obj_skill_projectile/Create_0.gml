@@ -2,6 +2,10 @@ damage = 0;
 veloc = 0;
 push_force = 2;
 
+// Lâminas giras: controle de perfuração contra inimigos-instância
+hit_set = {};
+hit_reset = 0;
+
 setup = function(_data) {
     damage = _data.damage;
     veloc = _data.speed;

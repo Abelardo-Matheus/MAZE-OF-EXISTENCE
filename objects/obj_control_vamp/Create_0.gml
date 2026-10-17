@@ -14,6 +14,9 @@ inicializar_gerador_mundo();
 // Inicializa sistema de ondas
 init_night_waves();
 
+// Gerenciador da horda noturna (milhares de inimigos sem instâncias)
+if (!instance_exists(obj_horde)) instance_create_layer(0, 0, "Instances", obj_horde);
+
 // Garanta que o alarme 0 comece zerado para o sistema assumir
 alarm[0] = 0;
 

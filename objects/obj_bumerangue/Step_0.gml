@@ -77,3 +77,10 @@ switch (state)
 // Movimento manual para evitar conflitos com variáveis nativas
 x += lengthdir_x(_current_speed, direction);
 y += lengthdir_y(_current_speed, direction);
+
+// HORDA: dano com perfuração (mesma hit_list e pierce_max do Collision_par_inimigos)
+var _hits_horda = horde_hit_instance(id, damage, push_force, x, y, hit_list, (pierce_max > 0) ? pierce_max : -1);
+if (_hits_horda > 0) {
+    pierce_max -= _hits_horda;
+    if (pierce_max <= 0) state = "returning";
+}

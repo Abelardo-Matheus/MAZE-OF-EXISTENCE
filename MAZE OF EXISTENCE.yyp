@@ -609,6 +609,10 @@
     {"id":{"name":"scr_pena","path":"scripts/scr_pena/scr_pena.yy",},},
     {"id":{"name":"scr_rastro_sombrio","path":"scripts/scr_rastro_sombrio/scr_rastro_sombrio.yy",},},
     {"id":{"name":"scr_tomo_celeridade","path":"scripts/scr_tomo_celeridade/scr_tomo_celeridade.yy",},},
+    {"id":{"name":"obj_horde","path":"objects/obj_horde/obj_horde.yy",},},
+    {"id":{"name":"scr_horde","path":"scripts/scr_horde/scr_horde.yy",},},
+    {"id":{"name":"scr_horde_api","path":"scripts/scr_horde_api/scr_horde_api.yy",},},
+    {"id":{"name":"scr_horde_config","path":"scripts/scr_horde_config/scr_horde_config.yy",},},
   ],
   "RoomOrderNodes": [
     {"roomId":{"name":"Fase_vamp","path":"rooms/Fase_vamp/Fase_vamp.yy",},},

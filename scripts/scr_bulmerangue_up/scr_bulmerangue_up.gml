@@ -124,76 +124,37 @@ function scr_bumerangue(_row_index)
         var _player_x = obj_player.x;
         var _player_y = obj_player.y;
 
-        // Cria Fila de Prioridade para ordenar inimigos por distância
-        var _priority_queue = ds_priority_create();
-        
-        // Coleta inimigos (SUBSTÍTUA 'obj_par_inimigos' SEU OBJETO PAI)
-        // Apenas dentro do alcance definido nos stats calculados universalmente
-        with (obj_par_inimigos) 
+        // Mira universal: os N inimigos mais próximos (instância + horda) dentro do alcance
+        var _alvos = inimigos_alvos(_player_x, _player_y, _stats.range, _stats.quantity, "perto");
+        var _amount_to_throw = array_length(_alvos);
+
+        for (var _i = 0; _i < _amount_to_throw; _i++) 
         {
-            var _dist = point_distance(x, y, _player_x, _player_y);
-            // Usa o _stats.range calculado
-            if (_dist <= _stats.range) 
-            {
-                // Menor distância = Maior prioridade (delete_min tirarpa o mais próximo)
-                ds_priority_add(_priority_queue, id, _dist);
+            var _target_id = _alvos[_i];
+
+            var _boomerang = instance_create_layer(_player_x, _player_y, "Instances", obj_bumerangue);
+            _boomerang.damage = _stats.damage;
+            _boomerang.move_speed = _stats.speed;
+            _boomerang.pierce_max = _stats.pierce_count;
+            _boomerang.push_force = _stats.knockback;
+
+            var _escala_final = _stats.size;
+            if (variable_instance_exists(_boomerang, "escala_base")) {
+                _escala_final *= _boomerang.escala_base;
             }
+            _boomerang.image_xscale = _escala_final;
+            _boomerang.image_yscale = _escala_final;
+
+            // Frames para atingir o alcance máximo (+10 de folga para passar do alvo)
+            _boomerang.timer_going = (_stats.range / _stats.speed) + 10;
+
+            _boomerang.target_x = _target_id.x;
+            _boomerang.target_y = _target_id.y;
+            _boomerang.direction = point_direction(_player_x, _player_y, _target_id.x, _target_id.y);
+            _boomerang.state = "going"; 
+            _boomerang.return_target = obj_player;
         }
-
-        // Se houver inimigos no alcance, lança
-        if (!ds_priority_empty(_priority_queue)) 
-        {
-            // Define quantos bumerangues vão sair (mínimo entre Qtd calculada ou inimigos disponíveis)
-            var _amount_to_throw = min(_stats.quantity, ds_priority_size(_priority_queue));
-
-            // Loop de Criação
-            for (var _i = 0; _i < _amount_to_throw; _i++) 
-            {
-                // Pega o inimigo mais próximo e remove da fila
-                var _target_id = ds_priority_delete_min(_priority_queue);
-
-                if (instance_exists(_target_id)) 
-                {
-                    // Criação do Objeto Bumerangue
-                    // SUBSTÍTUA 'obj_bumerangue' PELO NOME DO SEU OBJETO BUMERANGUE
-                    var _boomerang = instance_create_layer(_player_x, _player_y, "Instances", obj_bumerangue);
-                    
-                    // --- Passagem de Parâmetros usa os _stats calculados universalmente ---
-                    // Certifique-se de que o objeto 'obj_bumerangue' tem essas variáveis no Create
-                    _boomerang.damage = _stats.damage;
-                    _boomerang.move_speed = _stats.speed; // Usando a variável que você definiu no antigo scr_bumerangue
-                    _boomerang.pierce_max = _stats.pierce_count;
-                    _boomerang.push_force = _stats.knockback;
-                    
-                    // Escala Visual
-                    // Se usar o sistema de escala base que você tem (_boomerang.escala_base)
-                    var _escala_final = _stats.size;
-                    if (variable_instance_exists(_boomerang, "escala_base")) {
-                        _escala_final *= _boomerang.escala_base;
-                    }
-                    _boomerang.image_xscale = _escala_final;
-                    _boomerang.image_yscale = _escala_final;
-
-                    // --- LÓGICA ÚNICA DE ALCANCE (RANGE) ---
-                    // Calculamos quantos frames ele precisa viajar para atingir o range máximo.
-                    // Tempo (frames) = Distância (pixels) / Velocidade (pixels/frame)
-                    // Adicionamos +10 frames de "folga" para ele passar um pouco do alvo antes de voltar
-                    _boomerang.timer_going = (_stats.range / _stats.speed) + 10;
-
-                    // --- Mira e Estado Inicial ---
-                    _boomerang.target_x = _target_id.x;
-                    _boomerang.target_y = _target_id.y;
-                    _boomerang.direction = point_direction(_player_x, _player_y, _target_id.x, _target_id.y);
-                    
-                    // Configuração de estado interno do objeto bumerangue
-                    _boomerang.state = "going"; 
-                    _boomerang.return_target = obj_player; // Define quem ele persegue na volta
-                }
-            }
-        }
-        // Limpeza de memória obrigatória da Fila de Prioridade
-        ds_priority_destroy(_priority_queue);
     }
 }
 
-#endregion
+#endregion

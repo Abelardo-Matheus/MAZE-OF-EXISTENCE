@@ -50,6 +50,9 @@ if (image_index >= 1 && !damage_applied)
     
     // Limpeza de Memória Obrigatória
     ds_list_destroy(_hit_list);
+
+    // HORDA: mesmo dano/empurrão em área
+    horde_damage_circle(x, y, radius, damage, push_force);
     
     // Opcional: Tocar som de trovão aqui
     // audio_play_sound(snd_thunder, 1, false);
@@ -59,4 +62,4 @@ if (image_index >= 1 && !damage_applied)
 if (image_index >= image_number - 1) 
 {
     instance_destroy();
-}
+}

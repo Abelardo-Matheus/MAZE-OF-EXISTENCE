@@ -89,12 +89,11 @@ switch (state)
         }
 
         // 4. Procura Inimigo
-        var _nearest = instance_nearest(x, y, obj_par_inimigos);
-        if (_nearest != noone) {
-            if (point_distance(x, y, _nearest.x, _nearest.y) < range) {
-                target_enemy = _nearest;
-                state = "chase";
-            }
+        // Mira universal (instâncias + horda): target_enemy vira struct {x, y, inst, uid}
+        var _nearest = inimigo_mais_proximo(x, y, range);
+        if (_nearest != undefined) {
+            target_enemy = _nearest;
+            state = "chase";
         }
         break;
 
@@ -102,7 +101,7 @@ switch (state)
     // ESTADO 2: PERSEGUINDO (CHASE)
     // ------------------------------------------------------------
     case "chase":
-        if (instance_exists(target_enemy)) {
+        if (inimigo_posicao(target_enemy) != undefined) {
             move_towards_point(target_enemy.x, target_enemy.y, velocidade * 1.5);
             sprite_index = spr_sapo_walk;
 
@@ -117,7 +116,7 @@ switch (state)
             
             if (point_distance(x, y, target_enemy.x, target_enemy.y) > range * 1.5) {
                 state = "idle";
-                target_enemy = noone;
+                target_enemy = undefined;
             }
         } else {
             state = "idle";
@@ -129,6 +128,15 @@ switch (state)
     // ------------------------------------------------------------
     case "dash":
         dash_timer--;
+
+        // HORDA: o "tapa" (mesma regra do Collision_par_inimigos: 1 acerto por dash)
+        if (!has_hit && horde_hit_instance(id, damage, 4, x, y, -1, 1) > 0) {
+            has_hit = true;
+            speed = -2;
+            state = "cooldown";
+            attack_cooldown_current = attack_cooldown_max;
+            break;
+        }
         if (dash_timer % 2 == 0) {
             var _trail = instance_create_layer(x, y, layer, obj_par_efeito_rastro);
             _trail.sprite_index = sprite_index;
@@ -188,4 +196,4 @@ else if (state == "dash")
 else 
 {
     image_speed = 1; // Padrão para teleporte e cooldown
-}
+}

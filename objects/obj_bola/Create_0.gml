@@ -22,6 +22,5 @@ alvo = noone; // Variável para guardar o inimigo alvo
 
 // Encontra o inimigo mais próximo ao nascer
 // Certifique-se de que 'obj_par_inimigos' é o objeto pai correto
-if (instance_exists(obj_par_inimigos)) {
-    alvo = instance_nearest(x, y, obj_par_inimigos);
-}
+// Mira universal: instância OU inimigo da horda (struct {x, y, inst, uid})
+alvo = inimigo_mais_proximo(x, y);

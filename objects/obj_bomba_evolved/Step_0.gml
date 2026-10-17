@@ -81,6 +81,10 @@ switch (state)
             }
         }
         ds_list_destroy(_enemies_in_range);
+
+        // HORDA: puxa e dá o dano contínuo silencioso a cada 10 frames
+        horde_pull_circle(x, y, radius, push_force * 4, 10);
+        if (timer_sugando % 10 == 0) horde_damage_circle(x, y, radius, damage * 0.1, 0, x, y, false, -1, true);
         
         // 3. O Fim do Buraco Negro (A Grande Explosão!)
         // 120 frames = 2 segundos sugando
@@ -106,10 +110,13 @@ switch (state)
                     }
                 }
                 ds_list_destroy(_final_hit_list);
+
+                // HORDA: explosão final
+                horde_damage_circle(x, y, radius, damage, 0);
             }
             
             // Destrói a bomba
             instance_destroy();
         }
         break;
-}
+}

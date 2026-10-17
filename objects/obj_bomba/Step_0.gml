@@ -118,6 +118,9 @@ switch (state)
             }
             // Limpeza de memória obrigatória
             ds_list_destroy(_enemies_hit_list);
+
+            // HORDA: mesmo splash (dano cai com a distância) e empurrão a partir do jogador
+            horde_damage_circle(x, y, radius, damage, push_force, obj_player.x, obj_player.y, false, splash_multiplier);
         }
 
         // 2. Destruição após o fim da animação
@@ -126,4 +129,4 @@ switch (state)
             instance_destroy();
         }
         break;
-}
+}

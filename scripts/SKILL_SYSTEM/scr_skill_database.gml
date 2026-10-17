@@ -31,10 +31,9 @@ function scr_skill_database_init() {
             { damage: 25, cooldown: 40, projectile_count: 3, speed: 12, size: 1.5 }
         ],
         on_fire: function(_lv) {
-            var _enemies = [];
-            with (obj_par_inimigos) { if (point_distance(x, y, other.x, other.y) < 500) array_push(_enemies, id); }
+            // Mira universal: os mais próximos (instância + horda), já ordenados
+            var _enemies = inimigos_alvos(x, y, 500, _lv.projectile_count, "perto");
             if (array_length(_enemies) == 0) return;
-            array_sort(_enemies, function(_a, _b) { return point_distance(x, y, _a.x, _a.y) - point_distance(x, y, _b.x, _b.y); });
             
             var _count = min(_lv.projectile_count, array_length(_enemies));
             var _area_mod = (variable_global_exists("player_area_mod") ? global.player_area_mod : 1);

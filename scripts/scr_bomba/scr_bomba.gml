@@ -68,39 +68,19 @@ function scr_bomba(_row_index)
         
         var _player_x = obj_player.x;
         var _player_y = obj_player.y;
-        var _targets_list = ds_list_create();
+        // Cálculo infinito: Ganha +1 bomba a cada 5 níveis depois do 15
+        var _bombas_extras = floor(max(0, _current_level - 15) / 5);
+        var _total_bombs_to_throw = _stats.bomb_count + _bombas_extras;
 
-        with (obj_par_inimigos) 
+        // Mira universal: as bombas vão nos inimigos mais próximos (instância + horda)
+        var _alvos = inimigos_alvos(_player_x, _player_y, 1000, _total_bombs_to_throw, "perto");
+        var _bombs_to_throw = array_length(_alvos);
+
+        if (_bombs_to_throw > 0) 
         {
-            if (point_distance(x, y, _player_x, _player_y) <= 1000) {
-                ds_list_add(_targets_list, id);
-            }
-        }
-
-        var _total_targets = ds_list_size(_targets_list);
-
-        if (_total_targets > 0) 
-        {
-            var _priority_queue = ds_priority_create();
-            
-            for(var _k = 0; _k < _total_targets; _k++)
-            {
-                var _enemy = _targets_list[| _k];
-                var _dist = point_distance(_player_x, _player_y, _enemy.x, _enemy.y);
-                ds_priority_add(_priority_queue, _enemy, _dist);
-            }
-
-            // Cálculo infinito: Ganha +1 bomba a cada 5 níveis depois do 15
-            var _bombas_extras = floor(max(0, _current_level - 15) / 5);
-            var _total_bombs_to_throw = _stats.bomb_count + _bombas_extras;
-
-            var _bombs_to_throw = min(_total_bombs_to_throw, _total_targets);
-
             for (var _i = 0; _i < _bombs_to_throw; _i++) 
             {
-                var _target_id = ds_priority_delete_min(_priority_queue);
-
-                if (instance_exists(_target_id)) 
+                var _target_id = _alvos[_i];
                 {
                     // --- MUDANÇA AQUI: Usa a variável _bomb_obj ---
                     var _bomb = instance_create_layer(_player_x, _player_y, "Instances", _bomb_obj);
@@ -120,8 +100,6 @@ function scr_bomba(_row_index)
                     _bomb.splash_multiplier = _stats.splash_multiplier;
                 }
             }
-            ds_priority_destroy(_priority_queue);
         }
-        ds_list_destroy(_targets_list);
     }
-}
+}

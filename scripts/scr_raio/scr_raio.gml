@@ -107,61 +107,31 @@ function scr_raio(_row_index)
         // ========================================================
         // --- 3. SUA LÓGICA ÚNICA DE TARGETING (Apenas na Tela) ---
         // ========================================================
-        var _targets_list = ds_list_create();
+        // Mira universal: inimigos (instância + horda) visíveis na câmera, escolhidos ao acaso
+        var _px = instance_exists(obj_player) ? obj_player.x : camera_get_view_x(view_camera[0]);
+        var _py = instance_exists(obj_player) ? obj_player.y : camera_get_view_y(view_camera[0]);
+        var _alvos = inimigos_alvos(_px, _py, 100000, _stats.quantity, "aleatorio", true);
+        var _total_targets = array_length(_alvos);
 
-        // Pega apenas inimigos visíveis na tela (câmera)
-        var _cam_x = camera_get_view_x(view_camera[0]);
-        var _cam_y = camera_get_view_y(view_camera[0]);
-        var _cam_w = camera_get_view_width(view_camera[0]);
-        var _cam_h = camera_get_view_height(view_camera[0]);
-
-        // Coleta inimigos (SUBSTÍTUA 'obj_par_inimigos' PELO SEU OBJETO PAI)
-        with (obj_par_inimigos) 
-        {
-            // Adiciona uma margem de 50 pixels fora da tela
-            if (x > _cam_x - 50 && x < _cam_x + _cam_w + 50 && 
-                y > _cam_y - 50 && y < _cam_y + _cam_h + 50)
-            {
-                ds_list_add(_targets_list, id);
-            }
-        }
-
-        var _total_targets = ds_list_size(_targets_list);
-
-        // Se houver alvos válidos na tela
         if (_total_targets > 0) 
         {
-            // Embaralha a lista para que os raios caiam em inimigos variados
-            ds_list_shuffle(_targets_list);
-
-            // Loop pela Quantidade de Raios calculada universalmente
+            // Mais raios que alvos: recomeça a lista (múltiplos hits no mesmo inimigo)
             for (var _i = 0; _i < _stats.quantity; _i++)
             {
-                // O operador '%' (módulo) garante que se tivermos mais raios que inimigos,
-                // a lista recomeça do zero (hit kill/múltiplos hits no mesmo inimigo)
-                var _target_enemy = _targets_list[| _i % _total_targets];
+                var _target_enemy = _alvos[_i % _total_targets];
 
-                if (instance_exists(_target_enemy)) 
-                {
-                    // Cria o Objeto Raio (SUBSTÍTUA 'obj_raio' PELO NOME DO SEU OBJETO)
-                    var _lightning = instance_create_layer(_target_enemy.x, _target_enemy.y, "Instances", obj_raio);
-                    
-                    // --- Passagem de Parâmetros usa os _stats calculados ---
-                    _lightning.damage = _stats.damage;
-                    _lightning.radius = _stats.radius;
-                    _lightning.push_force = _stats.push_force;
-                    _lightning.duration = _stats.duration;
-                    
-                    // Adicionar um pequeno offset aleatório para não cair tudo no mesmo pixel exato
-                    _lightning.x += irandom_range(-10, 10);
-                    _lightning.y += irandom_range(-10, 10);
-                }
+                var _lightning = instance_create_layer(_target_enemy.x, _target_enemy.y, "Instances", obj_raio);
+                _lightning.damage = _stats.damage;
+                _lightning.radius = _stats.radius;
+                _lightning.push_force = _stats.push_force;
+                _lightning.duration = _stats.duration;
+
+                // Pequeno offset aleatório para não cair tudo no mesmo pixel exato
+                _lightning.x += irandom_range(-10, 10);
+                _lightning.y += irandom_range(-10, 10);
             }
         }
-        
-        // Limpeza de memória
-        ds_list_destroy(_targets_list);
     }
 }
 
-#endregion
+#endregion

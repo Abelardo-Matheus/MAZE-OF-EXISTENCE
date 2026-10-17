@@ -140,6 +140,9 @@ function scr_explosao(_row_index)
             }
         }
 
+        // HORDA: mesmo dano/empurrão em área a partir do jogador
+        horde_damage_circle(_player_x, _player_y, _stats.radius, _stats.damage, _stats.push_force);
+
         // --- Efeito Visual (VFX) ---
         // Cria o objeto visual da explosão (SUBSTÍTUA 'obj_confete' PELO SEU OBJETO)
         var _vfx = instance_create_layer(_player_x, _player_y, "Instances", obj_confete);
@@ -170,4 +173,4 @@ function scr_explosao(_row_index)
     }
 }
 
-#endregion
+#endregion

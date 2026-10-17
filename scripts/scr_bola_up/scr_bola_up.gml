@@ -57,10 +57,9 @@ function scr_bola(_row_index)
     if (global.ball_timer >= _stats.cooldown) 
     {
         global.ball_timer = 0; 
-        var _all_enemies_list = ds_list_create();
-        with (obj_par_inimigos) { ds_list_add(_all_enemies_list, id); }
-        
-        var _shots_to_fire = min(_stats.projectile_count, ds_list_size(_all_enemies_list));
+        // Mira universal: N inimigos aleatórios (instância + horda)
+        var _alvos = inimigos_alvos(obj_player.x, obj_player.y, 100000, _stats.projectile_count, "aleatorio");
+        var _shots_to_fire = array_length(_alvos);
 
         // ========================================================
         // --- NOVO: CÁLCULO DA QUANTIDADE DE BOLINHAS ---
@@ -71,11 +70,7 @@ function scr_bola(_row_index)
 
         for (var _i = 0; _i < _shots_to_fire; _i++) 
         {
-            var _random_index = irandom(ds_list_size(_all_enemies_list) - 1);
-            var _target_enemy = _all_enemies_list[| _random_index];
-            ds_list_delete(_all_enemies_list, _random_index); 
-
-            if (instance_exists(_target_enemy)) 
+            var _target_enemy = _alvos[_i];
             {
                 var _projectile = instance_create_layer(obj_player.x, obj_player.y, "Instances", _bola_obj);
                 _projectile.direction = point_direction(obj_player.x, obj_player.y, _target_enemy.x, _target_enemy.y);
@@ -90,6 +85,6 @@ function scr_bola(_row_index)
                 _projectile.qtd_bolinhas = _bolinhas_calculadas;
             }
         }
-        ds_list_destroy(_all_enemies_list);
+
     }
-}
+}
