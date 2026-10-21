@@ -184,6 +184,29 @@ function cidade_ponto_ok(_x, _y) {
     return terreno_bioma_em(_x, _y) == "cidade";
 }
 
+/// @desc O tile foi desenhado como cidade? Mesmo critério do chão
+///       (terreno_construir_regiao olha o bioma no CENTRO do tile, não no ponto).
+function cidade_tile_e_cidade(_gx, _gy) {
+    return terreno_bioma_em((_gx + 0.5) * CIDADE_T, (_gy + 0.5) * CIDADE_T) == "cidade";
+}
+
+/// @desc true se o "pé" de algo em (_x, _y) pisa em rua ou faixa da cidade
+///       (ou em calçada, se _calcada_ok = false). Testa o centro e as pontas do pé:
+///       _rx para os lados, _ry_cima para cima (copa/tronco) e um pouco para baixo.
+function cidade_pe_na_rua(_x, _y, _rx, _ry_cima, _calcada_ok = false) {
+    var _ox = [0, -_rx, _rx, 0, 0];
+    var _oy = [0, 0, 0, -_ry_cima, 20];
+    for (var _i = 0; _i < 5; _i++) {
+        var _gx = floor((_x + _ox[_i]) / CIDADE_T);
+        var _gy = floor((_y + _oy[_i]) / CIDADE_T);
+        if (!cidade_tile_e_cidade(_gx, _gy)) continue;
+        var _t = cidade_tipo_tile(_gx, _gy);
+        if (_t == CID_RUA || _t == CID_FAIXA) return true;
+        if (_t == CID_CALCADA && !_calcada_ok) return true;
+    }
+    return false;
+}
+
 /// @desc Tipo da quadra (determinístico pela semente do mundo).
 ///       Quadras largas (rua removida) viram praça/parque com mais frequência.
 function cidade_tipo_quadra(_k, _j) {
@@ -360,10 +383,21 @@ function cidade_registrar_poste(_x, _y) {
     registrar_posicao_geracao(_x, _y);
 }
 
+/// @desc Registra um enfeite. Devolve false se o lugar não serve.
+///       Nada nasce na rua/faixa; árvore, arbusto, canteiro e brinquedos também não
+///       ficam na calçada (hidrante, lixeira, correio e banco podem).
 function cidade_registrar_enfeite(_x, _y, _tipo) {
-    if (!cidade_ponto_ok(_x, _y)) return;
+    if (!cidade_ponto_ok(_x, _y)) return false;
+    var _grande = (_tipo == ENF_ARVORE || _tipo == ENF_ARBUSTO || _tipo == ENF_CANTEIRO || _tipo == ENF_FONTE
+                || _tipo == ENF_BALANCO || _tipo == ENF_GANGORRA || _tipo == ENF_ESCORREGADOR);
+    if (_grande) {
+        if (cidade_pe_na_rua(_x, _y, 40, 40, false)) return false;
+    } else {
+        if (cidade_pe_na_rua(_x, _y, 0, 0, true)) return false;
+    }
     var _dados = [_x, _y, irandom(9999999), _tipo];
     registrar_entidade_no_bloco(cidade_bloco_de(_x), cidade_bloco_de(_y), "enfeite", _dados);
+    return true;
 }
 
 function cidade_registrar_carro(_x, _y, _dir) {
@@ -383,7 +417,7 @@ function cidade_espalhar(_x0, _y0, _x1, _y1, _tipos, _qtd, _dist, _ocupados) {
             if (abs(_x - _o[0]) < _o[2] + _dist && abs(_y - _o[1]) < _o[3] + _dist * 0.6) { _livre = false; break; }
         }
         if (!_livre) continue;
-        cidade_registrar_enfeite(_x, _y, _tipos[irandom(array_length(_tipos) - 1)]);
+        if (!cidade_registrar_enfeite(_x, _y, _tipos[irandom(array_length(_tipos) - 1)])) continue; // caiu na rua: tenta outro ponto
         array_push(_ocupados, [_x, _y, 40, 30]);
         _feitos++;
     }

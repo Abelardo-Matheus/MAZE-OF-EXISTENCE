@@ -9,8 +9,13 @@ var _dx = cidade_dx(dir);
 var _dy = cidade_dy(dir);
 
 // ---------- tem alguém na frente? ----------
-var _alc = (dir == 1 || dir == 2) ? meio + 40 : 90;          // alcance da "visão"
-var _ax = x + _dx * _alc, _ay = y + _dy * _alc - 24;
+// alcance da "visão": logo à frente do para-choque (subindo, a frente fica "comp" px acima da origem)
+var _ax = x, _ay = y;
+switch (dir) {
+    case 1: case 2: _ax = x + _dx * (meio + 40); _ay = y - larg / 2; break;
+    case 0:         _ay = y + 66;                break;
+    case 3:         _ay = y - comp - 40;         break;
+}
 var _x0 = _ax - 46, _x1 = _ax + 46, _y0 = _ay - 34, _y1 = _ay + 34;
 var _jogador = collision_rectangle(_x0, _y0, _x1, _y1, obj_player, false, true) != noone;
 var _bloq = _jogador;
@@ -23,7 +28,9 @@ if (!_bloq && parado_timer < 150) {
         var _rx = x - _eu.x, _ry = y - _eu.y;
         var _frente = _rx * _dx + _ry * _dy;
         var _lado = abs(_rx * _dy) + abs(_ry * _dx);
-        if (_frente > 0 && _frente < _eu.meio + meio + 30 && _lado < 50) { _bloq = true; break; }
+        // distância entre origens até encostar: de lado = os dois meios; na vertical = o comprimento de quem está em cima
+        var _lim = (_dx != 0) ? _eu.meio + meio + 30 : ((_dy > 0) ? comp : _eu.comp) + 30;
+        if (_frente > 0 && _frente < _lim && _lado < 50) { _bloq = true; break; }
     }
 }
 
@@ -79,7 +86,11 @@ if (virar_para != -1) {
 }
 
 // ---------- visual ----------
-if (vel > 0.2) anim = (anim + vel * 0.12) mod 2;
-image_index = dir * 2 + floor(anim);
-light_offset_x = cidade_dx(dir) * 80;
-light_offset_y = cidade_dy(dir) * 65 - 30;
+if (vel > 0.2) anim = (anim + vel * 0.1) mod 4;   // 4 passos: roda girando + balanço + fumaça
+image_index = dir * 4 + floor(anim);
+// faróis na frente do carro
+switch (dir) {
+    case 0:  light_offset_x = 0;                         light_offset_y = 20;          break;
+    case 3:  light_offset_x = 0;                         light_offset_y = -comp - 20;  break;
+    default: light_offset_x = cidade_dx(dir) * (meio + 20); light_offset_y = -larg / 2; break;
+}

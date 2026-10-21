@@ -27,39 +27,117 @@ function obter_inputs_jogador() {
     };
 }
 
-/// @desc Executa movimentação com colisão pixel-perfect
+/// @desc Objetos do mundo que bloqueiam o player pela MÁSCARA DO PÉ (tronco, base da pedra/casa).
+///       Eles não usam mais `solid`: o solid do GameMaker devolve o player inteiro pra posição
+///       anterior (sem deslizar) e, como a máscara muda com o vento/balanço, prendia e puxava o player.
+function colisao_obstaculos_player() {
+    return [obj_arvore, obj_rock, obj_estrutura];
+}
+
+/// @desc Instâncias de obstáculo que o player já está sobrepondo em (x, y) — ele pode sair delas.
+function colisao_sobrepostos() {
+    var _res = [];
+    var _objs = colisao_obstaculos_player();
+    var _l = ds_list_create();
+    for (var _k = 0; _k < array_length(_objs); _k++) {
+        ds_list_clear(_l);
+        var _n = instance_place_list(x, y, _objs[_k], _l, false);
+        for (var _i = 0; _i < _n; _i++) array_push(_res, _l[| _i]);
+    }
+    ds_list_destroy(_l);
+    return _res;
+}
+
+/// @desc true se o player em (_x, _y) bate na parede _obj ou num obstáculo do mundo.
+/// @param _ignorar   instâncias já sobrepostas no começo do movimento (deixa sair delas)
+/// @param _sem_parede true quando o player já começou dentro da parede (deixa sair)
+function colisao_bloqueia(_x, _y, _obj, _ignorar, _sem_parede) {
+    if (!_sem_parede && place_meeting(_x, _y, _obj)) return true;
+    var _objs = colisao_obstaculos_player();
+    for (var _k = 0; _k < array_length(_objs); _k++) {
+        var _inst = instance_place(_x, _y, _objs[_k]);
+        if (_inst == noone) continue;
+        if (array_length(_ignorar) == 0) return true;
+        // pode haver mais de uma: só bloqueia se alguma não estiver na lista de ignoradas
+        var _l = ds_list_create();
+        var _n = instance_place_list(_x, _y, _objs[_k], _l, false);
+        var _bate = false;
+        for (var _i = 0; _i < _n; _i++) {
+            var _ok = false;
+            for (var _j = 0; _j < array_length(_ignorar); _j++) if (_ignorar[_j] == _l[| _i]) { _ok = true; break; }
+            if (!_ok) { _bate = true; break; }
+        }
+        ds_list_destroy(_l);
+        if (_bate) return true;
+    }
+    return false;
+}
+
+/// @desc Executa movimentação com colisão pixel a pixel, deslizando em paredes e obstáculos.
+///       - Eixos separados: andando na diagonal contra algo, desliza pelo outro eixo.
+///       - Quina escorregadia: batendo de frente na ponta de algo (até COLISAO_QUINA px),
+///         o player é empurrado de lado pra contornar em vez de ficar agarrado (vale correndo/dash).
+///       - Se já começar sobreposto (ex.: árvore balançou em cima), deixa sair em vez de travar.
 /// @param _hveloc Velocidade horizontal desejada
 /// @param _vveloc Velocidade vertical desejada
 /// @param _col_obj Objeto ou instância de colisão (padrão: global.sala.parede)
+#macro COLISAO_QUINA 10
 function aplicar_movimento_com_colisao(_hveloc, _vveloc, _col_obj = undefined) {
     var _obj = _col_obj;
-    
+
     // Se nenhum objeto foi passado, tenta pegar a parede da sala atual ou o padrão
     if (_obj == undefined) {
-        if (variable_global_exists("sala") && variable_struct_exists(global.sala, "parede")) {
+        if (variable_global_exists("sala") && is_struct(global.sala) && variable_struct_exists(global.sala, "parede")) {
             _obj = global.sala.parede;
         } else {
             _obj = obj_wall;
         }
     }
 
-    // Colisão Horizontal
-    if (place_meeting(x + _hveloc, y, _obj)) {
-        while (!place_meeting(x + sign(_hveloc), y, _obj)) {
-            x += sign(_hveloc);
-        }
-        _hveloc = 0;
-    }
-    x += _hveloc;
+    var _ign = colisao_sobrepostos();
+    var _sem_parede = place_meeting(x, y, _obj);
+    var _h_ori = _hveloc, _v_ori = _vveloc;
 
-    // Colisão Vertical
-    if (place_meeting(x, y + _vveloc, _obj)) {
-        while (!place_meeting(x, y + sign(_vveloc), _obj)) {
-            y += sign(_vveloc);
+    // ---------- Horizontal ----------
+    if (_hveloc != 0) {
+        if (colisao_bloqueia(x + _hveloc, y, _obj, _ign, _sem_parede)) {
+            var _s = sign(_hveloc);
+            repeat (ceil(abs(_hveloc))) {
+                if (colisao_bloqueia(x + _s, y, _obj, _ign, _sem_parede)) break;
+                x += _s;
+            }
+            // quina: só quando não está apertando pra cima/baixo
+            if (_v_ori == 0) {
+                var _passo = max(1, min(abs(_h_ori), 3));
+                for (var _d = 1; _d <= COLISAO_QUINA; _d++) {
+                    if (!colisao_bloqueia(x + _s, y - _d, _obj, _ign, _sem_parede) && !colisao_bloqueia(x, y - _passo, _obj, _ign, _sem_parede)) { y -= _passo; break; }
+                    if (!colisao_bloqueia(x + _s, y + _d, _obj, _ign, _sem_parede) && !colisao_bloqueia(x, y + _passo, _obj, _ign, _sem_parede)) { y += _passo; break; }
+                }
+            }
+        } else {
+            x += _hveloc;
         }
-        _vveloc = 0;
     }
-    y += _vveloc;
+
+    // ---------- Vertical ----------
+    if (_vveloc != 0) {
+        if (colisao_bloqueia(x, y + _vveloc, _obj, _ign, _sem_parede)) {
+            var _s2 = sign(_vveloc);
+            repeat (ceil(abs(_vveloc))) {
+                if (colisao_bloqueia(x, y + _s2, _obj, _ign, _sem_parede)) break;
+                y += _s2;
+            }
+            if (_h_ori == 0) {
+                var _passo2 = max(1, min(abs(_v_ori), 3));
+                for (var _d2 = 1; _d2 <= COLISAO_QUINA; _d2++) {
+                    if (!colisao_bloqueia(x - _d2, y + _s2, _obj, _ign, _sem_parede) && !colisao_bloqueia(x - _passo2, y, _obj, _ign, _sem_parede)) { x -= _passo2; break; }
+                    if (!colisao_bloqueia(x + _d2, y + _s2, _obj, _ign, _sem_parede) && !colisao_bloqueia(x + _passo2, y, _obj, _ign, _sem_parede)) { x += _passo2; break; }
+                }
+            }
+        } else {
+            y += _vveloc;
+        }
+    }
 }
 
 // ============================================================================

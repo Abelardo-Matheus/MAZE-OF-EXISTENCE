@@ -14,6 +14,7 @@ escale = irandom_range(2, 6);
 image_xscale = escale;
 image_yscale = escale;
 depth = -y;
+solid = false; // o player colide pela máscara do tronco (aplicar_movimento_com_colisao), sem o solid do GM
 
 vida = 100;
 

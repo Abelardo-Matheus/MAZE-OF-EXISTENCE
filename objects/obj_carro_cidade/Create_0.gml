@@ -1,7 +1,9 @@
 // feather disable GM2017
 /// @desc Carrinho da cidade: anda pelas faixas (mão dupla), vira nos cruzamentos
 /// e nunca sai da cidade. Para quando tem gente na frente.
-/// Sprite: 8 frames = dir*2 + roda  (0 baixo, 1 esquerda, 2 direita, 3 cima)
+/// Sprite top-down: 16 frames = dir*4 + passo  (0 baixo, 1 esquerda, 2 direita, 3 cima)
+/// Render 3D visto de cima ("Claude outputs/carros3d": rm.py + veiculos.py + gerar.py)
+/// Origem = chão na borda de baixo do veículo, no meio. Calota girando, balanço e fumaça.
 var _visuais = [spr_cid_carro_vermelho, spr_cid_fusca_azul, spr_cid_onibus_escolar, spr_cid_sorveteria];
 if (!variable_instance_exists(id, "variante") || variante < 0) variante = irandom(array_length(_visuais) - 1);
 variante = clamp(variante, 0, array_length(_visuais) - 1);
@@ -12,8 +14,17 @@ image_speed  = 0;
 var _vels    = [2.6, 2.3, 1.8, 1.6];
 vel_max      = _vels[variante] * random_range(0.9, 1.1);
 vel          = vel_max;
-var _meios   = [80, 72, 120, 92];   // meio comprimento (px) visto de lado
+// medidas do sprite (tudo.py imprime esses números)
+var _meios   = [80, 71, 126, 93];    // meio comprimento (px) andando de lado
+var _comps   = [133, 118, 209, 154]; // comprimento do "pé" na tela subindo/descendo
+var _largs   = [60, 55, 75, 73];     // largura do "pé" na tela andando de lado
+var _altos_h = [83, 72, 120, 125];   // altura total na tela andando de lado
+var _altos_v = [151, 129, 260, 199]; // altura total na tela subindo/descendo
 meio         = _meios[variante];
+comp         = _comps[variante];
+larg         = _largs[variante];
+alto_h       = _altos_h[variante];
+alto_v       = _altos_v[variante];
 anim         = 0;
 virar_para   = -1;      // direção escolhida no cruzamento (executa ao chegar na faixa certa)
 inter_atual  = "";      // cruzamento onde a decisão já foi tomada

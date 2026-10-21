@@ -42,8 +42,7 @@ if (instance_exists(obj_player))
     // Se as duas condições forem verdadeiras, o player sumiu atrás da imagem
     if (_dentro_x && _atras_y) 
     {
-        image_alpha = 0.2; // Fica transparente
-        solid = false;     // Tira a colisão
+        image_alpha = 0.2; // Fica transparente (a colisão é só na base: aplicar_movimento_com_colisao)
     } 
     // Se o player estiver na frente, do lado ou longe
     else 
@@ -52,10 +51,6 @@ if (instance_exists(obj_player))
         if (image_alpha != 1.0) {
             image_alpha = 1.0; 
         }
-        
-        // Devolve a colisão se o player já tiver saído de dentro do objeto
-        if (solid == false && !place_meeting(x, y, obj_player)) {
-            solid = true;
-        }
+
     }
 }

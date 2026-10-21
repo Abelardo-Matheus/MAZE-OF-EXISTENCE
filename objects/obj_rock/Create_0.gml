@@ -17,6 +17,7 @@ escale = irandom_range(4, 7);
 image_xscale = escale;
 image_yscale = escale;
 depth = -y;
+solid = false; // o player colide pela máscara da base (aplicar_movimento_com_colisao), sem o solid do GM
 
 // Tom da pedra conforme o bioma
 // Sprite do bioma (spr_rock_<bioma>), mesmos 4 tamanhos do spr_rock.

@@ -7,7 +7,7 @@ if (balao > 0) {
     var _esc = 0.32;
     draw_set_font(fnt_dialogos);
     var _tw = string_width(_t) * _esc, _th = string_height("Ag") * _esc;
-    var _bx = x, _by2 = y - sprite_height + 10, _by1 = _by2 - _th - 10;
+    var _bx = x, _by2 = y - ((dir == 0 || dir == 3) ? alto_v : alto_h) - 6, _by1 = _by2 - _th - 10;
     draw_set_alpha(min(1, balao / 15));
     draw_set_color(make_color_rgb(52, 32, 26));
     draw_roundrect_ext(_bx - _tw / 2 - 6, _by1 - 1, _bx + _tw / 2 + 6, _by2 + 1, 8, 8, false);

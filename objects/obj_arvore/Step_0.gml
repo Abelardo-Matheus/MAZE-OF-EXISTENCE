@@ -56,17 +56,11 @@ if (instance_exists(obj_player)) {
         
         // Verifica se está atrás (Y menor)
         if (obj_player.y < y) {
-            image_alpha = 0.2; // Fica transparente
-            solid = false;     // Tira a colisão
+            image_alpha = 0.2; // Fica transparente (a colisão é só no tronco: aplicar_movimento_com_colisao)
         } 
         else {
             // Está na frente
             image_alpha = 1.0; 
-            
-            // Devolve a colisão se o player não estiver "dentro" dela
-            if (!place_meeting(x, y, obj_player)) {
-                solid = true;
-            }
         }
     } 
     // ==========================================
@@ -77,9 +71,6 @@ if (instance_exists(obj_player)) {
         if (image_alpha != 1.0) {
             image_alpha = 1.0;
         }
-        
-        if (solid == false && !place_meeting(x, y, obj_player)) {
-            solid = true;
-        }
+
     }
 }

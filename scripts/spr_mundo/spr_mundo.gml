@@ -430,6 +430,13 @@ function gerar_cobertura_cenario(_bx, _by, _obj, _quantidade, _lista_global, _di
     var _inicio_x = _bx * global.tamanho_bloco;
     var _inicio_y = _by * global.tamanho_bloco;
 
+    // As fronteiras dos biomas ondulam (TERRENO_DEFORMA): o chão de um bloco vizinho
+    // pode entrar neste. Se o vizinho ainda não tem bioma, terreno_bioma_em responde
+    // "floresta" e a árvore nasce onde depois o chão vira rua. Define os vizinhos antes.
+    for (var _vx = -1; _vx <= 1; _vx++)
+        for (var _vy = -1; _vy <= 1; _vy++)
+            definir_bioma_do_cluster(_bx + _vx, _by + _vy);
+
     var _celulas_por_lado = ceil(sqrt(_quantidade));
     if (_celulas_por_lado == 0) return; 
 
@@ -449,13 +456,8 @@ function gerar_cobertura_cenario(_bx, _by, _obj, _quantidade, _lista_global, _di
 
                 // PERFORMANCE: Spatial Hashing
                 // CIDADE: nada de árvore/pedra na rua, faixa ou calçada
-                var _na_rua = false;
-                if (terreno_bioma_em(_pos_x, _pos_y) == "cidade") {
-                    _na_rua = cidade_tipo_em(_pos_x, _pos_y) != CID_MIOLO
-                           || cidade_tipo_em(_pos_x - 70, _pos_y) != CID_MIOLO
-                           || cidade_tipo_em(_pos_x + 70, _pos_y) != CID_MIOLO
-                           || cidade_tipo_em(_pos_x, _pos_y - 90) != CID_MIOLO;
-                }
+                // (cada ponto do pé é testado no tile, com o mesmo critério do chão)
+                var _na_rua = cidade_pe_na_rua(_pos_x, _pos_y, 70, 90, false);
 
                 if (!_na_rua && !posicao_conflitante_geracao(_pos_x, _pos_y, _dist_minima)) 
                 {
