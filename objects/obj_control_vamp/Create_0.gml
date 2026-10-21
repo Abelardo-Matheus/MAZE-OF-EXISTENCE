@@ -46,3 +46,6 @@ if (global.sair)
     global.sair = false;
 }
 
+// --- Baús que o jogador colocou no mundo aberto (itens_geral -> global.baus_fora) ---
+// Roda na 1ª entrada e em toda volta de uma casa: a room não é persistente, então recria.
+recriar_baus();

@@ -732,178 +732,698 @@ function recriar_item_dropado(_sala_x, _sala_y) {
 
 #endregion
 
-#region ---------- BAÚ PORTÁTIL (COLOCÁVEL NO CHÃO, QUALQUER SALA) ----------
-// [O QUE]: Item "colocavel" (ver catálogo acima) craftado, usado no inventário e depois
-//          clicado no mapa pra ser plantado. Funciona em QUALQUER sala (casa, corredor,
-//          masmorra...) porque a validação usa só duas coisas universais do jogo:
-//          1) a célula precisa ser SALA_CHAO no layout da própria sala (spr_fase_criation)
-//          2) nenhuma instância sólida (parede de qualquer bioma, móvel, outro baú...) pode
-//             estar em cima — checado via a flag `solid`, sem precisar saber o nome do objeto.
-// [COMO] : inventory_use_item() chama colocar_bau_iniciar() -> obj_player (Step/Draw End)
-//          mostra o fantasma seguindo o mouse e confirma com clique esquerdo em
-//          colocar_bau_confirmar() -> cria obj_bau_jogador e guarda em global.sala_com_bau
-//          (mesmo padrão de global.sala_com_item_drop), recriado em toda sala por
-//          recriar_baus() (chamado em carregar_sala, spr_fase_criation).
+#region ---------- BAÚ PORTÁTIL (COLOCÁVEL NO CHÃO, CASA OU MUNDO ABERTO) ----------
+// [O QUE]: Item "colocavel" (ver catálogo acima) craftado, usado no inventário e plantado
+//          numa célula do grid. Funciona dentro das casas (room Fase_BEBE) e fora delas
+//          (mundo aberto Fase_vamp ou qualquer outra room).
+// [ONDE FICA SALVO] (bau_lista_atual):
+//   - Casa : global.sala_com_bau["x_y"] -> ds_list. Esse mapa está em casa_mapas_salvos()
+//            (spr_fase_criation), então é salvo junto com a seed da casa e volta igual em
+//            cada visita (casa_restaurar). Antes ele era limpo ao entrar na casa.
+//   - Fora : global.baus_fora[nome da room] -> ds_list. reset_level_data nunca mexe nele;
+//            os baús voltam no Create do obj_control_vamp (recriar_baus).
+//   Cada baú é um struct { x, y (pé: centro embaixo), cw (largura em células), item_id,
+//   slots, spr, escala, grid }. O ds_grid dos itens é guardado por referência, então
+//   guardar/retirar item já atualiza o save.
+// [COMO] : inventory_use_item() -> colocar_bau_iniciar() -> obj_player (Step / Draw End)
+//          mostra a pegada no grid seguindo o mouse -> clique confirma em colocar_bau_confirmar().
+//          A UI (Baú | Mochila) é bau_ui_step() (obj_inventario Step) + bau_ui_desenhar()
+//          (obj_inventario Draw GUI).
 
-/// @desc Entra no modo "clique no chão pra posicionar": fecha o inventário e segue o mouse.
+#macro BAU_ALCANCE_CELULAS 4    // distância máx. (em células) do player até onde dá pra plantar o baú
+#macro BAU_DIST_ABRIR      40   // px entre o player e o baú para abrir com E
+
+#region --- dados / persistência ---
+
+/// Tamanho da célula do grid do jogo (com valor seguro se ainda não existir)
+function bau_cs() {
+    return variable_global_exists("_cell_size") ? global._cell_size : 64;
+}
+
+/// Dentro de uma casa (salas geradas pelo sistema de salas)?
+function bau_em_casa() {
+    return room == Fase_BEBE;
+}
+
+/// ds_list dos baús da sala/room atual. Com _criar = false devolve -1 se não houver nenhum.
+function bau_lista_atual(_criar = false) {
+    var _mapa, _chave;
+    if (bau_em_casa()) {
+        if (!variable_global_exists("sala_com_bau") || !ds_exists(global.sala_com_bau, ds_type_map)) global.sala_com_bau = ds_map_create();
+        _mapa  = global.sala_com_bau;
+        _chave = get_room_id(global.current_sala);
+    } else {
+        if (!variable_global_exists("baus_fora") || !ds_exists(global.baus_fora, ds_type_map)) global.baus_fora = ds_map_create();
+        _mapa  = global.baus_fora;
+        _chave = room_get_name(room);
+    }
+    if (!ds_map_exists(_mapa, _chave)) {
+        if (!_criar) return -1;
+        ds_map_add(_mapa, _chave, ds_list_create());
+    }
+    return _mapa[? _chave];
+}
+
+/// Objeto com que o player colide agora (mesma regra de scr_player_colisao)
+function bau_objeto_colisao() {
+    if (variable_global_exists("sala") && is_struct(global.sala) && variable_struct_exists(global.sala, "parede") && object_exists(global.sala.parede)) {
+        return global.sala.parede;
+    }
+    return obj_wall;
+}
+
+/// Cria a instância do baú (e a caixa de colisão do pé) a partir do struct salvo
+function bau_instanciar(_d) {
+    var _cs = bau_cs();
+    var _inst = instance_create_depth(_d.x, _d.y, profundidade_pe(_d.y), obj_bau_jogador);
+    with (_inst) {
+        dados  = _d;
+        grid   = _d.grid;
+        slots  = _d.slots;
+        sprite_index = _d.spr;
+        image_xscale = _d.escala;
+        image_yscale = _d.escala;
+        image_index  = 0;
+        aberto = false;
+
+        // Caixa de colisão só no pé (o player passa por trás da tampa, igual aos móveis)
+        var _cw = variable_struct_exists(_d, "cw") ? _d.cw : 1;
+        var _l  = _d.x - _cw * _cs / 2 + 4;
+        var _t  = _d.y - _cs * 0.55;
+        colisao = instance_create_depth(_l, _t, 0, bau_objeto_colisao());
+        with (colisao) {
+            mask_index   = spr_parede_mascara;   // 64x64, origem no canto
+            image_angle  = 0;
+            image_xscale = (_cw * _cs - 8) / 64;
+            image_yscale = (_cs * 0.55 - 2) / 64;
+            image_speed  = 0;
+            visible      = false;
+            bau_colisao  = true;
+        }
+    }
+    return _inst;
+}
+
+/// Recria os baús já colocados na sala/room atual.
+/// Chamado em carregar_sala (casas) e no Create do obj_control_vamp (mundo aberto).
+/// _coords é ignorado (mantido para compatibilidade): a sala vem de bau_lista_atual().
+function recriar_baus(_coords = undefined) {
+    global.bau_aberto = noone;
+    var _lista = bau_lista_atual(false);
+    if (_lista == -1) return;
+    for (var _i = 0; _i < ds_list_size(_lista); _i++) {
+        var _d = _lista[| _i];
+        if (!is_struct(_d) || !ds_exists(_d.grid, ds_type_grid)) continue;
+        if (instance_exists(obj_bau_jogador)) {
+            // já existe (ex.: chamado duas vezes no mesmo frame)? não duplica
+            var _ja = false;
+            with (obj_bau_jogador) if (dados == _d) _ja = true;
+            if (_ja) continue;
+        }
+        bau_instanciar(_d);
+    }
+}
+
+#endregion
+
+#region --- posicionar no grid ---
+
+/// Largura do baú em células, pelo tamanho real do sprite na escala do item
+function bau_largura_celulas(_spr, _escala) {
+    return max(1, round(sprite_get_width(_spr) * _escala / bau_cs()));
+}
+
+/// Pegada do baú no grid quando o mouse está na célula (_cx, _cy)
+/// Retorna { cx, cy, cw, x1, y1, x2, y2 (retângulo do pé), px, py (onde o sprite é desenhado) }
+function bau_pegada(_cx, _cy, _cw) {
+    var _cs = bau_cs();
+    var _lx = _cx - ((_cw - 1) div 2);
+    var _x1 = _lx * _cs, _y1 = _cy * _cs;
+    return {
+        cx: _lx, cy: _cy, cw: _cw,
+        x1: _x1, y1: _y1, x2: _x1 + _cw * _cs, y2: _y1 + _cs,
+        px: _x1 + _cw * _cs / 2, py: _y1 + _cs - 4
+    };
+}
+
+/// Entra no modo "clique no chão pra posicionar": fecha o inventário e segue o mouse.
 function colocar_bau_iniciar(_slot) {
     var _grid = global.grid_itens;
     var _id = _grid[# INFOS.ITEM, _slot];
     var _d = item_db(_id);
-    if (is_undefined(_d) || _d.slots <= 0) return;
+    if (is_undefined(_d) || !variable_struct_exists(_d, "slots") || _d.slots <= 0) return;
 
     global.colocando_bau = {
         ativo: true, slot: _slot, item_id: _id,
         spr: _d.spr, slots: _d.slots, escala: _d.escala,
-        gx: 0, gy: 0, valido: false
+        cw: bau_largura_celulas(_d.spr, _d.escala),
+        pegada: undefined, valido: false, motivo: "",
+        espera: 2   // ignora o clique que usou o item no inventário
     };
     if (instance_exists(obj_inventario)) obj_inventario.is_open = false;
-    inventory_msg("Clique no chão para posicionar o " + _d.nome + " (botão direito cancela)", c_yellow);
+    inventory_msg("Clique numa célula livre perto de você (botão direito / Esc cancela)", c_yellow);
 }
 
-/// @desc Sai do modo de posicionamento sem gastar o item.
+/// Sai do modo de posicionamento sem gastar o item.
 function colocar_bau_cancelar() {
     global.colocando_bau = { ativo: false };
 }
 
-/// @desc A célula do mundo em (_wx, _wy) é chão livre (sem parede/móvel/outro baú em cima)?
-/// Funciona em QUALQUER sala/fase (casa, corredor, Fase_vamp...): não depende do sistema de
-/// layout da maze (sala_obter_layout só é confiável dentro de carregar_sala/FASE_BEBE — em
-/// outras fases, que trocam de room com room_goto, global.current_sala pode não corresponder
-/// à sala visível e o layout viria errado). Em vez disso usa só duas checagens universais:
-function colocar_bau_posicao_valida(_wx, _wy) {
-    var _cs = global._cell_size;
+/// A pegada _P (bau_pegada) pode receber o baú? Retorna "" se pode, ou o motivo se não pode.
+function colocar_bau_motivo_invalido(_P) {
+    var _cs = bau_cs();
 
-    // 1) dentro dos limites da room atual, seja qual for a fase
-    if (_wx < 0 || _wy < 0 || _wx >= room_width || _wy >= room_height) return false;
+    // 1) perto do player
+    if (instance_exists(obj_player)) {
+        var _cx = (_P.x1 + _P.x2) / 2, _cy = (_P.y1 + _P.y2) / 2;
+        var _dx = max(0, abs(obj_player.x - _cx) - (_P.x2 - _P.x1) / 2);
+        var _dy = max(0, abs(obj_player.y - _cy) - (_P.y2 - _P.y1) / 2);
+        if (point_distance(0, 0, _dx, _dy) > BAU_ALCANCE_CELULAS * _cs) return "Longe demais";
+    }
 
-    // 2) nenhuma instância sólida (qualquer parede do bioma, móvel, outro baú) pode ocupar a célula
-    var _margem = _cs / 2 - 6;
-    var _livre = true;
-    with (all) {
-        if (!solid) continue;
-        if (!(bbox_right < _wx - _margem || bbox_left > _wx + _margem || bbox_bottom < _wy - _margem || bbox_top > _wy + _margem)) {
-            _livre = false;
+    // 2) dentro da casa: todas as células do pé precisam ser chão da própria sala
+    if (bau_em_casa() && variable_global_exists("salas_layout")) {
+        var _L = sala_obter_layout(global.current_sala);
+        for (var _k = 0; _k < _P.cw; _k++) {
+            if (sala_celula(_L, _P.cx + _k, _P.cy) != SALA_CHAO) return "Fora do chão";
         }
     }
-    return _livre;
+
+    // 3) nada ocupando o pé
+    var _lista = ds_list_create();
+    var _n = collision_rectangle_list(_P.x1 + 2, _P.y1 + 2, _P.x2 - 3, _P.y2 - 3, all, false, true, _lista, false);
+    var _parede = bau_objeto_colisao();
+    var _motivo = "";
+    for (var _i = 0; _i < _n; _i++) {
+        var _o  = _lista[| _i];
+        var _oi = _o.object_index;
+
+        // Coisas altas (casa, árvore, pedra, baú, player): só a faixa do pé ocupa o chão
+        var _fator = 0;
+        if (_oi == obj_estrutura || object_is_ancestor(_oi, obj_estrutura)) _fator = 0.5;
+        else if (object_is_ancestor(_oi, par_objetos) || _oi == obj_bau_jogador || _oi == obj_player) _fator = 0.3;
+        if (_fator > 0) {
+            var _h  = _o.bbox_bottom - _o.bbox_top;
+            var _bt = _o.bbox_bottom - max(_cs * 0.5, min(_cs, _h * _fator));
+            if (_o.bbox_bottom > _P.y1 + 2 && _bt < _P.y2 - 3) { _motivo = (_oi == obj_player) ? "Você está em cima" : "Ocupado"; break; }
+            continue;
+        }
+
+        // Parede, caixa de colisão de móvel/baú ou qualquer outra coisa sólida: o bbox inteiro
+        if (_o.solid || _oi == _parede || object_is_ancestor(_oi, _parede) || _oi == obj_wall || object_is_ancestor(_oi, obj_wall)) {
+            _motivo = "Ocupado";
+            break;
+        }
+    }
+    ds_list_destroy(_lista);
+    return _motivo;
 }
 
-/// @desc Confirma a colocação em (_wx, _wy): cria o baú, guarda na sala e consome o item.
-function colocar_bau_confirmar(_wx, _wy) {
+/// Compatibilidade com o código antigo: posição (centro da célula) é válida?
+function colocar_bau_posicao_valida(_wx, _wy) {
+    var _cs = bau_cs();
+    var _cw = global.colocando_bau.ativo ? global.colocando_bau.cw : 1;
+    return colocar_bau_motivo_invalido(bau_pegada(floor(_wx / _cs), floor(_wy / _cs), _cw)) == "";
+}
+
+/// Atualiza o fantasma (chamado no Step do obj_player enquanto colocando_bau.ativo)
+function colocar_bau_atualizar() {
+    var _b = global.colocando_bau;
+    var _cs = bau_cs();
+    _b.pegada = bau_pegada(floor(mouse_x / _cs), floor(mouse_y / _cs), _b.cw);
+    _b.motivo = colocar_bau_motivo_invalido(_b.pegada);
+    _b.valido = (_b.motivo == "");
+
+    if (_b.espera > 0) { _b.espera--; return; }
+    if (mouse_check_button_pressed(mb_left)) {
+        if (_b.valido) colocar_bau_confirmar();
+        else inventory_msg(_b.motivo + "!", c_orange);
+    } else if (mouse_check_button_pressed(mb_right) || keyboard_check_pressed(vk_escape)) {
+        colocar_bau_cancelar();
+    }
+}
+
+/// Desenha a pegada no grid + o baú transparente (Draw End do obj_player)
+function colocar_bau_desenhar() {
+    var _b = global.colocando_bau;
+    if (!_b.ativo || is_undefined(_b.pegada)) return;
+    var _P = _b.pegada;
+    var _cs = bau_cs();
+    var _cor = _b.valido ? make_color_rgb(90, 220, 110) : make_color_rgb(235, 70, 60);
+
+    // células vizinhas bem fraquinhas, pra mostrar o grid
+    draw_set_color(c_white);
+    draw_set_alpha(0.10);
+    for (var _gx = _P.cx - 1; _gx <= _P.cx + _P.cw; _gx++) {
+        for (var _gy = _P.cy - 1; _gy <= _P.cy + 1; _gy++) {
+            draw_rectangle(_gx * _cs, _gy * _cs, (_gx + 1) * _cs - 1, (_gy + 1) * _cs - 1, true);
+        }
+    }
+    // pegada
+    draw_set_color(_cor);
+    draw_set_alpha(0.28);
+    draw_rectangle(_P.x1, _P.y1, _P.x2 - 1, _P.y2 - 1, false);
+    draw_set_alpha(0.9);
+    draw_rectangle(_P.x1, _P.y1, _P.x2 - 1, _P.y2 - 1, true);
+    draw_rectangle(_P.x1 + 1, _P.y1 + 1, _P.x2 - 2, _P.y2 - 2, true);
+    draw_set_alpha(1);
+
+    // baú
+    draw_sprite_ext(_b.spr, 0, _P.px, _P.py, _b.escala, _b.escala, 0, _b.valido ? c_white : make_color_rgb(255, 120, 110), 0.65);
+    draw_set_color(c_white);
+}
+
+/// Confirma a colocação na pegada atual: cria o baú, guarda na sala e consome o item.
+function colocar_bau_confirmar() {
     var _b = global.colocando_bau;
     var _grid_player = global.grid_itens;
     if (_grid_player[# INFOS.ITEM, _b.slot] != _b.item_id) { colocar_bau_cancelar(); return; } // slot mudou nesse meio tempo
-
-    var _sala_id = get_room_id(global.current_sala);
-    if (!ds_map_exists(global.sala_com_bau, _sala_id)) ds_map_add(global.sala_com_bau, _sala_id, ds_list_create());
-    var _lista = ds_map_find_value(global.sala_com_bau, _sala_id);
+    var _P = _b.pegada;
 
     var _grid_bau = ds_grid_create(INFOS.HEIGHT, _b.slots);
     ds_grid_clear(_grid_bau, -1);
-    var _dados = { x: _wx, y: _wy, item_id: _b.item_id, slots: _b.slots, spr: _b.spr, escala: _b.escala, grid: _grid_bau };
-    ds_list_add(_lista, _dados);
-
-    var _inst = instance_create_depth(_wx, _wy, profundidade_pe(_wy), obj_bau_jogador);
-    with (_inst) {
-        dados  = _dados;
-        grid   = _dados.grid;
-        slots  = _dados.slots;
-        sprite_index = _dados.spr;
-        image_xscale = _dados.escala;
-        image_yscale = _dados.escala;
-        aberto = false;
-    }
+    var _dados = {
+        x: _P.px, y: _P.py, cw: _P.cw,
+        item_id: _b.item_id, slots: _b.slots, spr: _b.spr, escala: _b.escala, grid: _grid_bau
+    };
+    ds_list_add(bau_lista_atual(true), _dados);
+    bau_instanciar(_dados);
 
     _grid_player[# INFOS.QUANTIDADE, _b.slot]--;
     if (_grid_player[# INFOS.QUANTIDADE, _b.slot] <= 0) inventory_clear_slot(_b.slot);
     inventory_pos_mudanca();
     colocar_bau_cancelar();
+    inventory_msg("Baú colocado! Aperte E perto dele para abrir.", c_lime);
 }
 
-/// @desc Chamado em carregar_sala (spr_fase_criation): recria os baús já colocados nessa sala.
-function recriar_baus(_coords) {
-    var _sala_id = get_room_id(_coords);
-    if (!ds_map_exists(global.sala_com_bau, _sala_id)) return;
-    var _lista = ds_map_find_value(global.sala_com_bau, _sala_id);
-    for (var _i = 0; _i < ds_list_size(_lista); _i++) {
-        var _d = _lista[| _i];
-        var _inst = instance_create_depth(_d.x, _d.y, profundidade_pe(_d.y), obj_bau_jogador);
-        with (_inst) {
-            dados  = _d;
-            grid   = _d.grid;
-            slots  = _d.slots;
-            sprite_index = _d.spr;
-            image_xscale = _d.escala;
-            image_yscale = _d.escala;
-            aberto = false;
-        }
+#endregion
+
+#region --- abrir / fechar / recolher ---
+
+function bau_abrir(_inst) {
+    if (instance_exists(global.bau_aberto) && global.bau_aberto != _inst) bau_fechar();
+    global.bau_aberto = _inst;
+    with (_inst) aberto = true;
+    if (instance_exists(obj_inventario)) {
+        obj_inventario.is_open = false;
+        obj_inventario.bau_hover = { lado: -1, slot: -1 };
     }
 }
 
-/// @desc Tira 1 item do grid do baú (_i) e devolve pra mochila (clique num slot do baú aberto).
-function bau_slot_click(_bau, _i) {
-    with (_bau) {
-        if (grid[# INFOS.ITEM, _i] == -1) return;
-        var _dest = inventory_find_empty_slot();
-        if (_dest == -1) { inventory_msg("Mochila cheia!", c_red); return; }
-        for (var _c = 0; _c < INFOS.HEIGHT; _c++) {
-            global.grid_itens[# _c, _dest] = grid[# _c, _i];
-            grid[# _c, _i] = -1;
-        }
-        inventory_pos_mudanca();
-    }
+function bau_fechar() {
+    if (instance_exists(global.bau_aberto)) with (global.bau_aberto) aberto = false;
+    global.bau_aberto = noone;
 }
 
-/// @desc Guarda o item do slot _slot_bag da mochila no primeiro espaço livre do baú aberto.
-function bau_guardar_item(_bau, _slot_bag) {
-    with (_bau) {
-        if (global.grid_itens[# INFOS.ITEM, _slot_bag] == -1) return;
-        var _dest = -1;
-        for (var _i = 0; _i < slots; _i++) if (grid[# INFOS.ITEM, _i] == -1) { _dest = _i; break; }
-        if (_dest == -1) { inventory_msg("Baú cheio!", c_red); return; }
-        for (var _c = 0; _c < INFOS.HEIGHT; _c++) grid[# _c, _dest] = global.grid_itens[# _c, _slot_bag];
-    }
-    inventory_clear_slot(_slot_bag);
-    inventory_pos_mudanca();
+/// Baú vazio?
+function bau_vazio(_inst) {
+    for (var _i = 0; _i < _inst.slots; _i++) if (_inst.grid[# INFOS.ITEM, _i] != -1) return false;
+    return true;
 }
 
-/// @desc Recolhe o baú _inst de volta pro inventário (só se estiver vazio). Chamado pelo F.
+/// Recolhe o baú _inst de volta pro inventário (só se estiver vazio). Botão "Recolher" do painel.
 function bau_recolher(_inst) {
-    for (var _i = 0; _i < _inst.slots; _i++) {
-        if (_inst.grid[# INFOS.ITEM, _i] != -1) { inventory_msg("Esvazie o baú antes de recolher!", c_orange); return; }
-    }
-    var _destino = inventory_find_empty_slot();
-    if (_destino == -1) { inventory_msg("Mochila cheia!", c_red); return; }
-
+    if (!bau_vazio(_inst)) { inventory_msg("Esvazie o baú antes de recolher!", c_orange); return false; }
     var _d = _inst.dados;
-    var _item = item_db(_d.item_id);
-    var _grid = global.grid_itens;
-    _grid[# INFOS.ITEM, _destino]       = _d.item_id;
-    _grid[# INFOS.QUANTIDADE, _destino] = 1;
-    _grid[# INFOS.SPRITE, _destino]     = _item.spr;
-    _grid[# INFOS.IMAGE_IND, _destino]  = _item.img;
-    _grid[# INFOS.NOME, _destino]       = _item.nome;
-    _grid[# INFOS.DESCRICAO, _destino]  = _item.desc;
-    _grid[# INFOS.TIPO, _destino]       = _item.tipo;
-    _grid[# INFOS.PRECO, _destino]      = _item.preco;
-    _grid[# INFOS.DANO, _destino]       = 0;
-    _grid[# INFOS.ARMADURA, _destino]   = 0;
-    _grid[# INFOS.VELOCIDADE, _destino] = 0;
-    _grid[# INFOS.CURA, _destino]       = 0;
-    _grid[# INFOS.NIVEL, _destino]      = 1;
-    _grid[# INFOS.PASSIVAS, _destino]   = [];
+    if (!inventory_add(_d.item_id, 1)) { inventory_msg("Mochila cheia!", c_red); return false; }
 
-    var _sala_id = get_room_id(global.current_sala);
-    if (ds_map_exists(global.sala_com_bau, _sala_id)) {
-        var _lista = ds_map_find_value(global.sala_com_bau, _sala_id);
+    var _lista = bau_lista_atual(false);
+    if (_lista != -1) {
         for (var _i = 0; _i < ds_list_size(_lista); _i++) {
             if (_lista[| _i] == _d) { ds_list_delete(_lista, _i); break; }
         }
     }
-    ds_grid_destroy(_d.grid);
-    inventory_pos_mudanca();
+    if (ds_exists(_d.grid, ds_type_grid)) ds_grid_destroy(_d.grid);
+    if (global.bau_aberto == _inst) global.bau_aberto = noone;
+    if (instance_exists(_inst.colisao)) instance_destroy(_inst.colisao);
     instance_destroy(_inst);
+    inventory_pos_mudanca();
+    return true;
 }
+
+#endregion
+
+#region --- mover itens entre baú e mochila ---
+
+/// Move _qtd unidades (-1 = a pilha toda) do slot _src de _g_src para _g_dst (slots 0.._n_dst-1).
+/// Empilha com o mesmo item quando dá; senão usa o primeiro espaço vazio. Retorna quantas moveu.
+function bau_transferir(_g_src, _src, _g_dst, _n_dst, _qtd = -1) {
+    var _id = _g_src[# INFOS.ITEM, _src];
+    if (_id == -1) return 0;
+    var _tem = _g_src[# INFOS.QUANTIDADE, _src];
+    if (!is_real(_tem) || _tem < 1) _tem = 1;
+    if (_qtd < 0 || _qtd > _tem) _qtd = _tem;
+
+    var _d = item_db(_id);
+    var _stack = !is_undefined(_d) && _d.stack;
+
+    // 1) junta numa pilha igual
+    var _dest = -1;
+    if (_stack) {
+        for (var _i = 0; _i < _n_dst; _i++) if (_g_dst[# INFOS.ITEM, _i] == _id) { _dest = _i; break; }
+    }
+    if (_dest != -1) {
+        _g_dst[# INFOS.QUANTIDADE, _dest] += _qtd;
+    } else {
+        // 2) primeiro espaço vazio
+        for (var _i = 0; _i < _n_dst; _i++) if (_g_dst[# INFOS.ITEM, _i] == -1) { _dest = _i; break; }
+        if (_dest == -1) return 0;
+        for (var _c = 0; _c < INFOS.HEIGHT; _c++) _g_dst[# _c, _dest] = _g_src[# _c, _src];
+        _g_dst[# INFOS.QUANTIDADE, _dest] = _qtd;
+    }
+
+    // tira da origem
+    if (_qtd >= _tem) {
+        for (var _c = 0; _c < INFOS.HEIGHT; _c++) _g_src[# _c, _src] = -1;
+    } else {
+        _g_src[# INFOS.QUANTIDADE, _src] = _tem - _qtd;
+    }
+    return _qtd;
+}
+
+/// Clique num slot do baú: devolve pra mochila (_qtd = -1 pilha toda, 1 = uma unidade)
+function bau_slot_click(_bau, _i, _qtd = -1) {
+    if (_bau.grid[# INFOS.ITEM, _i] == -1) return;
+    if (bau_transferir(_bau.grid, _i, global.grid_itens, inventory_bag_slots(), _qtd) == 0) {
+        inventory_msg("Mochila cheia!", c_red);
+        return;
+    }
+    inventory_pos_mudanca();
+}
+
+/// Clique num slot da mochila: guarda no baú aberto
+function bau_guardar_item(_bau, _slot_bag, _qtd = -1) {
+    if (global.grid_itens[# INFOS.ITEM, _slot_bag] == -1) return;
+    if (bau_transferir(global.grid_itens, _slot_bag, _bau.grid, _bau.slots, _qtd) == 0) {
+        inventory_msg("Baú cheio!", c_red);
+        return;
+    }
+    inventory_pos_mudanca();
+}
+
+/// Botões "Guardar tudo" / "Pegar tudo"
+function bau_mover_tudo(_bau, _para_bau) {
+    var _movidos = 0, _sobrou = false;
+    if (_para_bau) {
+        var _bag = inventory_bag_slots();
+        for (var _i = 0; _i < _bag; _i++) {
+            if (global.grid_itens[# INFOS.ITEM, _i] == -1) continue;
+            if (bau_transferir(global.grid_itens, _i, _bau.grid, _bau.slots) > 0) _movidos++; else _sobrou = true;
+        }
+    } else {
+        for (var _i = 0; _i < _bau.slots; _i++) {
+            if (_bau.grid[# INFOS.ITEM, _i] == -1) continue;
+            if (bau_transferir(_bau.grid, _i, global.grid_itens, inventory_bag_slots()) > 0) _movidos++; else _sobrou = true;
+        }
+    }
+    if (_sobrou) inventory_msg(_para_bau ? "Baú cheio! Nem tudo coube." : "Mochila cheia! Nem tudo coube.", c_orange);
+    if (_movidos > 0) inventory_pos_mudanca();
+}
+
+/// Quantos espaços do grid estão ocupados
+function bau_ocupados(_g, _n) {
+    var _c = 0;
+    for (var _i = 0; _i < _n; _i++) if (_g[# INFOS.ITEM, _i] != -1) _c++;
+    return _c;
+}
+
+#endregion
+
+#region --- UI do baú (painel Baú | Mochila) ---
+// Layout em "pixels de design", multiplicados por uma escala que segue a GUI (igual ao inventário).
+// Os dois painéis têm posição própria (CONVENTIONS: cada contêiner com seu posicionamento).
+
+/// Calcula o layout da janela do baú aberto. Retorna um struct com retângulos já em GUI.
+function bau_ui_layout(_bau) {
+    var _gw = display_get_gui_width(), _gh = display_get_gui_height();
+    var _cols = 6;
+    var _slot = 40, _gap = 6, _padx = 14, _topo = 34, _base = 14;
+    var _rows_bau = max(1, ceil(_bau.slots / _cols));
+    var _bag = inventory_bag_slots();
+    var _rows_bag = max(1, ceil(_bag / _cols));
+    var _rows = max(_rows_bau, _rows_bag);
+
+    var _pw = _padx * 2 + _cols * _slot + (_cols - 1) * _gap;           // largura de cada painel
+    var _ph = _topo + _rows * _slot + (_rows - 1) * _gap + _base;        // altura dos painéis
+    var _sep = 18;                                                        // espaço entre os painéis
+    var _rod = 44;                                                        // rodapé (botões + dica)
+    var _W = _pw * 2 + _sep, _H = _ph + _rod;
+
+    var _s = max(1, floor(min(_gw * 0.92 / _W, _gh * 0.80 / _H) * 2) / 2);
+    var _x0 = floor(_gw / 2 - _W * _s / 2);
+    var _y0 = floor(_gh / 2 - _H * _s / 2);
+
+    var _L = {
+        s: _s, cols: _cols, slot: _slot * _s, gap: _gap * _s,
+        n_bau: _bau.slots, n_bag: _bag,
+        // painel do baú (esquerda) e da mochila (direita)
+        p_bau: [_x0, _y0, _x0 + _pw * _s, _y0 + _ph * _s],
+        p_bag: [_x0 + (_pw + _sep) * _s, _y0, _x0 + _W * _s, _y0 + _ph * _s],
+        topo: _topo * _s, padx: _padx * _s
+    };
+
+    // botões do rodapé (centralizados embaixo dos painéis)
+    var _by = _y0 + (_ph + 10) * _s, _bh = 22 * _s, _bw = 104 * _s, _bg = 10 * _s;
+    var _bx = _gw / 2 - (_bw * 4 + _bg * 3) / 2;
+    _L.btn_guardar  = [_bx,                    _by, _bx + _bw,               _by + _bh];
+    _L.btn_pegar    = [_bx + (_bw + _bg),      _by, _bx + _bw * 2 + _bg,     _by + _bh];
+    _L.btn_recolher = [_bx + (_bw + _bg) * 2,  _by, _bx + _bw * 3 + _bg * 2, _by + _bh];
+    _L.btn_fechar   = [_bx + (_bw + _bg) * 3,  _by, _bx + _bw * 4 + _bg * 3, _by + _bh];
+    return _L;
+}
+
+/// Retângulo GUI do slot _i do painel _p ([x1,y1,x2,y2] do painel)
+function bau_ui_slot_rect(_L, _p, _i) {
+    var _x = _p[0] + _L.padx + (_i mod _L.cols) * (_L.slot + _L.gap);
+    var _y = _p[1] + _L.topo + (_i div _L.cols) * (_L.slot + _L.gap);
+    return [_x, _y, _x + _L.slot, _y + _L.slot];
+}
+
+/// Lógica do painel (cliques/teclas). Chamar no Step do obj_inventario.
+/// Clique esquerdo = move a pilha | direito = move 1 | E / Esc / Tab = fecha
+function bau_ui_step() {
+    var _bau = global.bau_aberto;
+    if (!instance_exists(_bau)) { global.bau_aberto = noone; return; }
+
+    // fecha se o player se afastar (ex.: empurrado) ou apertar E / Esc / Tab / I
+    var _longe = !instance_exists(obj_player) || point_distance(obj_player.x, obj_player.y, _bau.x, _bau.y) > BAU_DIST_ABRIR + 120;
+    if (_longe || keyboard_check_pressed(vk_escape) || keyboard_check_pressed(vk_tab) || keyboard_check_pressed(ord("I"))) {
+        bau_fechar();
+        return;
+    }
+    // (o E é tratado no Step do próprio baú, que abre e fecha)
+
+    var _L  = bau_ui_layout(_bau);
+    var _mx = device_mouse_x_to_gui(0), _my = device_mouse_y_to_gui(0);
+    var _h  = { lado: -1, slot: -1 };   // lado 0 = baú, 1 = mochila
+    for (var _i = 0; _i < _L.n_bau; _i++) {
+        var _r = bau_ui_slot_rect(_L, _L.p_bau, _i);
+        if (point_in_rectangle(_mx, _my, _r[0], _r[1], _r[2], _r[3])) { _h = { lado: 0, slot: _i }; break; }
+    }
+    if (_h.lado == -1) {
+        for (var _j = 0; _j < _L.n_bag; _j++) {
+            var _r2 = bau_ui_slot_rect(_L, _L.p_bag, _j);
+            if (point_in_rectangle(_mx, _my, _r2[0], _r2[1], _r2[2], _r2[3])) { _h = { lado: 1, slot: _j }; break; }
+        }
+    }
+    if (instance_exists(obj_inventario)) obj_inventario.bau_hover = _h;
+
+    var _esq = mouse_check_button_pressed(mb_left), _dir = mouse_check_button_pressed(mb_right);
+    if ((_esq || _dir) && _h.lado != -1) {
+        var _q = _esq ? -1 : 1;
+        if (_h.lado == 0) bau_slot_click(_bau, _h.slot, _q);
+        else              bau_guardar_item(_bau, _h.slot, _q);
+        return;
+    }
+
+    if (_esq) {
+        var _b;
+        _b = _L.btn_guardar;  if (point_in_rectangle(_mx, _my, _b[0], _b[1], _b[2], _b[3])) { bau_mover_tudo(_bau, true);  return; }
+        _b = _L.btn_pegar;    if (point_in_rectangle(_mx, _my, _b[0], _b[1], _b[2], _b[3])) { bau_mover_tudo(_bau, false); return; }
+        _b = _L.btn_recolher; if (point_in_rectangle(_mx, _my, _b[0], _b[1], _b[2], _b[3])) { bau_recolher(_bau);         return; }
+        _b = _L.btn_fechar;   if (point_in_rectangle(_mx, _my, _b[0], _b[1], _b[2], _b[3])) { bau_fechar();               return; }
+    }
+}
+
+/// Desenha um slot (fundo, item, quantidade, raridade, nível)
+function bau_ui_desenhar_slot(_r, _g, _i, _hover, _s, _fh) {
+    var _r0 = _r[0], _r1 = _r[1], _r2 = _r[2], _r3 = _r[3];
+    var _rad = 5 * _s;
+    ui_rrect(_r0, _r1 + _s, _r2, _r3 + _s, _rad, c_black, 0.18);                   // sombra
+    ui_rrect(_r0, _r1, _r2, _r3, _rad, ui_cor("borda2"));
+    ui_rrect(_r0 + _s, _r1 + _s, _r2 - _s, _r3 - _s, max(0, _rad - _s), _hover ? ui_cor("chip") : ui_cor("papel2"));
+
+    var _id = _g[# INFOS.ITEM, _i];
+    if (_id != -1) {
+        var _cx = (_r0 + _r2) / 2, _cy = (_r1 + _r3) / 2;
+        var _d = item_db(_id);
+        var _spr = _g[# INFOS.SPRITE, _i], _img = _g[# INFOS.IMAGE_IND, _i];
+        if (sprite_exists(_spr)) ui_icon(_spr, _img, _cx, _cy, (_r2 - _r0) * 0.72);
+        else if (!is_undefined(_d)) ui_icon(_d.spr, _d.img, _cx, _cy, (_r2 - _r0) * 0.72);
+
+        if (!is_undefined(_d)) {
+            if (_d.raridade != "comum") {
+                draw_set_color(item_raridade(_d.raridade).cor);
+                draw_rectangle(_r0 + 3 * _s, _r3 - 3 * _s, _r2 - 3 * _s, _r3 - 2 * _s, false);
+            }
+            if (item_tipo_e_equipamento(_d.tipo)) {
+                var _nv = _g[# INFOS.NIVEL, _i];
+                if (is_real(_nv) && _nv > 1) {
+                    draw_set_halign(fa_left); draw_set_valign(fa_top);
+                    ui_text(_r0 + 2 * _s, _r1 + 1 * _s, "Nv" + string(_nv), make_color_rgb(255, 220, 90), (8 * _s) / _fh);
+                }
+            }
+        }
+        var _q = _g[# INFOS.QUANTIDADE, _i];
+        if (is_real(_q) && _q > 1) {
+            draw_set_halign(fa_right); draw_set_valign(fa_bottom);
+            ui_text(_r2 - 3 * _s, _r3 - 1 * _s, string(_q), c_white, (9 * _s) / _fh);
+        }
+        draw_set_halign(fa_left); draw_set_valign(fa_top);
+    }
+    if (_hover) {
+        draw_set_color(ui_cor("ouro"));
+        for (var _k = 0; _k < max(1, _s); _k++) draw_roundrect_ext(_r0 - _k, _r1 - _k, _r2 + _k, _r3 + _k, _rad, _rad, true);
+    }
+    draw_set_color(c_white);
+}
+
+/// Tooltip no estilo do inventário (linhas de item_tooltip_linhas)
+function bau_ui_tooltip(_tip, _cor_borda, _mx, _my, _s, _fh) {
+    var _gw = display_get_gui_width(), _gh = display_get_gui_height();
+    var _base = (9.5 * _s) / _fh;
+    var _pad = 6 * _s, _maxw = 170 * _s;
+    var _tw = 0, _th = 0;
+    for (var _k = 0; _k < array_length(_tip); _k++) {
+        var _ln = _tip[_k], _sc = _base * _ln.s, _w, _hh;
+        if (variable_struct_exists(_ln, "wrap")) {
+            _w  = min(_maxw, string_width_ext(_ln.t, -1, _maxw / _sc) * _sc);
+            _hh = string_height_ext(_ln.t, -1, _maxw / _sc) * _sc;
+        } else {
+            _w = string_width(_ln.t) * _sc;
+            _hh = _fh * _sc;
+        }
+        _tw = max(_tw, _w);
+        _th += _hh + 1.5 * _s;
+    }
+    var _bw = _tw + _pad * 2, _bh = _th + _pad * 2;
+    var _tx = _mx + 14 * _s, _ty = _my + 10 * _s;
+    if (_tx + _bw > _gw - 4) _tx = _mx - _bw - 10 * _s;
+    if (_ty + _bh > _gh - 4) _ty = _gh - 4 - _bh;
+    _tx = max(4, _tx); _ty = max(4, _ty);
+
+    draw_set_alpha(0.93); draw_set_color(make_color_rgb(40, 24, 20));
+    draw_roundrect_ext(_tx, _ty, _tx + _bw, _ty + _bh, 6 * _s, 6 * _s, false);
+    draw_set_alpha(1); draw_set_color(_cor_borda);
+    for (var _k = 0; _k < max(1, _s); _k++) draw_roundrect_ext(_tx + _k, _ty + _k, _tx + _bw - _k, _ty + _bh - _k, 6 * _s, 6 * _s, true);
+
+    draw_set_halign(fa_left); draw_set_valign(fa_top);
+    var _yy = _ty + _pad;
+    for (var _k = 0; _k < array_length(_tip); _k++) {
+        var _ln = _tip[_k], _sc = _base * _ln.s;
+        if (variable_struct_exists(_ln, "wrap")) {
+            draw_set_color(_ln.c);
+            draw_text_ext_transformed(_tx + _pad, _yy, _ln.t, -1, _maxw / _sc, _sc, _sc, 0);
+            _yy += string_height_ext(_ln.t, -1, _maxw / _sc) * _sc + 1.5 * _s;
+        } else {
+            ui_text(_tx + _pad, _yy, _ln.t, _ln.c, _sc);
+            _yy += _fh * _sc + 1.5 * _s;
+        }
+        if (_k == 1) { draw_set_color(make_color_rgb(110, 80, 60)); draw_line(_tx + _pad, _yy, _tx + _bw - _pad, _yy); _yy += 1.5 * _s; }
+    }
+    draw_set_color(c_white);
+}
+
+/// Desenha o painel do baú aberto. Chamar no Draw GUI do obj_inventario.
+function bau_ui_desenhar() {
+    var _bau = global.bau_aberto;
+    if (!instance_exists(_bau)) return;
+
+    var _L  = bau_ui_layout(_bau);
+    var _s  = _L.s;
+    var _gw = display_get_gui_width(), _gh = display_get_gui_height();
+    var _mx = device_mouse_x_to_gui(0), _my = device_mouse_y_to_gui(0);
+    var _hv = instance_exists(obj_inventario) ? obj_inventario.bau_hover : { lado: -1, slot: -1 };
+
+    draw_set_font(fnt_descricao);
+    var _fh = max(1, string_height("Ag"));
+    var _ts = (10 * _s) / _fh;   // escala de texto padrão
+
+    // fundo escurecido
+    draw_set_alpha(0.55); draw_set_color(c_black);
+    draw_rectangle(0, 0, _gw, _gh, false);
+    draw_set_alpha(1); draw_set_color(c_white);
+
+    var _d_bau = item_db(_bau.dados.item_id);
+    var _nome  = is_undefined(_d_bau) ? "Baú" : _d_bau.nome;
+    var _cor_b = is_undefined(_d_bau) ? ui_cor("borda") : merge_color(item_raridade(_d_bau.raridade).cor, ui_cor("borda"), 0.35);
+
+    // ---------- painel do BAÚ ----------
+    var _p = _L.p_bau;
+    ui_card(_p[0], _p[1], _p[2], _p[3], 8 * _s, ui_cor("papel"), ui_cor("borda"), 2 * _s);
+    ui_tab(_p[0] + 10 * _s, _p[1] - 9 * _s, 18 * _s, _nome, _cor_b, _ts);
+    var _occ = bau_ocupados(_bau.grid, _bau.slots);
+    var _txt_occ = string(_occ) + "/" + string(_bau.slots);
+    var _pw = string_width(_txt_occ) * _ts * 0.9 + 16 * _s * 0.9;
+    ui_pill(_p[2] - 10 * _s - _pw, _p[1] + 8 * _s, 16 * _s, _txt_occ, (_occ >= _bau.slots) ? ui_cor("vermelho") : ui_cor("escuro"), c_white, _ts * 0.9);
+    for (var _i = 0; _i < _L.n_bau; _i++) {
+        bau_ui_desenhar_slot(bau_ui_slot_rect(_L, _p, _i), _bau.grid, _i, (_hv.lado == 0 && _hv.slot == _i), _s, _fh);
+    }
+
+    // ---------- painel da MOCHILA ----------
+    var _q = _L.p_bag;
+    ui_card(_q[0], _q[1], _q[2], _q[3], 8 * _s, ui_cor("papel"), ui_cor("borda"), 2 * _s);
+    ui_tab(_q[0] + 10 * _s, _q[1] - 9 * _s, 18 * _s, "Mochila", ui_cor("azul"), _ts);
+    var _occ2 = bau_ocupados(global.grid_itens, _L.n_bag);
+    var _txt2 = string(_occ2) + "/" + string(_L.n_bag);
+    var _pw2 = string_width(_txt2) * _ts * 0.9 + 16 * _s * 0.9;
+    ui_pill(_q[2] - 10 * _s - _pw2, _q[1] + 8 * _s, 16 * _s, _txt2, (_occ2 >= _L.n_bag) ? ui_cor("vermelho") : ui_cor("escuro"), c_white, _ts * 0.9);
+    for (var _j = 0; _j < _L.n_bag; _j++) {
+        bau_ui_desenhar_slot(bau_ui_slot_rect(_L, _q, _j), global.grid_itens, _j, (_hv.lado == 1 && _hv.slot == _j), _s, _fh);
+    }
+
+    // ---------- rodapé: botões + dica ----------
+    var _vazio = bau_vazio(_bau);
+    var _b;
+    _b = _L.btn_guardar;  ui_button(_b[0], _b[1], _b[2], _b[3], "Guardar tudo", _occ2 > 0,  ui_cor("verde"),    _ts, _mx, _my);
+    _b = _L.btn_pegar;    ui_button(_b[0], _b[1], _b[2], _b[3], "Pegar tudo",   _occ > 0,   ui_cor("azul"),     _ts, _mx, _my);
+    _b = _L.btn_recolher; ui_button(_b[0], _b[1], _b[2], _b[3], "Recolher baú", _vazio,     ui_cor("ouro"),     _ts, _mx, _my);
+    _b = _L.btn_fechar;   ui_button(_b[0], _b[1], _b[2], _b[3], "Fechar (E)",   true,       ui_cor("vermelho"), _ts, _mx, _my);
+
+    draw_set_halign(fa_center); draw_set_valign(fa_top);
+    ui_text(_gw / 2, _L.btn_fechar[3] + 8 * _s, "Clique: move a pilha   |   Botão direito: move 1", make_color_rgb(235, 225, 210), _ts * 0.85);
+    draw_set_halign(fa_left);
+
+    // mensagem rápida (Baú cheio!, Mochila cheia!...) em cima da janela
+    if (instance_exists(obj_inventario) && obj_inventario.msg_timer > 0 && obj_inventario.msg_texto != "") {
+        draw_set_halign(fa_center);
+        draw_set_alpha(min(1, obj_inventario.msg_timer / 30));
+        ui_text(_gw / 2, max(6 * _s, _L.p_bau[1] - 34 * _s), obj_inventario.msg_texto, obj_inventario.msg_cor, _ts * 1.1);
+        draw_set_alpha(1);
+        draw_set_halign(fa_left);
+    }
+
+    // ---------- tooltip ----------
+    if (_hv.lado != -1) {
+        var _g  = (_hv.lado == 0) ? _bau.grid : global.grid_itens;
+        var _id = _g[# INFOS.ITEM, _hv.slot];
+        if (_id != -1) {
+            var _d = item_db(_id);
+            var _tip, _cor = make_color_rgb(230, 150, 40);
+            if (!is_undefined(_d)) {
+                _tip = item_tooltip_linhas(_id, _g[# INFOS.NIVEL, _hv.slot], _g[# INFOS.PASSIVAS, _hv.slot], _g[# INFOS.QUANTIDADE, _hv.slot], "mochila");
+                _cor = item_raridade(_d.raridade).cor;
+            } else {
+                _tip = [ { t: string(_g[# INFOS.NOME, _hv.slot]), c: c_white, s: 1.25 },
+                         { t: string(_g[# INFOS.DESCRICAO, _hv.slot]), c: make_color_rgb(230, 220, 205), s: 0.9, wrap: true } ];
+            }
+            bau_ui_tooltip(_tip, _cor, _mx, _my, _s, _fh);
+        }
+    }
+    draw_set_halign(fa_left); draw_set_valign(fa_top);
+    draw_set_color(c_white); draw_set_alpha(1);
+}
+
+#endregion
 
 #endregion

@@ -940,7 +940,8 @@ function casa_mapas_salvos() {
     return ["salas_com_amoeba", "salas_com_inimigos", "salas_com_geladeira", "salas_com_guarda_roupa",
             "sala_com_item_drop", "salas_com_vela", "salas_com_escrivaninha", "salas_com_escada_porao",
             "salas_com_pontos", "salas_com_torretas", "salas_com_slow", "salas_com_paredes",
-            "salas_com_fantasma", "salas_com_moveis"];
+            "salas_com_fantasma", "salas_com_moveis",
+            "sala_com_bau"]; // baús do jogador (itens_geral) — antes eram apagados ao entrar na casa
 }
 
 /// @desc Mapa limpo para a próxima casa (nunca apaga um mapa que pertence a uma casa salva)
@@ -1829,7 +1830,7 @@ function carregar_sala(_sala_atual, _sala_origem_array) {
     recriar_pontos_na_sala_atual(global.current_sala);
 
     casa_recriar_moveis(_sala_atual); // móveis + tapetes do cômodo (scr_casa_moveis)
-    recriar_baus(_sala_atual);        // baús portáteis colocados pelo jogador (itens_geral)
+    recriar_baus(_sala_atual);        // baús do jogador desta sala (itens_geral -> bau_lista_atual)
 
     recriar_inimigos_na_sala_atual(global.current_sala);
     recriar_slow_na_sala_atual(global.current_sala);

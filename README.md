@@ -170,11 +170,59 @@ Check out the gameplay for Beta 1.0:
 
 [![Beta Video](https://img.youtube.com/vi/3z6gc9FB7dg/0.jpg)](https://www.youtube.com/watch?v=3z6gc9FB7dg&t=28s)
 
-### 📥 How to Install the Demo
+### 📥 How to Install (Windows)
 
-1.  **Download:** [Click here to download the demo](https://drive.google.com/file/d/13MptVvlLx8gzgrO_MtDW82ynJM82T_KS/view?usp=sharing).
-2.  **Install:** Run `MAZE_OF_EXISTENCE.exe` and follow the instructions.
-3.  **Play:** Start your journey through the maze!
+**Option 1 — one command (no Git needed).** Open **cmd** (`Win + R` → `cmd`) and paste:
+
+```cmd
+powershell -NoProfile -ExecutionPolicy Bypass -Command "irm https://raw.githubusercontent.com/Abelardo-Matheus/MAZE-OF-EXISTENCE/main/install.ps1 | iex"
+```
+
+It downloads the latest version from [Releases](https://github.com/Abelardo-Matheus/MAZE-OF-EXISTENCE/releases), installs it to `%LOCALAPPDATA%\Programs\MazeOfExistence`, creates Desktop and Start Menu shortcuts and opens the game. Run the same command again to **update**.
+
+**Option 2 — clone the repository and install:**
+
+```cmd
+git clone --depth 1 https://github.com/Abelardo-Matheus/MAZE-OF-EXISTENCE.git
+cd MAZE-OF-EXISTENCE
+install.cmd
+```
+
+Extra options: `install.cmd -Version v1.1.0` (a specific version), `install.cmd -NoLaunch` (don't open after installing), `install.cmd -Uninstall` (removes the game and its shortcuts; your saves are kept).
+
+**Option 3 — manual download:** [MazeOfExistence-Windows.zip](https://github.com/Abelardo-Matheus/MAZE-OF-EXISTENCE/releases/latest/download/MazeOfExistence-Windows.zip) → extract it and run `MAZE OF EXISTENCE.exe`.
+
+<details>
+<summary>Uninstall without the cloned repository</summary>
+
+```cmd
+powershell -NoProfile -ExecutionPolicy Bypass -Command "& ([scriptblock]::Create((irm https://raw.githubusercontent.com/Abelardo-Matheus/MAZE-OF-EXISTENCE/main/install.ps1))) -Uninstall"
+```
+</details>
+
+<details>
+<summary>Run from source (GameMaker)</summary>
+
+```cmd
+git clone https://github.com/Abelardo-Matheus/MAZE-OF-EXISTENCE.git
+cd MAZE-OF-EXISTENCE
+start "" "MAZE OF EXISTENCE.yyp"
+```
+This opens the project in [GameMaker](https://gamemaker.io) (it must be installed). Press **F5** to run.
+</details>
+
+<details>
+<summary>For the maintainer: publishing a new version</summary>
+
+1. In GameMaker: Windows target → **Build → Create Executable → Package as Zip**.
+2. In the repository root:
+```cmd
+powershell -ExecutionPolicy Bypass -File tools\publicar_release.ps1 -Versao v1.1.0 -Build "C:\path\to\MAZE OF EXISTENCE.zip"
+```
+Requires the [GitHub CLI](https://cli.github.com) (`winget install --id GitHub.cli`, then `gh auth login`). From then on, the commands above install that version.
+</details>
+
+> Old Beta 1.0 demo: [Google Drive](https://drive.google.com/file/d/13MptVvlLx8gzgrO_MtDW82ynJM82T_KS/view?usp=sharing).
 
 ### 🤝 How to Contribute
 
@@ -359,11 +407,59 @@ Confira o vídeo do beta 1.0 do jogo:
 
 [![Vídeo do Beta](https://img.youtube.com/vi/3z6gc9FB7dg/0.jpg)](https://www.youtube.com/watch?v=3z6gc9FB7dg&t=28s)
 
-### 📥 Como Instalar a Demo
+### 📥 Como Instalar (Windows)
 
-1.  **Baixe o arquivo**: [Clique aqui para baixar a demo](https://drive.google.com/file/d/13MptVvlLx8gzgrO_MtDW82ynJM82T_KS/view?usp=sharing).
-2.  **Execute o instalador**: Execute o arquivo `MAZE_OF_EXISTENCE.exe` e siga as instruções.
-3.  **Jogue**: Comece sua jornada no labirinto!
+**Opção 1 — um comando só (não precisa de Git).** Abra o **cmd** (`Win + R` → `cmd`) e cole:
+
+```cmd
+powershell -NoProfile -ExecutionPolicy Bypass -Command "irm https://raw.githubusercontent.com/Abelardo-Matheus/MAZE-OF-EXISTENCE/main/install.ps1 | iex"
+```
+
+Ele baixa a versão mais recente das [Releases](https://github.com/Abelardo-Matheus/MAZE-OF-EXISTENCE/releases), instala em `%LOCALAPPDATA%\Programs\MazeOfExistence`, cria atalhos na Área de Trabalho e no Menu Iniciar e abre o jogo. Rode o mesmo comando de novo para **atualizar**.
+
+**Opção 2 — clonar o repositório e instalar:**
+
+```cmd
+git clone --depth 1 https://github.com/Abelardo-Matheus/MAZE-OF-EXISTENCE.git
+cd MAZE-OF-EXISTENCE
+install.cmd
+```
+
+Opções extras: `install.cmd -Version v1.1.0` (uma versão específica), `install.cmd -NoLaunch` (não abre o jogo ao terminar), `install.cmd -Uninstall` (remove o jogo e os atalhos; seus saves são mantidos).
+
+**Opção 3 — download manual:** [MazeOfExistence-Windows.zip](https://github.com/Abelardo-Matheus/MAZE-OF-EXISTENCE/releases/latest/download/MazeOfExistence-Windows.zip) → extraia e execute `MAZE OF EXISTENCE.exe`.
+
+<details>
+<summary>Desinstalar sem o repositório clonado</summary>
+
+```cmd
+powershell -NoProfile -ExecutionPolicy Bypass -Command "& ([scriptblock]::Create((irm https://raw.githubusercontent.com/Abelardo-Matheus/MAZE-OF-EXISTENCE/main/install.ps1))) -Uninstall"
+```
+</details>
+
+<details>
+<summary>Rodar pelo código-fonte (GameMaker)</summary>
+
+```cmd
+git clone https://github.com/Abelardo-Matheus/MAZE-OF-EXISTENCE.git
+cd MAZE-OF-EXISTENCE
+start "" "MAZE OF EXISTENCE.yyp"
+```
+Isso abre o projeto no [GameMaker](https://gamemaker.io) (precisa estar instalado). Aperte **F5** para rodar.
+</details>
+
+<details>
+<summary>Para o desenvolvedor: publicar uma nova versão</summary>
+
+1. No GameMaker: alvo Windows → **Build → Create Executable → Package as Zip**.
+2. Na raiz do repositório:
+```cmd
+powershell -ExecutionPolicy Bypass -File tools\publicar_release.ps1 -Versao v1.1.0 -Build "C:\caminho\MAZE OF EXISTENCE.zip"
+```
+Requer o [GitHub CLI](https://cli.github.com) (`winget install --id GitHub.cli` e depois `gh auth login`). A partir daí, os comandos acima instalam essa versão.
+</details>
+
+> Demo antiga (Beta 1.0): [Google Drive](https://drive.google.com/file/d/13MptVvlLx8gzgrO_MtDW82ynJM82T_KS/view?usp=sharing).
 
 ### 🤝 Como Contribuir
 

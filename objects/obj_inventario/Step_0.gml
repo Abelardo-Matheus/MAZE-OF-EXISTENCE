@@ -1,6 +1,16 @@
 // feather disable GM2017
 /// @desc Passivas (sempre) + interação com o inventário (quando aberto)
 
+// Baú aberto: o painel Baú | Mochila assume o mouse (itens_geral.gml -> bau_ui_step)
+if (instance_exists(global.bau_aberto)) {
+    is_open = false;
+    itens_passivas_tick();
+    if (msg_timer > 0) msg_timer--;
+    drag_slot = -1; drag_ativo = false;
+    bau_ui_step();
+    exit;
+}
+
 // Regeneração e tempo dos buffs rodam com o inventário fechado
 if (!is_open) {
     itens_passivas_tick();

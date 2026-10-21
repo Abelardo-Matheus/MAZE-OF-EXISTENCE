@@ -24,6 +24,7 @@ drag_px        = 0;
 drag_py        = 0;
 hover_craft    = -1;   // receita embaixo do mouse
 hover_upgrade  = false;
+bau_hover      = { lado: -1, slot: -1 }; // slot embaixo do mouse no painel do baú (lado 0 = baú, 1 = mochila)
 
 // Mensagem rápida (inventory_msg)
 msg_texto = "";
