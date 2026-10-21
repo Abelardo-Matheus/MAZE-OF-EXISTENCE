@@ -92,6 +92,7 @@
     {"name":"obj_GUI","order":5,"path":"objects/obj_GUI/obj_GUI.yy",},
     {"name":"spr_itens_invent_passivo_armadura","order":7,"path":"sprites/spr_itens_invent_passivo_armadura/spr_itens_invent_passivo_armadura.yy",},
     {"name":"spr_player_baixo_parado_atacando","order":9,"path":"sprites/spr_player_baixo_parado_atacando/spr_player_baixo_parado_atacando.yy",},
+    {"name":"obj_bau_jogador","order":19,"path":"objects/obj_bau_jogador/obj_bau_jogador.yy",},
     {"name":"spr_iinventario","order":3,"path":"sprites/spr_iinventario/spr_iinventario.yy",},
     {"name":"obj_torreta","order":2,"path":"objects/obj_torreta/obj_torreta.yy",},
     {"name":"scr_shuriken_up","order":6,"path":"scripts/scr_shuriken_up/scr_shuriken_up.yy",},

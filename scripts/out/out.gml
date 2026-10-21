@@ -50,6 +50,35 @@ function draw_text_outlined_ext(_x1, _y1, _x2, _y2, _cor, _cor2, _string, _line_
     }
 }
 
+function draw_text_outlined_wrapped_block(_x1, _y1, _x2, _y2, _cor, _cor2, _string, _line_height) {
+    var _width_limit = _x2 - _x1;
+    var _current_line = "";
+    var _words = string_split(_string, " ");
+    var _yy = _y1;
+
+    for (var _i = 0; _i < array_length(_words); _i++) {
+        var _temp_line = _current_line + (_current_line == "" ? "" : " ") + _words[_i];
+
+        // Quebra de linha ao exceder o limite de largura
+        if (string_width(_temp_line) > _width_limit) {
+            draw_text_outlined(_x1, _yy, _cor, _cor2, _current_line);
+            _yy += _line_height;
+
+            // Verifica se atingiu o limite de altura do bloco
+            if (_yy + _line_height > _y2) return;
+
+            _current_line = _words[_i];
+        } else {
+            _current_line = _temp_line;
+        }
+    }
+
+    // Desenha a última linha restante
+    if (_current_line != "") {
+        draw_text_outlined(_x1, _yy, _cor, _cor2, _current_line);
+    }
+}
+
 function draw_text_outlined_transformed(_x, _y, _str, _sep, _w, _xscale, _yscale, _out_color, _main_color) {
     // Desenha o contorno
     draw_set_color(_out_color);

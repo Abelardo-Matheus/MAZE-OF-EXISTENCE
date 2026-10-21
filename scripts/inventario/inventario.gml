@@ -194,6 +194,7 @@ function inventory_use_item(_slot) {
 
     if (_tipo == "adesivo") { inventory_msg("Arraste o adesivo até um equipamento para colar!", c_yellow); return; }
     if (_tipo == "material") { inventory_msg("Materiais são usados no craft.", c_ltgray); return; }
+    if (_tipo == "colocavel") { colocar_bau_iniciar(_slot); return; }
 
     if (_slot < _bag) {
         var _alvo = -1;

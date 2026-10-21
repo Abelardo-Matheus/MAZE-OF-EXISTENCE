@@ -25,3 +25,11 @@ if (desenha_botao)
     draw_set_color(c_white);
 }
 botao_frame = 1; // volta para F; a escada troca para E no End Step de cada frame
+
+// 5. Fantasma do baú sendo posicionado (modo "colocar baú" — ver obj_player Step e itens_geral.gml)
+if (global.colocando_bau.ativo) {
+    var _b = global.colocando_bau;
+    draw_set_alpha(0.5);
+    draw_sprite_ext(_b.spr, 0, _b.gx, _b.gy, _b.escala, _b.escala, 0, _b.valido ? c_white : c_red, 1);
+    draw_set_alpha(1);
+}

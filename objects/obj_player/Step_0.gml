@@ -14,6 +14,24 @@ if (keyboard_check_pressed(ord("I")) || keyboard_check_pressed(vk_tab)) {
     }
 }
 
+// --- Modo "colocar baú": segue o mouse, clique esquerdo confirma, direito cancela ---
+if (global.colocando_bau.ativo) {
+    var _cs = global._cell_size;
+    var _gx = floor(mouse_x / _cs) * _cs + _cs / 2;
+    var _gy = floor(mouse_y / _cs) * _cs + _cs / 2;
+    global.colocando_bau.gx = _gx;
+    global.colocando_bau.gy = _gy;
+    global.colocando_bau.valido = colocar_bau_posicao_valida(_gx, _gy);
+
+    if (mouse_check_button_pressed(mb_left) && global.colocando_bau.valido) {
+        colocar_bau_confirmar(_gx, _gy);
+    } else if (mouse_check_button_pressed(mb_right) || keyboard_check_pressed(vk_escape)) {
+        colocar_bau_cancelar();
+    }
+    image_speed = 0;
+    exit; // congela o player enquanto está posicionando, igual ao inventário aberto
+}
+
 // ========================================================
 // 2. SISTEMA DE PAUSA E CONGELAMENTO
 // ========================================================

@@ -70,14 +70,14 @@ function mini_mapa_vamp() {
         _w = 1000; _h = 800;
         _map_x = (_gw - _w) / 2;
         _map_y = (_gh - _h) / 2;
-        _scale = 0.2;
-        _max_dist = 9000;
+        _scale = 0.05;
+        _max_dist = 90000;
     } else {
         _w = 220; _h = 200;
         _map_x = _gw - _w - 40;
         _map_y = _gh - _h - 40;
-        _scale = 0.02;
-        _max_dist = 9000;
+        _scale = 0.05;
+        _max_dist = 90000;
     }
 
     // --- Renderização do Fundo Base ---

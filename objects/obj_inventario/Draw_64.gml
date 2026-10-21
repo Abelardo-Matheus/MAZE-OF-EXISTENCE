@@ -8,8 +8,12 @@ if (!is_open) {
         ui_text(display_get_gui_width() / 2, 60, msg_texto, msg_cor, 1);
         draw_set_alpha(1); draw_set_halign(fa_left);
     }
-    exit;
+    // Mesmo com a mochila fechada, o painel do baú (abre com E perto dele) continua desenhado
+    // mais abaixo neste evento — por isso NÃO damos exit aqui quando há um baú aberto.
+    if (!instance_exists(global.bau_aberto)) exit;
 }
+
+if (is_open) {
 
 calcular_layout();
 var _gw = display_get_gui_width();
@@ -621,5 +625,88 @@ if (msg_timer > 0 && msg_texto != "") {
     ui_text(_gw / 2, _my_msg, msg_texto, msg_cor, _te(10, _fh, _s));
     draw_set_alpha(1);
     draw_set_halign(fa_left);
+}
+
+} // fim do "if (is_open)" — painel completo da mochila
+
+// ============================================================================
+// 10. PAINEL DO BAÚ ABERTO (E perto de um obj_bau_jogador) — ver itens_geral.gml
+//     Desenhado aqui (não no próprio baú) pra ficar sempre em GUI, do lado da mochila,
+//     independente da mochila completa estar aberta ou não.
+// ============================================================================
+if (instance_exists(global.bau_aberto)) {
+    var _bau = global.bau_aberto;
+    var _gx_m = device_mouse_x_to_gui(0);
+    var _gy_m = device_mouse_y_to_gui(0);
+
+    var _cols  = 6;
+    var _tam   = 56;
+    var _pad   = 6;
+    var _bw2   = _cols * (_tam + _pad) + 40;
+    var _linhas_bau = ceil(_bau.slots / _cols);
+    var _bag   = inventory_bag_slots();
+    var _linhas_bag = ceil(_bag / _cols);
+
+    // Painel do baú à direita da tela; a mochila (quando aberta) fica no lugar normal dela
+    var _px = display_get_gui_width() - _bw2 - 20;
+    var _py = 160;
+
+    draw_set_font(fnt_status);
+    draw_set_halign(fa_left);
+    draw_set_valign(fa_top);
+
+    draw_set_alpha(0.85); draw_set_color(c_black);
+    draw_rectangle(_px - 20, _py - 40, _px + _bw2 - 20, _py + (_linhas_bau + _linhas_bag) * (_tam + _pad) + 70, false);
+    draw_set_alpha(1); draw_set_color(c_white);
+    draw_text(_px, _py - 35, "Baú (" + string(_bau.slots) + " espaços) — E fecha");
+
+    for (var _i = 0; _i < _bau.slots; _i++) {
+        var _col = _i mod _cols, _lin = _i div _cols;
+        var _sx = _px + _col * (_tam + _pad);
+        var _sy = _py + _lin * (_tam + _pad);
+
+        draw_set_color(c_gray);
+        draw_rectangle(_sx, _sy, _sx + _tam, _sy + _tam, true);
+
+        var _item = _bau.grid[# INFOS.ITEM, _i];
+        if (_item != -1) {
+            draw_sprite_ext(_bau.grid[# INFOS.SPRITE, _i], _bau.grid[# INFOS.IMAGE_IND, _i], _sx + _tam / 2, _sy + _tam / 2, 2, 2, 0, c_white, 1);
+            var _q = _bau.grid[# INFOS.QUANTIDADE, _i];
+            if (_q > 1) {
+                draw_set_halign(fa_right); draw_set_valign(fa_bottom); draw_set_color(c_yellow);
+                draw_text(_sx + _tam - 2, _sy + _tam - 2, string(_q));
+                draw_set_halign(fa_left); draw_set_valign(fa_top); draw_set_color(c_white);
+            }
+        }
+
+        if (point_in_rectangle(_gx_m, _gy_m, _sx, _sy, _sx + _tam, _sy + _tam) && mouse_check_button_pressed(mb_left)) {
+            bau_slot_click(_bau, _i);
+        }
+    }
+
+    // Mochila simplificada embaixo, pra guardar itens no baú (clique guarda no primeiro espaço livre)
+    var _py2 = _py + _linhas_bau * (_tam + _pad) + 30;
+    draw_set_color(c_white);
+    draw_text(_px, _py2 - 20, "Mochila — clique guarda no baú");
+
+    for (var _j = 0; _j < _bag; _j++) {
+        var _col2 = _j mod _cols, _lin2 = _j div _cols;
+        var _sx2 = _px + _col2 * (_tam + _pad);
+        var _sy2 = _py2 + _lin2 * (_tam + _pad);
+
+        draw_set_color(c_dkgray);
+        draw_rectangle(_sx2, _sy2, _sx2 + _tam, _sy2 + _tam, true);
+
+        var _item2 = global.grid_itens[# INFOS.ITEM, _j];
+        if (_item2 != -1) {
+            draw_sprite_ext(global.grid_itens[# INFOS.SPRITE, _j], global.grid_itens[# INFOS.IMAGE_IND, _j], _sx2 + _tam / 2, _sy2 + _tam / 2, 2, 2, 0, c_white, 1);
+        }
+
+        if (point_in_rectangle(_gx_m, _gy_m, _sx2, _sy2, _sx2 + _tam, _sy2 + _tam) && mouse_check_button_pressed(mb_left)) {
+            bau_guardar_item(_bau, _j);
+        }
+    }
+
+    draw_set_color(c_white);
 }
 draw_set_color(c_white);

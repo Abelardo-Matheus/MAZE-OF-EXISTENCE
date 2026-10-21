@@ -110,6 +110,9 @@ function reset_global_variables()
     global.salas_com_geladeira    = _reset_map(global.salas_com_geladeira);
     global.salas_com_guarda_roupa = _reset_map(global.salas_com_guarda_roupa);
     global.sala_com_item_drop     = _reset_map(global.sala_com_item_drop);
+    global.sala_com_bau           = _reset_map(global.sala_com_bau);
+    global.colocando_bau          = { ativo: false };
+    global.bau_aberto             = noone;
     global.salas_com_vela         = _reset_map(global.salas_com_vela);
     global.salas_com_escrivaninha = _reset_map(global.salas_com_escrivaninha);
     global.salas_com_escada_porao = _reset_map(global.salas_com_escada_porao);

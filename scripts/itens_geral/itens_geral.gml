@@ -46,6 +46,7 @@ function item_tipo_nome(_tipo) {
         case "bota":     return "Calçado";
         case "material": return "Material";
         case "adesivo":  return "Adesivo";
+        case "colocavel":return "Colocável";
     }
     return "Item";
 }
@@ -135,7 +136,9 @@ function itens_definir_catalogo() {
             raridade: _rar, desc: _desc, stats: _stats, stack: _stack,
             inata:  variable_struct_exists(_extra, "inata")   ? _extra.inata   : "",
             buffs:  variable_struct_exists(_extra, "buffs")   ? _extra.buffs   : [],
-            passiva_adesivo: variable_struct_exists(_extra, "passiva") ? _extra.passiva : ""
+            passiva_adesivo: variable_struct_exists(_extra, "passiva") ? _extra.passiva : "",
+            slots:  variable_struct_exists(_extra, "slots")  ? _extra.slots  : 0,
+            escala: variable_struct_exists(_extra, "escala") ? _extra.escala : 1
         };
         array_push(global.itens_ordem, _id);
     };
@@ -219,6 +222,21 @@ function itens_definir_catalogo() {
     _def("po_estrela",  "Pó de Estrela",  "material", _M, 12, 25, "raro",    "Usado para MELHORAR equipamentos.");
     _def("pilha",       "Pilha",          "material", _M, 13, 12, "incomum", "Dá energia aos brinquedos.");
     _def("papel",       "Papel Colorido", "material", _M, 14, 3,  "comum",   "Base para fazer adesivos.");
+    _def("vela",        "Vela",           "material", spr_itens_invent_passivo, 0, 8, "comum", "Uma velinha para iluminar o escuro.");
+
+    // ---------------- COLOCÁVEIS ----------------
+    // TODO: trocar spr_movel_bau (placeholder, mesmo sprite dos móveis de casa) por sprites
+    // próprios (menores, visual de "baú portátil") quando forem criados na IDE — ver escala
+    // abaixo, que já diminui o placeholder pra não ficar do tamanho de um móvel de casa.
+    // extra: { slots: espaços de guarda, escala: tamanho do sprite no mundo }
+    _def("bau_madeira",   "Baú de Madeira",   "colocavel", spr_movel_bau, 0, 0, "comum",
+         "Craftado para guardar itens. Use e clique no chão para posicionar.", {}, { slots: 6,  escala: 0.55 });
+    _def("bau_ferro",     "Baú de Ferro",     "colocavel", spr_movel_bau, 0, 0, "incomum",
+         "Mais resistente, guarda mais itens.",                                {}, { slots: 12, escala: 0.70 });
+    _def("bau_ouro",      "Baú de Ouro",      "colocavel", spr_movel_bau, 0, 0, "raro",
+         "Reforçado com ouro, guarda bem mais itens.",                        {}, { slots: 18, escala: 0.85 });
+    _def("bau_lendario",  "Baú Lendário",     "colocavel", spr_movel_bau, 0, 0, "lendario",
+         "O maior baú portátil que existe.",                                  {}, { slots: 24, escala: 1.0  });
 
     // ---------------- ADESIVOS (passivas) ----------------
     // Arraste um adesivo até um equipamento para colar a passiva nele.
@@ -320,6 +338,11 @@ function itens_definir_receitas() {
     // --- Materiais ---
     _r("papel",           { madeira: 1 }, 2);
     _r("po_estrela",      { gude: 1, giz: 1, pena: 1 }, 2);
+    // --- Colocáveis --- (cada baú é mais caro que o anterior, exige o material do nível antes)
+    _r("bau_madeira",     { madeira: 6, pedra: 2 });
+    _r("bau_ferro",       { madeira: 6, ferro: 4, pedra: 2 });
+    _r("bau_ouro",        { ferro: 6, ouro: 3, couro: 2 });
+    _r("bau_lendario",    { ouro: 6, po_estrela: 3, ferro: 4, couro: 2 });
     // --- Adesivos ---
     _r("ad_coracao",      { papel: 1, erva: 2 });
     _r("ad_estrela",      { papel: 1, po_estrela: 1, giz: 1 });
@@ -705,6 +728,182 @@ function recriar_item_dropado(_sala_x, _sala_y) {
             if (array_length(_d) > 21) { item_id = _d[19]; nivel = _d[20]; passivas = _d[21]; }
         }
     }
+}
+
+#endregion
+
+#region ---------- BAÚ PORTÁTIL (COLOCÁVEL NO CHÃO, QUALQUER SALA) ----------
+// [O QUE]: Item "colocavel" (ver catálogo acima) craftado, usado no inventário e depois
+//          clicado no mapa pra ser plantado. Funciona em QUALQUER sala (casa, corredor,
+//          masmorra...) porque a validação usa só duas coisas universais do jogo:
+//          1) a célula precisa ser SALA_CHAO no layout da própria sala (spr_fase_criation)
+//          2) nenhuma instância sólida (parede de qualquer bioma, móvel, outro baú...) pode
+//             estar em cima — checado via a flag `solid`, sem precisar saber o nome do objeto.
+// [COMO] : inventory_use_item() chama colocar_bau_iniciar() -> obj_player (Step/Draw End)
+//          mostra o fantasma seguindo o mouse e confirma com clique esquerdo em
+//          colocar_bau_confirmar() -> cria obj_bau_jogador e guarda em global.sala_com_bau
+//          (mesmo padrão de global.sala_com_item_drop), recriado em toda sala por
+//          recriar_baus() (chamado em carregar_sala, spr_fase_criation).
+
+/// @desc Entra no modo "clique no chão pra posicionar": fecha o inventário e segue o mouse.
+function colocar_bau_iniciar(_slot) {
+    var _grid = global.grid_itens;
+    var _id = _grid[# INFOS.ITEM, _slot];
+    var _d = item_db(_id);
+    if (is_undefined(_d) || _d.slots <= 0) return;
+
+    global.colocando_bau = {
+        ativo: true, slot: _slot, item_id: _id,
+        spr: _d.spr, slots: _d.slots, escala: _d.escala,
+        gx: 0, gy: 0, valido: false
+    };
+    if (instance_exists(obj_inventario)) obj_inventario.is_open = false;
+    inventory_msg("Clique no chão para posicionar o " + _d.nome + " (botão direito cancela)", c_yellow);
+}
+
+/// @desc Sai do modo de posicionamento sem gastar o item.
+function colocar_bau_cancelar() {
+    global.colocando_bau = { ativo: false };
+}
+
+/// @desc A célula do mundo em (_wx, _wy) é chão livre (sem parede/móvel/outro baú em cima)?
+/// Funciona em QUALQUER sala/fase (casa, corredor, Fase_vamp...): não depende do sistema de
+/// layout da maze (sala_obter_layout só é confiável dentro de carregar_sala/FASE_BEBE — em
+/// outras fases, que trocam de room com room_goto, global.current_sala pode não corresponder
+/// à sala visível e o layout viria errado). Em vez disso usa só duas checagens universais:
+function colocar_bau_posicao_valida(_wx, _wy) {
+    var _cs = global._cell_size;
+
+    // 1) dentro dos limites da room atual, seja qual for a fase
+    if (_wx < 0 || _wy < 0 || _wx >= room_width || _wy >= room_height) return false;
+
+    // 2) nenhuma instância sólida (qualquer parede do bioma, móvel, outro baú) pode ocupar a célula
+    var _margem = _cs / 2 - 6;
+    var _livre = true;
+    with (all) {
+        if (!solid) continue;
+        if (!(bbox_right < _wx - _margem || bbox_left > _wx + _margem || bbox_bottom < _wy - _margem || bbox_top > _wy + _margem)) {
+            _livre = false;
+        }
+    }
+    return _livre;
+}
+
+/// @desc Confirma a colocação em (_wx, _wy): cria o baú, guarda na sala e consome o item.
+function colocar_bau_confirmar(_wx, _wy) {
+    var _b = global.colocando_bau;
+    var _grid_player = global.grid_itens;
+    if (_grid_player[# INFOS.ITEM, _b.slot] != _b.item_id) { colocar_bau_cancelar(); return; } // slot mudou nesse meio tempo
+
+    var _sala_id = get_room_id(global.current_sala);
+    if (!ds_map_exists(global.sala_com_bau, _sala_id)) ds_map_add(global.sala_com_bau, _sala_id, ds_list_create());
+    var _lista = ds_map_find_value(global.sala_com_bau, _sala_id);
+
+    var _grid_bau = ds_grid_create(INFOS.HEIGHT, _b.slots);
+    ds_grid_clear(_grid_bau, -1);
+    var _dados = { x: _wx, y: _wy, item_id: _b.item_id, slots: _b.slots, spr: _b.spr, escala: _b.escala, grid: _grid_bau };
+    ds_list_add(_lista, _dados);
+
+    var _inst = instance_create_depth(_wx, _wy, profundidade_pe(_wy), obj_bau_jogador);
+    with (_inst) {
+        dados  = _dados;
+        grid   = _dados.grid;
+        slots  = _dados.slots;
+        sprite_index = _dados.spr;
+        image_xscale = _dados.escala;
+        image_yscale = _dados.escala;
+        aberto = false;
+    }
+
+    _grid_player[# INFOS.QUANTIDADE, _b.slot]--;
+    if (_grid_player[# INFOS.QUANTIDADE, _b.slot] <= 0) inventory_clear_slot(_b.slot);
+    inventory_pos_mudanca();
+    colocar_bau_cancelar();
+}
+
+/// @desc Chamado em carregar_sala (spr_fase_criation): recria os baús já colocados nessa sala.
+function recriar_baus(_coords) {
+    var _sala_id = get_room_id(_coords);
+    if (!ds_map_exists(global.sala_com_bau, _sala_id)) return;
+    var _lista = ds_map_find_value(global.sala_com_bau, _sala_id);
+    for (var _i = 0; _i < ds_list_size(_lista); _i++) {
+        var _d = _lista[| _i];
+        var _inst = instance_create_depth(_d.x, _d.y, profundidade_pe(_d.y), obj_bau_jogador);
+        with (_inst) {
+            dados  = _d;
+            grid   = _d.grid;
+            slots  = _d.slots;
+            sprite_index = _d.spr;
+            image_xscale = _d.escala;
+            image_yscale = _d.escala;
+            aberto = false;
+        }
+    }
+}
+
+/// @desc Tira 1 item do grid do baú (_i) e devolve pra mochila (clique num slot do baú aberto).
+function bau_slot_click(_bau, _i) {
+    with (_bau) {
+        if (grid[# INFOS.ITEM, _i] == -1) return;
+        var _dest = inventory_find_empty_slot();
+        if (_dest == -1) { inventory_msg("Mochila cheia!", c_red); return; }
+        for (var _c = 0; _c < INFOS.HEIGHT; _c++) {
+            global.grid_itens[# _c, _dest] = grid[# _c, _i];
+            grid[# _c, _i] = -1;
+        }
+        inventory_pos_mudanca();
+    }
+}
+
+/// @desc Guarda o item do slot _slot_bag da mochila no primeiro espaço livre do baú aberto.
+function bau_guardar_item(_bau, _slot_bag) {
+    with (_bau) {
+        if (global.grid_itens[# INFOS.ITEM, _slot_bag] == -1) return;
+        var _dest = -1;
+        for (var _i = 0; _i < slots; _i++) if (grid[# INFOS.ITEM, _i] == -1) { _dest = _i; break; }
+        if (_dest == -1) { inventory_msg("Baú cheio!", c_red); return; }
+        for (var _c = 0; _c < INFOS.HEIGHT; _c++) grid[# _c, _dest] = global.grid_itens[# _c, _slot_bag];
+    }
+    inventory_clear_slot(_slot_bag);
+    inventory_pos_mudanca();
+}
+
+/// @desc Recolhe o baú _inst de volta pro inventário (só se estiver vazio). Chamado pelo F.
+function bau_recolher(_inst) {
+    for (var _i = 0; _i < _inst.slots; _i++) {
+        if (_inst.grid[# INFOS.ITEM, _i] != -1) { inventory_msg("Esvazie o baú antes de recolher!", c_orange); return; }
+    }
+    var _destino = inventory_find_empty_slot();
+    if (_destino == -1) { inventory_msg("Mochila cheia!", c_red); return; }
+
+    var _d = _inst.dados;
+    var _item = item_db(_d.item_id);
+    var _grid = global.grid_itens;
+    _grid[# INFOS.ITEM, _destino]       = _d.item_id;
+    _grid[# INFOS.QUANTIDADE, _destino] = 1;
+    _grid[# INFOS.SPRITE, _destino]     = _item.spr;
+    _grid[# INFOS.IMAGE_IND, _destino]  = _item.img;
+    _grid[# INFOS.NOME, _destino]       = _item.nome;
+    _grid[# INFOS.DESCRICAO, _destino]  = _item.desc;
+    _grid[# INFOS.TIPO, _destino]       = _item.tipo;
+    _grid[# INFOS.PRECO, _destino]      = _item.preco;
+    _grid[# INFOS.DANO, _destino]       = 0;
+    _grid[# INFOS.ARMADURA, _destino]   = 0;
+    _grid[# INFOS.VELOCIDADE, _destino] = 0;
+    _grid[# INFOS.CURA, _destino]       = 0;
+    _grid[# INFOS.NIVEL, _destino]      = 1;
+    _grid[# INFOS.PASSIVAS, _destino]   = [];
+
+    var _sala_id = get_room_id(global.current_sala);
+    if (ds_map_exists(global.sala_com_bau, _sala_id)) {
+        var _lista = ds_map_find_value(global.sala_com_bau, _sala_id);
+        for (var _i = 0; _i < ds_list_size(_lista); _i++) {
+            if (_lista[| _i] == _d) { ds_list_delete(_lista, _i); break; }
+        }
+    }
+    ds_grid_destroy(_d.grid);
+    inventory_pos_mudanca();
+    instance_destroy(_inst);
 }
 
 #endregion

@@ -63,6 +63,9 @@ global.salas_com_vela           = ds_map_create();
 global.salas_com_escrivaninha   = ds_map_create();
 global.salas_com_escada_porao   = ds_map_create();
 global.sala_com_item_drop       = ds_map_create();
+global.sala_com_bau             = ds_map_create(); // baús portáteis colocados pelo jogador (ver itens_geral)
+global.colocando_bau            = { ativo: false }; // estado do modo "clique no chão para posicionar o baú"
+global.bau_aberto               = noone; // instância de obj_bau_jogador aberta no momento (UI em obj_inventario)
 global.salas_com_geladeira      = ds_map_create();
 global.salas_com_guarda_roupa   = ds_map_create();
 global.salas_com_moveis         = ds_map_create(); // mobília da casa (scr_casa_moveis)
@@ -1826,6 +1829,7 @@ function carregar_sala(_sala_atual, _sala_origem_array) {
     recriar_pontos_na_sala_atual(global.current_sala);
 
     casa_recriar_moveis(_sala_atual); // móveis + tapetes do cômodo (scr_casa_moveis)
+    recriar_baus(_sala_atual);        // baús portáteis colocados pelo jogador (itens_geral)
 
     recriar_inimigos_na_sala_atual(global.current_sala);
     recriar_slow_na_sala_atual(global.current_sala);
