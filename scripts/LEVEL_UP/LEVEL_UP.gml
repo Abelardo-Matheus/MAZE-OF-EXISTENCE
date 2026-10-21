@@ -205,9 +205,10 @@ function aplicar_status_level() {
     if (instance_exists(obj_skill_manager)) {
         obj_skill_manager.recalculate_player_stats();
     } else {
-        global.vida_max = global.vida_max_calc[_curr_lvl];
-        global.ataque = global.dano_base[_curr_lvl];
+        global.vida_max = global.vida_max_calc[_curr_lvl] + (variable_global_exists("equip_aplicado") ? global.equip_aplicado.vida : 0);
     }
+    // Ataque = base do nível + equipamentos/adesivos (scripts/inventario)
+    player_stats_recalcular();
 }
 
 
@@ -246,18 +247,27 @@ function ganhar_xp(_xp_amount)
 
 function calcular_critico() 
 {
-    // Chance baseada no nível (ex: Nível 10 = 10% de chance)
-    var _chance = global.level_player * 1;
-    var _roll = irandom_range(1, 100);
-    
-    if (_roll <= _chance) 
+    // Ataque sem crítico já inclui equipamentos e adesivos (player_stats_recalcular)
+    var _base = variable_global_exists("ataque_sem_crit") ? global.ataque_sem_crit : global.dano_base[global.level_player];
+    var _e = variable_global_exists("equip_stats") ? global.equip_stats : undefined;
+
+    // Chance baseada no nível (Nível 10 = 10%) + passivas/buffs de crítico
+    var _chance = global.level_player * 1 + (is_undefined(_e) ? 0 : _e.crit);
+    var _mult   = 1.5 + (is_undefined(_e) ? 0 : _e.crit_dano / 100);
+
+    if (irandom_range(1, 100) <= _chance) 
     {
         global.critico = 1; // Flag visual
-        global.ataque = global.dano_base[global.level_player] * 1.5; // Dano Crítico (150%)
+        global.ataque = _base * _mult; // Dano Crítico
     } 
     else 
     {
         global.critico = 0;
-        global.ataque = global.dano_base[global.level_player]; // Dano Normal
+        global.ataque = _base; // Dano Normal
+    }
+
+    // Vampirismo (Dentinho de Vampiro): cura uma parte do golpe
+    if (!is_undefined(_e) && _e.vampirismo > 0) {
+        global.vida = min(global.vida_max, global.vida + global.ataque * _e.vampirismo / 100);
     }
 }

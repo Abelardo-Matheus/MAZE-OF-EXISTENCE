@@ -6,6 +6,9 @@
 var _dano = dano;
 // 1. Verifica se o Player pode tomar dano no momento
 if (other.tomar_dano) {
+    // Defesa e esquiva dos equipamentos (scripts/inventario)
+    _dano = player_dano_recebido(_dano);
+    if (_dano <= 0) exit;
 
     // 2. Entra no escopo do Player para aplicar as mudanças
     with (other) {

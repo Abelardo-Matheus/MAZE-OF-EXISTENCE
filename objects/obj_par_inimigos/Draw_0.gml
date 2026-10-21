@@ -16,14 +16,4 @@ if (hit == true) {
     draw_self();
 }
 
-// --- Desenha HUD de Vida (Sempre na frente) ---
-if (alarm[2] >= 0) {
-    var _sprw = sprite_get_width(spr_hud_vida_inimigo) / 2 * escala;
-    var _hud_y = y - (12 * escala);
-
-    draw_sprite_ext(spr_hud_vida_inimigo, 0, x - _sprw, _hud_y, escala, escala, 0, c_white, 1);
-    
-    // Barra de vida (escala horizontal baseada na porcentagem de vida)
-    var _porcentagem_vida = (vida / max_vida) * escala;
-    draw_sprite_ext(spr_vida_, 0, x - _sprw, _hud_y, _porcentagem_vida, escala, 0, c_white, 1);
-}
+// Barra de vida: inimigo_desenhar_hud() no Draw End (obj_par_inimigos)

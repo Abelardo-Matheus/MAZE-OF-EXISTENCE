@@ -1,133 +1,116 @@
 // feather disable GM2017
+/// @desc Passivas (sempre) + interação com o inventário (quando aberto)
 
+// Regeneração e tempo dos buffs rodam com o inventário fechado
+if (!is_open) {
+    itens_passivas_tick();
+    if (msg_timer > 0) msg_timer--;
+    drag_slot = -1; drag_ativo = false;
+    exit;
+}
+if (msg_timer > 0) msg_timer--;
 
-if (!is_open) exit;
+calcular_layout();
 
 var _mx = device_mouse_x_to_gui(0);
 var _my = device_mouse_y_to_gui(0);
+var _grid = global.grid_itens;
+var _n_slots = ds_grid_height(_grid);
 
-// Reduz o cooldown do clique
-if (cooldown_timer > 0) cooldown_timer--;
-var _grid_height = ds_grid_height(global.grid_itens);
-// Loop pelos Slots (Inventário + Equipamentos)
-for (var _i = 0; _i < _grid_height; _i++) {
-    // Calcula posição do slot (reutilizando a lógica de layout)
-    var _sx = 0, _sy = 0;
-    
-    if (_i < total_slots) {
-        // Grid Principal
-        var _col = _i % grid_cols;
-        var _row = _i div grid_cols;
-        _sx = inventory_x + grid_start_x + (_col * (slot_width + slot_buffer));
-        _sy = inventory_y + grid_start_y + (_row * (slot_height + slot_buffer));
+// ========================================================
+// 1. HOVER: slot, receita e botão de upgrade
+// ========================================================
+hover_slot = -1;
+for (var _i = 0; _i < _n_slots; _i++) {
+    var _r = slot_rect(_i);
+    if (point_in_rectangle(_mx, _my, _r[0], _r[1], _r[2], _r[3])) { hover_slot = _i; break; }
+}
+
+hover_craft = -1;
+var _n_rec = array_length(craft_ordem);
+for (var _l = 0; _l < craft_linhas; _l++) {
+    var _idx = craft_scroll + _l;
+    if (_idx >= _n_rec) break;
+    var _rr = craft_row_rect(_l);
+    if (point_in_rectangle(_mx, _my, _rr[0], _rr[1], _rr[2], _rr[3])) { hover_craft = _l; break; }
+}
+
+hover_upgrade = point_in_rectangle(_mx, _my, ux(lay_btn_up[0]), uy(lay_btn_up[1]), ux(lay_btn_up[2]), uy(lay_btn_up[3]));
+
+// Item selecionado sumiu/mudou? fecha a oficina
+if (selected_slot != -1 && _grid[# INFOS.ITEM, selected_slot] == -1) selected_slot = -1;
+
+// ========================================================
+// 2. ARRASTAR E SOLTAR / CLICAR
+// ========================================================
+if (mouse_check_button_pressed(mb_left) && hover_slot != -1 && _grid[# INFOS.ITEM, hover_slot] != -1) {
+    drag_slot  = hover_slot;
+    drag_ativo = false;
+    drag_px = _mx;
+    drag_py = _my;
+}
+
+if (drag_slot != -1 && mouse_check_button(mb_left)) {
+    if (!drag_ativo && point_distance(drag_px, drag_py, _mx, _my) > 6) drag_ativo = true;
+}
+
+if (drag_slot != -1 && mouse_check_button_released(mb_left)) {
+    if (drag_ativo) {
+        if (hover_slot != -1 && hover_slot != drag_slot) {
+            var _era_sel = (selected_slot == drag_slot);
+            inventory_mover(drag_slot, hover_slot);
+            // a oficina acompanha o item que foi movido
+            if (_era_sel && _grid[# INFOS.ITEM, hover_slot] != -1) selected_slot = hover_slot;
+        }
     } else {
-        // Slots de Equipamento
-        var _eq_idx = _i - total_slots;
-        _sx = inventory_x + equip_start_x;
-        _sy = inventory_y + equip_start_y + (_eq_idx * (slot_height + slot_buffer));
+        // Clique simples: abre/fecha na oficina
+        selected_slot = (selected_slot == drag_slot) ? -1 : drag_slot;
     }
+    drag_slot  = -1;
+    drag_ativo = false;
+}
 
-    // Verifica Hover (Mouse sobre o slot)
-    var _is_hover = point_in_rectangle(_mx, _my, _sx, _sy, _sx + slot_width, _sy + slot_height);
-    
-    if (_is_hover) {
-        selected_slot = _i; // Marca qual slot está sob o mouse
-
-        // --- CLIQUE ESQUERDO: Selecionar / Mover ---
-        if (mouse_check_button_pressed(mb_left) && cooldown_timer == 0) {
-            cooldown_timer = 10;
-            
-            // Se não tem item na mão, pega o do slot
-            if (selected_item == -1) {
-                if (global.grid_itens[# INFOS.ITEM, _i] != -1) {
-                    selected_item = global.grid_itens[# INFOS.ITEM, _i];
-                    selected_index = _i;
-                }
-            } 
-            // Se tem item na mão, tenta colocar ou trocar
-            else {
-                inventory_swap_item(selected_index, _i); // Função auxiliar para trocar
-                selected_item = -1;
-                selected_index = -1;
-            }
-        }
-
-        // --- CLIQUE DIREITO / TECLA E: Equipar / Desequipar / Usar ---
-        if ((mouse_check_button_pressed(mb_right) || keyboard_check_pressed(ord("E"))) && selected_item == -1) {
-            inventory_use_item(_i); // Função auxiliar para usar/equipar
-        }
-        
-        // --- TECLA F: Dropar Item ---
-        if (keyboard_check_pressed(ord("F"))) {
-            inventory_drop_item(_i);
-        }
+// ========================================================
+// 3. TECLAS SOBRE O SLOT
+// ========================================================
+if (hover_slot != -1 && drag_slot == -1) {
+    // Botão direito / E: usar, equipar ou desequipar
+    if (mouse_check_button_pressed(mb_right) || keyboard_check_pressed(ord("E"))) {
+        inventory_use_item(hover_slot);
+    }
+    // F: soltar no chão
+    if (keyboard_check_pressed(ord("F"))) {
+        if (selected_slot == hover_slot) selected_slot = -1;
+        inventory_drop_item(hover_slot);
     }
 }
-// ==========================================
-// LÓGICA DE CLIQUE NO CRAFTING (COM SCROLL E CONSUMO)
-// ==========================================
-if (mouse_check_button_pressed(mb_left) && cooldown_timer == 0) {
-    
-    if (!variable_instance_exists(id, "craft_scroll")) craft_scroll = 0;
-    var _receitas_total = array_length(global.receitas_craft);
-    var _max_visiveis = 3;
-    var _fim_loop = min(_receitas_total, craft_scroll + _max_visiveis);
 
-    for (var _i = craft_scroll; _i < _fim_loop; _i++) {
-        
-        var _posicao_na_tela = _i - craft_scroll;
-        var _cx = inventory_x + craft_box_x;
-        var _cy = inventory_y + craft_box_y + (_posicao_na_tela * (craft_pane_height + craft_buffer));
-        
-        var _bx = _cx + craft_pane_width - craft_btn_w - 15;
-        var _by = _cy + (craft_pane_height / 2) - (craft_btn_h / 2);
+// ========================================================
+// 4. OFICINA: upgrade (clique no botão ou tecla U)
+// ========================================================
+if (selected_slot != -1) {
+    var _tipo_sel = _grid[# INFOS.TIPO, selected_slot];
+    var _clique_btn = hover_upgrade && mouse_check_button_pressed(mb_left);
+    if (_tipo_sel == "uso") {
+        if (_clique_btn) inventory_use_item(selected_slot);          // botão USAR
+    } else if (_clique_btn || keyboard_check_pressed(ord("U"))) {
+        item_upgrade(selected_slot);                                 // botão MELHORAR / tecla U
+    }
+}
 
-        // Se clicou em cima do botão...
-        if (point_in_rectangle(_mx, _my, _bx, _by, _bx + craft_btn_w, _by + craft_btn_h)) {
-            
-            var _receita = global.receitas_craft[_i];
-            
-            // Só faz o item se tiver os ingredientes
-            if (player_has_all_ingredients(_receita)) {
-                cooldown_timer = 10;
-                
-                // 1. Remove os ingredientes do inventário
-                var _total_reqs = array_length(_receita.ingredientes);
-                for (var _j = 0; _j < _total_reqs; _j++) {
-                    var _req = _receita.ingredientes[_j];
-                    // Consome o item!
-                    inventory_remove_item(_req.item, _req.qtd); 
-                }
-                
-                // 2. Busca os atributos completos na Database usando o sprite e index da receita!
-                var _dados_completos = buscar_dados_do_item(_receita.spr_resultado, _receita.idx_resultado);
+// ========================================================
+// 5. CRAFT: scroll e botão CRIAR
+// ========================================================
+var _area_craft = point_in_rectangle(_mx, _my, ux(lay_craft[0]), uy(lay_craft[1]), ux(lay_craft[2]), uy(lay_craft[3]));
+if (_area_craft) {
+    if (mouse_wheel_down()) craft_scroll++;
+    if (mouse_wheel_up())   craft_scroll--;
+}
+craft_scroll = clamp(craft_scroll, 0, max(0, _n_rec - craft_linhas));
 
-                if (_dados_completos != undefined) {
-                    // 3. Adiciona no inventário puxando a vida, dano e armadura corretos da Database!
-                    adicionar_item_invent(
-                        _receita.resultado,            // O ID do item (enum)
-                        _receita.qtd_resultado,        // Quantidade que o craft gera
-                        _dados_completos[0],           // Sprite
-                        _dados_completos[1],           // Nome
-                        _dados_completos[2],           // Descrição
-                        -1, -1, -1, -1,                // Posições no mundo (ignorado, pois vai direto pra mochila)
-                        _dados_completos[4],           // Dano
-                        _dados_completos[5],           // Armadura
-                        _dados_completos[6],           // Velocidade
-                        _dados_completos[3],           // Cura
-                        _dados_completos[8],           // Tipo ("arma", "uso", etc)
-                        _dados_completos[7],           // Index da imagem
-                        _dados_completos[9]            // Preço
-                    );
-                } else {
-                    // Segurança: Se por algum motivo o item não existir na database, avisa no console
-                    show_debug_message("ERRO DE CRAFT: Item não encontrado na Database! Spr: " + string(_receita.spr_resultado) + " Idx: " + string(_receita.idx_resultado));
-                }
-                
-                // 4. Atualiza a lista (os ingredientes sumiram, a lista precisa atualizar!)
-                atualizar_crafts_disponiveis(); 
-            }
-            break; // Já clicou num botão, para o loop
-        }
+if (mouse_check_button_pressed(mb_left) && hover_craft != -1) {
+    var _b = craft_btn_rect(hover_craft);
+    if (point_in_rectangle(_mx, _my, _b[0], _b[1], _b[2], _b[3])) {
+        craft_fazer(craft_ordem[craft_scroll + hover_craft]);
     }
 }

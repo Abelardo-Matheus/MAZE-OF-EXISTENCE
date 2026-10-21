@@ -187,7 +187,7 @@ function procurar_poder(_id_procurado)
     {
         var _poder = global.lista_poderes_basicos[| _i];
         
-        if (_poder.id == _id_procurado) 
+        if (is_struct(_poder) && _poder.ID == _id_procurado) 
         {
             _objeto_encontrado = _poder;
             break;

@@ -75,7 +75,7 @@ function sprite_ajuste(_spr) {
         case spr_player_direita_parado_atacando: return 1.26562;
         case spr_player_esquerda_parado_atacando: return 1.26562;
         case spr_bola: return 2.8125;
-        case spr_shuriken: return 2.35938;
+        case spr_shuriken: return 1.35938;
         case spr_bulmerangue: return 2.09375;
         case spr_confete: return 3.4375;
         case spr_bomba_vamp: return 1.25;

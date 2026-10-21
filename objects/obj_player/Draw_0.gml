@@ -14,25 +14,4 @@ draw_sprite_ext(spr_sombra, 0, x, y + 15, 0.8, 0.8, 0, c_white, 1);
 var _aj = sprite_ajuste(sprite_index);
 draw_sprite_ext(sprite_index, image_index, x, y, image_xscale * _aj, image_yscale * _aj, image_angle, image_blend, image_alpha);
 
-// 3. Arma (Sobre a cabeça)
-if (desenha_arma) 
-{
-    // Otimização: Usamos 'global.armamento' direto no subimg (indice da imagem),
-    // já que 0 é espada e 1 é arco nos dois lugares.
-    draw_sprite_ext(spr_arma, global.armamento, x, y - 60, 1, 1, 0, c_white, dir_alfa);
-}
-
-// 4. Botão de Interação (Prompt)
-if (desenha_botao) 
-{
-    // Configurações de texto
-    draw_set_font(fnt_status);
-    draw_set_color(c_white);
-    draw_set_halign(fa_left);
-    
-    // Desenha o botão usando o alpha calculado no Step
-    draw_sprite_ext(spr_botoes, 1, x, y - 60, 0.6, 0.6, 0, c_white, piscando_alpha);
-    
-    // Boa prática: Resetar cor/alinhamento para não afetar outros desenhos
-    draw_set_color(c_white);
-}
+// 3 e 4 (arma e botão de interação) ficam no Draw End: sempre por cima dos móveis

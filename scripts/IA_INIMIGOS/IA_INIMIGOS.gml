@@ -261,7 +261,7 @@ function inimigo_ia_fim_hit() {
     image_blend = c_white;
 }
 
-/// @desc Draw: sombra, corpo (flash branco no hit), "!" e barra de vida
+/// @desc Draw: sombra e corpo (flash branco no hit)
 function inimigo_ia_desenhar() {
     var _esc = abs(image_xscale);
     var _sw = (sombra_largura * _esc) / 50;
@@ -271,8 +271,18 @@ function inimigo_ia_desenhar() {
     if (hit) gpu_set_fog(true, c_white, 0, 0);
     draw_sprite_ext(sprite_index, image_index, x, y + _bob, image_xscale, image_yscale, 0, image_blend, image_alpha);
     if (hit) gpu_set_fog(false, c_white, 0, 0);
+    // "!" e barra de vida ficam em inimigo_desenhar_hud() (Draw End): sempre por cima dos móveis
 
-    if (alerta > 0) {
+}
+
+
+/// @desc Draw End de todo inimigo (obj_par_inimigos): "!" de alerta e barra de vida.
+///       Fica no Draw End para nunca ser coberto por móveis/paredes (que usam depth = -y).
+function inimigo_desenhar_hud() {
+    var _voa = variable_instance_exists(id, "voa") && voa;
+    var _bob = (_voa && variable_instance_exists(id, "fase_voo")) ? sin(current_time * 0.005 + fase_voo) * 2 : 0;
+
+    if (variable_instance_exists(id, "alerta") && alerta > 0) {
         var _ax = x;
         var _ay = bbox_top - 14 + _bob - min(4, (40 - alerta));
         draw_set_color(c_black);
@@ -283,7 +293,7 @@ function inimigo_ia_desenhar() {
         draw_set_color(c_white);
     }
 
-    if (alarm[2] >= 0) {
+    if (alarm[2] >= 0 && variable_instance_exists(id, "max_vida") && max_vida > 0) {
         var _hs = 3;
         var _w = sprite_get_width(spr_hud_vida_inimigo) * _hs;
         var _hx = x - _w / 2;

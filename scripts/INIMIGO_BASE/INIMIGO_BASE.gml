@@ -19,7 +19,7 @@ function scr_inimigo_hit(){
 }
 
 function scr_inimigo_perseguir(){
-    if (variable_instance_exists(id, "sprite_normal")) sprite_index = sprite_normal;
+    if (variable_instance_exists(id, "sprite_normal") && sprite_exists(sprite_normal)) sprite_index = sprite_normal;
     image_speed = 1.5;
     
     if (instance_exists(obj_player)) {
@@ -56,7 +56,7 @@ function scr_inimigo_escolher_estado(){
 
 function scr_inimigo_andar(){
     scr_inimigo_check_player();
-    if (variable_instance_exists(id, "sprite_normal")) sprite_index = sprite_normal;
+    if (variable_instance_exists(id, "sprite_normal") && sprite_exists(sprite_normal)) sprite_index = sprite_normal;
     
     if (distance_to_point(dest_x, dest_y) > veloc) {
         var _dir = point_direction(x, y, dest_x, dest_y);
@@ -71,7 +71,7 @@ function scr_inimigo_andar(){
 
 function scr_inimigo_parado(){
     scr_inimigo_check_player();
-    if (variable_instance_exists(id, "sprite_parado")) sprite_index = sprite_parado;
+    if (variable_instance_exists(id, "sprite_parado") && sprite_exists(sprite_parado)) sprite_index = sprite_parado;
     hveloc = 0;
     vveloc = 0;
 }

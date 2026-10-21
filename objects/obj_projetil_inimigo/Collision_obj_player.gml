@@ -1,7 +1,8 @@
 // feather disable GM2017
 // Mesmo dano/knockback que o toque dos inimigos
 if (other.tomar_dano) {
-    var _dano = dano;
+    var _dano = player_dano_recebido(dano); // defesa e esquiva (scripts/inventario)
+    if (_dano <= 0) exit;
     with (other) {
         global.vida -= _dano;
         empurrar_dir = other.direction;

@@ -49,7 +49,8 @@ for (var _bx = _start_bx; _bx <= _end_bx; _bx++) {
                         switch (_tipo) {
                             case "estrutura":
                                 // feather disable once GM2064
-                                _inst = instance_create_depth(_px, _py, 0, _dados[3], {});
+                                // casas da cidade levam o visual (variante) junto
+                                _inst = instance_create_depth(_px, _py, 0, _dados[3], (array_length(_dados) > 7) ? { variante: _dados[7] } : {});
         // feather ignore GM2064
 								_inst.seed = _seed;
                                 _inst.nome = _dados[5];
@@ -65,6 +66,16 @@ for (var _bx = _start_bx; _bx <= _end_bx; _bx++) {
                                 _inst = instance_create_depth(_px, _py, 0, obj_bicho_ambiente, {});
                                 _inst.sprite_index = _dados[3];
                                 _inst.vel_maxima = _dados[4];
+                                break;
+                            case "humano":
+                                // a variante vai na struct para já existir no Create
+                                _inst = instance_create_depth(_px, _py, -_py, obj_humano_cidade, { variante: _dados[3] });
+                                break;
+                            case "enfeite":
+                                _inst = instance_create_depth(_px, _py, -_py, obj_enfeite_cidade, { tipo: _dados[3] });
+                                break;
+                            case "carro":
+                                _inst = instance_create_depth(_px, _py, -_py, obj_carro_cidade, { variante: _dados[3], dir: _dados[4] });
                                 break;
                             case "monstro":
                                 _inst = instance_create_depth(_px, _py, 0, _dados[3], { 

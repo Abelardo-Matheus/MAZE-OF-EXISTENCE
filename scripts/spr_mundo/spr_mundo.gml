@@ -43,7 +43,9 @@ function recriar_estruturas()
         var _escala_minimapa = _info[6]; 
 
         // O objeto nasce e usa sua PRÓPRIA lógica de escala baseada na seed
-        var _inst = instance_create_depth(_px, _py, 0, _obj, { seed: _seed });
+        var _extra = { seed: _seed };
+        if (array_length(_info) > 7) _extra.variante = _info[7];   // casas da cidade guardam o visual
+        var _inst = instance_create_depth(_px, _py, 0, _obj, _extra);
         
         // Tratamento especial APENAS para o Boss se precisar forçar um sprite diferente do minimapa
         if (_spr != noone && _obj == obj_secondary_boss) { 
@@ -183,8 +185,22 @@ function definir_bioma_do_cluster(_start_bx, _start_by)
 {
     var _id_inicial = string(_start_bx) + "," + string(_start_by);
     
-    // O jogador sempre começa numa floresta
-    if (!ds_map_exists(global.mapa_biomas, "0,0")) global.mapa_biomas[? "0,0"] = "floresta";
+    // O jogador sempre começa numa CIDADE (a casa inicial fica no meio do bloco 0,0).
+    // A cidade cresce para lados aleatórios, então o tamanho/formato muda a cada jogo.
+    if (!ds_map_exists(global.mapa_biomas, "0,0")) {
+        global.mapa_biomas[? "0,0"] = "cidade";
+        var _wx = 0, _wy = 0;
+        repeat (irandom_range(3, 6)) {
+            switch (irandom(3)) {
+                case 0: _wx++; break;
+                case 1: _wx--; break;
+                case 2: _wy++; break;
+                case 3: _wy--; break;
+            }
+            var _wk = string(_wx) + "," + string(_wy);
+            if (!ds_map_exists(global.mapa_biomas, _wk)) global.mapa_biomas[? _wk] = "cidade";
+        }
+    }
 
     // Se o bloco já tem um bioma, ignoramos
     if (ds_map_exists(global.mapa_biomas, _id_inicial)) return;
@@ -273,9 +289,9 @@ function gerenciar_mundo_procedural()
                 break;
 
             case "cidade":
-                gerar_estruturas_para_bloco(_bx, _by, obj_estrutura, irandom_range(4, 10), 300);
-                gerar_estruturas_para_bloco(_bx, _by, obj_poste, irandom_range(3, 6), 200);
-                gerar_estruturas_para_bloco(_bx, _by, obj_par_npc_vendedor_um, 1, 400);
+                // ruas, calçadas, casas animadas, praças, parquinhos e carros (script scr_cidade)
+                gerar_cidade_para_bloco(_bx, _by);
+                gerar_humanos_para_bloco(_bx, _by, irandom_range(7, 12));
                 gerar_monstros_para_bloco(_bx, _by, _meu_bioma, 300); 
                 break;
 
@@ -432,7 +448,16 @@ function gerar_cobertura_cenario(_bx, _by, _obj, _quantidade, _lista_global, _di
                 var _pos_y = _inicio_y + (_j * _tamanho_celula) + random_range(50, _tamanho_celula - 50);
 
                 // PERFORMANCE: Spatial Hashing
-                if (!posicao_conflitante_geracao(_pos_x, _pos_y, _dist_minima)) 
+                // CIDADE: nada de árvore/pedra na rua, faixa ou calçada
+                var _na_rua = false;
+                if (terreno_bioma_em(_pos_x, _pos_y) == "cidade") {
+                    _na_rua = cidade_tipo_em(_pos_x, _pos_y) != CID_MIOLO
+                           || cidade_tipo_em(_pos_x - 70, _pos_y) != CID_MIOLO
+                           || cidade_tipo_em(_pos_x + 70, _pos_y) != CID_MIOLO
+                           || cidade_tipo_em(_pos_x, _pos_y - 90) != CID_MIOLO;
+                }
+
+                if (!_na_rua && !posicao_conflitante_geracao(_pos_x, _pos_y, _dist_minima)) 
                 {
                     var _seed = abs((_pos_x * 73856093) ^ (_pos_y * 19349663));
 
@@ -483,5 +508,42 @@ function gerar_fauna_para_bloco(_bx, _by, _quantidade_tentativas)
         registrar_posicao_geracao(_pos_x, _pos_y);
 
         randomize(); 
+    }
+}
+
+
+// ============================================================================
+// HUMANOS DA CIDADE (obj_humano_cidade)
+// Gera os dados virtuais; o obj_otimizador cria a instância quando a câmera chega perto.
+// Cada humano nasce num ponto do bioma "cidade" e passeia sem sair dele.
+// ============================================================================
+#macro HUMANOS_VARIANTES 9   // quantidade de visuais em obj_humano_cidade (Create)
+
+function gerar_humanos_para_bloco(_bx, _by, _quantidade)
+{
+    var _bloco_id = "humanos_" + string(_bx) + "," + string(_by);
+    if (ds_map_exists(global.blocos_gerados, _bloco_id)) return;
+    ds_map_add(global.blocos_gerados, _bloco_id, true);
+
+    var _inicio_x = _bx * global.tamanho_bloco;
+    var _inicio_y = _by * global.tamanho_bloco;
+    var _criados = 0;
+    var _tentativas = 0;
+
+    while (_criados < _quantidade && _tentativas < _quantidade * 6)
+    {
+        _tentativas++;
+        var _pos_x = _inicio_x + random_range(80, global.tamanho_bloco - 80);
+        var _pos_y = _inicio_y + random_range(80, global.tamanho_bloco - 80);
+
+        // Só nasce dentro da cidade (fronteira ondulada) e longe do centro das casas
+        if (terreno_bioma_em(_pos_x, _pos_y) != "cidade") continue;
+        if (posicao_conflitante_geracao(_pos_x, _pos_y, 140)) continue;
+        if (cidade_tipo_em(_pos_x, _pos_y) == CID_RUA) continue;   // não nasce no meio da rua
+
+        var _seed = irandom(999999);
+        var _dados = [_pos_x, _pos_y, _seed, irandom(HUMANOS_VARIANTES - 1)];
+        registrar_entidade_no_bloco(_bx, _by, "humano", _dados);
+        _criados++;
     }
 }

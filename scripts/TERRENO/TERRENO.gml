@@ -93,8 +93,13 @@ function terreno_id(_nome) {
 // ----------------------------------------------------------------------------
 // Ruido suave (value noise) deterministico
 // ----------------------------------------------------------------------------
+/// @desc Número pseudoaleatório em [0, 1) para o ponto inteiro (ix, iy) e a semente s.
+///       ATENÇÃO: no GML frac() de número negativo é NEGATIVO (frac(-3.4) = -0.4). Como sin()
+///       é negativo metade das vezes, sem a correção abaixo o ruído ia de -1 a 1 e a
+///       "temperatura" ficava perto de 0 -> quase o mundo inteiro virava neve.
 function terreno_hash(_ix, _iy, _s) {
-    return frac(sin(_ix * 127.1 + _iy * 311.7 + _s * 74.7) * 43758.5453);
+    var _v = frac(sin(_ix * 127.1 + _iy * 311.7 + _s * 74.7) * 43758.5453);
+    return (_v < 0) ? _v + 1 : _v;
 }
 
 function terreno_ruido(_x, _y, _s) {
@@ -117,7 +122,7 @@ function terreno_ruido(_x, _y, _s) {
 // ----------------------------------------------------------------------------
 function terreno_escolher_bioma(_bx, _by) {
     terreno_inicializar();
-    if (_bx == 0 && _by == 0) return "floresta"; // comeco tranquilo
+    if (_bx == 0 && _by == 0) return "cidade"; // o jogador sempre começa numa cidade
 
     var _s = global.semente_terreno;
     var _temp = terreno_ruido(_bx / 6 + 0.37, _by / 6 + 0.71, _s) * 0.75
@@ -126,16 +131,22 @@ function terreno_escolher_bioma(_bx, _by) {
               + terreno_ruido(_bx / 2.1, _by / 2.1, _s + 57) * 0.25;
     var _sorte = random(1);
 
-    if (_sorte < 0.10) return "cidade";       // cidades aparecem em qualquer clima
-    if (_sorte < 0.14) return "cristalino";   // raro
+    if (_sorte < 0.10) return "cidade";       // cidades aparecem em qualquer clima (~10%)
+    if (_sorte < 0.16) return "cristalino";   // raro (~6%)
 
-    if (_temp < 0.36) return "neve";
-    if (_temp > 0.64) return (_umid < 0.5) ? "deserto" : "vulcanico";
+    // O ruído fica concentrado perto de 0.5 (20% dos valores < 0.34 e 20% > 0.65),
+    // por isso os cortes ficam nessas faixas. Com isso cada bioma sai com uns 8~17%:
+    //   frio (< 0.34)  -> neve
+    //   quente (> 0.65) -> deserto (seco) ou vulcânico (úmido)
+    //   ameno          -> pela umidade: pântano > floresta negra > floresta > prado > vazia
+    // ATENÇÃO: "< baixo" para neve e "> alto" para quente. Inverter (ex.: < 0.66) faz quase tudo virar neve.
+    if (_temp < 0.34) return "neve";
+    if (_temp > 0.65) return (_umid < 0.5) ? "deserto" : "vulcanico";
 
     if (_umid > 0.64) return "pantano";
-    if (_umid > 0.55) return "floresta_negra";
-    if (_umid > 0.42) return "floresta";
-    if (_umid > 0.34) return "prado";
+    if (_umid > 0.56) return "floresta_negra";
+    if (_umid > 0.46) return "floresta";
+    if (_umid > 0.37) return "prado";
     return "vazia";
 }
 
@@ -223,6 +234,7 @@ function terreno_construir_regiao(_rx, _ry) {
     // mantem o alfa da surface opaco mesmo desenhando sombras semi-transparentes
     gpu_set_blendmode_ext_sepalpha(bm_src_alpha, bm_inv_src_alpha, bm_one, bm_inv_src_alpha);
 
+    var _id_cidade = terreno_id("cidade");
     var _viz = array_create(4, 0);
     var _diag = array_create(4, 0);
 
@@ -239,9 +251,13 @@ function terreno_construir_regiao(_rx, _ry) {
             // chao base (pedaco da textura continua)
             draw_sprite_part(spr_terreno, _b, _mx * _t, _my * _t, _t, _t, _px, _py);
 
+            // cidade: ruas, calcadas e gramados (script scr_cidade)
+            var _sem_deco = false;
+            if (_b == _id_cidade) _sem_deco = cidade_desenhar_tile(_gx, _gy, _px, _py, _mx, _my);
+
             // decoracao (deterministica por tile)
             var _h = abs((_gx * 73856093) ^ (_gy * 19349663));
-            if ((_h mod 100) < 35) {
+            if (!_sem_deco && (_h mod 100) < 35) {
                 var _d = (_h div 100) mod 8;
                 draw_sprite_part(spr_terreno, _b, (_d mod 4) * _t, 128 + (_d div 4) * _t, _t, _t, _px, _py);
             }

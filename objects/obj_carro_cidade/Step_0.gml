@@ -1,0 +1,85 @@
+// feather disable GM2017
+depth = -y;
+
+// Pausas do jogo (inventário aberto / tela de level up)
+if (instance_exists(obj_inventario) && obj_inventario.is_open) exit;
+if (variable_global_exists("level_up") && global.level_up) exit;
+
+var _dx = cidade_dx(dir);
+var _dy = cidade_dy(dir);
+
+// ---------- tem alguém na frente? ----------
+var _alc = (dir == 1 || dir == 2) ? meio + 40 : 90;          // alcance da "visão"
+var _ax = x + _dx * _alc, _ay = y + _dy * _alc - 24;
+var _x0 = _ax - 46, _x1 = _ax + 46, _y0 = _ay - 34, _y1 = _ay + 34;
+var _jogador = collision_rectangle(_x0, _y0, _x1, _y1, obj_player, false, true) != noone;
+var _bloq = _jogador;
+if (!_bloq && parado_timer < 240) _bloq = collision_rectangle(_x0, _y0, _x1, _y1, obj_humano_cidade, false, true) != noone;
+if (!_bloq && parado_timer < 150) {
+    // outro carro na mesma faixa, logo à frente
+    var _eu = id;
+    with (obj_carro_cidade) {
+        if (id == _eu) continue;
+        var _rx = x - _eu.x, _ry = y - _eu.y;
+        var _frente = _rx * _dx + _ry * _dy;
+        var _lado = abs(_rx * _dy) + abs(_ry * _dx);
+        if (_frente > 0 && _frente < _eu.meio + meio + 30 && _lado < 50) { _bloq = true; break; }
+    }
+}
+
+if (_bloq) { vel = max(0, vel - 0.25); parado_timer++; }
+else       { vel = min(vel_max, vel + 0.05); parado_timer = 0; }
+
+// buzina quando o jogador fica parado na frente
+if (_jogador && vel == 0) {
+    buzina_timer++;
+    if (buzina_timer == 50) balao = 70;
+} else buzina_timer = 0;
+if (balao > 0) balao--;
+
+// ---------- anda ----------
+x += _dx * vel;
+y += _dy * vel;
+
+// fim da cidade logo à frente (borda ondulada): meia-volta
+if (terreno_bioma_em(x + _dx * 120, y + _dy * 120) != "cidade") meia_volta();
+
+// ---------- cruzamentos ----------
+var _c = cidade_cruzamento(x, y);
+if (is_struct(_c)) {
+    var _k = string(_c.j) + "," + string(max(_c.desce, _c.sobe));
+    if (_k != inter_atual && virar_para == -1) {
+        inter_atual = _k;
+        cruz = _c;
+        virar_para = escolher_saida(_c);
+        if (virar_para == dir) virar_para = -1;
+        else if (virar_para == cidade_oposta(dir)) meia_volta();
+    }
+} else if (dir == 0 || dir == 3) {
+    // rua vertical acabando (avenida desalinhada / calçada à frente): meia-volta
+    var _fr = cidade_tipo_em(x, y + cidade_dy(dir) * 110);
+    if (_fr == CID_CALCADA || _fr == CID_MIOLO) meia_volta();
+}
+
+// executa a curva quando chega na faixa da nova direção
+if (virar_para != -1) {
+    var _alvo = faixa_de(virar_para);
+    var _chegou = false;
+    switch (dir) {
+        case 2: _chegou = (x >= _alvo); break;
+        case 1: _chegou = (x <= _alvo); break;
+        case 0: _chegou = (y >= _alvo); break;
+        case 3: _chegou = (y <= _alvo); break;
+    }
+    if (_chegou) {
+        if (virar_para == 0 || virar_para == 3) x = _alvo; else y = _alvo;
+        dir = virar_para;
+        virar_para = -1;
+    }
+}
+
+// ---------- visual ----------
+if (vel > 0.2) anim = (anim + vel * 0.12) mod 2;
+image_index = dir * 2 + floor(anim);
+light_offset_x = cidade_dx(dir) * 80;
+light_offset_y = cidade_dy(dir) * 65 - 30;

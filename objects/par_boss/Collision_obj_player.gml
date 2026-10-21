@@ -9,6 +9,9 @@ var _dano_causado = dano;
 // 1. Verifica se o alvo (Player) pode tomar dano
 // Certifique-se que o player tem a variável "tomar_dano" no Create
 if (other.tomar_dano) { 
+    // Defesa e esquiva dos equipamentos (scripts/inventario)
+    _dano_causado = player_dano_recebido(_dano_causado);
+    if (_dano_causado <= 0) exit;
     
     // Sugestão: Em vez de 40 fixo, use uma variável do inimigo, ex: "meu_dano"
     

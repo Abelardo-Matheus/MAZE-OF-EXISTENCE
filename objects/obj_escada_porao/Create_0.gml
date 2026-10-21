@@ -1,34 +1,9 @@
 // feather disable GM2017
-image_xscale = global._cell_size / sprite_get_width(sprite_index)*1.5;
-image_yscale = global._cell_size / sprite_get_height(sprite_index)*1.5;
-
-if(!global.entrou){
-if(global.direcao_escada_porao == 0){
-	image_angle = 90;
-}if(global.direcao_escada_porao == 1){
-	image_angle = 270;
-}if(global.direcao_escada_porao == 2){
-	image_angle = 180;
-}if(global.direcao_escada_porao == 3){
-	image_angle = 0;
-}
-}else{
-if(global.direcao_escada_porao == 1){
-	image_angle = 90;
-}if(global.direcao_escada_porao == 0){
-	image_angle = 270;
-}if(global.direcao_escada_porao == 3){
-	image_angle = 180;
-}if(global.direcao_escada_porao == 2){
-	image_angle = 0;
-	
-}
-}
-
-global.sala_entrada = global.current_sala;
-sala_ida = global.salas_escuras[0];
-direcao = global.direcao_escada;
-angulo = 0;
-
-
-
+/// @desc Escada fundos <-> porão (dados e lógica em spr_fase_criation > região Escada)
+sprite_index = spr_escada_porao_top;   // frame 0 = descendo (fundos) | 1 = subindo (porão)
+image_speed  = 0;
+image_xscale = global._cell_size / 64;
+image_yscale = global._cell_size / 64;
+image_angle  = 0;
+destino = undefined; // [x, y] da sala do outro lado (preenchido por recriar_escada_na_sala_atual)
+sobe = false;

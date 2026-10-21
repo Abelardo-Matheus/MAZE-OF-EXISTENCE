@@ -2,7 +2,7 @@
 image_xscale = escala;
 image_yscale = escala;
 script_execute(state);
-depth = -y;
+depth = profundidade_pe(bbox_bottom); // mesma regra do player e dos móveis
 
 
 if (vida <= 0) {

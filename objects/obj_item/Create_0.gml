@@ -1,4 +1,8 @@
 // feather disable GM2017
+// Dados do item no chão (preenchidos por item_criar_no_mundo em scripts/itens_geral)
+item_id = "";     // ID da database (global.itens_db)
+nivel = 1;        // nível do equipamento
+passivas = [];    // adesivos colados
 quantidade = -1;
 nome = "";
 descricao = "";
@@ -14,12 +18,4 @@ tipo = -1;
 ind = -1;
 profundidade = -1;
 preco = -1;
-
-
-
-
-
-
-
-
-
+image_speed = 0;

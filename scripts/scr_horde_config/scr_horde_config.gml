@@ -80,6 +80,8 @@ function horde_on_player_hit(_player, _dano, _from_x, _from_y) {
     var _ok = false;
     with (_player) {
         if (!tomar_dano) break;
+        _dano = player_dano_recebido(_dano); // defesa e esquiva (scripts/inventario)
+        if (_dano <= 0) break;
         _ok = true;
         global.vida -= _dano;
         empurrar_dir = (x == _from_x && y == _from_y) ? 0 : point_direction(_from_x, _from_y, x, y);

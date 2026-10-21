@@ -2,6 +2,12 @@
 depth = -y
 
 // ==========================================
+// VENTO: inclina a arvore conforme o vento global (scr_vento)
+// ==========================================
+vento_incl = lerp(vento_incl, vento_inclinacao(x, vento_fase), 0.2);
+image_index = variante * VENTO_POSES + vento_pose(vento_incl);
+
+// ==========================================
 // EFEITO DE PISCAR (Vermelho)
 // ==========================================
 if (tempo_piscar > 0) {

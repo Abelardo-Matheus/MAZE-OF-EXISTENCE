@@ -1,0 +1,162 @@
+================================================================================
+PROBLEMAS IDENTIFICADOS - INVESTIGAÇÃO MANUAL NECESSÁRIA
+================================================================================
+
+⚠️ Estes problemas requerem análise mais profunda pelo desenvolvedor
+
+================================================================================
+1. FUNÇÕES DUPLICADAS (PRIORIDADE ALTA)
+================================================================================
+
+Arquivo: scripts/spr_fase_criation/spr_fase_criation.gml
+
+Função 1: recriar_inimigos_na_sala_atual() - Linha ~745
+Função 2: recriar_inimigos_na_sala_atual_alet() - Linha ~812
+
+AÇÕES RECOMENDADAS:
+  1. Comparar as duas funções linha por linha
+  2. Se forem idênticas: remover uma
+  3. Se diferentes: renomear com clareza (ex: _aleatorio, _random)
+  4. Documentar a diferença de comportamento
+
+IMPACTO: Redução de manutenção, menos bugs por inconsistência
+
+================================================================================
+2. FUNÇÕES NÃO CHAMADAS (PRIORIDADE ALTA)
+================================================================================
+
+Arquivo: scripts/spr_fase_criation/spr_fase_criation.gml
+
+Função: conta_salas_adjacentes() - Linha 1007
+Função: gera_salas_procedurais() - Linha 1024
+
+STATUS: Nunca referenciadas no código
+
+INVESTIGAR:
+  □ Buscar referências usando Ctrl+H no seu editor (Search Replace)
+  □ Se não encontrar nada: remover ambas
+  □ Se encontrar uso condicional (comentado): decidir se restaurar
+
+IMPACTO: Se não usadas, -40 linhas de código morto
+
+================================================================================
+3. MAGIC NUMBERS (PRIORIDADE MÉDIA)
+================================================================================
+
+Arquivo: scripts/inventario/inventario.gml
+Linha: 251
+
+Código problemático:
+  var _total_slots = 18; // 6x3, ajuste se seu inventário for maior
+
+SOLUÇÃO RECOMENDADA:
+
+Criar novo script ou adicionar a um existente:
+
+  #macro INVENTORY_TOTAL_SLOTS 18
+  #macro INVENTORY_EQUIP_SLOTS 3
+  
+Depois substituir todas as ocorrências:
+  
+  var _total_slots = INVENTORY_TOTAL_SLOTS;
+  var _equip_slots = INVENTORY_EQUIP_SLOTS;
+
+BENEFÍCIO: Mudança fácil em um único lugar
+
+================================================================================
+4. VALIDAÇÕES FALTANDO (PRIORIDADE MÉDIA)
+================================================================================
+
+Função: criar_drop_especifico()
+Localização: inventario.gml - Linha ~176
+
+PROBLEMA: Validação de _quantidade mas falta validação de raridade range
+
+SOLUÇÃO:
+  if (_quantidade <= 0) return;
+  if (_raridade < 0 || _raridade > 100) _raridade = 50; // Default
+
+Status: ✅ JÁ FOI CORRIGIDA
+
+================================================================================
+5. VARIÁVEIS GLOBAIS NÃO UTILIZADAS (PRIORIDADE BAIXA)
+================================================================================
+
+Investigar em: ALL_GLOBAL.gml
+
+Variáveis suspeitas:
+  - global.armamento (declarada linha 14, nunca usada no código principal)
+  - Verifique se são realmente necessárias
+  
+COMANDO PARA VERIFICAR:
+  Ctrl+H → Search: "global.armamento"
+  Se apenas 1 resultado (a declaração): pode remover
+
+================================================================================
+6. FUNÇÕES COM RETORNO INCONSISTENTE (PRIORIDADE BAIXA)
+================================================================================
+
+Arquivo: inventario.gml
+
+Funções verificadas:
+  ✅ inventory_remove_item() - Agora retorna bool (CORRIGIDA)
+  
+Funções a verificar:
+  □ inventory_find_empty_slot() - Retorna int ou -1 (consistente)
+  □ inventory_drop_item() - Sem retorno (OK)
+  □ inventory_use_item() - Sem retorno (OK)
+
+Status: Parece OK, verificar como chamar essas funções
+
+================================================================================
+7. ARRAYS INICIALIZADOS VAZIOS (PRIORIDADE BAIXA)
+================================================================================
+
+Arquivo: spr_fase_criation.gml
+Linhas: 24-25
+
+✅ CORRIGIDO: Agora com documentação
+
+Mas investigar se realmente precisam estar vazios:
+  global.sala_jardim = [];
+  global.templos_salas_pos = [];
+
+Sugestão: Verificar se devem ser preenchidos durante inicialização
+
+================================================================================
+RESUMO - O QUE FAZER
+================================================================================
+
+FASE 1 - HOJE (Crítico):
+  1. Testar sistema de raridade de drop (bug corrigido)
+  2. Testar stats de equipamento (reset corrigido)
+  3. Comparar funções duplicadas de inimigos
+
+FASE 2 - ESTA SEMANA:
+  1. Remover funções não chamadas se confirmado
+  2. Criar macros para magic numbers
+  3. Revisar ALL_GLOBAL.gml
+
+FASE 3 - PRÓXIMA SEMANA:
+  1. Refatorar poderes_lista.gml (345 linhas)
+  2. Analisar GUI.gml (537 linhas)
+  3. Padronizar toda nomenclatura
+
+================================================================================
+CHECKLIST DE VALIDAÇÃO
+================================================================================
+
+Após fazer as correções, verificar:
+
+□ Testar criação de items com raridade 50% → deve dropar ~50%
+□ Testar equipar/desequipar items → stats devem atualizar corretamente
+□ Testar remover items do inventário → deve funcionar sem erros
+□ Verificar logs (show_debug_message) para erros ao inicializar
+□ Testar geração de inimigos com diferentes levels
+□ Testar drop de items específicos
+
+================================================================================
+Arquivo gerado: 01/09/2026
+Última análise: Código completo de MAZE OF EXISTENCE
+Status: Pronto para ação
+================================================================================

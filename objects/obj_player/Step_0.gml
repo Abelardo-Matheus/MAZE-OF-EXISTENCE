@@ -1,6 +1,6 @@
 // feather disable GM2017
 /// @description Lógica Principal (Step) ORGANIZADA
-depth = -y;
+depth = profundidade_pe(bbox_bottom); // pé do player: passa atrás/na frente dos móveis (scr_casa_moveis)
 // ========================================================
 // 1. INPUTS DE SISTEMA (Abrir/Fechar Menus)
 // ========================================================
@@ -138,14 +138,14 @@ var _item_perto = instance_nearest(x, y, obj_item);
 var _npc = instance_nearest(x, y, obj_par_npc_vendedor_um);
 desenha_botao = false; // Reseta a cada frame
 
-if (_item_perto != noone && distance_to_object(_item_perto) <= 25 && !global.inventario_cheio) {
+if (_item_perto != noone && distance_to_object(_item_perto) <= 25) {
     desenha_botao = true;
     if (keyboard_check_pressed(ord("F"))) {
-        // ... (Seu código de adicionar ao inventário aqui) ...
-        // Para economizar espaço, não colei tudo, mas mantenha sua lógica de coleta aqui.
-        adicionar_item_invent(_item_perto.image_index, _item_perto.quantidade, _item_perto.sprite_index, _item_perto.nome, _item_perto.descricao, _item_perto.sala_x, _item_perto.sala_y, _item_perto.pos_x, _item_perto.pos_y, _item_perto.dano, _item_perto.armadura, _item_perto.velocidade, _item_perto.cura, _item_perto.tipo, _item_perto.ind, _item_perto.preco);
-        coletar_item(_item_perto.pos_x, _item_perto.pos_y, global.current_sala);
-        instance_destroy(_item_perto);
+        // Coleta pelo sistema novo de itens (ID, nível e adesivos vêm junto)
+        if (inventory_pegar_instancia(_item_perto)) {
+            coletar_item(_item_perto.pos_x, _item_perto.pos_y, global.current_sala);
+            instance_destroy(_item_perto);
+        }
         desenha_botao = false;
     }
 }

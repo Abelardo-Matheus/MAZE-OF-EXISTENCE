@@ -1,5 +1,5 @@
 // feather disable GM2017
-depth = -y;
+depth = profundidade_pe(bbox_bottom); // mesma regra do player e dos móveis
 // HITBOX: a máscara fica fixa no sprite de andar. Antes ela trocava junto com a animação
 // (andar/parado têm bbox diferentes), e a hitbox "pulava" de tamanho.
 if (sprite_exists(sprite_normal) && mask_index != sprite_normal) mask_index = sprite_normal;

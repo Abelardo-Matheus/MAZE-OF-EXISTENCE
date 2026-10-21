@@ -54,4 +54,7 @@ function recalculate_player_stats() {
     global.ataque = _new_stats.ataque;
     global.speed_player = _new_stats.speed_player;
     global.vida_max = _new_stats.vida_max;
+
+    // Soma equipamentos, adesivos e buffs do inventário (scripts/inventario)
+    equip_aplicar_pos_skill();
 }

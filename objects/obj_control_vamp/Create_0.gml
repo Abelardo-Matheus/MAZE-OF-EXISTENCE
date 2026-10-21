@@ -24,6 +24,10 @@ alarm[0] = 0;
 inicializar_tudo();
 
 
+// --- Primeiro spawn: na calçada, na porta da casa inicial da cidade ---
+// (feito no 1º Step, quando o obj_player com certeza já existe)
+spawn_inicial_pendente = !global.sair;
+
 // --- Lógica de Retorno (Transição de Sala) ---
 // Verifica se o jogador está "saindo" de um interior para este mapa
 if (global.sair) 

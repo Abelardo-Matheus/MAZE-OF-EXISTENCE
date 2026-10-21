@@ -16,6 +16,14 @@ if (!variable_global_exists("enemy_id_counter"))
     global.enemy_id_counter = 0;
 }
 
+// Primeiro spawn: sempre no mesmo lugar, na frente da casa inicial (scr_cidade)
+if (spawn_inicial_pendente && instance_exists(obj_player)) {
+    spawn_inicial_pendente = false;
+    var _sx = cidade_spawn_x(), _sy = cidade_spawn_y();
+    with (obj_player) { x = _sx; y = _sy; }
+    if (instance_exists(obj_camera)) with (obj_camera) { x = _sx; y = _sy; }
+}
+
 // Debug: Clique do Mouse
 if (mouse_check_button_pressed(mb_left)) 
 {

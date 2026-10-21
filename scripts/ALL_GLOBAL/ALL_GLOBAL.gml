@@ -26,7 +26,10 @@ enum ARMAMENTOS {
 
 enum INFOS {
     ITEM, QUANTIDADE, SPRITE, NOME, DESCRICAO, SALA_X, SALA_Y, POS_X, POS_Y,
-    DANO, ARMADURA, VELOCIDADE, CURA, TIPO, IMAGE_IND, PRECO, HEIGHT
+    DANO, ARMADURA, VELOCIDADE, CURA, TIPO, IMAGE_IND, PRECO,
+    NIVEL,    // nível do equipamento (1..ITEM_NIVEL_MAX)
+    PASSIVAS, // array com os IDs das passivas (adesivos) coladas
+    HEIGHT
 }
 
 // Enums de IDs de Itens
@@ -71,8 +74,8 @@ global.level_player = 1;      // Nível base do jogador
 global.mata_fantasma = false;
 global.current_level = 1;
 global.armadura_bebe = 0;
-global.speed_player_base = 10;
-global.speed_player = 10;
+global.speed_player_base = 400;
+global.speed_player = 400;
 global.encontrou_sala_escura = false;
 global.xp = 0;
 global.tamanho_player = 1;
@@ -103,7 +106,7 @@ global.timer_running = true;
 // --- NOVAS VARIÁVEIS DO SISTEMA DE SKILLS ---
 global.player_area_mod = 1.0;
 global.player_cooldown_mod = 1.0;
-global.speed_player_base = 4.0; // Referência para as passivas de velocidade
+global.speed_player_base = 40.0; // Referência para as passivas de velocidade
 
 // Inicializa catálogo de itens se necessário
 criar_lista_itens_padronizados();
