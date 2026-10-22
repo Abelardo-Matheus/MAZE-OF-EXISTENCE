@@ -15,19 +15,21 @@ function fim_animation(){
 /// @desc Captura os inputs do jogador de forma padronizada
 function obter_inputs_jogador() {
     return {
-        esquerda: keyboard_check(ord("A")) || keyboard_check(vk_left),
-        direita:  keyboard_check(ord("D")) || keyboard_check(vk_right),
-        cima:     keyboard_check(ord("W")) || keyboard_check(vk_up),
-        baixo:    keyboard_check(ord("S")) || keyboard_check(vk_down),
-        shift:    keyboard_check(vk_shift),
+        // teclas configuráveis (scripts/SAVES -> tecla_segurando); as setas sempre funcionam também
+        esquerda: tecla_segurando("esquerda") || keyboard_check(vk_left),
+        direita:  tecla_segurando("direita")  || keyboard_check(vk_right),
+        cima:     tecla_segurando("cima")     || keyboard_check(vk_up),
+        baixo:    tecla_segurando("baixo")    || keyboard_check(vk_down),
+        shift:    tecla_segurando("correr"),
         mouse_esq_press: mouse_check_button_pressed(mb_left),
         mouse_esq_rel:   mouse_check_button_released(mb_left),
         mouse_dir_press: mouse_check_button_pressed(mb_right),
-        interagir: keyboard_check_pressed(ord("F"))
+        interagir: tecla_apertou("interagir")
     };
 }
 
 /// @desc Objetos do mundo que bloqueiam o player pela MÁSCARA DO PÉ (tronco, base da pedra/casa).
+///       Carros da cidade também bloqueiam: ver colisao_carro_em() (retângulo do pé do carro).
 ///       Eles não usam mais `solid`: o solid do GameMaker devolve o player inteiro pra posição
 ///       anterior (sem deslizar) e, como a máscara muda com o vento/balanço, prendia e puxava o player.
 function colisao_obstaculos_player() {
@@ -70,7 +72,25 @@ function colisao_bloqueia(_x, _y, _obj, _ignorar, _sem_parede) {
         ds_list_destroy(_l);
         if (_bate) return true;
     }
+    if (colisao_carro_em(_x, _y)) return true;
     return false;
+}
+
+/// @desc true se quem chama (player/inimigo), movido para (_x, _y), entra no "pé" de um carro da cidade.
+///       Usa o retângulo do carro no chão (obj_carro_cidade.hitbox), não a máscara do sprite (que inclui
+///       o teto). Carro que já está em cima (ex.: acabou de atropelar) é ignorado, pra deixar sair.
+function colisao_carro_em(_x, _y) {
+    if (!instance_exists(obj_carro_cidade)) return false;
+    var _ox = _x - x, _oy = _y - y;
+    var _l0 = bbox_left + _ox, _t0 = bbox_top + _oy, _r0 = bbox_right + _ox, _b0 = bbox_bottom + _oy;
+    var _l = bbox_left, _t = bbox_top, _r = bbox_right, _b = bbox_bottom;
+    var _bate = false;
+    with (obj_carro_cidade) {
+        var _hb = hitbox();
+        if (rectangle_in_rectangle(_l, _t, _r, _b, _hb[0], _hb[1], _hb[2], _hb[3]) != 0) continue; // já está dentro
+        if (rectangle_in_rectangle(_l0, _t0, _r0, _b0, _hb[0], _hb[1], _hb[2], _hb[3]) != 0) { _bate = true; break; }
+    }
+    return _bate;
 }
 
 /// @desc Executa movimentação com colisão pixel a pixel, deslizando em paredes e obstáculos.

@@ -1,4 +1,5 @@
 // feather disable GM2017
+if (!visible) exit; // dormindo fora da tela (scr_desempenho -> desempenho_cull)
 /// @desc Entrada (F) e transparência vêm do obj_estrutura; aqui só a animação
 event_inherited();
 

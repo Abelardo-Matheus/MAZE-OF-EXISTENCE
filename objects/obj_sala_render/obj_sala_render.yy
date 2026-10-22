@@ -10,8 +10,8 @@
   "managed": true,
   "overriddenProperties": [],
   "parent": {
-    "name": "OBJETOS",
-    "path": "folders/Objects/FASE_BEBE_ALL/OBJETOS.yy",
+    "name": "CONTROLES",
+    "path": "folders/Objects/CONTROLES.yy",
   },
   "parentObjectId": null,
   "persistent": false,

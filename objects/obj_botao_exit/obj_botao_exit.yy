@@ -9,7 +9,7 @@
   "overriddenProperties": [],
   "parent": {
     "name": "MENU",
-    "path": "folders/Objects/FASE_BEBE_ALL/MENU.yy",
+    "path": "folders/Objects/INTERFACE/MENU.yy",
   },
   "parentObjectId": {
     "name": "obj_par_botoes_menu",

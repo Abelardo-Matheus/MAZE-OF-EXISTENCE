@@ -69,3 +69,79 @@ function desenha_barra_vida() {
     draw_set_color(c_black);
     draw_set_alpha(1);
 }
+
+/// @desc Estamina como uma bolinha (anel) ao lado do player: 360° cheia -> 0° vazia.
+///       Chamar no Draw End do obj_player. Some devagar quando enche; cansado = vermelho pulsando.
+function desenha_estamina_bolinha() {
+    var _pct = clamp(global.estamina / max(1, global.max_estamina), 0, 1);
+    var _cansado = variable_global_exists("cansado") && global.cansado;
+    // filhos do obj_player com Create próprio (ex.: obj_player_tutorial) não criam a variável
+    if (!variable_instance_exists(id, "estamina_alfa")) estamina_alfa = 0;
+
+    // aparece quando gasta, some ~1 s depois de encher
+    if (_pct < 1 || _cansado) estamina_alfa = min(1, estamina_alfa + 0.15);
+    else                      estamina_alfa = max(0, estamina_alfa - 0.03);
+    if (estamina_alfa <= 0) exit;
+
+    var _cx = x + 28;          // ao lado direito do player
+    var _cy = y - 36;
+    var _ro = 10;              // raio de fora
+    var _ri = 6;               // raio de dentro (anel)
+    var _a  = estamina_alfa;
+
+    // cor: verde (cheia) -> amarelo -> vermelho (vazia); cansado pisca vermelho
+    var _cor = (_pct > 0.5) ? merge_color(c_yellow, make_color_rgb(90, 220, 90), (_pct - 0.5) * 2)
+                            : merge_color(c_red, c_yellow, _pct * 2);
+    if (_cansado) _cor = merge_color(c_red, make_color_rgb(120, 0, 0), 0.5 + 0.5 * sin(current_time * 0.012));
+
+    // fundo
+    draw_set_alpha(_a * 0.6);
+    draw_set_color(c_black);
+    draw_circle(_cx, _cy, _ro + 2, false);
+    draw_set_alpha(_a * 0.35);
+    draw_set_color(_cansado ? make_color_rgb(90, 0, 0) : c_dkgray);
+    draw_circle(_cx, _cy, _ro, false);
+
+    // arco: começa no topo e vai no sentido horário (360° = cheia, 0° = vazia)
+    if (_pct > 0) {
+        var _ang = 360 * _pct;
+        var _n = max(2, ceil(36 * _pct));
+        draw_primitive_begin(pr_trianglestrip);
+        for (var _i = 0; _i <= _n; _i++) {
+            var _d = 90 - _ang * (_i / _n);
+            draw_vertex_color(_cx + lengthdir_x(_ro, _d), _cy + lengthdir_y(_ro, _d), _cor, _a);
+            draw_vertex_color(_cx + lengthdir_x(_ri, _d), _cy + lengthdir_y(_ri, _d), _cor, _a);
+        }
+        draw_primitive_end();
+    }
+
+    // miolo escuro (deixa o anel bem visível)
+    draw_set_alpha(_a * 0.8);
+    draw_set_color(c_black);
+    draw_circle(_cx, _cy, _ri - 1, false);
+
+    draw_set_alpha(1);
+    draw_set_color(c_white);
+}
+
+/// @desc Força do vento (0..100) e direção no topo da tela, embaixo do relógio (Draw GUI)
+function desenha_vento_hud() {
+    if (!variable_global_exists("vento") || !is_struct(global.vento)) exit;
+    var _f = vento_forca_100();
+    var _txt = "Vento " + string(_f) + (global.vento.dir > 0 ? " >>" : " <<");
+    var _cor = (_f > VENTO_LIMIAR_EMPURRAO) ? make_color_rgb(255, 170, 80) : make_color_rgb(200, 230, 255);
+    draw_set_font(fnt_status);
+    draw_set_halign(fa_center);
+    draw_set_valign(fa_top);
+    draw_set_color(_cor); // cor do texto (o contorno é preto)
+    draw_text_colour_outline_escalado(display_get_gui_width() / 2, 58, _txt, 3, c_black, 7, 30, 400, 1, 1);
+    // evento de clima (Chuva, Tempestade!, Nevasca!, FURACÃO!...)
+    var _ev = clima_nome();
+    if (_ev != "") {
+        var _pisca = (global.clima.evento == "furacao" && (current_time div 300) mod 2 == 0);
+        draw_set_color(_pisca ? c_red : make_color_rgb(255, 230, 120));
+        draw_text_colour_outline_escalado(display_get_gui_width() / 2, 90, _ev, 3, c_black, 7, 30, 400, 1, 1);
+    }
+    draw_set_color(c_white);
+    draw_set_halign(fa_left);
+}

@@ -5,7 +5,7 @@
   "isCompatibility": false,
   "isDnD": false,
   "parent": {
-    "name": "GUI",
-    "path": "folders/Scripts/GUI.yy",
+    "name": "MUNDO",
+    "path": "folders/Scripts/MUNDO.yy",
   },
 }

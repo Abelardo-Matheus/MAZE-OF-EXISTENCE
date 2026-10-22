@@ -1,0 +1,36 @@
+Importe cada PNG na IDE: Sprites > Create > Import (Import Strip Image quando tiver frames).
+Nome do sprite = nome do arquivo.
+
+spr_cachorro_idle          4 frames 64x64  origem 32,44 (pés)
+spr_cachorro_walk          4 frames 64x64  origem 32,44 (pés)
+spr_cachorro_attack        4 frames 64x64  origem 32,44 (pés)
+spr_cachorro_icon          1 frame  32x32  origem 16,16
+spr_gato_idle              4 frames 64x64  origem 32,44 (pés)
+spr_gato_walk              4 frames 64x64  origem 32,44 (pés)
+spr_gato_attack            4 frames 64x64  origem 32,44 (pés)
+spr_gato_icon              1 frame  32x32  origem 16,16
+spr_coelho_idle            4 frames 64x64  origem 32,44 (pés)
+spr_coelho_walk            4 frames 64x64  origem 32,44 (pés)
+spr_coelho_attack          4 frames 64x64  origem 32,44 (pés)
+spr_coelho_icon            1 frame  32x32  origem 16,16
+spr_tartaruga_idle         4 frames 64x64  origem 32,44 (pés)
+spr_tartaruga_walk         4 frames 64x64  origem 32,44 (pés)
+spr_tartaruga_attack       4 frames 64x64  origem 32,44 (pés)
+spr_tartaruga_icon         1 frame  32x32  origem 16,16
+spr_adaga                  4 frames 32x32  origem centro
+spr_aviao_papel            2 frames 32x32  origem centro
+spr_pedrinha               1 frames 16x16  origem centro
+spr_piao                   4 frames 32x32  origem centro
+spr_bolha_sabao            4 frames 32x32  origem centro
+spr_bolhas_icon            1 frame  32x32  origem 16,16
+spr_aviao_icon             1 frame  32x32  origem 16,16
+spr_estilingue_icon        1 frame  32x32  origem 16,16
+spr_piao_icon              1 frame  32x32  origem 16,16
+spr_tenis_icon             1 frame  32x32  origem 16,16
+spr_leite_icon             1 frame  32x32  origem 16,16
+spr_mochila_icon           1 frame  32x32  origem 16,16
+spr_chiclete_icon          1 frame  32x32  origem 16,16
+spr_lancheira_icon         1 frame  32x32  origem 16,16
+spr_estrela_icon           1 frame  32x32  origem 16,16
+spr_lupa_icon              1 frame  32x32  origem 16,16
+spr_curativo_icon          1 frame  32x32  origem 16,16

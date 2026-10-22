@@ -1,4 +1,7 @@
 // feather disable GM2017
+// Clima por baixo dos riscos/folhas: céu escuro, chuva/neve/areia, furacões, raios
+clima_desenhar();
+
 for (var _i = 0; _i < array_length(particulas); _i++) {
     var _p = particulas[_i];
     if (_p.tipo == 0) {

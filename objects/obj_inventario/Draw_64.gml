@@ -7,6 +7,7 @@ if (instance_exists(global.bau_aberto)) {
 }
 
 if (!is_open) {
+    hotbar_desenhar(false); // hotbar pequena na esquerda (inventario.gml)
     // Mensagem rápida aparece mesmo com o inventário fechado (ex.: "Mochila cheia!")
     if (msg_timer > 0 && msg_texto != "") {
         draw_set_font(fnt_descricao); draw_set_halign(fa_center); draw_set_valign(fa_top);
@@ -39,6 +40,7 @@ draw_set_alpha(0.7); draw_set_color(c_black);
 draw_rectangle(0, 0, _gw, _gh, false);
 draw_set_alpha(1); draw_set_color(c_white);
 draw_sprite_ext(spr_iinventario, 0, inventory_x, inventory_y, _s, _s, 0, c_white, 1);
+hotbar_desenhar(true); // fundo da hotbar; os ícones saem no loop de slots (dá para arrastar)
 
 // ============================================================================
 // 2. SLOTS (mochila + equipamentos)
@@ -50,10 +52,19 @@ for (var _i = 0; _i < _n_slots; _i++) {
     var _cy = (_r[1] + _r[3]) / 2;
 
     // Espaço de equipamento ocupado: cobre a silhueta (espada/escudo/bota) do fundo
-    if (_i >= total_slots && _grid[# INFOS.ITEM, _i] != -1 && !(drag_ativo && _i == drag_slot)) {
+    if (_i >= total_slots && _i < slot_index_hotbar && _grid[# INFOS.ITEM, _i] != -1 && !(drag_ativo && _i == drag_slot)) {
         draw_set_color(make_color_rgb(211, 191, 169));
         draw_rectangle(_r[0], _r[1], _r[2] - 1, _r[3] - 1, false);
         draw_set_color(c_white);
+    }
+    // Espaço do chapéu vazio: o fundo tem a silhueta de espada; cobre e mostra um chapéu clarinho
+    if (_i == slot_index_head && (_grid[# INFOS.ITEM, _i] == -1 || (drag_ativo && _i == drag_slot))) {
+        draw_set_color(make_color_rgb(211, 191, 169));
+        draw_rectangle(_r[0], _r[1], _r[2] - 1, _r[3] - 1, false);
+        draw_set_color(c_white);
+        var _hs = _s * 0.85;
+        draw_sprite_ext(spr_itens_cabeca, 0, (_r[0] + _r[2]) / 2 - sprite_get_width(spr_itens_cabeca) * _hs / 2,
+                        (_r[1] + _r[3]) / 2 - sprite_get_height(spr_itens_cabeca) * _hs / 2, _hs, _hs, 0, c_black, 0.18);
     }
 
     // destaque: selecionado (oficina) e hover
@@ -306,12 +317,10 @@ if (is_undefined(_sel_d)) {
     ui_pill(ux(_nx) + _wp + 2 * _s, uy(_oy + 13), 9 * _s, _rar.nome, merge_color(_rar.cor, c_black, 0.2), c_white, _ts_p, merge_color(_rar.cor, c_black, 0.7));
 
     if (_equip) {
-        // estrelas de nível (canto direito)
-        for (var _k = 0; _k < ITEM_NIVEL_MAX; _k++) {
-            draw_estrela(ux(_of[2] - 42 + _k * 9), uy(_oy + 4), 3.6 * _s, (_k < _nv) ? ui_cor("ouro") : make_color_rgb(170, 150, 128));
-        }
+        // nível (canto direito) — sem limite, sobe matando monstros
+        draw_estrela(ux(_of[2] - 10), uy(_oy + 4), 3.6 * _s, ui_cor("ouro"));
         draw_set_halign(fa_right);
-        ui_text(ux(_of[2] - 4), uy(_oy + 10), "Nv " + string(_nv) + "/" + string(ITEM_NIVEL_MAX), make_color_rgb(170, 110, 20), _te(6, _fh, _s), _tx_cl);
+        ui_text(ux(_of[2] - 4), uy(_oy + 10), "Nv " + string(_nv), make_color_rgb(170, 110, 20), _te(6, _fh, _s), _tx_cl);
         draw_set_halign(fa_left);
 
         // ---------- Atributos (agora > próximo nível) ----------
@@ -325,7 +334,7 @@ if (is_undefined(_sel_d)) {
             if (_v == 0) continue;
             var _inf = item_stat_info(_ord[_k]);
             var _t1 = (_v > 0 ? "+" : "") + item_num_str(_v) + _inf.sufixo;
-            var _t2 = (_nv < ITEM_NIVEL_MAX && _v > 0) ? "> " + item_num_str(item_stat(_sel_id, _ord[_k], _nv + 1)) + _inf.sufixo : "";
+            var _t2 = (_v > 0) ? "> " + item_num_str(item_stat(_sel_id, _ord[_k], _nv + 1)) + _inf.sufixo : "";
             var _wc = _hs * 1.15 + (string_width(_t1) + (_t2 != "" ? string_width(" " + _t2) : 0)) * _ts_s + _hs * 0.4;
             if (_sx + _wc > ux(_of[2] - 3)) break;
             ui_rrect(_sx, _sy, _sx + _wc, _sy + _hs, _hs / 2, ui_cor("chip"));
@@ -341,7 +350,7 @@ if (is_undefined(_sel_d)) {
         // ---------- Adesivos ----------
         var _ay = _oy + 45;
         draw_set_valign(fa_middle);
-        ui_text(ux(_ox), uy(_ay + 7), "Adesivos", ui_cor("texto"), _te(6.5, _fh, _s), _tx_cl);
+        ui_text(ux(_ox), uy(_ay + 7), "Passivas", ui_cor("texto"), _te(6.5, _fh, _s), _tx_cl);
         draw_set_valign(fa_top);
         var _slots = item_slots_passiva(_nv);
         var _pas = _grid[# INFOS.PASSIVAS, selected_slot];
@@ -351,7 +360,7 @@ if (is_undefined(_sel_d)) {
             ui_socket(_scx, _scy, 6.5 * _s, _k < _slots);
             if (_k < _np) {
                 var _pd = global.passivas_db[$ _pas[_k]];
-                if (!is_undefined(_pd)) ui_icon_item(_pd.adesivo, _scx, _scy, 17 * _s);
+                if (!is_undefined(_pd)) ui_icon_item(_pd.icone, _scx, _scy, 17 * _s);
             } else if (_k >= _slots) {
                 draw_set_halign(fa_center); draw_set_valign(fa_middle);
                 ui_text(_scx, _scy, (_k == 1 ? "Nv3" : "Nv5"), make_color_rgb(235, 225, 215), _te(5, _fh, _s));
@@ -367,35 +376,24 @@ if (is_undefined(_sel_d)) {
             var _ix = ux(_ox + 95);
             var _hw = ux(_of[2] - 3) - _ix;
             ui_rrect(_ix, uy(_ay + 2), _ix + _hw, uy(_ay + 12), 5 * _s, make_color_rgb(255, 228, 150));
-            ui_icon_item(_pi.adesivo, _ix + 5 * _s, uy(_ay + 7), 12 * _s);
+            ui_icon_item(_pi.icone, _ix + 5 * _s, uy(_ay + 7), 12 * _s);
             draw_set_valign(fa_middle);
             ui_text_fit(_ix + 11 * _s, uy(_ay + 7), _pi.nome, make_color_rgb(140, 80, 10), _te(6, _fh, _s), _hw - 13 * _s);
             draw_set_valign(fa_top);
         }
 
-        // ---------- Custo + MELHORAR ----------
-        var _c = item_upgrade_custo(selected_slot);
+        // ---------- XP do item (sobe matando monstros com ele equipado) ----------
         var _b = lay_btn_up;
-        if (_c.maximo) {
-            ui_pill(ux(_ox), uy(_b[1] + 2), 12 * _s, "NÍVEL MÁXIMO!", ui_cor("ouro"), c_white, _te(7, _fh, _s), make_color_rgb(150, 90, 10));
-            ui_button(ux(_b[0]), uy(_b[1]), ux(_b[2]), uy(_b[3]), "MÁX", false, ui_cor("ouro"), _te(7.5, _fh, _s), _mx, _my);
-        } else {
-            var _tem_m = global.moedas >= _c.moedas;
-            var _qpo = inventory_count_item("po_estrela");
-            var _tem_p = _qpo >= _c.po;
-            var _cy = uy(_b[1] + 8);
-            var _ts_c = _te(7, _fh, _s);
-            var _x0 = ux(_ox);
-            ui_rrect(_x0, _cy - 6 * _s, ux(_b[0] - 3), _cy + 6 * _s, 6 * _s, ui_cor("papel2"));
-            ui_moeda(_x0 + 6 * _s, _cy, 4 * _s);
-            draw_set_valign(fa_middle);
-            ui_text(_x0 + 12 * _s, _cy, string(_c.moedas), _tem_m ? make_color_rgb(255, 215, 90) : make_color_rgb(255, 110, 100), _ts_c, ui_cor("escuro"));
-            var _x1p = _x0 + 12 * _s + string_width(string(_c.moedas)) * _ts_c + 7 * _s;
-            ui_icon_item("po_estrela", _x1p + 5 * _s, _cy, 13 * _s);
-            ui_text(_x1p + 11 * _s, _cy, string(_qpo) + "/" + string(_c.po), _tem_p ? make_color_rgb(200, 160, 255) : make_color_rgb(255, 110, 100), _ts_c, ui_cor("escuro"));
-            draw_set_valign(fa_top);
-            ui_button(ux(_b[0]), uy(_b[1]), ux(_b[2]), uy(_b[3]), "MELHORAR", _tem_m && _tem_p, make_color_rgb(240, 160, 30), _te(7, _fh, _s), _mx, _my);
-        }
+        var _xp = item_xp_slot(_grid, selected_slot);
+        var _xpn = item_xp_prox(_nv);
+        var _cy = uy(_b[1] + 8);
+        var _x0 = ux(_ox), _x1 = ux(_b[2]);
+        ui_rrect(_x0, _cy - 6 * _s, _x1, _cy + 6 * _s, 6 * _s, ui_cor("papel2"));
+        var _pp = clamp(_xp / _xpn, 0, 1);
+        if (_pp > 0) ui_rrect(_x0, _cy - 6 * _s, _x0 + max(12 * _s, (_x1 - _x0) * _pp), _cy + 6 * _s, 6 * _s, make_color_rgb(120, 200, 90));
+        draw_set_halign(fa_center); draw_set_valign(fa_middle);
+        ui_text((_x0 + _x1) / 2, _cy, "XP " + string(floor(_xp)) + "/" + string(_xpn) + "  -  mate monstros!", c_white, _te(6.5, _fh, _s), ui_cor("escuro"));
+        draw_set_halign(fa_left); draw_set_valign(fa_top);
     } else {
         // ---------- Consumível / material / adesivo ----------
         var _info = [];
@@ -545,7 +543,8 @@ if (!drag_ativo) {
         var _hid = _grid[# INFOS.ITEM, hover_slot];
         if (!is_undefined(item_db(_hid))) {
             _tip = item_tooltip_linhas(_hid, _grid[# INFOS.NIVEL, hover_slot], _grid[# INFOS.PASSIVAS, hover_slot],
-                                       _grid[# INFOS.QUANTIDADE, hover_slot], inventory_slot_e_equip(hover_slot) ? "equipado" : "mochila");
+                                       _grid[# INFOS.QUANTIDADE, hover_slot], inventory_slot_e_equip(hover_slot) ? "equipado" : "mochila",
+                                       item_xp_slot(_grid, hover_slot));
         } else {
             _tip = [ { t: string(_grid[# INFOS.NOME, hover_slot]), c: c_white, s: 1.25 },
                      { t: string(_grid[# INFOS.DESCRICAO, hover_slot]), c: make_color_rgb(230, 220, 205), s: 0.9, wrap: true } ];
@@ -571,7 +570,7 @@ if (!is_undefined(_tip)) {
             _h = string_height_ext(_ln.t, -1, _maxw / _sc) * _sc;
         } else {
             _w = string_width(_ln.t) * _sc;
-            if (variable_struct_exists(_ln, "estrelas")) _w += ITEM_NIVEL_MAX * 9 * _s + 6 * _s;
+            if (variable_struct_exists(_ln, "estrelas")) _w += min(5, _ln.estrelas) * 9 * _s + 6 * _s;
             _h = _fh * _sc;
         }
         _tw = max(_tw, _w);
@@ -606,7 +605,7 @@ if (!is_undefined(_tip)) {
             ui_text(_tx + _pad, _yy, _ln.t, _ln.c, _sc);
             if (variable_struct_exists(_ln, "estrelas")) {
                 var _sx0 = _tx + _pad + string_width(_ln.t) * _sc + 8 * _s;
-                for (var _q = 0; _q < ITEM_NIVEL_MAX; _q++) {
+                for (var _q = 0; _q < min(5, _ln.estrelas); _q++) {
                     draw_estrela(_sx0 + _q * 9 * _s, _yy + _fh * _sc / 2, 3.4 * _s, (_q < _ln.estrelas) ? make_color_rgb(255, 210, 50) : make_color_rgb(90, 80, 70));
                 }
             }

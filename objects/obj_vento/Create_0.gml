@@ -5,4 +5,4 @@
 vento_init();
 depth = -100000;
 particulas = [];   // structs { tipo, x, y, vx, vy, vida, dur, esc, cor, fase }
-max_part = 45;
+max_part = 45;     // muda com a força do vento no Step (mais forte = mais partículas)

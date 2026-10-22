@@ -26,67 +26,13 @@ function gerar_estruturas(_obj_struct, _quantidade_estruturas, _distancia_minima
 // ============================================================================
 function recriar_estruturas() 
 {
-    // ==========================================
-    // 1. Recria Estruturas Padrão (Casas, Boss, Vendedor)
-    // ==========================================
-    var _total = ds_list_size(global.posicoes_estruturas);
-    for (var _i = 0; _i < _total; _i++) 
-    {
-        var _info = global.posicoes_estruturas[| _i];
-        
-        var _px      = _info[0];
-        var _py      = _info[1];
-        var _seed    = _info[2];
-        var _obj     = _info[3]; 
-        var _spr     = _info[4]; 
-        var _nome    = _info[5]; 
-        var _escala_minimapa = _info[6]; 
-
-        // O objeto nasce e usa sua PRÓPRIA lógica de escala baseada na seed
-        var _extra = { seed: _seed };
-        if (array_length(_info) > 7) _extra.variante = _info[7];   // casas da cidade guardam o visual
-        var _inst = instance_create_depth(_px, _py, 0, _obj, _extra);
-        
-        // Tratamento especial APENAS para o Boss se precisar forçar um sprite diferente do minimapa
-        if (_spr != noone && _obj == obj_secondary_boss) { 
-            _inst.sprite_index = _spr; 
-        }
-
-        _inst.nome = _nome;
-        _inst.escala_mini = _escala_minimapa; // Guarda a escala apenas para uso no minimapa
-    }
-    
-    // ==========================================
-    // 2. Recria as Árvores
-    // ==========================================
-    var _total_arvores = ds_list_size(global.posicoes_arvores);
-    for (var _i = 0; _i < _total_arvores; _i++) 
-    {
-        var _a_info = global.posicoes_arvores[| _i];
-        var _inst = instance_create_depth(_a_info[0], _a_info[1], 0, obj_arvore, {});
-		_inst.seed = _a_info[2];
-    }
-
-    // ==========================================
-    // 3. Recria as Pedras
-    // ==========================================
-    var _total_pedras = ds_list_size(global.posicoes_pedras);
-    for (var _i = 0; _i < _total_pedras; _i++) 
-    {
-        var _p_info = global.posicoes_pedras[| _i];
-        var _inst = instance_create_depth(_p_info[0], _p_info[1], 0, obj_rock, {});
-		_inst.seed = _p_info[2];
-    }
-
-    // ==========================================
-    // 4. Recria Grupos de Inimigos
-    // ==========================================
-    var _total_grupos = ds_list_size(global.posicoes_grupos_inimigos);
-    for (var _i = 0; _i < _total_grupos; _i++) 
-    {
-        var _g_info = global.posicoes_grupos_inimigos[| _i];
-        var _inst = instance_create_depth(_g_info[0], _g_info[1], 0, obj_grupo_inimigos, {});
-		_inst.seed = _g_info[2];
+    // Casas, árvores, pedras, montinhos e grupos são VIRTUAIS: o obj_otimizador cria só o que
+    // está perto da câmera (global.grid_entidades_mundo). Antes esta função recriava TUDO de novo
+    // ao voltar de uma casa e o otimizador criava outra cópia por cima — quebrar uma árvore
+    // deixava a de baixo no lugar ("a árvore não some"). Agora só esquece as instâncias da room
+    // anterior (a room não é persistente) e o otimizador recria cada coisa uma vez só.
+    if (variable_global_exists("instancias_ativas") && ds_exists(global.instancias_ativas, ds_type_map)) {
+        ds_map_clear(global.instancias_ativas);
     }
 }
 
@@ -99,6 +45,7 @@ function inicializar_gerador_mundo()
     if (!variable_global_exists("posicoes_estruturas")) global.posicoes_estruturas = ds_list_create(); 
     if (!variable_global_exists("posicoes_arvores"))    global.posicoes_arvores = ds_list_create(); 
     if (!variable_global_exists("posicoes_pedras"))     global.posicoes_pedras = ds_list_create(); 
+    if (!variable_global_exists("posicoes_terra"))      global.posicoes_terra = ds_list_create();  // montinhos (pá)
     if (!variable_global_exists("posicoes_bichos"))     global.posicoes_bichos = ds_list_create(); 
     if (!variable_global_exists("posicoes_grupos_inimigos")) global.posicoes_grupos_inimigos = ds_list_create(); 
     if (!variable_global_exists("posicoes_monstros")) global.posicoes_monstros = ds_list_create();
@@ -284,6 +231,7 @@ function gerenciar_mundo_procedural()
             case "floresta":
                 gerar_cobertura_cenario(_bx, _by, obj_arvore, irandom_range(200, 250), global.posicoes_arvores, 1);
                 gerar_cobertura_cenario(_bx, _by, obj_rock, irandom_range(5, 20), global.posicoes_pedras, 50);
+                gerar_cobertura_cenario(_bx, _by, obj_monte_terra, irandom_range(10, 20), global.posicoes_terra, 90); // montinhos (pá)
                 gerar_fauna_para_bloco(_bx, _by, irandom_range(5, 15));
                 gerar_monstros_para_bloco(_bx, _by, _meu_bioma, 200); 
                 break;
@@ -304,12 +252,14 @@ function gerenciar_mundo_procedural()
             case "vazia":
                 gerar_estruturas_para_bloco(_bx, _by, obj_secondary_boss, 1, 1000); 
                 gerar_cobertura_cenario(_bx, _by, obj_rock, irandom_range(50, 100), global.posicoes_pedras, 50);
+                gerar_cobertura_cenario(_bx, _by, obj_monte_terra, irandom_range(4, 10), global.posicoes_terra, 90); // montinhos (pá)
                 gerar_monstros_para_bloco(_bx, _by, _meu_bioma, 500); 
                 break;
 
             // ---------------- BIOMAS NOVOS ----------------
             case "deserto":
                 gerar_cobertura_cenario(_bx, _by, obj_rock, irandom_range(20, 40), global.posicoes_pedras, 80);
+                gerar_cobertura_cenario(_bx, _by, obj_monte_terra, irandom_range(12, 25), global.posicoes_terra, 90); // montinhos (pá)
                 gerar_cobertura_cenario(_bx, _by, obj_arvore, irandom_range(5, 15), global.posicoes_arvores, 150);
                 gerar_fauna_para_bloco(_bx, _by, irandom_range(4, 10));
                 gerar_monstros_para_bloco(_bx, _by, _meu_bioma, 400);
@@ -318,11 +268,13 @@ function gerenciar_mundo_procedural()
             case "neve":
                 gerar_cobertura_cenario(_bx, _by, obj_arvore, irandom_range(40, 80), global.posicoes_arvores, 100);
                 gerar_cobertura_cenario(_bx, _by, obj_rock, irandom_range(10, 25), global.posicoes_pedras, 80);
+                gerar_cobertura_cenario(_bx, _by, obj_monte_terra, irandom_range(10, 20), global.posicoes_terra, 90); // montinhos (pá)
                 gerar_monstros_para_bloco(_bx, _by, _meu_bioma, 300);
                 break;
 
             case "pantano":
                 gerar_cobertura_cenario(_bx, _by, obj_arvore, irandom_range(80, 120), global.posicoes_arvores, 60);
+                gerar_cobertura_cenario(_bx, _by, obj_monte_terra, irandom_range(8, 15), global.posicoes_terra, 90); // montinhos (pá)
                 gerar_estruturas_para_bloco(_bx, _by, obj_grupo_inimigos, irandom_range(1, 3), 400);
                 gerar_fauna_para_bloco(_bx, _by, irandom_range(5, 12));
                 gerar_monstros_para_bloco(_bx, _by, _meu_bioma, 250);
@@ -338,6 +290,7 @@ function gerenciar_mundo_procedural()
             case "prado":
                 gerar_cobertura_cenario(_bx, _by, obj_arvore, irandom_range(15, 30), global.posicoes_arvores, 120);
                 gerar_cobertura_cenario(_bx, _by, obj_rock, irandom_range(3, 8), global.posicoes_pedras, 80);
+                gerar_cobertura_cenario(_bx, _by, obj_monte_terra, irandom_range(12, 22), global.posicoes_terra, 90); // montinhos (pá)
                 gerar_fauna_para_bloco(_bx, _by, irandom_range(15, 25));
                 gerar_monstros_para_bloco(_bx, _by, _meu_bioma, 400);
                 break;
@@ -443,7 +396,7 @@ function gerar_cobertura_cenario(_bx, _by, _obj, _quantidade, _lista_global, _di
     var _tamanho_celula = global.tamanho_bloco / _celulas_por_lado;
 
     // Identifica o tipo de cenário para a virtualização
-    var _tipo = (_obj == obj_arvore) ? "arvore" : "pedra";
+    var _tipo = (_obj == obj_arvore) ? "arvore" : ((_obj == obj_monte_terra) ? "terra" : "pedra");
 
     for (var _i = 0; _i < _celulas_por_lado; _i++) 
     {

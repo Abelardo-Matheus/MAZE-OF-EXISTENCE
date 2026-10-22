@@ -15,8 +15,8 @@
   "managed": true,
   "overriddenProperties": [],
   "parent": {
-    "name": "PLAYER",
-    "path": "folders/Objects/FASE_BEBE_ALL/PLAYER.yy",
+    "name": "TUTORIAL",
+    "path": "folders/Objects/TUTORIAL.yy",
   },
   "parentObjectId": {
     "name": "obj_player",

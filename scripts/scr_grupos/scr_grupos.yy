@@ -5,7 +5,7 @@
   "isCompatibility": false,
   "isDnD": false,
   "parent": {
-    "name": "GERAÇÃO",
-    "path": "folders/Scripts/GERAÇÃO.yy",
+    "name": "INIMIGOS",
+    "path": "folders/Scripts/INIMIGOS.yy",
   },
 }

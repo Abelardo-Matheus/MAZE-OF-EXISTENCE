@@ -16,7 +16,7 @@
   "overriddenProperties": [],
   "parent": {
     "name": "INIMIGOS",
-    "path": "folders/Objects/FASE_BEBE_ALL/INIMIGOS.yy",
+    "path": "folders/Objects/INIMIGOS.yy",
   },
   "parentObjectId": {
     "name": "obj_par_inimigos",
@@ -37,10 +37,7 @@
   "physicsStartAwake": true,
   "properties": [],
   "solid": false,
-  "spriteId": {
-    "name": "spr_globo_branco",
-    "path": "sprites/spr_globo_branco/spr_globo_branco.yy",
-  },
+  "spriteId": null,
   "spriteMaskId": null,
   "visible": true,
 }

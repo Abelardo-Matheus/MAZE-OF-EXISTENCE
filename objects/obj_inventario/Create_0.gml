@@ -10,10 +10,13 @@ is_open = false;
 grid_cols   = 6;
 grid_rows   = 3;
 total_slots = grid_cols * grid_rows;      // mochila
-equip_slots_count = 3;                    // arma, armadura, calçado (ficam no fim da grid)
-slot_index_weapon = total_slots;
+equip_slots_count = 3;                    // chapéu, armadura, calçado (ficam no fim da grid)
+slot_index_weapon = total_slots;          // (nome antigo) = espaço do CHAPÉU; armas ficam só na hotbar
+slot_index_head   = total_slots;
 slot_index_armor  = total_slots + 1;
 slot_index_boots  = total_slots + 2;
+hotbar_slots_count = HOTBAR_SLOTS;         // hotbar (inventario.gml -> região HOTBAR), depois dos equipamentos
+slot_index_hotbar  = total_slots + equip_slots_count;
 
 // Mouse
 hover_slot     = -1;   // slot embaixo do mouse
@@ -78,6 +81,7 @@ uy = function(_py) { return inventory_y + _py * scale; };
 
 /// Retângulo (GUI) do slot _i: [x1, y1, x2, y2]
 slot_rect = function(_i) {
+    if (_i >= slot_index_hotbar) return hotbar_rect(_i - slot_index_hotbar); // hotbar fica na borda esquerda da tela
     var _x, _y;
     if (_i < total_slots) {
         _x = lay_slot_x[_i mod grid_cols];
@@ -107,7 +111,7 @@ calcular_layout();
 // ========================================================
 // 3. MOCHILA (DS GRID)
 // ========================================================
-global.grid_itens = ds_grid_create(INFOS.HEIGHT, total_slots + equip_slots_count);
+global.grid_itens = ds_grid_create(INFOS.HEIGHT, total_slots + equip_slots_count + hotbar_slots_count);
 ds_grid_clear(global.grid_itens, -1);
 global.inventario_cheio = false;
 
@@ -154,8 +158,21 @@ if (itens_iniciais_teste) {
     inventory_add("pilha", 2);
     inventory_add("ad_coracao", 1);
     inventory_add("biscoito", 3);
-    inventory_add("espada_madeira", 1);
 }
+
+// ========================================================
+// 7. HOTBAR INICIAL: espada de madeira (1) e arco de madeira (2); 3 e 4 vazios
+// ========================================================
+// já nascem com 0..3 passivas sorteadas (scr_passivas_itens)
+item_slot_preencher(global.grid_itens, slot_index_hotbar + 0, "espada_madeira", 1, 1, passivas_sortear("arma", item_db("espada_madeira").inata));
+item_slot_preencher(global.grid_itens, slot_index_hotbar + 1, "arco_madeira",   1, 1, passivas_sortear("arco", item_db("arco_madeira").inata));
+item_ativo_init(); // recarga da habilidade X + efeitos
+// Ferramentas de coleta de madeira na mochila (árvore = machado, pedra = picareta, terra = pá)
+inventory_add("machado_madeira", 1);
+inventory_add("picareta_madeira", 1);
+inventory_add("pa_madeira", 1);
+global.hotbar_ativo = 0;
+global.hotbar_aviso = 0;
 
 atualizar_crafts_disponiveis();
 player_stats_recalcular();

@@ -6,14 +6,10 @@
 draw_sprite_ext(spr_sombra, image_index, x+1, y+16/2, image_xscale/2, escala/2, 0, c_white, 1);
 
 // --- Desenha o Personagem ---
-if (hit == true) {
-    // Efeito de Flash Branco
-    gpu_set_fog(true, c_white, 0, 0);
-    draw_self(); // Agora desenha com o xscale correto definido no Step
-    gpu_set_fog(false, c_white, 0, 0);
-} else {
-    // Desenho normal
-    draw_self();
-}
+// Cor pela força (IA_INIMIGOS -> inimigo_cor_atual): mais forte = vermelho mais escuro
+var _cor = inimigo_cor_atual();
+if (hit == true) gpu_set_fog(true, c_white, 0, 0); // Efeito de Flash Branco
+draw_sprite_ext(sprite_index, image_index, x, y, image_xscale, image_yscale, image_angle, _cor, image_alpha);
+if (hit == true) gpu_set_fog(false, c_white, 0, 0);
 
 // Barra de vida: inimigo_desenhar_hud() no Draw End (obj_par_inimigos)

@@ -76,8 +76,9 @@ function scr_bola(_row_index)
                 _projectile.direction = point_direction(obj_player.x, obj_player.y, _target_enemy.x, _target_enemy.y);
                 _projectile.veloc = _stats.speed; 
                 _projectile.damage = _stats.damage;
-                _projectile.image_xscale = _stats.size * 0.1;
-                _projectile.image_yscale = _stats.size * 0.1;
+                // Tamanho padronizado: ~20px na tela * size (size já inclui o Anel)
+                _projectile.image_xscale = skill_escala_px(spr_bola, 20, _stats.size);
+                _projectile.image_yscale = _projectile.image_xscale;
                 _projectile.push_force = _stats.knockback; 
                 _projectile.pode_quicar = false; 
                 
@@ -87,4 +88,4 @@ function scr_bola(_row_index)
         }
 
     }
-}
+}

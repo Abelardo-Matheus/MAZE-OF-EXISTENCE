@@ -147,7 +147,7 @@ function scr_personagem_arco_tuto() {
 
     // Gerencia o Arco
     if (!instance_exists(obj_arco)) {
-        instance_create_layer(x, y, "Instances_itens", obj_arco);
+        instance_create_depth(x, y, depth - 1, obj_arco); // a room do tutorial não tem a camada "Instances_itens"
     }
 
     with (obj_arco) {
@@ -162,7 +162,7 @@ function scr_personagem_arco_tuto() {
 
     if (mouse_check_button_released(mb_left)) {
         if (instance_exists(obj_arco) && obj_arco.image_index >= 4) {
-            var _flecha = instance_create_layer(obj_arco.x, obj_arco.y, "Instances_itens", obj_flecha);
+            var _flecha = instance_create_depth(obj_arco.x, obj_arco.y, depth - 1, obj_flecha);
             _flecha.direction = _dir_mouse;
             _flecha.speed = 15;
             _flecha.image_angle = _dir_mouse;

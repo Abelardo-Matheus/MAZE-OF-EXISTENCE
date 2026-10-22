@@ -1,46 +1,23 @@
 // feather disable GM2017
 
 /// @desc Retorna a estrutura de dados (Vetor de Item) da PENA (Passivo)
+/// O efeito é aplicado por mods_recalcular() (scr_modificadores) a partir do nível.
 function scr_feather_config()
 {
     return {
-        stats_base: {
-            speed_gain_percent: 0, 
-			sprite_icon: spr_pena_icon
-        },
-        niveis: [
-            { desc: "DEIXA O JOGADOR MAIS RÁPIDO (+5% Velocidade).", upgrade: function(_s) { _s.speed_gain_percent = 5; } },
-            { desc: "VELOCIDADE AUMENTADA EM MAIS 5%.", upgrade: function(_s) { _s.speed_gain_percent = 5; } },
-            { desc: "VELOCIDADE AUMENTADA EM MAIS 10%.", upgrade: function(_s) { _s.speed_gain_percent = 10; } },
-            { desc: "VELOCIDADE AUMENTADA EM MAIS 10%.", upgrade: function(_s) { _s.speed_gain_percent = 10; } },
-            { desc: "MEGA UPGRADE: VELOCIDADE AUMENTADA EM MAIS 15%.", upgrade: function(_s) { _s.speed_gain_percent = 15; } }
-        ]
+        stats_base: { sprite_icon: spr_pena_icon },
+        niveis: passiva_niveis([
+            "DEIXA O JOGADOR MAIS RÁPIDO (+5% VELOCIDADE).",
+            "VELOCIDADE AUMENTADA EM MAIS 5%.",
+            "VELOCIDADE AUMENTADA EM MAIS 10%.",
+            "VELOCIDADE AUMENTADA EM MAIS 10%.",
+            "MEGA UPGRADE: VELOCIDADE AUMENTADA EM MAIS 15%."
+        ]),
+        mods: function(_m, _lvl) {
+            _m.veloc_player += passiva_nivel_valor([0, 0.05, 0.10, 0.20, 0.30, 0.45], _lvl);
+        }
     };
 }
 
-/// @desc Lógica da 'Pena' (Aplica bônus permanente de Velocidade)
-function scr_pena(_row_index) 
-{
-    if (global.level_up) exit;
-
-    var _current_level = global.itens_vamp_grid[# ITENS_VAMP.LEVEL, _row_index]; 
-    if (_current_level <= 0) exit;
-
-    var _control_var_name = "passive_last_applied_pena_" + string(_row_index);
-    if (!variable_global_exists(_control_var_name)) variable_global_set(_control_var_name, 0);
-    
-    var _last_applied_level = variable_global_get(_control_var_name);
-
-    if (_last_applied_level < _current_level) 
-    {
-        var _config = scr_feather_config(); 
-        var _upgrade_stats = scr_generic_calculate_passive_upgrade(_config, _current_level, global.itens_vamp_grid, _row_index, ITENS_VAMP.DESCRIPTION);
-
-        if (_upgrade_stats.speed_gain_percent > 0) {
-            global.speed_player *= (1 + (_upgrade_stats.speed_gain_percent / 100));
-        }
-
-        variable_global_set(_control_var_name, _current_level);
-        show_debug_message("Pena Lvl "+string(_current_level)+"! Nova Velocidade: " + string(global.speed_player));
-    }
-}
+/// @desc Mantido só por compatibilidade (a grid usa executor -1 para passivas)
+function scr_pena(_row_index) { }

@@ -91,6 +91,9 @@ function scr_generic_calculate_stats(_skill_config, _current_level, _grid, _row_
              _nivel_info.upgrade(_stats);
         }
     }
+
+    // 2.1 Bônus globais das passivas/pet (Anel, Tomo, Leite, Mochila...) valem para TODAS as armas
+    mods_aplicar_stats(_stats, _skill_config);
     
     // 3. Atualiza a descrição na Grid para o PRÓXIMO nível
     var _next_level = _current_level + 1;
@@ -138,18 +141,19 @@ function scr_generic_calculate_passive_upgrade(_item_config, _current_level, _gr
     // Se _current_level = 1 (acabou de pegar Lvl 1), o upgrade está no índice 0 da array.
     var _array_index = _current_level - 1;
     
-    if (_array_index >= 0 && _array_index < _max_defined_levels) {
-        var _nivel_info = _levels_array[_array_index];
+    if (_array_index >= 0 && _max_defined_levels > 0) {
+        var _nivel_info = _levels_array[_array_index % _max_defined_levels];
         // Aplica apenas o bônus deste nível no struct temporário
         _nivel_info.upgrade(_stats);
     }
     
     // Atualiza a descrição na Grid para o PRÓXIMO nível (se houver)
-    var _desc_grid = "MÁXIMO ATINGIDO";
-    if (_current_level < _max_defined_levels)
+    // Sem limite: o ciclo recomeça depois do último nível definido
+    var _desc_grid = "";
+    if (_max_defined_levels > 0)
     {
         // Se nível atual é 1, próximo upgrade é o índice 1 da array (nível 2)
-        _desc_grid = _levels_array[_current_level].desc; 
+        _desc_grid = _levels_array[_current_level % _max_defined_levels].desc; 
     }
     
     _grid[# _col_desc, _row_index] = _desc_grid;
@@ -276,10 +280,21 @@ function inicializar_tudo()
 
     // Adicione novos Itens aqui (Nível começa 0, Descrição vazia "")
     // Nota: Passamos dois scripts agora (Config e Execução)
-    ds_grid_add_item_vamp("PENA", scr_feather_config, scr_pena, -1, 0); 
-    ds_grid_add_item_vamp("ÍMÃ",  scr_ima_de_almas_config, scr_ima_de_almas, -1, 0); 
-    ds_grid_add_item_vamp("ANEL",  scr_anel_amplificador_config, scr_anel_amplificador, -1, 0); 
-    ds_grid_add_item_vamp("TOMO",  scr_tomo_celeridade_config, scr_tomo_celeridade, -1, 0); 
+    // Passivas: o executor é -1 porque o efeito vem de mods_recalcular() (scr_modificadores),
+    // que recalcula tudo a partir do nível — nada de somar "um nível por vez".
+    ds_grid_add_item_vamp("PENA",      scr_feather_config,            -1, -1, 0);
+    ds_grid_add_item_vamp("ÍMÃ",       scr_ima_de_almas_config,       -1, -1, 0);
+    ds_grid_add_item_vamp("ANEL",      scr_anel_amplificador_config,  -1, -1, 0);
+    ds_grid_add_item_vamp("TOMO",      scr_tomo_celeridade_config,    -1, -1, 0);
+    // Passivas novas (tema infância) — scr_passivas_infancia
+    ds_grid_add_item_vamp("LEITE",     scr_leite_config,     -1, -1, 0);
+    ds_grid_add_item_vamp("MOCHILA",   scr_mochila_config,   -1, -1, 0);
+    ds_grid_add_item_vamp("CHICLETE",  scr_chiclete_config,  -1, -1, 0);
+    ds_grid_add_item_vamp("LANCHEIRA", scr_lancheira_config, -1, -1, 0);
+    ds_grid_add_item_vamp("ESTRELINHA",scr_estrelinha_config,-1, -1, 0);
+    ds_grid_add_item_vamp("LUPA",      scr_lupa_config,      -1, -1, 0);
+    ds_grid_add_item_vamp("CURATIVO",  scr_curativo_config,  -1, -1, 0);
+    ds_grid_add_item_vamp("TÊNIS",     scr_tenis_config,     -1, -1, 0);
 
 
     // --- 3. Upgrades Ativos (Reinicia a grid) ---
@@ -298,14 +313,30 @@ function inicializar_tudo()
     ds_grid_add_upgrade_vamp("ADAGAS",     scr_adagas_velozes_config, scr_adagas_velozes, -1, 0);
 
     
-    // Habilidades sem config/script ainda
-    ds_grid_add_upgrade_vamp("ORBE",       -1, -1, -1, 0);
-    ds_grid_add_upgrade_vamp("BOLHAS",     -1, -1, -1, 0);
-    
     ds_grid_add_upgrade_vamp("RAIO",       scr_lightning_config,   scr_raio,       -1, 0);
-    ds_grid_add_upgrade_vamp("SAPO",       scr_sapo_config,       scr_sapo,       -1, 0);
-    ds_grid_add_upgrade_vamp("BORBOLETA",   scr_butterfly_config,   scr_borboleta,  -1, 0);
     ds_grid_add_upgrade_vamp("BOMBA",      scr_bomb_config,      scr_bomba,      -1, 0);
+
+    // Ativos novos (tema infância) — scr_ativos_infancia
+    ds_grid_add_upgrade_vamp("BOLHAS",     scr_bolhas_config,     scr_bolhas,     -1, 0);
+    ds_grid_add_upgrade_vamp("AVIÃO",      scr_aviao_config,      scr_aviao,      -1, 0);
+    ds_grid_add_upgrade_vamp("ESTILINGUE", scr_estilingue_config, scr_estilingue, -1, 0);
+    ds_grid_add_upgrade_vamp("PIÃO",       scr_piao_config,       scr_piao,       -1, 0);
+
+    // PETS (config com pet: true) — só UM pode ser escolhido por partida.
+    // Subindo de nível o pet ganha cópias (vários sapos, vários cachorros...).
+    ds_grid_add_upgrade_vamp("SAPO",       scr_sapo_config,       scr_sapo,       -1, 0);
+    ds_grid_add_upgrade_vamp("BORBOLETA",  scr_butterfly_config,  scr_borboleta,  -1, 0);
+    ds_grid_add_upgrade_vamp("CACHORRO",   scr_cachorro_config,   scr_pet_animal, -1, 0);
+    ds_grid_add_upgrade_vamp("GATO",       scr_gato_config,       scr_pet_animal, -1, 0);
+    ds_grid_add_upgrade_vamp("COELHO",     scr_coelho_config,     scr_pet_animal, -1, 0);
+    ds_grid_add_upgrade_vamp("TARTARUGA",  scr_tartaruga_config,  scr_pet_animal, -1, 0);
+
+    // --- 4. Estado da partida: modificadores, rerolls e pet escolhido ---
+    mods_resetar();
+    // Aplica já as passivas que começam com nível > 0 (ex.: ANEL de teste). Antes o bônus só
+    // entrava no primeiro level up, porque mods_recalcular() só era chamado em level_up_aplicar_carta.
+    mods_recalcular();
+    global.rerolls_restantes = REROLLS_POR_PARTIDA;
 
 
     // ========================================================

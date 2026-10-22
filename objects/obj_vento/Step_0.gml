@@ -3,6 +3,13 @@ if (variable_global_exists("level_up") && global.level_up == true) exit; // paus
 
 vento_atualizar();
 var _v = global.vento;
+var _f100 = vento_forca_100();   // 0..100
+
+// Força acima de VENTO_LIMIAR_EMPURRAO (50) empurra player e inimigos (scr_vento -> vento_empurrar)
+vento_empurrar();
+
+// Chuva / neve / areia (scr_vento -> CLIMA)
+clima_particulas();
 
 // area visivel
 var _cx = 0, _cy = 0, _cw = room_width, _ch = room_height;
@@ -17,7 +24,9 @@ depth = -(_cy + _ch) - 2000;
 
 // ---------------- cria particulas (mais vento = mais efeito) ----------------
 var _int = _v.forca + _v.rajada;
-if (array_length(particulas) < max_part) {
+max_part = 15 + round(_f100 * 1.6);                 // 15 (calmo) .. 175 (força 100)
+var _tentativas = 1 + floor(_f100 / 20);             // 1..6 tentativas de criar por frame
+repeat (_tentativas) if (array_length(particulas) < max_part) {
     // risco de vento: aparece em qualquer ponto da tela
     if (random(1) < _int * 0.10) {
         var _e = choose(3, 4);

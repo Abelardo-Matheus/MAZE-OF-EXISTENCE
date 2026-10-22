@@ -9,8 +9,8 @@
   "managed": true,
   "overriddenProperties": [],
   "parent": {
-    "name": "INIMIGOS",
-    "path": "folders/Objects/FASE_BEBE_ALL/INIMIGOS.yy",
+    "name": "FANTASMAS",
+    "path": "folders/Objects/INIMIGOS/FANTASMAS.yy",
   },
   "parentObjectId": {
     "name": "par_inimigos_fantasmas",

@@ -8,6 +8,7 @@
 function scr_butterfly_config()
 {
     return {
+        pet: true, // PET: só um pet por partida (ver scr_pets_animais / level_upp)
         // --- Status Base (Nível 0 - Antes da primeira coleta) ---
         // Usamos os nomes exatos definidos na macro DEFAULT_SKILL_STATS
         stats_base: {
@@ -28,7 +29,7 @@ function scr_butterfly_config()
             { 
                 desc: "COLETA UMA BORBOLETA QUE SOLTA PÓLEN EXPLOSIVO NOS INIMIGOS.", 
                 upgrade: function(_s) { 
-                    _s.quantity = 1; // Ativa a criação
+                    _s.quantity = max(_s.quantity, 1); // Ativa a criação (não zera nos ciclos)
                 } 
             },
             // Nível 2
@@ -38,8 +39,8 @@ function scr_butterfly_config()
             },
             // Nível 3
             { 
-                desc: "ÁREA DO PÓLEN AUMENTADA (+15% Radius)", 
-                upgrade: function(_s) { _s.pollen_radius *= 1.15; } 
+                desc: "MAIS UMA BORBOLETA! (+1 PET E +15% ÁREA DO PÓLEN)", 
+                upgrade: function(_s) { _s.quantity = min(_s.quantity + 1, PET_MAX_COPIAS); _s.pollen_radius *= 1.15; } 
             },
             // Nível 4
             { 
@@ -49,7 +50,7 @@ function scr_butterfly_config()
             // Nível 5
             { 
                 desc: "MAIS UMA BORBOLETA (Quantidade +1)", 
-                upgrade: function(_s) { _s.quantity += 1; } 
+                upgrade: function(_s) { _s.quantity = min(_s.quantity + 1, PET_MAX_COPIAS); } 
             },
             // Nível 6
             { 
@@ -58,8 +59,8 @@ function scr_butterfly_config()
             },
             // Nível 7 (Ciclo recomeça ou Mega bônus)
             { 
-                desc: "SUPER UPGRADE: DANO DO PÓLEN AUMENTADO EM 30%", 
-                upgrade: function(_s) { _s.damage *= 1.30; } 
+                desc: "SUPER UPGRADE: MAIS UMA BORBOLETA E PÓLEN +30%", 
+                upgrade: function(_s) { _s.quantity = min(_s.quantity + 1, PET_MAX_COPIAS); _s.damage *= 1.30; } 
             }
         ]
     };

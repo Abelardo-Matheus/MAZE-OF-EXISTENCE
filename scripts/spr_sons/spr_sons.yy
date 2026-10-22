@@ -5,7 +5,7 @@
   "isCompatibility": false,
   "isDnD": false,
   "parent": {
-    "name": "SOM",
-    "path": "folders/Scripts/SOM.yy",
+    "name": "SISTEMA",
+    "path": "folders/Scripts/SISTEMA.yy",
   },
 }

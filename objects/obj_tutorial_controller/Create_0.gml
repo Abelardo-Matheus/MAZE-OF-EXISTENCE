@@ -1,22 +1,28 @@
 // feather disable GM2017
-/// @desc Inicialização do Controlador de Tutorial
+/// @desc Controlador do Tutorial (passos data-driven em scr_tutorial -> tutorial_passos)
+passos = tutorial_passos();
 tutorial_step = 0;
-last_step = -1;
-dialogue_active = false;
+passo_iniciado = false;
+preparado = false;          // decoração + progresso são feitos no 1º Step (quando o piso já existe)
 
-// Posição inicial do player para checar movimento
+// Dados usados pelos passos
 start_x = obj_player.x;
 start_y = obj_player.y;
+correr_frames = 0;
+fez_dash = false;
+amoebas_treino = [];
 
-// Flag para saber se a amoeba do tutorial foi criada
-amoeba_spawned = false;
-portal_spawned = false;
-
-// Função para iniciar um diálogo de tutorial
-function start_tuto_dialogue(_nome) {
+/// @desc Abre um diálogo do tutorial (textos em scr_textos)
+falar = function(_nome) {
     if (!instance_exists(obj_dialogo)) {
         var _dialogo = instance_create_layer(x, y, "Instances_dialogo", obj_dialogo);
         _dialogo.npc_nome = _nome;
-        dialogue_active = true;
     }
+}
+
+/// @desc Quantas amoebas do treino ainda estão vivas
+amoebas_vivas = function() {
+    var _n = 0;
+    for (var _i = 0; _i < array_length(amoebas_treino); _i++) if (instance_exists(amoebas_treino[_i])) _n++;
+    return _n;
 }

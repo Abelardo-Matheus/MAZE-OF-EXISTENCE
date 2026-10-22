@@ -7,7 +7,7 @@ function scr_bomb_config()
         stats_base: {
             damage: 20,                 
             sprite_icon: spr_bomba_icon,
-            cooldown: 7000,             
+            cooldown: 7000 * global.cooldown_tomo,             
             radius: 100,                
             push_force: 0,              
             bomb_count: 0,              
@@ -102,4 +102,4 @@ function scr_bomba(_row_index)
             }
         }
     }
-}
+}

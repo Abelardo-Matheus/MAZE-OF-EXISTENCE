@@ -13,8 +13,8 @@
   "managed": true,
   "overriddenProperties": [],
   "parent": {
-    "name": "MORCEGO VAMPIRO",
-    "path": "folders/Objects/FASE_BEBE_ALL/INIMIGOS/MORCEGO VAMPIRO.yy",
+    "name": "BICHOS",
+    "path": "folders/Objects/INIMIGOS/BICHOS.yy",
   },
   "parentObjectId": {
     "name": "obj_par_inimigos",

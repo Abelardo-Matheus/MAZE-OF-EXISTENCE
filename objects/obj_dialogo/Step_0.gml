@@ -5,6 +5,17 @@ if(initialized = false){
 	alarm[0] = 1;
 }
 
+// Alguns diálogos encerram o próprio objeto ao carregar (ex.: "Sair_Tutorial" troca de room).
+// O instance_destroy() roda o CleanUp na hora e apaga a text_grid, então para aqui.
+if (!instance_exists(id)) exit;
+// Diálogo sem nenhuma fala (nome não tratado que só muda estado): fecha sem ler a grid vazia.
+if (ds_grid_height(text_grid) <= 0) {
+	global.dialogo = false;
+	if (instance_exists(global.current_player)) global.current_player.andar = false;
+	instance_destroy();
+	exit;
+}
+
 
 	if(char_index < string_length(text_grid[# DialogInfo.TEXT, page])){
 		if(keyboard_check_pressed(ord("E"))){

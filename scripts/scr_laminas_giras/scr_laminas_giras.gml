@@ -38,27 +38,29 @@ function scr_laminas_giras(_row_index)
     if (!variable_global_exists(_timer_var)) variable_global_set(_timer_var, 0);
     var _timer = variable_global_get(_timer_var);
     
-    var _cd_mod = (variable_global_exists("player_cooldown_mod") ? global.player_cooldown_mod : 1);
+    // Recarga, área e dano já vêm com os bônus das passivas (mods_aplicar_stats)
     _timer += (delta_time / 1000); 
 
-    if (_timer >= (_stats.cooldown * _cd_mod)) 
+    if (_timer >= _stats.cooldown) 
     {
         _timer = 0; // reseta o cooldown (antes era sobrescrito no fim da função)
         var _count = _stats.quantity;
-        var _area_mod = (variable_global_exists("player_area_mod") ? global.player_area_mod : 1);
-        
         for (var _i = 0; _i < _count; _i++) {
             var _angle = (360 / _count) * _i;
             var _blade = instance_create_layer(obj_player.x, obj_player.y, "Instances", asset_get_index("obj_skill_projectile"));
             
             _blade.damage = _stats.damage;
             _blade.veloc = 0; 
-            _blade.image_xscale = _stats.size * _area_mod;
-            _blade.image_yscale = _stats.size * _area_mod;
-            _blade.sprite_index = spr_shuriken_icon;
+            // Antes usava spr_shuriken_icon (ícone de 158px da carta) -> lâminas gigantes.
+            // Agora usa o sprite animado da shuriken com ~20px na tela (escala pela bbox).
+            _blade.sprite_index = spr_shuriken;
+            _blade.image_speed = 1;
+            var _esc = skill_escala_px(spr_shuriken, 20, _stats.size);
+            _blade.image_xscale = _esc;
+            _blade.image_yscale = _esc;
             
             _blade.orbital_angle = _angle;
-            _blade.orbital_radius = _stats.radius * _area_mod;
+            _blade.orbital_radius = _stats.radius;
             _blade.orbital_speed = _stats.orbital_speed;
             _blade.duration_timer = _stats.duration;
             _blade.parent_player = obj_player;

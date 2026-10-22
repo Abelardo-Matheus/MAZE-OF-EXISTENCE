@@ -19,6 +19,13 @@
 //   "emboscada"  : fica parado disfarcado ate o jogador chegar perto (cogumelos)
 // ============================================================================
 
+// --- Cor por força: nível 1 = cor normal ... nível INIMIGO_NIVEL_COR_MAX = vermelho mais escuro ---
+#macro INIMIGO_NIVEL_COR_MAX   10    // nível em que o vermelho chega no máximo
+#macro INIMIGO_RONDA_COR_MAX   5     // multiplicador de vida da ronda em que chega no máximo
+#macro INIMIGO_COR_MAIS_FORTE_R 150  // limite do vermelho escuro (ainda dá para ver o sprite)
+#macro INIMIGO_COR_MAIS_FORTE_G 28
+#macro INIMIGO_COR_MAIS_FORTE_B 28
+
 /// @desc Move respeitando paredes (ou atravessando, para fantasmas/voadores)
 function inimigo_ia_mover(_h, _v) {
     if (atravessa) {
@@ -261,6 +268,30 @@ function inimigo_ia_fim_hit() {
     image_blend = c_white;
 }
 
+/// @desc Cor do inimigo pela força (0 = normal .. 1 = o mais forte).
+/// Quanto mais forte, mais vermelho e mais escuro — até INIMIGO_COR_MAIS_FORTE,
+/// que ainda deixa ver o desenho do sprite. Usada pelas instâncias e pela horda.
+function inimigo_cor_por_poder(_poder) {
+    _poder = clamp(_poder, 0, 1);
+    if (_poder <= 0.02) return c_white;
+    return merge_color(make_color_rgb(255, 190, 190), make_color_rgb(INIMIGO_COR_MAIS_FORTE_R, INIMIGO_COR_MAIS_FORTE_G, INIMIGO_COR_MAIS_FORTE_B), _poder);
+}
+
+/// @desc Força relativa da instância (0..1): nível (inimigo_ia_nivel) e multiplicador da ronda da noite
+function inimigo_poder() {
+    var _lvl = 1;
+    if (variable_instance_exists(id, "lvl_inimigo") && is_real(lvl_inimigo)) _lvl = lvl_inimigo;
+    else if (variable_instance_exists(id, "lvl") && is_real(lvl)) _lvl = lvl;
+    var _p = (_lvl - 1) / (INIMIGO_NIVEL_COR_MAX - 1);
+    if (variable_instance_exists(id, "forca_ronda")) _p = max(_p, (forca_ronda - 1) / (INIMIGO_RONDA_COR_MAX - 1));
+    return clamp(_p, 0, 1);
+}
+
+/// @desc Cor com que o inimigo deve ser desenhado agora (substitui image_blend no Draw)
+function inimigo_cor_atual() {
+    return inimigo_cor_por_poder(inimigo_poder());
+}
+
 /// @desc Draw: sombra e corpo (flash branco no hit)
 function inimigo_ia_desenhar() {
     var _esc = abs(image_xscale);
@@ -269,7 +300,7 @@ function inimigo_ia_desenhar() {
     draw_sprite_ext(spr_sombra, 0, x, y, _sw * (voa ? 0.8 : 1), _sw * (voa ? 0.6 : 0.8), 0, c_white, voa ? 0.45 : 0.7);
 
     if (hit) gpu_set_fog(true, c_white, 0, 0);
-    draw_sprite_ext(sprite_index, image_index, x, y + _bob, image_xscale, image_yscale, 0, image_blend, image_alpha);
+    draw_sprite_ext(sprite_index, image_index, x, y + _bob, image_xscale, image_yscale, 0, inimigo_cor_atual(), image_alpha);
     if (hit) gpu_set_fog(false, c_white, 0, 0);
     // "!" e barra de vida ficam em inimigo_desenhar_hud() (Draw End): sempre por cima dos móveis
 
@@ -294,11 +325,21 @@ function inimigo_desenhar_hud() {
     }
 
     if (alarm[2] >= 0 && variable_instance_exists(id, "max_vida") && max_vida > 0) {
-        var _hs = 3;
-        var _w = sprite_get_width(spr_hud_vida_inimigo) * _hs;
-        var _hx = x - _w / 2;
-        var _hy = bbox_top - 10 + _bob;
-        draw_sprite_ext(spr_hud_vida_inimigo, 0, _hx, _hy, _hs, _hs, 0, c_white, 1);
-        draw_sprite_ext(spr_vida_, 0, _hx, _hy, max(0, vida / max_vida) * _hs, _hs, 0, c_white, 1);
+        // Moldura spr_hud_vida_inimigo (12x3, borda de 1px) e preenchimento spr_vida_ (10x1).
+        // O preenchimento é medido pelo INTERIOR da moldura e a porcentagem é travada em 0..1:
+        // antes, inimigo com vida > max_vida (nível/ronda/sala restaurada) estourava a moldura.
+        var _hs  = 3;
+        var _fw  = sprite_get_width(spr_hud_vida_inimigo);
+        var _fh  = sprite_get_height(spr_hud_vida_inimigo);
+        var _fx  = x - (_fw * _hs) / 2;              // canto superior esquerdo da moldura (centralizada)
+        var _fy  = bbox_top - 10 + _bob - _hs;
+        var _pct = clamp(vida / max(1, max_vida), 0, 1);
+        var _iw  = (_fw - 2) * _hs;                   // largura interna (sem a borda)
+        var _ih  = (_fh - 2) * _hs;                   // altura interna
+        draw_sprite_ext(spr_hud_vida_inimigo, 0, _fx + sprite_get_xoffset(spr_hud_vida_inimigo) * _hs, _fy + sprite_get_yoffset(spr_hud_vida_inimigo) * _hs, _hs, _hs, 0, c_white, 1);
+        if (_pct > 0) {
+            draw_sprite_ext(spr_vida_, 0, _fx + _hs + sprite_get_xoffset(spr_vida_) * (_iw * _pct / sprite_get_width(spr_vida_)), _fy + _hs,
+                _iw * _pct / sprite_get_width(spr_vida_), _ih / sprite_get_height(spr_vida_), 0, c_white, 1);
+        }
     }
 }

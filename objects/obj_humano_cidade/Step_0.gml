@@ -1,4 +1,5 @@
 // feather disable GM2017
+if (!visible) exit; // dormindo fora da tela (scr_desempenho -> desempenho_cull)
 /// @desc IA de passeio do humano da cidade
 depth = -y;
 

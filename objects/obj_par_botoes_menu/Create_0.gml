@@ -17,3 +17,6 @@ uni_h     = shader_get_uniform(shd_glow_botao, "u_pixel_h");
 var _tex = sprite_get_texture(sprite_index, 0);
 tex_w = texture_get_texel_width(_tex);
 tex_h = texture_get_texel_height(_tex);
+
+// Menu de opções / carregar (obj_control_menu cuida dos botões Opções e Carregar)
+if (!instance_exists(obj_control_menu)) instance_create_depth(0, 0, -15000, obj_control_menu);

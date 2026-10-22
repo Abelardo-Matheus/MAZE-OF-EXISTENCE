@@ -61,6 +61,14 @@ The game is divided into two main parts:
 * Unified damage system (`scr_damage_system`) for every weapon and skill.
 * **Weapon evolutions**: evolved **Ball** and **Bomb**, plus bow & arrow attacks.
 
+**🧸 Powers rework (childhood theme)**
+* Level-up screen now shows **every power you own with its level**, has a **Reroll** button (3 uses per run) and limits you to **4 actives + 4 passives** — after that you only upgrade what you have.
+* Passives now affect **every** power and pet (area, cooldown, damage, duration…), computed by `scr_modificadores`.
+* New passives: *Chocolate Milk* (+damage), *Extra Backpack* (+projectiles), *Stretchy Gum* (+duration), *Lunchbox* (regen), *Golden Star* (+XP), *Detective Magnifier* (+crit), *Band-Aid* (−damage taken), *Roller Sneakers* (+projectile speed).
+* New actives: *Soap Bubbles*, *Paper Plane* (homing), *Slingshot* and *Spinning Top*.
+* New pets **Dog, Cat, Rabbit and Turtle**, each with its own trait. You pick **one pet** per run and it multiplies as it levels up.
+* Fixed giant shurikens (Spinning Blades) and tiny arrow-daggers (new dagger sprite sheet).
+
 **🐾 Pets & enemies**
 * New **Butterfly pet** that wanders around and releases explosive pollen on enemies (joins the Frog pet).
 * New enemies: **Skeleton**, colored **Amoebas**, and improved enemy AI.
@@ -297,6 +305,14 @@ O jogo se divide em duas partes principais:
 * Novas **skills passivas**: *Anel Amplificador* (+área), *Tomo da Celeridade* (−cooldown), *Ímã de Almas* (+alcance de coleta) e *Pena*.
 * Sistema de dano unificado (`scr_damage_system`) para todas as armas e skills.
 * **Evolução de armas**: **Bola** e **Bomba** evoluídas, além de ataque com arco e flecha.
+
+**🧸 Reforma dos poderes (tema infância)**
+* A tela de level up mostra **todos os poderes que você tem e o nível**, tem botão **Sortear de novo** (3 usos por partida) e limita a **4 ativos + 4 passivos** — depois disso só melhora o que você já tem.
+* As passivas agora valem para **todos** os poderes e pets (área, recarga, dano, duração…), calculadas em `scr_modificadores`.
+* Novas passivas: *Leite com Chocolate* (+dano), *Mochila Extra* (+projéteis), *Chiclete* (+duração), *Lancheira* (regeneração), *Estrelinha Dourada* (+XP), *Lupa* (+crítico), *Curativo* (−dano recebido), *Tênis de Rodinha* (+velocidade dos projéteis).
+* Novos ativos: *Bolhas de Sabão*, *Avião de Papel* (teleguiado), *Estilingue* e *Pião*.
+* Novos pets **Cachorro, Gato, Coelho e Tartaruga**, cada um com sua peculiaridade. Você escolhe **um pet** por partida e ele se multiplica ao subir de nível.
+* Corrigidas as shurikens gigantes (Lâminas Giras) e as adagas minúsculas que eram flechas (nova sprite sheet de adaga).
 
 **🐾 Pets e inimigos**
 * Novo **pet Borboleta** que voa ao redor e solta pólen explosivo nos inimigos (junto ao pet Sapo).

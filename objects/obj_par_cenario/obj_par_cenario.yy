@@ -6,8 +6,8 @@
   "managed": true,
   "overriddenProperties": [],
   "parent": {
-    "name": "CONTROLES",
-    "path": "folders/Objects/FASE_BEBE_ALL/CONTROLES.yy",
+    "name": "NATUREZA",
+    "path": "folders/Objects/MUNDO/NATUREZA.yy",
   },
   "parentObjectId": null,
   "persistent": false,

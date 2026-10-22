@@ -10,6 +10,12 @@
 // ------------------------------------------------------------------------------
 // 1. ESTADO: ANDANDO (Movimento Padrão)
 // ------------------------------------------------------------------------------
+// --- Estamina / cansaço (bolinha ao lado do player: VIDA.gml -> desenha_estamina_bolinha) ---
+#macro ESTAMINA_REGEN          0.5   // por frame, parado/andando sem correr
+#macro ESTAMINA_REGEN_CANSADO  0.15  // por frame quando zerou (recupera sozinho com o tempo)
+#macro CANSADO_SAI_PCT         0.4   // volta ao normal quando recupera 40% da estamina
+#macro CANSADO_VELOC           0.35  // velocidade quando cansado (35% da normal)
+
 function scr_personagem_andando() {
     // --- Entradas (Inputs) ---
     var _in = obter_inputs_jogador();
@@ -17,10 +23,12 @@ function scr_personagem_andando() {
     // --- Cálculo de Velocidade ---
     var _h_input = _in.direita - _in.esquerda;
     var _v_input = _in.baixo - _in.cima;
-    var _speed   = global.speed_player;
+    var _speed   = global.speed_player * mods_get().veloc_player; // Pena / Tênis / pet Coelho
+    var _cansado = variable_global_exists("cansado") && global.cansado;
+    if (_cansado) _speed *= CANSADO_VELOC; // estamina acabou: fica bem lento até recuperar
 
-    // Sistema de Corrida (Gasta Estamina)
-    if (_in.shift && global.estamina > 0 && (_h_input != 0 || _v_input != 0)) {
+    // Sistema de Corrida (Gasta Estamina) — cansado não corre
+    if (!_cansado && _in.shift && global.estamina > 0 && (_h_input != 0 || _v_input != 0)) {
         _speed += 2;
         andar = true;
         global.estamina -= 0.5;
@@ -57,6 +65,9 @@ function scr_personagem_andando() {
 
     scr_player_colisao();
 
+    // Tecla X: habilidade da espada/arco na mão (scr_passivas_itens)
+    item_ativo_input();
+
     // --- Transição de Estados ---
     if (_in.mouse_esq_press) {
         parar_som_passo();
@@ -72,9 +83,12 @@ function scr_personagem_andando() {
             image_index = 0;
             state = scr_personagem_arco;
         }
+        else {
+            hotbar_usar_ativo(); // consumível / baú na mão (inventario.gml -> HOTBAR)
+        }
     }
 
-    if (_in.mouse_dir_press && global.estamina >= 10 && alarm[ALARM_DASH_COOLDOWN] <= 0) {
+    if (!_cansado && _in.mouse_dir_press && global.estamina >= 10 && alarm[ALARM_DASH_COOLDOWN] <= 0) {
         parar_som_passo();
         global.estamina -= 10;
         alarm[ALARM_ESTAMINA] = 60;
@@ -134,18 +148,27 @@ function scr_ataque_player() {
         var _xx = x;
         var _yy = y;
         var _angle = 0; 
+        // alcance da arma na mão (hotbar): 1 = normal, taco/laser maior, adaga menor
+        var _hd = hotbar_ativo_db();
+        var _alc = (!is_undefined(_hd) && is_struct(_hd.espada)) ? _hd.espada.alcance : 1;
+        _alc *= 1 + global.equip_stats.alcance / 100; // passiva Braço Comprido
+        var _dist = 20 * _alc;
         
         switch (dir) {
-            case 0: _xx += 20; _angle = 0;   break;
-            case 1: _yy -= 20; _angle = 90;  break;
-            case 2: _xx -= 20; _angle = 180; break;
-            case 3: _yy += 20; _angle = 270; break;
+            case 0: _xx += _dist; _angle = 0;   break;
+            case 1: _yy -= _dist; _angle = 90;  break;
+            case 2: _xx -= _dist; _angle = 180; break;
+            case 3: _yy += _dist; _angle = 270; break;
         }
         
         var _hitbox = instance_create_layer(_xx, _yy, "Instances", obj_hibox_ataque);
         _hitbox.image_angle = _angle; 
+        _hitbox.image_xscale *= _alc;
+        _hitbox.image_yscale *= _alc;
         _hitbox.dano = global.ataque;
         _hitbox.pode_matar_fantasma = global.mata_fantasma;
+        // Ferramenta na mão (machado/picareta/pá): o golpe quebra árvore/pedra/terra (scr_coleta)
+        _hitbox.coleta = (!is_undefined(_hd) && _hd.tipo == "coleta") ? _hd.coleta : undefined;
     }
 
     // Fim da Animação -> Volta a andar
@@ -194,11 +217,19 @@ function scr_personagem_arco() {
     if (mouse_check_button_released(mb_left)) {
         // Só atira se o arco estiver "carregado" (frame 3 ou mais)
         if (instance_exists(obj_arco) && obj_arco.image_index >= 3) {
-            var _flecha = instance_create_layer(obj_arco.x, obj_arco.y, "Instances", obj_flecha);
-            _flecha.direction = _dir_mouse;
-            _flecha.image_angle = _dir_mouse;
-            _flecha.speed = 12;
-            _flecha.dano = global.ataque;
+            // arco na mão (hotbar): velocidade, quantas flechas e o leque entre elas
+            var _hd = hotbar_ativo_db();
+            var _ad = (!is_undefined(_hd) && is_struct(_hd.arco)) ? _hd.arco : { vel: 12, flechas: 1, abertura: 0 };
+            var _nfl = _ad.flechas + floor(global.equip_stats.flechas);        // passiva Aljava Cheia
+            var _abr = (_ad.abertura > 0) ? _ad.abertura : 8;
+            for (var _f = 0; _f < _nfl; _f++) {
+                var _ang = _dir_mouse + (_f - (_nfl - 1) / 2) * _abr;
+                var _flecha = instance_create_layer(obj_arco.x, obj_arco.y, "Instances", obj_flecha);
+                _flecha.direction = _ang;
+                _flecha.image_angle = _ang;
+                _flecha.speed = _ad.vel;
+                _flecha.dano = global.ataque;
+            }
             
             // Pequeno recuo ao atirar
             var _recuo_dir = _dir_mouse + 180;
@@ -264,7 +295,7 @@ function scr_personagem_hit() {
 // ------------------------------------------------------------------------------
 function scr_player_colisao() {
     // Verifica se a parede existe na sala
-    var _parede = obj_wall;
+    var _parede = obj_parede_bebe;
     if (variable_global_exists("sala") && variable_struct_exists(global.sala, "parede")) {
         _parede = global.sala.parede;
     }
@@ -280,3 +311,14 @@ function fim_animation_() {
 }
 
 #endregion
+
+/// @desc Feedback visual de dano do PLAYER (chamar no escopo do player).
+/// Flash de cor nos primeiros frames e depois pisca até acabar a invencibilidade.
+/// O desenho fica no Draw do obj_player (dano_visual): não depende de estado/alarme,
+/// então a cor nunca fica "presa" (antes image_blend = c_red só voltava ao sair do estado hit).
+function player_sinal_dano(_cor = c_red, _frames = 90) {
+    dano_visual       = _frames;
+    dano_visual_total = max(1, _frames);
+    dano_cor          = _cor;
+    image_blend       = c_white;
+}

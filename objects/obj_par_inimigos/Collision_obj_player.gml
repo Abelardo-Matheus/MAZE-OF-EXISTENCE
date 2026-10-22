@@ -33,8 +33,8 @@ if (other.tomar_dano) {
         tomar_dano = false;
         alarm[ALARM_INVENCIBILIDADE] = 90; // Tempo invulnerável (ex: 1.5 segundos)
 
-        // Feedback visual imediato
-        image_blend = c_red;
+        // Feedback visual: flash vermelho + piscar (Draw do obj_player)
+        player_sinal_dano(c_red, 90);
     }
 
     // 3. Cria o popup de dano (na posição do player)

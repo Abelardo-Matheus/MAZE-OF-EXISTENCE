@@ -6,8 +6,8 @@
   "managed": true,
   "overriddenProperties": [],
   "parent": {
-    "name": "PLAYER",
-    "path": "folders/Objects/FASE_BEBE_ALL/PLAYER.yy",
+    "name": "CHAO_PAREDES",
+    "path": "folders/Objects/MUNDO/CHAO_PAREDES.yy",
   },
   "parentObjectId": null,
   "persistent": true,

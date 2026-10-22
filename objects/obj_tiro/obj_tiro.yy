@@ -11,7 +11,7 @@
   "overriddenProperties": [],
   "parent": {
     "name": "INIMIGOS",
-    "path": "folders/Objects/FASE_BEBE_ALL/INIMIGOS.yy",
+    "path": "folders/Objects/INIMIGOS.yy",
   },
   "parentObjectId": null,
   "persistent": false,
@@ -29,10 +29,7 @@
   "physicsStartAwake": true,
   "properties": [],
   "solid": false,
-  "spriteId": {
-    "name": "spr_tiro_sperm_inimigo",
-    "path": "sprites/spr_tiro_sperm_inimigo/spr_tiro_sperm_inimigo.yy",
-  },
+  "spriteId": null,
   "spriteMaskId": null,
   "visible": true,
 }

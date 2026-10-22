@@ -96,16 +96,12 @@ if (hover_slot != -1 && drag_slot == -1) {
 }
 
 // ========================================================
-// 4. OFICINA: upgrade (clique no botão ou tecla U)
+// 4. OFICINA: botão USAR (consumível). Equipamentos sobem de nível matando monstros.
 // ========================================================
 if (selected_slot != -1) {
     var _tipo_sel = _grid[# INFOS.TIPO, selected_slot];
     var _clique_btn = hover_upgrade && mouse_check_button_pressed(mb_left);
-    if (_tipo_sel == "uso") {
-        if (_clique_btn) inventory_use_item(selected_slot);          // botão USAR
-    } else if (_clique_btn || keyboard_check_pressed(ord("U"))) {
-        item_upgrade(selected_slot);                                 // botão MELHORAR / tecla U
-    }
+    if (_tipo_sel == "uso" && _clique_btn) inventory_use_item(selected_slot);  // botão USAR
 }
 
 // ========================================================

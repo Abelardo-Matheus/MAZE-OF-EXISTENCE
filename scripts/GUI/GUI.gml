@@ -57,7 +57,7 @@ function draw_clock_hand(_x, _y, _angle, _len, _color) {
 }
 function mini_mapa_vamp() {
     // --- Input (Idealmente mover para o Step Event, mas mantido aqui para portabilidade) ---
-    if (keyboard_check_pressed(ord("M"))) {
+    if (tecla_apertou("mapa")) {
         global.minimap_expandido = !global.minimap_expandido;
     }
 
@@ -495,6 +495,8 @@ function scr_debug_posicao_ui(_base_x, _base_y)
 
 
 function draw_fps(){
+	// Configurações > Vídeo > Mostrar FPS
+	if (variable_global_exists("config") && !global.config.mostrar_fps) return;
 	
 	// ========================================================
 // DESENHA O FPS NO CANTO DA TELA (Draw GUI)

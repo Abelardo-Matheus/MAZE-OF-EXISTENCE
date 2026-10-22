@@ -1,0 +1,17 @@
+SPRITES ANIMADOS DOS PROJÉTEIS (substituem os sprites que estavam parados)
+==========================================================================
+Os sprites já existem no projeto: NÃO crie sprites novos, só troque as imagens.
+
+Na IDE: abra o sprite > Image > Import Strip Image... (ou "Import" e escolha a tira)
+  - Frame width/height = 32 x 32, Number of frames = o número no nome do arquivo
+  - Marque "Replace" (substituir os frames atuais)
+  - Origem: Middle Centre (16,16)
+  - Velocidade do sprite: 12 fps (o código já põe image_speed = 1)
+
+spr_adaga        <- spr_adaga_strip8.png        8 frames  aponta p/ DIREITA (o código gira pelo image_angle)
+spr_aviao_papel  <- spr_aviao_papel_strip6.png  6 frames  aponta p/ DIREITA, asas batendo
+spr_pedrinha     <- spr_pedrinha_strip8.png     8 frames  rolando (era 16x16 com 1 frame; agora 32x32)
+spr_piao         <- spr_piao_strip8.png         8 frames  girando em pé (image_angle = 0 no código)
+
+O tamanho na tela não muda: skill_escala_px() mede a bbox visível do sprite.
+Para refazer/ajustar: python tools/gerar_sprites_projeteis.py (gera nesta pasta).

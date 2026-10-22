@@ -8,6 +8,7 @@
 function scr_sapo_config()
 {
     return {
+        pet: true, // PET: só um pet por partida (ver scr_pets_animais / level_upp)
         // --- Status Base (Nível 0 - Antes da primeira coleta) ---
         // Usamos os nomes exatos definidos na macro DEFAULT_SKILL_STATS
         stats_base: {
@@ -27,7 +28,7 @@ function scr_sapo_config()
             { 
                 desc: "COLETA UM PET SAPO QUE ENGOLE INIMIGOS PERIÓDICAMENTE.", 
                 upgrade: function(_s) { 
-                    _s.quantity = 1; // Ativa a criação
+                    _s.quantity = max(_s.quantity, 1); // Ativa a criação (não zera nos ciclos)
                 } 
             },
             // Nível 2
@@ -37,8 +38,8 @@ function scr_sapo_config()
             },
             // Nível 3
             { 
-                desc: "VELOCIDADE DO PET AUMENTADA (+10%)", 
-                upgrade: function(_s) { _s.move_speed *= 1.10; } 
+                desc: "MAIS UM SAPO! (+1 PET E +10% VELOCIDADE)", 
+                upgrade: function(_s) { _s.quantity = min(_s.quantity + 1, PET_MAX_COPIAS); _s.move_speed *= 1.10; } 
             },
             // Nível 4
             { 
@@ -48,7 +49,7 @@ function scr_sapo_config()
             // Nível 5
             { 
                 desc: "MAIS UM SAPO (Quantidade +1)", 
-                upgrade: function(_s) { _s.quantity += 1; } 
+                upgrade: function(_s) { _s.quantity = min(_s.quantity + 1, PET_MAX_COPIAS); } 
             },
             // Nível 6
             { 
@@ -57,8 +58,8 @@ function scr_sapo_config()
             },
             // Nível 7 (Ciclo recomeça ou Mega bônus)
             { 
-                desc: "MEGA UPGRADE: DANO DO PET AUMENTADO EM 20%", 
-                upgrade: function(_s) { _s.damage *= 1.20; } 
+                desc: "MEGA UPGRADE: MAIS UM SAPO E DANO +20%", 
+                upgrade: function(_s) { _s.quantity = min(_s.quantity + 1, PET_MAX_COPIAS); _s.damage *= 1.20; } 
             }
         ]
     };
@@ -123,7 +124,7 @@ function scr_sapo(_row_index)
         // Isso garante que upgrades de dano/velocidade funcionem na hora.
         damage = _stats.damage;
         velocidade = _stats.move_speed;
-        cooldown_max = _stats.attack_cooldown;
+        attack_cooldown_max = _stats.attack_cooldown; // antes ia para "cooldown_max", que o objeto não lia
         orbit_radius = _stats.orbit_radius; // Distância alvo do player
         
         // Mantém sua lógica única: Range de detecção um pouco maior que a órbita

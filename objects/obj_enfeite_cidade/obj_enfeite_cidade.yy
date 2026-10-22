@@ -10,8 +10,8 @@
   "managed": true,
   "overriddenProperties": [],
   "parent": {
-    "name": "CENARIO",
-    "path": "folders/Objects/FASE_BEBE_ALL/CENARIO/ESTRUTURAS/CENARIO.yy",
+    "name": "CIDADE",
+    "path": "folders/Objects/MUNDO/CIDADE.yy",
   },
   "parentObjectId": {
     "name": "obj_par_cenario",

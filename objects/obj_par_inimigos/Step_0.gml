@@ -1,5 +1,7 @@
 // feather disable GM2017
 depth = profundidade_pe(bbox_bottom); // mesma regra do player e dos móveis
+// Vida acima do máximo (nível, ronda, sala restaurada): o máximo acompanha, senão a barra estoura
+if (variable_instance_exists(id, "max_vida") && vida > max_vida) max_vida = vida;
 // HITBOX: a máscara fica fixa no sprite de andar. Antes ela trocava junto com a animação
 // (andar/parado têm bbox diferentes), e a hitbox "pulava" de tamanho.
 if (sprite_exists(sprite_normal) && mask_index != sprite_normal) mask_index = sprite_normal;
@@ -29,6 +31,7 @@ if (vida <= 0) {
 		var _xp = instance_create_layer(x, y, "instances", obj_xp_um);
 		_xp.xp_ganho = _xp_valor;
 	}
+    item_ao_matar(x, y); // XP dos itens equipados + passivas de abate (scr_passivas_itens)
     instance_destroy();
 	obj_player.alarm[6] =  3;
 	criar_item_aleatorio_passivos_pe(x,y,depth,100);

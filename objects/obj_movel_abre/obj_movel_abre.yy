@@ -8,8 +8,8 @@
   "managed": true,
   "overriddenProperties": [],
   "parent": {
-    "name": "OBJETOS",
-    "path": "folders/Objects/FASE_BEBE_ALL/OBJETOS.yy",
+    "name": "CASA",
+    "path": "folders/Objects/MUNDO/CASA.yy",
   },
   "parentObjectId": {
     "name": "obj_movel_casa",

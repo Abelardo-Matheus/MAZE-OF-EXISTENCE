@@ -6,6 +6,12 @@ push_force = 2;
 hit_set = {};
 hit_reset = 0;
 
+// Poderes novos (scr_ativos_infancia):
+// perfura   -> atravessa inimigos (cada inimigo leva dano a cada HORDE_TICK_IFRAMES frames)
+// ao_acertar -> method opcional chamado no primeiro acerto em vez do dano direto (ex.: bolha estoura em área)
+perfura = false;
+ao_acertar = undefined;
+
 setup = function(_data) {
     damage = _data.damage;
     veloc = _data.speed;

@@ -1,44 +1,6 @@
 // feather disable GM2017
-/// @description Insert description here
-// You can write your code in this editor
-draw_set_alpha(1);
-draw_set_font(fnt_menu);
-draw_set_color(c_white);
-
-draw_set_halign(fa_center);
-draw_set_valign(fa_middle);
-
-draw_text(970,323,"Maze \nOF \nEXISTENCE");
-
-if(option_list == 1){
-	draw_set_color(c_white);
-	draw_set_font(fnt_menu_op);
-	if(option_selected = 0) draw_set_color(c_yellow)
-	draw_text(room_width/2,room_height/2+60,"JOGAR");
-	
-	
-	draw_set_color(c_white);
-	if(option_selected = 1) draw_set_color(c_yellow)
-	draw_text(room_width/2,room_height/2+150,"SAIR");
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/// @description Lógica + desenho do menu de pausa / configurações
+// O Draw GUI roda depois de todos os Steps: o Esc do baú / colocar baú / inventário já foi tratado.
+// (funções no Create: menu_atualizar = lógica | menu_desenhar = desenho)
+menu_atualizar();
+menu_desenhar();

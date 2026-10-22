@@ -46,3 +46,6 @@ if (_tuto_obj != -1) {
         instance_create_layer(x, y, "Instances", (is_string(_tuto_obj) ? asset_get_index(_tuto_obj) : _tuto_obj));
     }
 }
+
+// Menu de pausa (Esc) / configurações: objeto persistente único
+if (!instance_exists(obj_control_menu)) instance_create_depth(0, 0, -15000, obj_control_menu);

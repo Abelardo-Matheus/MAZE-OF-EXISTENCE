@@ -14,6 +14,9 @@ inicializar_gerador_mundo();
 // Inicializa sistema de ondas
 init_night_waves();
 
+// Vento (força aleatória 0..100, empurra acima de 50): garante o obj_vento na fase
+vento_garantir();
+
 // Gerenciador da horda noturna (milhares de inimigos sem instâncias)
 if (!instance_exists(obj_horde)) instance_create_layer(0, 0, "Instances", obj_horde);
 

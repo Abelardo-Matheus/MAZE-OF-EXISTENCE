@@ -132,6 +132,11 @@ function _horde_type_get(_obj, _hp_mult, _scale, _over = undefined, _key_extra =
         if (variable_struct_exists(_over, "elite"))    _t.elite  = _over.elite;
     }
 
+    // Cor pela força (mesma regra das instâncias: IA_INIMIGOS -> inimigo_cor_por_poder)
+    var _mh = (!is_undefined(_over) && variable_struct_exists(_over, "mult_hp")) ? _over.mult_hp : 1;
+    _t.poder = max((_t.lvl - 1) / (INIMIGO_NIVEL_COR_MAX - 1), (_mh * (_t.elite ? 2 : 1) - 1) / (INIMIGO_RONDA_COR_MAX - 1));
+    _t.cor   = inimigo_cor_por_poder(_t.poder);
+
     var _spr2 = _t.sprite;
     var _sp = sprite_get_speed(_spr2);
     _t.anim_fps = ((sprite_get_speed_type(_spr2) == spritespeed_framespersecond) ? _sp : _sp * game_get_speed(gamespeed_fps)) * 1.2;
@@ -445,6 +450,7 @@ function _horde_process_deaths() {
 
         _horde_gem_drop(_x, _y, round(_t.xp)); // XP já escalado pela ronda (scr_rondas_noite)
         horde_on_enemy_death(_t.obj, _x, _y);
+        item_ao_matar(_x, _y); // XP dos itens equipados + passivas de abate
         _horde_remove(_i);
 
         if (!is_undefined(_t.split)) {

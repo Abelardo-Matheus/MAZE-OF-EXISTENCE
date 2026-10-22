@@ -11,8 +11,8 @@
   "managed": true,
   "overriddenProperties": [],
   "parent": {
-    "name": "COLETAVEIS",
-    "path": "folders/Objects/FASE_BEBE_ALL/COLETAVEIS.yy",
+    "name": "ITENS",
+    "path": "folders/Objects/ITENS.yy",
   },
   "parentObjectId": {
     "name": "obj_par_cenario",

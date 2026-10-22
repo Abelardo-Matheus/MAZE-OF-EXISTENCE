@@ -5,7 +5,7 @@
   "isCompatibility": false,
   "isDnD": false,
   "parent": {
-    "name": "FASE_1",
-    "path": "folders/Scripts/FASE_1.yy",
+    "name": "CASA",
+    "path": "folders/Scripts/MUNDO/CASA.yy",
   },
 }

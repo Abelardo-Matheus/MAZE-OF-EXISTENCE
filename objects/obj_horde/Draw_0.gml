@@ -51,7 +51,7 @@ for (_k = 0; _k < grid_total; _k++) {
     _alpha = (_t.transp < 1) ? _t.transp + 0.15 * sin(_tms * 0.004 + ephase[_i]) : 1;
     _esc = _t.escala;
     draw_sprite_ext(_t.sprite, paused ? 0 : _tsec * _t.anim_fps + ephase[_i], _px, _py + _bob,
-                    (horde_px < _px) ? -_esc : _esc, _esc, 0, c_white, _alpha);
+                    (horde_px < _px) ? -_esc : _esc, _esc, 0, _t.cor, _alpha); // cor pela força
 }
 if (_fog) gpu_set_fog(false, c_white, 0, 0);
 
@@ -67,5 +67,5 @@ for (_k = 0; _k < grid_total; _k++) {
     var _hx = _px - _hw / 2;
     var _hy = _py + _t.topo - 10;
     draw_sprite_ext(spr_hud_vida_inimigo, 0, _hx, _hy, _hs, _hs, 0, c_white, 1);
-    draw_sprite_ext(spr_vida_, 0, _hx, _hy, max(0, ehp[_i] / ehpmax[_i]) * _hs, _hs, 0, c_white, 1);
+    draw_sprite_ext(spr_vida_, 0, _hx, _hy, clamp(ehp[_i] / max(1, ehpmax[_i]), 0, 1) * _hs, _hs, 0, c_white, 1);
 }

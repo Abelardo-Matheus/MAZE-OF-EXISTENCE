@@ -12,8 +12,8 @@
   "managed": true,
   "overriddenProperties": [],
   "parent": {
-    "name": "NPC",
-    "path": "folders/Objects/FASE_BEBE_ALL/NPC.yy",
+    "name": "INTERFACE",
+    "path": "folders/Objects/INTERFACE.yy",
   },
   "parentObjectId": null,
   "persistent": true,

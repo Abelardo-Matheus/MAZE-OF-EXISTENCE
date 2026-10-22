@@ -6,6 +6,6 @@
   "isDnD": false,
   "parent": {
     "name": "PETS",
-    "path": "folders/Scripts/PODERES/PETS.yy",
+    "path": "folders/Scripts/PODERES/ATIVOS/PETS.yy",
   },
 }

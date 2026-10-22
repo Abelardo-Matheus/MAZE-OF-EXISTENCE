@@ -6,8 +6,8 @@
   "managed": true,
   "overriddenProperties": [],
   "parent": {
-    "name": "CASA",
-    "path": "folders/Objects/FASE_BEBE_ALL/CENARIO/ESTRUTURAS/CASA.yy",
+    "name": "CIDADE",
+    "path": "folders/Objects/MUNDO/CIDADE.yy",
   },
   "parentObjectId": {
     "name": "obj_estrutura",

@@ -148,12 +148,8 @@ function scr_shuriken(_row_index)
             _shuriken.duration = _stats.duration; // Tempo total (ms)
             _shuriken.life_timer = 0;             // Cronômetro (ms) - inicia zerado
             
-            // Escala Visual
-            // Se usar o sistema de escala base que você tem (_shuriken.escala_base)
-            var _escala_final = _stats.size;
-            if (variable_instance_exists(_shuriken, "escala_base")) {
-                _escala_final *= _shuriken.escala_base;
-            }
+            // Escala Visual padronizada: ~18px na tela * size (size já inclui o Anel)
+            var _escala_final = skill_escala_px(spr_shuriken, 18, _stats.size);
             
             _shuriken.image_xscale = _escala_final;
             _shuriken.image_yscale = _escala_final;

@@ -5,7 +5,7 @@
   "isCompatibility": false,
   "isDnD": false,
   "parent": {
-    "name": "INIMIGOS",
-    "path": "folders/Scripts/INIMIGOS.yy",
+    "name": "BOSS",
+    "path": "folders/Scripts/INIMIGOS/BOSS.yy",
   },
 }

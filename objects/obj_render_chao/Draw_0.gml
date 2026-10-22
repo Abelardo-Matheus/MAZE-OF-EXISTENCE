@@ -43,6 +43,9 @@ for (var _rx = _rx0 - 1; _rx <= _rx1 + 1; _rx++) {
     }
 }
 
+// Rastro de veneno do player (scr_rastro_sombrio): no chão, por baixo de tudo
+rastro_desenhar();
+
 // libera da memoria as regioes que ficaram longe (a cada ~2 s)
 timer_limpeza++;
 if (timer_limpeza >= 120) {

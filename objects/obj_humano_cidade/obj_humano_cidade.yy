@@ -10,8 +10,8 @@
   "managed": true,
   "overriddenProperties": [],
   "parent": {
-    "name": "NPC",
-    "path": "folders/Objects/FASE_BEBE_ALL/NPC.yy",
+    "name": "NPCS",
+    "path": "folders/Objects/NPCS.yy",
   },
   "parentObjectId": null,
   "persistent": false,

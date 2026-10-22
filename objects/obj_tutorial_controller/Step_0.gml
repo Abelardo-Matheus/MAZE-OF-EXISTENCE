@@ -1,96 +1,32 @@
 // feather disable GM2017
-/// @desc Lógica do Tutorial por Passos
+/// @desc Percorre os passos do tutorial (scr_tutorial -> tutorial_passos)
 
-// 1. Monitora Diálogos
-if (dialogue_active && !instance_exists(obj_dialogo)) {
-    dialogue_active = false;
-    // Se acabamos de falar o texto inicial, não avançamos o step ainda, esperamos a ação
+// 1. Primeira vez: decora a casa e prepara XP/poderes de verdade
+if (!preparado) {
+    preparado = true;
+    tutorial_decorar_casa();
+    tutorial_preparar_progresso();
 }
 
-// 2. Máquina de Estados do Tutorial
-switch (tutorial_step) {
-    case 0: // ENSINAR MOVIMENTO
-        if (last_step != tutorial_step) {
-            start_tuto_dialogue("Tuto_Move");
-            last_step = tutorial_step;
-        }
-        
-        // Critério de avanço: se moveu 200 pixels
-        if (point_distance(start_x, start_y, obj_player.x, obj_player.y) > 200) {
-            tutorial_step = 1;
-        }
-        break;
+if (!instance_exists(obj_player)) exit;
 
-    case 1: // ENSINAR INTERAÇÃO
-        if (last_step != tutorial_step) {
-            start_tuto_dialogue("Tuto_Interact");
-            last_step = tutorial_step;
-        }
-        
-        // Critério de avanço: conversou com a Fada
-        // A Fada muda seu 'dig' ao conversar. Vamos monitorar isso ou o diálogo.
-        if (instance_exists(obj_npc_fada) && obj_npc_fada.dig > 0) {
-            tutorial_step = 2;
-        }
-        break;
+// 2. Monitora ações que duram poucos frames (contam mesmo com o objetivo ainda não visível)
+var _in = obter_inputs_jogador();
+if (_in.shift && global.estamina > 0 && (obj_player.hveloc != 0 || obj_player.vveloc != 0)) correr_frames++;
+if (obj_player.state == scr_personagem_dash_tuto) fez_dash = true;
 
-    case 2: // ENSINAR COMBATE
-        if (last_step != tutorial_step) {
-            last_step = tutorial_step;
-        }
-        
-        // Verifica se a cutscene criou a amoeba
-        if (!amoeba_spawned && instance_exists(obj_amoeba)) {
-            amoeba_spawned = true;
-        }
-        
-        // Critério de avanço: Amoeba morreu
-        if (amoeba_spawned && !instance_exists(obj_amoeba)) {
-            if (last_step == tutorial_step) { // Garante que roda uma vez
-                start_tuto_dialogue("Tuto_Combat_Win");
-                last_step = -2; // Estado intermediário
-            }
-            
-            // Só avança o step quando o diálogo de vitória fechar
-            if (!instance_exists(obj_dialogo)) {
-                tutorial_step = 3;
-            }
-        }
-        break;
+// 3. Espera diálogos e a tela de level up terminarem
+if (global.level_up || instance_exists(obj_dialogo)) exit;
+if (tutorial_step >= array_length(passos)) exit;
 
-    case 3: // ENSINAR DASH
-        if (last_step != tutorial_step) {
-            start_tuto_dialogue("Tuto_Dash");
-            last_step = tutorial_step;
-        }
-        
-        // Critério de avanço: Usou o Dash
-        if (global.in_dash) {
-            tutorial_step = 4;
-        }
-        break;
-
-    case 4: // ENSINAR TROCA DE ARMA
-        if (last_step != tutorial_step) {
-            start_tuto_dialogue("Tuto_Weapon");
-            last_step = tutorial_step;
-        }
-        
-        // Critério de avanço: Trocou para o arco (ARMAMENTOS.ARCO = 1)
-        if (global.armamento == ARMAMENTOS.ARCO) {
-            tutorial_step = 5;
-        }
-        break;
-
-    case 5: // FINALIZAR TUTORIAL
-        if (last_step != tutorial_step) {
-            start_tuto_dialogue("Tuto_End");
-            last_step = tutorial_step;
-            
-            // Permite que a fada responda com o diálogo final se o player interagir novamente
-            if (instance_exists(obj_npc_fada)) {
-                obj_npc_fada.dig = 4;
-            }
-        }
-        break;
+// 4. Passo atual
+var _p = passos[tutorial_step];
+if (!passo_iniciado) {
+    passo_iniciado = true;
+    _p.iniciar(id);
+    exit;
+}
+if (_p.concluido(id)) {
+    tutorial_step++;
+    passo_iniciado = false;
 }

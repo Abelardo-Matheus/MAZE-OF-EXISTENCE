@@ -138,10 +138,8 @@ function scr_bumerangue(_row_index)
             _boomerang.pierce_max = _stats.pierce_count;
             _boomerang.push_force = _stats.knockback;
 
-            var _escala_final = _stats.size;
-            if (variable_instance_exists(_boomerang, "escala_base")) {
-                _escala_final *= _boomerang.escala_base;
-            }
+            // Tamanho padronizado: ~14px * size (size base 2 -> ~28px; já inclui o Anel)
+            var _escala_final = skill_escala_px(spr_bulmerangue, 14, _stats.size);
             _boomerang.image_xscale = _escala_final;
             _boomerang.image_yscale = _escala_final;
 
@@ -157,4 +155,4 @@ function scr_bumerangue(_row_index)
     }
 }
 
-#endregion
+#endregion

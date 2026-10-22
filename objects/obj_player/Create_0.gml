@@ -20,6 +20,7 @@
 
 if (!variable_global_exists("estamina"))      global.estamina = 100;
 if (!variable_global_exists("max_estamina"))  global.max_estamina = 100;
+if (!variable_global_exists("cansado"))       global.cansado = false; // estamina zerou (PERSONAGEM.gml)
 if (!variable_global_exists("sanidade"))      global.sanidade = 100;
 
 // --- Atributos de Combate ---
@@ -70,6 +71,10 @@ tomar_dano = true;     // Se pode receber dano no momento (invencibilidade)
 empurrar_dir = 0;      // A direção para onde será empurrado
 dano_alfa = 0;         // Controle visual para piscar
 image_blend = c_white; // Garante que começa com a cor normal
+dano_visual       = 0;     // frames restantes do efeito de dano (player_sinal_dano / Draw)
+dano_visual_total = 1;
+dano_cor          = c_red;
+estamina_alfa     = 0;     // transparência da bolinha de estamina (some quando cheia)
 
 // Variáveis visuais da arma
 desenha_arma = false;
@@ -97,6 +102,9 @@ pegar = true; // Controle para não pegar itens infinitamente num frame
 // ========================================================
 // Se você usa viewports, pode querer inicializar algo aqui, 
 // mas geralmente fica num objeto controlador de câmera.
+
+// --- Menu de pausa (Esc) / configurações: objeto persistente único ---
+if (!instance_exists(obj_control_menu)) instance_create_depth(0, 0, -15000, obj_control_menu);
 
 // --- NOVO: SISTEMA DE SKILLS ---
 var _mgr_index = asset_get_index("obj_skill_manager");

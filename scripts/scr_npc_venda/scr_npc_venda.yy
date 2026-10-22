@@ -5,7 +5,7 @@
   "isCompatibility": false,
   "isDnD": false,
   "parent": {
-    "name": "NPC",
-    "path": "folders/Scripts/NPC.yy",
+    "name": "NPC_DIALOGO",
+    "path": "folders/Scripts/NPC_DIALOGO.yy",
   },
 }

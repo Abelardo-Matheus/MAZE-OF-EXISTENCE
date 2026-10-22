@@ -10,7 +10,7 @@
   "overriddenProperties": [],
   "parent": {
     "name": "CASA",
-    "path": "folders/Objects/FASE_BEBE_ALL/CENARIO/CASA.yy",
+    "path": "folders/Objects/MUNDO/CASA.yy",
   },
   "parentObjectId": null,
   "persistent": false,

@@ -1,5 +1,17 @@
 // feather disable GM2017
 
+// Tela de level up aberta: o jogo fica pausado (igual ao obj_player)
+if (!variable_instance_exists(id, "vel_anim_pausa")) vel_anim_pausa = -1;
+if (global.level_up) {
+    if (vel_anim_pausa < 0) vel_anim_pausa = image_speed;
+    image_speed = 0;
+    exit;
+}
+if (vel_anim_pausa >= 0) {
+    image_speed = vel_anim_pausa;
+    vel_anim_pausa = -1;
+}
+
 script_execute(state);
 depth = -y;
 if(global.estamina <= global.max_estamina && !andar){
@@ -49,3 +61,7 @@ if (desenha_arma) {
         desenha_arma = false;  // Para de desenhar quando o alfa chegar a 0
     }
 }
+
+// Poderes e pets ganhos no tutorial (mesmo sistema do jogo: scr_modificadores)
+skills_executar_tick();
+mods_tick();

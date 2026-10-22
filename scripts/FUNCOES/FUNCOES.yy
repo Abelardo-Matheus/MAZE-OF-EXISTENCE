@@ -5,7 +5,7 @@
   "isCompatibility": false,
   "isDnD": false,
   "parent": {
-    "name": "PLAYER",
-    "path": "folders/Scripts/PLAYER.yy",
+    "name": "SISTEMA",
+    "path": "folders/Scripts/SISTEMA.yy",
   },
 }

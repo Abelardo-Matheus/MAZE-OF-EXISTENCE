@@ -11,8 +11,8 @@
   "managed": true,
   "overriddenProperties": [],
   "parent": {
-    "name": "INIMIGOS_GRUPOS",
-    "path": "folders/Objects/FASE_BEBE_ALL/CENARIO/ESTRUTURAS/INIMIGOS_GRUPOS.yy",
+    "name": "INIMIGOS",
+    "path": "folders/Objects/INIMIGOS.yy",
   },
   "parentObjectId": {
     "name": "obj_par_cenario",

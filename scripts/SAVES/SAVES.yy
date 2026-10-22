@@ -5,7 +5,7 @@
   "isCompatibility": false,
   "isDnD": false,
   "parent": {
-    "name": "SAVES",
-    "path": "folders/Scripts/SAVES.yy",
+    "name": "SISTEMA",
+    "path": "folders/Scripts/SISTEMA.yy",
   },
 }

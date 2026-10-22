@@ -10,7 +10,7 @@
   "overriddenProperties": [],
   "parent": {
     "name": "PETS",
-    "path": "folders/Objects/FASE_BEBE_ALL/PETS.yy",
+    "path": "folders/Objects/PODERES/ATIVOS/PETS.yy",
   },
   "parentObjectId": {
     "name": "obj_par_pet",

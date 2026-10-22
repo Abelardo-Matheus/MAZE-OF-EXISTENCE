@@ -29,9 +29,10 @@ function inventory_find_empty_slot() {
 /// Tipo exigido por um slot (-1 = mochila, aceita tudo)
 function inventory_slot_tipo(_slot) {
     var _bag = inventory_bag_slots();
-    if (_slot == _bag)     return "arma";
+    if (_slot == _bag)     return "cabeca";      // chapéu (antes: arma — armas agora só na hotbar)
     if (_slot == _bag + 1) return "armadura";
     if (_slot == _bag + 2) return "bota";
+    if (hotbar_e_slot(_slot)) return "ferramenta";   // hotbar: arma, arco ou luz
     return -1;
 }
 
@@ -42,6 +43,7 @@ function inventory_slot_aceita(_dest, _src) {
     var _req = inventory_slot_tipo(_dest);
     if (_req == -1) return true;
     if (global.grid_itens[# INFOS.ITEM, _src] == -1) return true; // slot vazio pode "ir" pra qualquer lugar
+    if (_req == "ferramenta") return item_tipo_hotbar(global.grid_itens[# INFOS.TIPO, _src]);
     return global.grid_itens[# INFOS.TIPO, _src] == _req;
 }
 
@@ -142,7 +144,7 @@ function inventory_drop_item(_slot) {
     if (_p == noone) return;
 
     if (!is_undefined(item_db(_id))) {
-        item_criar_no_mundo(_p.x, _p.y, _id, _grid[# INFOS.QUANTIDADE, _slot], _grid[# INFOS.NIVEL, _slot], _grid[# INFOS.PASSIVAS, _slot]);
+        item_criar_no_mundo(_p.x, _p.y, _id, _grid[# INFOS.QUANTIDADE, _slot], _grid[# INFOS.NIVEL, _slot], _grid[# INFOS.PASSIVAS, _slot], undefined, item_xp_slot(_grid, _slot));
     } else {
         // item legado (fora da database)
         var _inst = instance_create_depth(_p.x, _p.y, -_p.y, obj_item);
@@ -196,9 +198,19 @@ function inventory_use_item(_slot) {
     if (_tipo == "material") { inventory_msg("Materiais são usados no craft.", c_ltgray); return; }
     if (_tipo == "colocavel") { colocar_bau_iniciar(_slot); return; }
 
+    // Arma, arco e luz: botão direito manda para a hotbar (e de volta para a mochila)
+    if ((item_tipo_ferramenta(_tipo) || _tipo == "coleta") && !hotbar_e_slot(_slot) && _slot < _bag) {
+        var _hb = -1;
+        for (var _h = 0; _h < HOTBAR_SLOTS; _h++) if (_grid[# INFOS.ITEM, hotbar_slot(_h)] == -1) { _hb = hotbar_slot(_h); break; }
+        if (_hb == -1) _hb = hotbar_slot(hotbar_ativo()); // hotbar cheia: troca com o item na mão
+        inventory_swap_item(_slot, _hb);
+        inventory_pos_mudanca();
+        return;
+    }
+
     if (_slot < _bag) {
         var _alvo = -1;
-        if (_tipo == "arma")     _alvo = _bag;
+        if (_tipo == "cabeca")   _alvo = _bag;
         if (_tipo == "armadura") _alvo = _bag + 1;
         if (_tipo == "bota")     _alvo = _bag + 2;
         if (_alvo != -1) { inventory_swap_item(_slot, _alvo); inventory_pos_mudanca(); }
@@ -226,12 +238,15 @@ function inventory_aplicar_adesivo(_src, _dest) {
     var _eq = item_db(_grid[# INFOS.ITEM, _dest]);
 
     if (!is_undefined(_eq) && _eq.inata == _pid) { inventory_msg("Esse item já nasce com essa passiva!", c_orange); return false; }
+    if (!is_undefined(_eq) && !passiva_serve(_pid, _eq.tipo)) { inventory_msg("Esse adesivo não serve nesse tipo de item!", c_orange); return false; }
     for (var _i = 0; _i < array_length(_pas); _i++) {
-        if (_pas[_i] == _pid) { inventory_msg("Esse item já tem esse adesivo!", c_orange); return false; }
+        if (_pas[_i] == _pid) { inventory_msg("Esse item já tem essa passiva!", c_orange); return false; }
     }
+    // Cheio (3): o adesivo substitui a passiva mais antiga
     if (array_length(_pas) >= item_slots_passiva(_nv)) {
-        inventory_msg("Sem espaço para adesivos! Melhore o item (Nv 3 e Nv 5 liberam espaço).", c_orange);
-        return false;
+        var _saiu = global.passivas_db[$ _pas[0]];
+        array_delete(_pas, 0, 1);
+        if (!is_undefined(_saiu)) inventory_msg(_saiu.nome + " saiu para dar lugar ao adesivo.", c_orange);
     }
 
     array_push(_pas, _pid);
@@ -243,39 +258,7 @@ function inventory_aplicar_adesivo(_src, _dest) {
     return true;
 }
 
-/// @desc Custo para subir o item do slot de nível. Retorna undefined se não pode.
-function item_upgrade_custo(_slot) {
-    var _grid = global.grid_itens;
-    var _d = item_db(_grid[# INFOS.ITEM, _slot]);
-    if (is_undefined(_d) || !item_tipo_e_equipamento(_d.tipo)) return undefined;
-    var _nv = _grid[# INFOS.NIVEL, _slot];
-    if (_nv >= ITEM_NIVEL_MAX) return { maximo: true, moedas: 0, po: 0 };
-    return { maximo: false, moedas: round((_d.preco * 0.6 + 10) * _nv), po: _nv };
-}
-
-/// @desc Sobe o nível do item do slot (moedas + Pó de Estrela)
-function item_upgrade(_slot) {
-    var _c = item_upgrade_custo(_slot);
-    if (is_undefined(_c)) { inventory_msg("Só equipamentos podem ser melhorados.", c_ltgray); return false; }
-    if (_c.maximo) { inventory_msg("Esse item já está no nível máximo!", c_yellow); return false; }
-    if (global.moedas < _c.moedas) { inventory_msg("Faltam moedas! (" + string(_c.moedas) + ")", c_red); return false; }
-    if (inventory_count_item("po_estrela") < _c.po) { inventory_msg("Falta Pó de Estrela! (" + string(_c.po) + ")", c_red); return false; }
-
-    global.moedas -= _c.moedas;
-    inventory_remove_item("po_estrela", _c.po);
-
-    var _grid = global.grid_itens;
-    var _antes = item_slots_passiva(_grid[# INFOS.NIVEL, _slot]);
-    _grid[# INFOS.NIVEL, _slot] += 1;
-    var _nv = _grid[# INFOS.NIVEL, _slot];
-    item_slot_atualizar_stats(_grid, _slot);
-    if (inventory_slot_e_equip(_slot)) player_stats_recalcular();
-
-    var _txt = _grid[# INFOS.NOME, _slot] + " subiu para o Nv " + string(_nv) + "!";
-    if (item_slots_passiva(_nv) > _antes) _txt += " Novo espaço de adesivo!";
-    inventory_msg(_txt, make_color_rgb(255, 220, 90));
-    return true;
-}
+// (Upgrade com moedas/Pó de Estrela saiu: o nível agora sobe matando monstros — scr_passivas_itens)
 
 #endregion
 
@@ -283,7 +266,10 @@ function item_upgrade(_slot) {
 
 function equip_stats_zero() {
     return { dano: 0, dano_pct: 0, defesa: 0, vel: 0, vida: 0, crit: 0, crit_dano: 0,
-             regen: 0, vampirismo: 0, esquiva: 0, mata_fantasma: false };
+             regen: 0, vampirismo: 0, esquiva: 0, mata_fantasma: false,
+             // passivas novas (scr_passivas_itens)
+             alcance: 0, flechas: 0, recarga: 0, cura_abate: 0, moeda_abate: 0,
+             xp_item: 0, espinhos: 0, sanidade_regen: 0 };
 }
 
 function _equip_somar(_e, _stat, _v) {
@@ -297,10 +283,12 @@ function equip_calcular_bonus() {
     var _tem_grid = variable_global_exists("grid_itens") && ds_exists(global.grid_itens, ds_type_grid);
     var _grid = _tem_grid ? global.grid_itens : -1;
     var _bag = _tem_grid ? inventory_bag_slots() : 0;
-    var _fim = _tem_grid ? _bag + 3 : 0;
     var _stats = ["dano", "defesa", "vel", "vida", "crit"];
+    // Slots que dão atributos: os 3 equipamentos + SÓ o item ativo da hotbar
+    var _slots_bonus = _tem_grid ? [_bag, _bag + 1, _bag + 2, hotbar_slot(hotbar_ativo())] : [];
 
-    for (var _s = _bag; _s < _fim; _s++) {
+    for (var _q = 0; _q < array_length(_slots_bonus); _q++) {
+        var _s = _slots_bonus[_q];
         var _id = _grid[# INFOS.ITEM, _s];
         if (_id == -1) continue;
         var _d = item_db(_id);
@@ -335,6 +323,7 @@ function equip_calcular_bonus() {
 
 /// @desc Recalcula ataque/defesa/velocidade/vida do player. Chame sempre que equipar algo.
 function player_stats_recalcular() {
+    hotbar_atualizar_armamento(); // o item ativo da hotbar define espada / arco / nada
     var _e = equip_calcular_bonus();
     if (!variable_global_exists("equip_aplicado")) global.equip_aplicado = { vel: 0, vida: 0 };
 
@@ -374,10 +363,11 @@ function player_dano_recebido(_dano) {
     var _e = variable_global_exists("equip_stats") ? global.equip_stats : equip_stats_zero();
     if (_e.esquiva > 0 && random(100) < min(_e.esquiva, 60)) {
         var _p = (variable_global_exists("current_player") && instance_exists(global.current_player)) ? global.current_player : obj_player;
-        with (_p) { tomar_dano = false; alarm[ALARM_INVENCIBILIDADE] = 40; image_blend = c_aqua; }
+        with (_p) { tomar_dano = false; alarm[ALARM_INVENCIBILIDADE] = 40; player_sinal_dano(c_aqua, 40); }
         return 0;
     }
     var _reducao = min(0.6, max(0, global.armadura_bebe) * 0.025); // 1 de defesa = 2.5%, máx 60%
+    _reducao = min(0.75, _reducao + mods_get().reducao_dano);         // + Curativo / pet Tartaruga
     return max(1, round(_dano * (1 - _reducao)));
 }
 
@@ -403,6 +393,9 @@ function itens_passivas_tick() {
     if (_regen > 0 && global.vida > 0 && global.vida < global.vida_max) {
         global.vida = min(global.vida_max, global.vida + _regen / game_get_speed(gamespeed_fps));
     }
+
+    // Sanidade, espinhos, recarga do X e efeitos (scr_passivas_itens)
+    itens_passivas_especiais_tick();
 
     // Buffs
     if (!variable_global_exists("buffs_ativos")) return;
@@ -492,7 +485,7 @@ function criar_drop_especifico(_pos_x, _pos_y, _nome_item, _quantidade, _raridad
 
 /// @desc Monta as linhas do tooltip de um item.
 /// Cada linha: { t: texto, c: cor, s: escala relativa, estrelas: nível (opcional) }
-function item_tooltip_linhas(_id, _nivel, _passivas, _qtd = 1, _contexto = "mochila") {
+function item_tooltip_linhas(_id, _nivel, _passivas, _qtd = 1, _contexto = "mochila", _xp = -1) {
     var _L = [];
     var _d = item_db(_id);
     if (is_undefined(_d)) {
@@ -504,7 +497,11 @@ function item_tooltip_linhas(_id, _nivel, _passivas, _qtd = 1, _contexto = "moch
 
     array_push(_L, { t: _d.nome, c: _rar.cor, s: 1.25 });
     array_push(_L, { t: item_tipo_nome(_d.tipo) + "  -  " + _rar.nome, c: make_color_rgb(190, 180, 170), s: 0.85 });
-    if (_equip) array_push(_L, { t: "Nv " + string(_nivel) + "/" + string(ITEM_NIVEL_MAX), c: make_color_rgb(255, 220, 90), s: 0.9, estrelas: _nivel });
+    if (_equip) {
+        var _txt_nv = "Nv " + string(floor(_nivel));
+        if (_xp >= 0) _txt_nv += "   XP " + string(floor(_xp)) + "/" + string(item_xp_prox(_nivel));
+        array_push(_L, { t: _txt_nv, c: make_color_rgb(255, 220, 90), s: 0.9 });
+    }
 
     // Atributos
     var _ordem = ["dano", "defesa", "vel", "vida", "crit"];
@@ -513,9 +510,29 @@ function item_tooltip_linhas(_id, _nivel, _passivas, _qtd = 1, _contexto = "moch
         if (_v == 0) continue;
         var _inf = item_stat_info(_ordem[_k]);
         var _prox = "";
-        if (_equip && _nivel < ITEM_NIVEL_MAX && _v > 0) _prox = "   (Nv" + string(_nivel + 1) + ": " + item_num_str(item_stat(_id, _ordem[_k], _nivel + 1)) + ")";
+        if (_equip && _v > 0) _prox = "   (Nv" + string(_nivel + 1) + ": " + item_num_str(item_stat(_id, _ordem[_k], _nivel + 1)) + ")";
         array_push(_L, { t: (_v > 0 ? "+" : "") + item_num_str(_v) + _inf.sufixo + " " + _inf.nome + _prox, c: (_v > 0 ? _inf.cor : c_red), s: 1 });
     }
+
+    // Hotbar: o que a arma/arco/luz faz
+    if (_d.tipo == "arco" && is_struct(_d.arco)) {
+        var _txt_arco = (_d.arco.flechas > 1 ? string(_d.arco.flechas) + " flechas por tiro, " : "") + "flecha " + (_d.arco.vel >= 15 ? "muito rápida" : (_d.arco.vel >= 12 ? "rápida" : "lenta"));
+        array_push(_L, { t: _txt_arco, c: make_color_rgb(200, 230, 255), s: 0.9 });
+    }
+    if (_d.tipo == "arma" && is_struct(_d.espada) && _d.espada.alcance != 1) {
+        array_push(_L, { t: "Golpe " + (_d.espada.alcance > 1 ? "grande" : "curtinho") + " (" + string(round(_d.espada.alcance * 100)) + "%)", c: make_color_rgb(200, 230, 255), s: 0.9 });
+    }
+    if (_d.tipo == "luz" && is_struct(_d.luz)) {
+        array_push(_L, { t: "Ilumina " + string(_d.luz.raio) + " px em volta e acalma (sanidade)", c: make_color_rgb(255, 235, 150), s: 0.9 });
+    }
+    if (_d.tipo == "arma") array_push(_L, { t: "X: Giro (acerta tudo em volta)", c: make_color_rgb(255, 200, 120), s: 0.9 });
+    if (_d.tipo == "arco") array_push(_L, { t: "X: Chuva de flechas em leque", c: make_color_rgb(255, 200, 120), s: 0.9 });
+    if (_d.tipo == "coleta" && is_struct(_d.coleta)) {
+        var _alvo_txt = (_d.coleta.tipo == "machado") ? "árvores" : ((_d.coleta.tipo == "picareta") ? "pedras" : "montinhos de terra");
+        array_push(_L, { t: "Quebra " + _alvo_txt + " (força " + string(_d.coleta.forca) + ")", c: make_color_rgb(200, 230, 255), s: 0.9 });
+    }
+    if (item_tipo_ferramenta(_d.tipo) || _d.tipo == "coleta") array_push(_L, { t: "Coloque na hotbar (1-4) para usar", c: make_color_rgb(170, 160, 150), s: 0.8 });
+    else if (_d.tipo == "uso" || _d.tipo == "colocavel") array_push(_L, { t: "Pode ir na hotbar: clique esquerdo usa", c: make_color_rgb(170, 160, 150), s: 0.8 });
 
     // Consumível: cura e buffs
     if (_d.tipo == "uso") {
@@ -539,7 +556,7 @@ function item_tooltip_linhas(_id, _nivel, _passivas, _qtd = 1, _contexto = "moch
     if (_equip) {
         if (_d.inata != "") {
             var _pi = global.passivas_db[$ _d.inata];
-            array_push(_L, { t: "* " + _pi.nome + " (inata): " + passiva_texto(_d.inata, _nivel), c: make_color_rgb(255, 210, 80), s: 0.95 });
+            array_push(_L, { t: "* " + _pi.nome + " (própria): " + passiva_texto(_d.inata, _nivel), c: make_color_rgb(255, 210, 80), s: 0.95 });
         }
         var _slots = item_slots_passiva(_nivel);
         var _np = is_array(_passivas) ? array_length(_passivas) : 0;
@@ -548,10 +565,10 @@ function item_tooltip_linhas(_id, _nivel, _passivas, _qtd = 1, _contexto = "moch
                 var _pd2 = global.passivas_db[$ _passivas[_p]];
                 if (!is_undefined(_pd2)) array_push(_L, { t: "> " + _pd2.nome + ": " + passiva_texto(_passivas[_p], _nivel), c: _pd2.cor, s: 0.95 });
             } else {
-                array_push(_L, { t: "[ espaço de adesivo vazio ]", c: make_color_rgb(140, 130, 120), s: 0.85 });
+                array_push(_L, { t: "[ espaço de passiva vazio: cole um adesivo ]", c: make_color_rgb(140, 130, 120), s: 0.85 });
             }
         }
-        if (_slots < 3) array_push(_L, { t: "Próximo espaço no Nv " + string(_slots == 1 ? 3 : 5), c: make_color_rgb(140, 130, 120), s: 0.8 });
+        array_push(_L, { t: "Equipado, sobe de nível matando monstros", c: make_color_rgb(140, 200, 120), s: 0.8 });
     }
 
     array_push(_L, { t: _d.desc, c: make_color_rgb(230, 220, 205), s: 0.9, wrap: true });
@@ -769,6 +786,193 @@ function ui_socket(_cx, _cy, _r, _aberto, _cor_glow = c_white) {
     draw_set_color(_aberto ? make_color_rgb(198, 176, 148) : make_color_rgb(118, 100, 86)); draw_circle(_cx, _cy, _r, false);
     draw_set_color(_aberto ? make_color_rgb(170, 146, 118) : make_color_rgb(98, 82, 70));   draw_circle(_cx + _r * 0.12, _cy + _r * 0.12, _r * 0.78, false);
     draw_set_color(c_white);
+}
+
+#endregion
+
+#region ---------- HOTBAR (4 espaços na esquerda: armas, arcos e luzes) ----------
+// Os 4 espaços ficam no FIM da global.grid_itens, depois dos 3 equipamentos:
+//   [0 .. mochila-1] mochila | [mochila .. +2] chapéu/armadura/calçado | [mochila+3 .. +6] hotbar
+// Aceita armas, arcos, luzes, consumíveis e colocáveis (item_tipo_hotbar).
+// Só o item ATIVO da hotbar dá atributos (equip_calcular_bonus) e define o ataque (global.armamento).
+// Trocar: teclas 1 2 3 4 (configuráveis: espada, arco, hot3, hot4) ou roda do mouse.
+// O zoom da câmera passou para Ctrl + roda (Camera.gml).
+#macro HOTBAR_SLOTS 4
+
+function hotbar_primeiro_slot() { return inventory_bag_slots() + 3; }
+function hotbar_slot(_i)        { return hotbar_primeiro_slot() + _i; }
+function hotbar_e_slot(_slot)   { var _h = hotbar_primeiro_slot(); return _slot >= _h && _slot < _h + HOTBAR_SLOTS; }
+
+function hotbar_ativo() {
+    if (!variable_global_exists("hotbar_ativo")) global.hotbar_ativo = 0;
+    return global.hotbar_ativo;
+}
+
+/// ID do item no espaço _i da hotbar (-1 = vazio)
+function hotbar_item_id(_i) {
+    if (!variable_global_exists("grid_itens") || !ds_exists(global.grid_itens, ds_type_grid)) return -1;
+    var _s = hotbar_slot(_i);
+    if (_s < 0 || _s >= ds_grid_height(global.grid_itens)) return -1;
+    return global.grid_itens[# INFOS.ITEM, _s];
+}
+
+/// Dados (item_db) do item na mão, ou undefined
+function hotbar_ativo_db() {
+    var _id = hotbar_item_id(hotbar_ativo());
+    if (_id == -1) return undefined;
+    return item_db(_id);
+}
+
+/// Espada / arco / nada (luz e espaço vazio não atacam)
+function hotbar_atualizar_armamento() {
+    var _d = hotbar_ativo_db();
+    var _t = is_undefined(_d) ? "" : _d.tipo;
+    if (_t == "arma" || _t == "coleta") global.armamento = ARMAMENTOS.ESPADA; // ferramenta de coleta golpeia igual à espada
+    else if (_t == "arco") global.armamento = ARMAMENTOS.ARCO;
+    else                   global.armamento = ARMAMENTOS.ALTURA; // nenhum ataque
+}
+
+/// Seleciona o espaço _i (dá a volta: 4 -> 0, -1 -> 3)
+function hotbar_selecionar(_i) {
+    global.hotbar_ativo = ((_i mod HOTBAR_SLOTS) + HOTBAR_SLOTS) mod HOTBAR_SLOTS;
+    global.hotbar_aviso = 90;   // mostra o nome do item por um tempinho
+    player_stats_recalcular();  // também atualiza global.armamento
+    with (obj_player) { dir_alfa = 1; desenha_arma = true; }
+}
+
+/// Clique esquerdo com consumível/colocável na mão: usa (cura/buff gasta 1; baú entra no modo posicionar)
+function hotbar_usar_ativo() {
+    if (instance_exists(obj_inventario) && obj_inventario.is_open) exit;
+    if (variable_global_exists("colocando_bau") && is_struct(global.colocando_bau) && variable_struct_exists(global.colocando_bau, "ativo") && global.colocando_bau.ativo) exit;
+    var _d = hotbar_ativo_db();
+    if (is_undefined(_d)) exit;
+    var _s = hotbar_slot(hotbar_ativo());
+    if (_d.tipo == "uso") {
+        inventory_use_item(_s);
+        player_stats_recalcular();    // acabou a pilha: a mão fica vazia
+    } else if (_d.tipo == "colocavel") {
+        colocar_bau_iniciar(_s);
+    }
+}
+
+/// Teclas 1-4 e roda do mouse (chamado no Step do obj_player)
+function hotbar_input() {
+    if (variable_global_exists("level_up") && global.level_up) exit;
+    if (instance_exists(obj_inventario) && obj_inventario.is_open) exit;
+    if (variable_global_exists("bau_aberto") && instance_exists(global.bau_aberto)) exit;
+    var _acoes = ["espada", "arco", "hot3", "hot4"];
+    for (var _i = 0; _i < HOTBAR_SLOTS; _i++) {
+        var _k = tecla(_acoes[_i]);
+        if (_k <= 0) _k = ord(string(_i + 1));
+        if (keyboard_check_pressed(_k)) { hotbar_selecionar(_i); exit; }
+    }
+    if (!keyboard_check(vk_control)) {
+        if (mouse_wheel_down()) hotbar_selecionar(hotbar_ativo() + 1);
+        else if (mouse_wheel_up()) hotbar_selecionar(hotbar_ativo() - 1);
+    }
+    if (variable_global_exists("hotbar_aviso") && global.hotbar_aviso > 0) global.hotbar_aviso--;
+}
+
+/// Luz na mão: o player vira uma fonte de luz (global.lista_luzes) — clareia a noite e recupera
+/// sanidade (o loop de sanidade do obj_player já usa a lista). Chamar no escopo do obj_player.
+function hotbar_luz_atualizar() {
+    if (!variable_global_exists("lista_luzes") || !ds_exists(global.lista_luzes, ds_type_list)) exit;
+    var _d = hotbar_ativo_db();
+    var _luz = (!is_undefined(_d) && is_struct(_d.luz)) ? _d.luz : undefined;
+    var _pos = ds_list_find_index(global.lista_luzes, id);
+    if (!is_undefined(_luz)) {
+        var _r = _luz.raio;
+        luz_1 = _r; luz_2 = _r * 0.75; luz_3 = _r * 0.45; luz_4 = _r * 0.3; luz_5 = _r * 0.2;
+        light_intensity = _luz.intensidade;
+        light_color     = _luz.cor;
+        light_style     = _luz.estilo;
+        light_offset_x  = 0;
+        light_offset_y  = -20;
+        global.luz_item_raio = _r;
+        if (_pos == -1) ds_list_add(global.lista_luzes, id);
+    } else {
+        global.luz_item_raio = 0;
+        if (_pos != -1) ds_list_delete(global.lista_luzes, _pos);
+    }
+}
+
+/// Retângulo (GUI) do espaço _i da hotbar: coluna pequena no meio da borda esquerda
+function hotbar_rect(_i) {
+    var _gh = display_get_gui_height();
+    var _k  = max(1, _gh / 360);
+    var _tam = 22 * _k, _gap = 4 * _k;
+    var _y0 = _gh / 2 - (HOTBAR_SLOTS * _tam + (HOTBAR_SLOTS - 1) * _gap) / 2;
+    var _x0 = 8 * _k;
+    var _y = _y0 + _i * (_tam + _gap);
+    return [_x0, _y, _x0 + _tam, _y + _tam];
+}
+
+/// Desenha a hotbar (Draw GUI do obj_inventario). Com o inventário aberto, os ícones
+/// são desenhados pelo loop de slots do inventário (para arrastar e soltar); aqui só o fundo.
+function hotbar_desenhar(_inventario_aberto) {
+    if (variable_global_exists("level_up") && global.level_up) exit;
+    var _ativo = hotbar_ativo();
+    var _k = max(1, display_get_gui_height() / 360);
+    draw_set_font(fnt_descricao);
+    var _fh = max(1, string_height("Ag"));
+    for (var _i = 0; _i < HOTBAR_SLOTS; _i++) {
+        var _r = hotbar_rect(_i);
+        var _sel = (_i == _ativo);
+        // fundo
+        draw_set_alpha(_inventario_aberto ? 0.95 : 0.75);
+        draw_set_color(make_color_rgb(52, 32, 26));
+        draw_roundrect_ext(_r[0] - _k, _r[1] - _k, _r[2] + _k, _r[3] + _k, 6 * _k, 6 * _k, false);
+        draw_set_color(_sel ? make_color_rgb(255, 236, 190) : make_color_rgb(222, 202, 176));
+        draw_roundrect_ext(_r[0], _r[1], _r[2], _r[3], 5 * _k, 5 * _k, false);
+        draw_set_alpha(1);
+        if (_sel) {
+            draw_set_color(make_color_rgb(255, 200, 60));
+            for (var _b = 0; _b < 2 * _k; _b++) draw_roundrect_ext(_r[0] - _b, _r[1] - _b, _r[2] + _b, _r[3] + _b, 6 * _k, 6 * _k, true);
+        }
+        // ícone (inventário fechado)
+        var _id = hotbar_item_id(_i);
+        if (!_inventario_aberto && _id != -1) {
+            var _d = item_db(_id);
+            if (!is_undefined(_d) && sprite_exists(_d.spr)) {
+                var _cx = (_r[0] + _r[2]) / 2, _cy = (_r[1] + _r[3]) / 2;
+                var _is = (_r[2] - _r[0]) * 0.9 / max(sprite_get_width(_d.spr), sprite_get_height(_d.spr));
+                draw_sprite_ext(_d.spr, _d.img, _cx - sprite_get_width(_d.spr) * _is / 2 + sprite_get_xoffset(_d.spr) * _is,
+                                _cy - sprite_get_height(_d.spr) * _is / 2 + sprite_get_yoffset(_d.spr) * _is, _is, _is, 0, c_white, 1);
+            }
+        }
+        // quantidade (consumíveis empilhados)
+        if (!_inventario_aberto && _id != -1) {
+            var _q = global.grid_itens[# INFOS.QUANTIDADE, hotbar_slot(_i)];
+            if (_q > 1) {
+                draw_set_halign(fa_right); draw_set_valign(fa_bottom);
+                ui_text(_r[2] - 2 * _k, _r[3] - 1 * _k, string(_q), c_white, (7 * _k) / _fh);
+            }
+        }
+        // recarga da habilidade X (só no item da mão)
+        if (_sel && variable_global_exists("item_ativo_cd") && global.item_ativo_cd > 0) {
+            var _pc = global.item_ativo_cd / max(1, global.item_ativo_cd_max);
+            draw_set_alpha(0.55);
+            draw_set_color(c_black);
+            draw_rectangle(_r[0], _r[1], _r[2], _r[1] + (_r[3] - _r[1]) * _pc, false);
+            draw_set_alpha(1);
+            draw_set_halign(fa_center); draw_set_valign(fa_middle);
+            ui_text((_r[0] + _r[2]) / 2, (_r[1] + _r[3]) / 2, string(ceil(global.item_ativo_cd / 60)), c_white, (8 * _k) / _fh);
+        }
+        // número do atalho
+        draw_set_halign(fa_left); draw_set_valign(fa_top);
+        ui_text(_r[0] + 2 * _k, _r[1] + 1 * _k, string(_i + 1), _sel ? make_color_rgb(255, 220, 90) : c_white, (7 * _k) / _fh);
+    }
+    // nome do item ativo logo depois de trocar
+    if (!_inventario_aberto && variable_global_exists("hotbar_aviso") && global.hotbar_aviso > 0) {
+        var _r = hotbar_rect(_ativo);
+        var _d2 = hotbar_ativo_db();
+        var _nome = is_undefined(_d2) ? "Mãos vazias" : _d2.nome;
+        draw_set_alpha(min(1, global.hotbar_aviso / 20));
+        draw_set_halign(fa_left); draw_set_valign(fa_middle);
+        ui_text(_r[2] + 6 * _k, (_r[1] + _r[3]) / 2, _nome, is_undefined(_d2) ? c_ltgray : item_raridade(_d2.raridade).cor, (8 * _k) / _fh);
+        draw_set_alpha(1);
+    }
+    draw_set_halign(fa_left); draw_set_valign(fa_top); draw_set_color(c_white);
 }
 
 #endregion

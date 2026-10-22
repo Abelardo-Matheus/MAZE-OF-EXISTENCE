@@ -1,11 +1,21 @@
 // feather disable GM2017
 /// @desc Arma e botão de interação acima da cabeça (Draw End: nunca ficam atrás de móveis)
+// Bolinha de estamina ao lado do player (VIDA.gml)
+desenha_estamina_bolinha();
+
+// Giro da espada / chuva de flechas / "Nv X!" dos itens (scr_passivas_itens)
+item_fx_desenhar();
+
 // 3. Arma (Sobre a cabeça)
 if (desenha_arma) 
 {
-    // Otimização: Usamos 'global.armamento' direto no subimg (indice da imagem),
-    // já que 0 é espada e 1 é arco nos dois lugares.
-    draw_sprite_ext(spr_arma, global.armamento, x, y - 60, 1, 1, 0, c_white, dir_alfa);
+    // Ícone do item ativo da hotbar (some aos poucos depois de trocar)
+    var _hd = hotbar_ativo_db();
+    if (!is_undefined(_hd) && sprite_exists(_hd.spr)) {
+        var _he = 0.55;
+        draw_sprite_ext(_hd.spr, _hd.img, x - sprite_get_width(_hd.spr) * _he / 2 + sprite_get_xoffset(_hd.spr) * _he,
+                        y - 62 - sprite_get_height(_hd.spr) * _he + sprite_get_yoffset(_hd.spr) * _he, _he, _he, 0, c_white, dir_alfa);
+    }
 }
 
 // 4. Botão de Interação (Prompt)

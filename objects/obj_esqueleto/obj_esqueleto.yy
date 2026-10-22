@@ -11,8 +11,8 @@
   "managed": true,
   "overriddenProperties": [],
   "parent": {
-    "name": "INIMIGOS",
-    "path": "folders/Objects/FASE_BEBE_ALL/INIMIGOS.yy",
+    "name": "ESQUELETOS",
+    "path": "folders/Objects/INIMIGOS/ESQUELETOS.yy",
   },
   "parentObjectId": {
     "name": "obj_par_inimigos",

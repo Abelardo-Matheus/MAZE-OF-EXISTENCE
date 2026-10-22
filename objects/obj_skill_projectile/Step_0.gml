@@ -17,19 +17,28 @@ if (variable_instance_exists(id, "Step_0_Custom")) {
 }
 if (!instance_exists(id)) exit; // o comportamento custom pode ter destruído
 
-if (variable_instance_exists(id, "orbital_radius")) {
-    // --- Lâmina orbital: perfura ---
+if (variable_instance_exists(id, "orbital_radius") || perfura) {
+    // --- Lâmina orbital / Pião: perfura ---
     hit_reset += 1;
     if (hit_reset >= HORDE_TICK_IFRAMES) {
         hit_set = {}; // libera os inimigos-instância para levarem dano de novo
         hit_reset = 0;
     }
-    var _cx = instance_exists(parent_player) ? parent_player.x : x;
-    var _cy = instance_exists(parent_player) ? parent_player.y : y;
+    var _pp = variable_instance_exists(id, "parent_player") ? parent_player : noone;
+    var _cx = instance_exists(_pp) ? _pp.x : x;
+    var _cy = instance_exists(_pp) ? _pp.y : y;
     horde_hit_instance_tick(id, damage, push_force, _cx, _cy);
 } else {
     // --- Tiro comum: acerta um e some, empurrando na direção do tiro ---
-    if (horde_hit_instance(id, damage, push_force, x - lengthdir_x(8, direction), y - lengthdir_y(8, direction), -1, 1) > 0) {
+    if (is_method(ao_acertar)) {
+        // Só detecta o toque e deixa o efeito especial (ex.: estouro em área) causar o dano
+        var _raio_toque = max(8, (bbox_right - bbox_left) * 0.5);
+        if (array_length(inimigos_alvos(x, y, _raio_toque, 1, "perto")) > 0) {
+            ao_acertar();
+            instance_destroy();
+            exit;
+        }
+    } else if (horde_hit_instance(id, damage, push_force, x - lengthdir_x(8, direction), y - lengthdir_y(8, direction), -1, 1) > 0) {
         instance_destroy();
         exit;
     }

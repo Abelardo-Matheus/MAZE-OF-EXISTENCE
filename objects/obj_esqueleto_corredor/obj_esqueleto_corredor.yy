@@ -13,8 +13,8 @@
   "managed": true,
   "overriddenProperties": [],
   "parent": {
-    "name": "ESQUELETO CORREDOR",
-    "path": "folders/Objects/FASE_BEBE_ALL/INIMIGOS/ESQUELETO CORREDOR.yy",
+    "name": "ESQUELETOS",
+    "path": "folders/Objects/INIMIGOS/ESQUELETOS.yy",
   },
   "parentObjectId": {
     "name": "obj_par_inimigos",

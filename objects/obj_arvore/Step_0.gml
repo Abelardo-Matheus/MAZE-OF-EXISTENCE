@@ -1,4 +1,5 @@
 // feather disable GM2017
+if (!visible) exit; // dormindo fora da tela (scr_desempenho -> desempenho_cull)
 depth = -y
 
 // ==========================================

@@ -5,7 +5,7 @@
   "isCompatibility": false,
   "isDnD": false,
   "parent": {
-    "name": "GERAÇÃO",
-    "path": "folders/Scripts/GERAÇÃO.yy",
+    "name": "HORDA",
+    "path": "folders/Scripts/INIMIGOS/HORDA.yy",
   },
 }

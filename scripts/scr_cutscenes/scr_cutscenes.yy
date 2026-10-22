@@ -5,7 +5,7 @@
   "isCompatibility": false,
   "isDnD": false,
   "parent": {
-    "name": "CUTESCENE",
-    "path": "folders/Scripts/CUTESCENE.yy",
+    "name": "NPC_DIALOGO",
+    "path": "folders/Scripts/NPC_DIALOGO.yy",
   },
 }

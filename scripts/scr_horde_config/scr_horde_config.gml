@@ -89,7 +89,7 @@ function horde_on_player_hit(_player, _dano, _from_x, _from_y) {
         alarm[ALARM_KNOCKBACK] = 15;
         tomar_dano = false;
         alarm[ALARM_INVENCIBILIDADE] = 90;
-        image_blend = c_red;
+        player_sinal_dano(c_red, 90);
     }
     if (_ok && object_exists(obj_dano)) {
         var _inst = instance_create_layer(_player.x, _player.y - 30, "Instances", obj_dano);

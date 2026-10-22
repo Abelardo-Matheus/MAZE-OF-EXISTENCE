@@ -83,8 +83,9 @@ function zoom() {
     }
 
     // --- Inputs ---
-    var _wheel_up = mouse_wheel_up();
-    var _wheel_down = mouse_wheel_down();
+    // A roda sozinha troca o item da hotbar; zoom agora é Ctrl + roda
+    var _wheel_up = mouse_wheel_up() && keyboard_check(vk_control);
+    var _wheel_down = mouse_wheel_down() && keyboard_check(vk_control);
 
     // --- Lógica de Zoom Matemática ---
     if (_wheel_up || _wheel_down) {

@@ -5,7 +5,8 @@ depth = profundidade_pe(bbox_bottom); // pé do player: passa atrás/na frente d
 // 1. INPUTS DE SISTEMA (Abrir/Fechar Menus)
 // ========================================================
 // Tem que vir ANTES da pausa para você conseguir fechar o menu!
-if ((keyboard_check_pressed(ord("I")) || keyboard_check_pressed(vk_tab)) && !instance_exists(global.bau_aberto) && !global.colocando_bau.ativo) {
+// (o Esc fecha o inventário e abre o menu de pausa: obj_control_menu)
+if ((tecla_apertou("inventario") || keyboard_check_pressed(vk_tab)) && !instance_exists(global.bau_aberto) && !global.colocando_bau.ativo) {
     if (instance_exists(obj_inventario)) {
         obj_inventario.is_open = !obj_inventario.is_open;
         if (obj_inventario.is_open) {
@@ -79,16 +80,19 @@ if (instance_exists(global.bloco_colisao)) {
 // 4. SISTEMAS GLOBAIS (Estamina, Vida, Sanidade)
 // ========================================================
 
-// --- Regeneração de Estamina ---
-if (global.estamina < global.max_estamina && !andar && alarm[ALARM_ESTAMINA] <= 0) {
-    global.estamina += 0.5;
-}
-// --- Exaustão ---
-if (global.estamina <= 0 && !andar) {
-    andar = true;
+// --- Estamina e cansaço (constantes em PERSONAGEM.gml; bolinha no Draw End) ---
+// Zerou -> fica cansado (bem lento, sem correr/dash) e recupera sozinho com o tempo
+if (global.estamina <= 0) {
     global.estamina = 0;
-    alarm[ALARM_ESTAMINA] = 50;
+    global.cansado = true;
 }
+if (global.cansado) {
+    global.estamina += ESTAMINA_REGEN_CANSADO;
+    if (global.estamina >= global.max_estamina * CANSADO_SAI_PCT) global.cansado = false;
+} else if (global.estamina < global.max_estamina && !andar && alarm[ALARM_ESTAMINA] <= 0) {
+    global.estamina += ESTAMINA_REGEN;
+}
+global.estamina = clamp(global.estamina, 0, global.max_estamina);
 // --- Morte ---
 if (global.vida <= 0) {
 }
@@ -123,21 +127,10 @@ global.sanidade = clamp(global.sanidade, 0, 100);
 // 5. INTERAÇÃO E VISUAL
 // ========================================================
 
-// --- Troca de Armas (Teclas 1 e 2) ---
-
-// Tecla 1 para Espada
-if (keyboard_check_pressed(ord("1"))) { 
-    global.armamento = ARMAMENTOS.ESPADA; // Ou o valor numérico que você usa, ex: 0
-    dir_alfa = 1; 
-    desenha_arma = true; 
-}
-
-// Tecla 2 para Arco
-if (keyboard_check_pressed(ord("2"))) { 
-    global.armamento = ARMAMENTOS.ARCO;   // Ou o valor numérico que você usa, ex: 1
-    dir_alfa = 1; 
-    desenha_arma = true; 
-}
+// --- Hotbar (inventario.gml -> região HOTBAR) ---
+// Teclas 1 2 3 4 ou roda do mouse trocam o item na mão (espada, arco, luz...).
+hotbar_input();
+hotbar_luz_atualizar();
 
 // Lógica de fade-out do desenho da arma na tela (Mantida igual ao seu original)
 if (desenha_arma) { 
@@ -154,7 +147,7 @@ desenha_botao = false; // Reseta a cada frame
 
 if (_item_perto != noone && distance_to_object(_item_perto) <= 25) {
     desenha_botao = true;
-    if (keyboard_check_pressed(ord("F"))) {
+    if (tecla_apertou("interagir")) {
         // Coleta pelo sistema novo de itens (ID, nível e adesivos vêm junto)
         if (inventory_pegar_instancia(_item_perto)) {
             coletar_item(_item_perto.pos_x, _item_perto.pos_y, global.current_sala);
@@ -173,14 +166,9 @@ else if (_npc != noone && distance_to_object(_npc) <= 50) {
 }
 
 // --- Efeitos Visuais ---
-// Piscar quando toma dano
-if (alarm[ALARM_INVENCIBILIDADE] > 0) {
-    if (image_alpha >= 1) dano_alfa = -0.05;
-    else if (image_alpha <= 0.2) dano_alfa = 0.05;
-    image_alpha += dano_alfa;
-} else {
-    image_alpha = 1;
-}
+// Piscar/flash de dano: agora é feito no Draw (dano_visual / player_sinal_dano em PERSONAGEM.gml)
+image_alpha = 1;
+image_blend = c_white;
 
 // Piscar botão de interação
 if (piscando_timer > 0) piscando_timer--;
@@ -188,23 +176,15 @@ else { piscando_alpha = (piscando_alpha == 1) ? 0 : 1; piscando_timer = 20; }
 
 /// @description Loop de Execução de Upgrades e Itens
 
-// --- 1. Executa Upgrades Ativos (ex: Bola, Bomba) ---
-var _upgrades_grid = global.upgrades_vamp_grid;
-var _upgrades_count = ds_grid_height(_upgrades_grid);
+// --- 1. Executa Upgrades Ativos e Pets (scr_modificadores -> skills_executar_tick) ---
+// Ativos só disparam com inimigo perto; pets rodam sempre.
+skills_executar_tick();
 
-for (var _i = 0; _i < _upgrades_count; _i++)
-{
-    var _level = _upgrades_grid[# UPGRADES_VAMP.LEVEL, _i];
-    if (_level > 0) {
-        var _script = _upgrades_grid[# UPGRADES_VAMP.SCRIPT, _i];
-        if (_script != -1) {
-            var _scr_to_exec = is_string(_script) ? asset_get_index(_script) : _script;
-            if (_scr_to_exec != -1 && (script_exists(_scr_to_exec) || is_method(_scr_to_exec) || is_real(_scr_to_exec))) {
-                script_execute(_scr_to_exec, _i); 
-            }
-        }
-    }
-}
+// --- 1.0b Rastro de veneno (scr_rastro_sombrio): grava o caminho no pé, envelhece e dá dano ---
+rastro_atualizar();
+
+// --- 1.1 Efeitos contínuos das passivas (regeneração da Lancheira) ---
+mods_tick();
 
 // --- 2. Executa Itens Passivos (ex: Pena) ---
 var _itens_grid = global.itens_vamp_grid;

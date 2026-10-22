@@ -12,7 +12,7 @@
   "overriddenProperties": [],
   "parent": {
     "name": "PODERES",
-    "path": "folders/Objects/FASE_BEBE_ALL/PODERES.yy",
+    "path": "folders/Objects/PODERES.yy",
   },
   "parentObjectId": null,
   "persistent": false,

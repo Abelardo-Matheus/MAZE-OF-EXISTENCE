@@ -10,8 +10,8 @@
   "managed": true,
   "overriddenProperties": [],
   "parent": {
-    "name": "PODERES",
-    "path": "folders/Objects/FASE_BEBE_ALL/PODERES.yy",
+    "name": "ATIVOS",
+    "path": "folders/Objects/PODERES/ATIVOS.yy",
   },
   "parentObjectId": null,
   "persistent": false,

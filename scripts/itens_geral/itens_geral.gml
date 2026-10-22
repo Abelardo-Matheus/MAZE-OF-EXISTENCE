@@ -6,16 +6,12 @@
 //  itens_definir_catalogo() (e uma receita em itens_definir_receitas(), se quiser).
 //
 //  Cada item tem um ID (string) que é guardado em INFOS.ITEM na grid do inventário.
-//  Equipamentos têm NÍVEL (1..ITEM_NIVEL_MAX) e PASSIVAS (adesivos colados).
+//  Equipamentos têm NÍVEL (sem limite, sobe matando monstros) e PASSIVAS
+//  (sorteadas ao nascer + adesivos). Passivas, XP e habilidade X: scripts/scr_passivas_itens
 //  Atributo no nível N  = base * (1 + ITEM_CRESC_STAT * (N - 1))
-//  Passiva no nível N   = base * (1 + ITEM_CRESC_PASSIVA * (N - 1))
-//  Espaços de adesivo   = 1 no Nv1, 2 no Nv3, 3 no Nv5 (item_slots_passiva)
 // ============================================================================
 
-#macro ITEM_NIVEL_MAX        5
 #macro ITEM_CRESC_STAT       0.30
-#macro ITEM_CRESC_PASSIVA    0.50
-#macro ITEM_CHANCE_PASSIVA_DROP 0.12
 
 #region ---------- RARIDADES / TIPOS ----------
 
@@ -42,17 +38,33 @@ function item_tipo_nome(_tipo) {
     switch (_tipo) {
         case "uso":      return "Consumível";
         case "arma":     return "Arma";
+        case "coleta":   return "Ferramenta";
         case "armadura": return "Armadura";
+        case "cabeca":   return "Chapéu";
         case "bota":     return "Calçado";
         case "material": return "Material";
         case "adesivo":  return "Adesivo";
         case "colocavel":return "Colocável";
+        case "arco":     return "Arco";
+        case "luz":      return "Luz";
+        case "ferramenta": return "Arma, Arco, Luz, Consumível ou Colocável";
     }
     return "Item";
 }
 
 function item_tipo_e_equipamento(_tipo) {
-    return (_tipo == "arma" || _tipo == "armadura" || _tipo == "bota");
+    return (_tipo == "arma" || _tipo == "armadura" || _tipo == "bota" || _tipo == "arco" || _tipo == "luz" || _tipo == "cabeca");
+}
+
+/// Itens que vão na HOTBAR (arma corpo a corpo, arco/arma de tiro, luz de mão)
+function item_tipo_ferramenta(_tipo) {
+    return (_tipo == "arma" || _tipo == "arco" || _tipo == "luz");
+}
+
+/// O que pode ficar na HOTBAR: armas/arcos/luzes + consumíveis (cura, buffs) + colocáveis (baús).
+/// Consumível/colocável na mão: clique esquerdo usa (hotbar_usar_ativo).
+function item_tipo_hotbar(_tipo) {
+    return item_tipo_ferramenta(_tipo) || _tipo == "coleta" || _tipo == "uso" || _tipo == "colocavel";
 }
 
 /// Nome e formato de cada atributo (para tooltip e status)
@@ -74,44 +86,8 @@ function item_stat_info(_stat) {
 
 #endregion
 
-#region ---------- PASSIVAS (ADESIVOS) ----------
-
-function itens_definir_passivas() {
-    global.passivas_db = {};
-    global.passivas_ordem = [];
-    var _p = function(_id, _nome, _stat, _base, _desc, _cor, _adesivo) {
-        global.passivas_db[$ _id] = { id: _id, nome: _nome, stat: _stat, base: _base, desc: _desc, cor: _cor, adesivo: _adesivo };
-        array_push(global.passivas_ordem, _id);
-    };
-    // {v} vira o valor já escalado pelo nível do item
-    _p("coracao",  "Coração Quentinho",   "regen",         0.5, "Recupera {v} de vida por segundo.",       make_color_rgb(255, 110, 140), "ad_coracao");
-    _p("estrela",  "Estrela da Sorte",    "crit",          4,   "+{v}% de chance de crítico.",             make_color_rgb(255, 210,  60), "ad_estrela");
-    _p("forca",    "Músculo de Brinquedo","dano_pct",      8,   "+{v}% de dano.",                          make_color_rgb(255, 140, 110), "ad_forca");
-    _p("escudo",   "Escudinho",           "defesa",        2,   "+{v} de defesa.",                         make_color_rgb(110, 180, 255), "ad_escudo");
-    _p("raio",     "Raio Veloz",          "vel",           0.5, "+{v} de velocidade.",                     make_color_rgb(255, 225,  80), "ad_raio");
-    _p("vampiro",  "Dentinho de Vampiro", "vampirismo",    3,   "Cura {v}% do dano que você causa.",       make_color_rgb(200,  80, 150), "ad_vampiro");
-    _p("nuvem",    "Nuvem Fofinha",       "esquiva",       4,   "{v}% de chance de esquivar de um golpe.", make_color_rgb(170, 220, 255), "ad_nuvem");
-    _p("urso",     "Abraço de Urso",      "vida",          10,  "+{v} de vida máxima.",                    make_color_rgb(200, 150, 100), "ad_urso");
-    _p("fantasma", "Caça-Fantasmas",      "mata_fantasma", 1,   "Seus golpes acertam fantasmas.",          make_color_rgb(190, 200, 255), "ad_fantasma");
-    _p("bum",      "Bum!",                "crit_dano",     15,  "+{v}% de dano crítico.",                  make_color_rgb(255, 150,  70), "ad_bum");
-}
-
-/// Valor da passiva num item de nível _nivel
-function passiva_valor(_pid, _nivel) {
-    var _d = global.passivas_db[$ _pid];
-    if (is_undefined(_d)) return 0;
-    if (_d.stat == "mata_fantasma") return 1;
-    return _d.base * (1 + ITEM_CRESC_PASSIVA * (max(1, _nivel) - 1));
-}
-
-/// Texto da passiva com o valor do nível
-function passiva_texto(_pid, _nivel) {
-    var _d = global.passivas_db[$ _pid];
-    if (is_undefined(_d)) return "";
-    return string_replace(_d.desc, "{v}", item_num_str(passiva_valor(_pid, _nivel)));
-}
-
-#endregion
+// PASSIVAS: o vetor com todos os tipos de passiva fica em scripts/scr_passivas_itens
+// (itens_definir_passivas, passiva_valor, passiva_texto, passivas_sortear).
 
 #region ---------- CATÁLOGO DE ITENS ----------
 
@@ -127,7 +103,10 @@ function itens_definir_catalogo() {
 
     // _def(id, nome, tipo, sprite, frame, preço, raridade, descrição, stats, extra)
     //   stats: { dano, defesa, vel, vida, crit, cura }  (só o que o item tem)
-    //   extra: { inata: "id_passiva", buffs: [ {stat, valor, seg} ], stack: bool }
+    //   extra: { inata: "id_passiva", buffs: [ {stat, valor, seg} ], stack: bool,
+    //            espada: { alcance },                       (arma: tamanho do golpe, 1 = normal)
+    //            arco:   { vel, flechas, abertura },        (arco: velocidade da flecha, flechas por tiro, leque em graus)
+    //            luz:    { raio, estilo, cor, intensidade } (luz: ilumina em volta do player e recupera sanidade) }
     var _def = function(_id, _nome, _tipo, _spr, _img, _preco, _rar, _desc, _stats = {}, _extra = {}) {
         var _stack = (_tipo == "uso" || _tipo == "material" || _tipo == "adesivo");
         if (variable_struct_exists(_extra, "stack")) _stack = _extra.stack;
@@ -138,7 +117,11 @@ function itens_definir_catalogo() {
             buffs:  variable_struct_exists(_extra, "buffs")   ? _extra.buffs   : [],
             passiva_adesivo: variable_struct_exists(_extra, "passiva") ? _extra.passiva : "",
             slots:  variable_struct_exists(_extra, "slots")  ? _extra.slots  : 0,
-            escala: variable_struct_exists(_extra, "escala") ? _extra.escala : 1
+            escala: variable_struct_exists(_extra, "escala") ? _extra.escala : 1,
+            espada: variable_struct_exists(_extra, "espada") ? _extra.espada : { alcance: 1 },
+            coleta: variable_struct_exists(_extra, "coleta") ? _extra.coleta : undefined, // machado/picareta/pá (scr_coleta)
+            arco:   variable_struct_exists(_extra, "arco")   ? _extra.arco   : undefined,
+            luz:    variable_struct_exists(_extra, "luz")    ? _extra.luz    : undefined
         };
         array_push(global.itens_ordem, _id);
     };
@@ -180,6 +163,43 @@ function itens_definir_catalogo() {
     _def("lanca_bolhas",    "Lança-Bolhas",       "arma", _W, 13, 35, "incomum", "Inimigos escorregam nas bolhas.",      { dano: 4 }, { inata: "nuvem" });
     _def("espada_pirulito", "Espada de Pirulito", "arma", _W, 14, 70, "epico",   "Doce, mas perigosa.",                  { dano: 8 }, { inata: "vampiro" });
 
+    // ---------------- HOTBAR: NOVAS ARMAS, ARCOS E LUZES (spr_itens_ferramentas) ----------------
+    // Vão na hotbar (1 2 3 4 / roda do mouse). Arma = golpe, arco = flecha, luz = clareia e acalma.
+    var _F = spr_itens_ferramentas;
+    _def("espada_ferro",    "Espada de Ferro",       "arma", _F, 0,  45,  "incomum",  "Pesada de verdade. Cuidado com o dedo.",   { dano: 10 });
+    _def("espada_cristal",  "Espada de Cristal",     "arma", _F, 1,  90,  "raro",     "Brilha igual pedra de aquário.",          { dano: 12, crit: 5 }, { espada: { alcance: 1.15 } });
+    _def("adaga_brinquedo", "Adaga de Brinquedo",    "arma", _F, 2,  18,  "comum",    "Pequena e rapidinha.",                    { dano: 4, vel: 1 },   { espada: { alcance: 0.8 } });
+    _def("taco_beisebol",   "Taco de Beisebol",      "arma", _F, 3,  40,  "incomum",  "Home run nos monstros!",                  { dano: 9 },           { espada: { alcance: 1.3 } });
+    _def("machadinha",      "Machadinha de Papelão", "arma", _F, 4,  35,  "incomum",  "Corta caixa, corta medo.",                { dano: 8, crit: 4 });
+    _def("espada_laser",    "Espada Laser",          "arma", _F, 5,  160, "lendario", "Vrrrum! Faz barulho de filme.",           { dano: 15, crit: 6 }, { espada: { alcance: 1.35 }, inata: "fantasma" });
+
+    _def("arco_madeira",    "Arco de Madeira",       "arco", _F, 6,  20,  "comum",    "O primeiro arco de todo aventureiro.",    { dano: 5 },           { arco: { vel: 12, flechas: 1, abertura: 0 } });
+    _def("arco_galho",      "Arco de Galho",         "arco", _F, 7,  8,   "comum",    "Feito com um galho torto e barbante.",    { dano: 3 },           { arco: { vel: 10, flechas: 1, abertura: 0 } });
+    _def("arco_ventosa",    "Arco de Ventosa",       "arco", _F, 8,  30,  "incomum",  "Flechas com ventosa: PLOC!",              { dano: 4, vel: 0.5 }, { arco: { vel: 14, flechas: 1, abertura: 0 } });
+    _def("besta_brinquedo", "Besta de Brinquedo",    "arco", _F, 9,  70,  "raro",     "Atira longe e forte.",                    { dano: 9 },           { arco: { vel: 17, flechas: 1, abertura: 0 } });
+    _def("arco_triplo",     "Arco Triplo",           "arco", _F, 10, 85,  "raro",     "Três flechas de uma vez!",                { dano: 5 },           { arco: { vel: 12, flechas: 3, abertura: 12 } });
+    _def("arco_arco_iris",  "Arco-Íris",             "arco", _F, 11, 170, "lendario", "Cada flecha de uma cor.",                 { dano: 10, crit: 5 }, { arco: { vel: 16, flechas: 2, abertura: 8 }, inata: "estrela" });
+
+    _def("lampada",         "Lâmpada",               "luz",  _F, 12, 25,  "comum",    "Ilumina em volta e espanta o medo.",      {},                    { luz: { raio: 200, estilo: "soft",    cor: make_color_rgb(255, 245, 200), intensidade: 0.85 } });
+    _def("tocha",           "Tocha",                 "luz",  _F, 13, 15,  "comum",    "Fogo que balança. Não encoste no sofá!",  {},                    { luz: { raio: 240, estilo: "flicker", cor: make_color_rgb(255, 170, 80),  intensidade: 0.9 } });
+    _def("lanterna",        "Lanterna",              "luz",  _F, 14, 45,  "incomum",  "Luz forte de pilha.",                     { vel: 0.5 },          { luz: { raio: 300, estilo: "soft",    cor: make_color_rgb(235, 245, 255), intensidade: 1 } });
+    _def("lampiao",         "Lampião",               "luz",  _F, 15, 60,  "raro",     "Luz quentinha de acampamento.",           { vida: 10 },          { luz: { raio: 280, estilo: "flicker", cor: make_color_rgb(255, 210, 130), intensidade: 1 } });
+    _def("pote_vagalumes",  "Pote de Vaga-lumes",    "luz",  _F, 16, 75,  "epico",    "Os vaga-lumes também te protegem.",       { defesa: 2 },         { luz: { raio: 230, estilo: "soft",    cor: make_color_rgb(220, 255, 140), intensidade: 0.9 }, inata: "coracao" });
+
+    // ---------------- FERRAMENTAS DE COLETA (scr_coleta) ----------------
+    // coleta: { tipo: "machado" (árvore) | "picareta" (pedra) | "pa" (montinho de terra), tier 1..3, forca (dano no objeto, vida 100) }
+    var _C = spr_itens_coleta;
+    _def("machado_madeira",   "Machado de Madeira",   "coleta", _C, 0, 10,  "comum",    "Corta árvores. Devagarinho.",               { dano: 2 }, { coleta: { tipo: "machado",  tier: 1, forca: 12 } });
+    _def("machado_ferro",     "Machado de Ferro",     "coleta", _C, 1, 45,  "incomum",  "Corta árvores rapidinho.",                  { dano: 4 }, { coleta: { tipo: "machado",  tier: 2, forca: 25 } });
+    _def("machado_diamante",  "Machado de Diamante",  "coleta", _C, 2, 150, "epico",    "Uma árvore em dois golpes!",                { dano: 7 }, { coleta: { tipo: "machado",  tier: 3, forca: 50 } });
+    _def("picareta_madeira",  "Picareta de Madeira",  "coleta", _C, 3, 10,  "comum",    "Quebra pedras. Às vezes acha ferro.",       { dano: 2 }, { coleta: { tipo: "picareta", tier: 1, forca: 12 } });
+    _def("picareta_ferro",    "Picareta de Ferro",    "coleta", _C, 4, 45,  "incomum",  "Acha mais ferro e até diamante.",           { dano: 4 }, { coleta: { tipo: "picareta", tier: 2, forca: 25 } });
+    _def("picareta_diamante", "Picareta de Diamante", "coleta", _C, 5, 150, "epico",    "As pedras tremem de medo.",                 { dano: 7 }, { coleta: { tipo: "picareta", tier: 3, forca: 50 } });
+    _def("pa_madeira",        "Pá de Madeira",        "coleta", _C, 6, 8,   "comum",    "Cava montinhos de terra.",                  { dano: 1 }, { coleta: { tipo: "pa",       tier: 1, forca: 15 } });
+    _def("pa_ferro",          "Pá de Ferro",          "coleta", _C, 7, 40,  "incomum",  "Cava rápido e acha mais coisas.",           { dano: 3 }, { coleta: { tipo: "pa",       tier: 2, forca: 30 } });
+    _def("pa_diamante",       "Pá de Diamante",       "coleta", _C, 8, 140, "epico",    "Tesouros escondidos aparecem!",             { dano: 6 }, { coleta: { tipo: "pa",       tier: 3, forca: 55 } });
+    _def("diamante",          "Diamante",             "material", _C, 9, 60, "raro",    "Sai das pedras com picareta de ferro ou melhor.");
+
     // ---------------- ARMADURAS ----------------
     _def("cobertor",     "Cobertor",                "armadura", _A, 0, 10,  "comum",   "Nenhum monstro passa do cobertor.",  { defesa: 1, vida: 5 });
     _def("papelao",      "Armadura de Papelão",     "armadura", _A, 1, 20,  "comum",   "Feita com a caixa da geladeira.",    { defesa: 2 });
@@ -191,6 +211,22 @@ function itens_definir_catalogo() {
     _def("pijama_dino",  "Pijama de Dinossauro",    "armadura", _A, 7, 45,  "incomum", "RAWR! Muito assustador.",            { defesa: 4, vida: 20 }, { inata: "urso" });
     _def("cavaleiro",    "Fantasia de Cavaleiro",   "armadura", _A, 8, 80,  "raro",    "Brilhante como uma panela.",         { defesa: 9 });
     _def("astronauta",   "Macacão de Astronauta",   "armadura", _A, 9, 110, "epico",   "Pronto para o espaço sideral.",      { defesa: 8, vida: 15 }, { inata: "coracao" });
+
+    // ---------------- CHAPÉUS (CABEÇA) — tema infância (spr_itens_cabeca) ----------------
+    // Vão no 1º espaço de equipamento do personagem (antes era da arma; armas agora só na hotbar).
+    var _K = spr_itens_cabeca;
+    _def("bone",              "Boné Virado",                "cabeca", _K, 0,  8,   "comum",    "Aba pra trás = mais rápido.",              { defesa: 1, vel: 0.5 });
+    _def("chapeu_pirata",     "Chapéu de Pirata de Jornal", "cabeca", _K, 1,  10,  "comum",    "Dobrado com o jornal de domingo. Arrr!",   { defesa: 2, crit: 2 });
+    _def("coroa_papel",       "Coroa de Papel",             "cabeca", _K, 2,  12,  "comum",    "Rei ou rainha da festa de aniversário.",   { defesa: 1, vida: 10 });
+    _def("capacete_bike",     "Capacete de Bicicleta",      "cabeca", _K, 3,  30,  "incomum",  "A mamãe mandou usar.",                     { defesa: 4 });
+    _def("gorro_la",          "Gorro com Pompom",           "cabeca", _K, 4,  28,  "incomum",  "Quentinho até a ponta da orelha.",         { defesa: 2, vida: 15 });
+    _def("capacete_panela",   "Capacete de Panela",         "cabeca", _K, 10, 35,  "incomum",  "Barulhento, mas aguenta tudo.",            { defesa: 6, vel: -0.5 });
+    _def("orelhas_gato",      "Orelhinhas de Gato",         "cabeca", _K, 11, 32,  "incomum",  "Miau! Ágil como um gatinho.",              { defesa: 1, vel: 1.5, crit: 3 });
+    _def("chapeu_bruxa",      "Chapéu de Bruxinha",         "cabeca", _K, 5,  55,  "raro",     "Abracadabra... estrelas de sorte!",        { defesa: 2 },            { inata: "estrela" });
+    _def("tiara_unicornio",   "Tiara de Unicórnio",         "cabeca", _K, 6,  60,  "raro",     "Brilha e deixa tudo mais fofinho.",        { defesa: 3, vel: 1 },    { inata: "nuvem" });
+    _def("capuz_dino",        "Capuz de Dinossauro",        "cabeca", _K, 7,  65,  "raro",     "RAWR! Os monstros ficam com medo.",        { defesa: 5, vida: 10 });
+    _def("capacete_astronauta","Capacete de Astronauta",    "cabeca", _K, 8,  110, "epico",    "Respira tranquilo em qualquer planeta.",   { defesa: 7 },            { inata: "coracao" });
+    _def("coroa_dourada",     "Coroa do Rei da Pracinha",   "cabeca", _K, 9,  160, "lendario", "Todo mundo obedece no escorregador.",      { defesa: 6, crit: 5 },   { inata: "forca" });
 
     // ---------------- CALÇADOS ----------------
     _def("sapato_velho",  "Sapato Velho",     "bota", _P, 0,  5,   "comum",    "Já viu dias melhores.",          { vel: 1 });
@@ -240,13 +276,21 @@ function itens_definir_catalogo() {
 
     // ---------------- ADESIVOS (passivas) ----------------
     // Arraste um adesivo até um equipamento para colar a passiva nele.
+    // (só as passivas que têm adesivo; frame = ad_frame no spr_itens_craft)
     var _n = array_length(global.passivas_ordem);
     for (var _i = 0; _i < _n; _i++) {
         var _pid = global.passivas_ordem[_i];
         var _pd  = global.passivas_db[$ _pid];
+        if (_pd.adesivo == "") continue;
         var _rar = (_pid == "fantasma" || _pid == "vampiro" || _pid == "bum") ? "raro" : "incomum";
-        _def(_pd.adesivo, "Adesivo: " + _pd.nome, "adesivo", _M, 15 + _i, 40, _rar,
+        _def(_pd.adesivo, "Adesivo: " + _pd.nome, "adesivo", _M, _pd.ad_frame, 40, _rar,
              "Arraste até um equipamento para colar a passiva.", {}, { passiva: _pid });
+    }
+
+    // Todo equipamento tem uma passiva própria: se o catálogo não deu, ganha a do tipo
+    for (var _i = 0; _i < array_length(global.itens_ordem); _i++) {
+        var _di = global.itens_db[$ global.itens_ordem[_i]];
+        if (item_tipo_e_equipamento(_di.tipo) && _di.inata == "") _di.inata = item_passiva_padrao(_di.tipo);
     }
 }
 
@@ -275,12 +319,12 @@ function item_stat(_id, _stat, _nivel = 1) {
     if (is_undefined(_d) || !variable_struct_exists(_d.stats, _stat)) return 0;
     var _b = _d.stats[$ _stat];
     if (_stat == "cura" || _b <= 0) return _b;
-    return _b * (1 + ITEM_CRESC_STAT * (max(1, _nivel) - 1));
+    return _b * (1 + ITEM_CRESC_STAT * (max(1, floor(_nivel)) - 1));
 }
 
-/// Quantos adesivos o item aceita no nível
+/// Quantas passivas (sorteadas + adesivos) o item aceita — sempre ITEM_PASSIVAS_MAX
 function item_slots_passiva(_nivel) {
-    return 1 + (_nivel >= 3) + (_nivel >= 5);
+    return ITEM_PASSIVAS_MAX;
 }
 
 #endregion
@@ -317,6 +361,21 @@ function itens_definir_receitas() {
     _r("mata_fantasma",   { ferro: 3, ouro: 1, frasco: 1, pilha: 1 });
     _r("espada_pirulito", { ouro: 2, papel: 2, erva: 2 });
     _r("espada_lapis",    { madeira: 3, giz: 3, ouro: 1 });
+    _r("espada_ferro",    { ferro: 3, madeira: 1 });
+    _r("adaga_brinquedo", { madeira: 1, papel: 1 });
+    _r("taco_beisebol",   { madeira: 4 });
+    _r("machadinha",      { papel: 3, madeira: 1, ferro: 1 });
+    // --- Arcos ---
+    _r("arco_galho",      { madeira: 2 });
+    _r("arco_madeira",    { madeira: 3, la: 1 });
+    _r("arco_ventosa",    { madeira: 2, couro: 1, botao: 1 });
+    _r("besta_brinquedo", { madeira: 3, ferro: 2, la: 1 });
+    _r("arco_triplo",     { madeira: 4, la: 2, ferro: 1 });
+    // --- Luzes ---
+    _r("tocha",           { madeira: 2, erva: 1 });
+    _r("lampada",         { frasco: 1, ferro: 1, pilha: 1 });
+    _r("lanterna",        { ferro: 2, pilha: 2, frasco: 1 });
+    _r("lampiao",         { ferro: 2, frasco: 1, erva: 2 });
     // --- Armaduras ---
     _r("cobertor",        { la: 2, couro: 1 });
     _r("papelao",         { papel: 3, couro: 1 });
@@ -325,6 +384,17 @@ function itens_definir_receitas() {
     _r("cavaleiro",       { ferro: 4, couro: 2, botao: 2 });
     _r("super_capa",      { la: 4, ouro: 1, po_estrela: 1 });
     _r("astronauta",      { ferro: 2, pilha: 2, la: 2, gude: 1 });
+    // --- Chapéus ---
+    _r("bone",            { la: 1, papel: 1 });
+    _r("chapeu_pirata",   { papel: 3 });
+    _r("coroa_papel",     { papel: 2, botao: 1 });
+    _r("capacete_bike",   { ferro: 1, couro: 1, botao: 1 });
+    _r("gorro_la",        { la: 3 });
+    _r("capacete_panela", { ferro: 3 });
+    _r("orelhas_gato",    { la: 2, couro: 1 });
+    _r("chapeu_bruxa",    { la: 2, po_estrela: 1, papel: 1 });
+    _r("tiara_unicornio", { ouro: 1, po_estrela: 1, la: 1 });
+    _r("capuz_dino",      { la: 3, couro: 2, botao: 1 });
     // --- Calçados ---
     _r("galocha",         { couro: 2, papel: 1 });
     _r("pantufa",         { la: 2, pena: 1 });
@@ -354,6 +424,17 @@ function itens_definir_receitas() {
     _r("ad_urso",         { papel: 1, la: 2, botao: 1 });
     _r("ad_fantasma",     { papel: 1, pilha: 1, frasco: 1, giz: 1 });
     _r("ad_bum",          { papel: 1, po_estrela: 1, gude: 1 });
+
+    // Ferramentas de coleta: madeira -> ferro -> diamante
+    _r("machado_madeira",   { madeira: 4 });
+    _r("picareta_madeira",  { madeira: 5 });
+    _r("pa_madeira",        { madeira: 3 });
+    _r("machado_ferro",     { madeira: 2, ferro: 3 });
+    _r("picareta_ferro",    { madeira: 2, ferro: 3 });
+    _r("pa_ferro",          { madeira: 2, ferro: 2 });
+    _r("machado_diamante",  { madeira: 2, diamante: 3 });
+    _r("picareta_diamante", { madeira: 2, diamante: 3 });
+    _r("pa_diamante",       { madeira: 2, diamante: 2 });
 }
 
 #endregion
@@ -411,7 +492,7 @@ function buscar_dados_por_nome(_nome) {
 #region ---------- ADICIONAR ITENS NA MOCHILA ----------
 
 /// Preenche um slot da grid com todos os dados do item no nível
-function item_slot_preencher(_grid, _slot, _id, _qtd, _nivel = 1, _passivas = undefined) {
+function item_slot_preencher(_grid, _slot, _id, _qtd, _nivel = 1, _passivas = undefined, _xp = 0) {
     var _d = item_db(_id);
     if (is_undefined(_d)) return;
     if (!is_array(_passivas)) _passivas = [];
@@ -427,8 +508,9 @@ function item_slot_preencher(_grid, _slot, _id, _qtd, _nivel = 1, _passivas = un
     _grid[# INFOS.SALA_Y,     _slot] = -1;
     _grid[# INFOS.POS_X,      _slot] = -1;
     _grid[# INFOS.POS_Y,      _slot] = -1;
-    _grid[# INFOS.NIVEL,      _slot] = clamp(_nivel, 1, ITEM_NIVEL_MAX);
+    _grid[# INFOS.NIVEL,      _slot] = max(1, floor(_nivel));
     _grid[# INFOS.PASSIVAS,   _slot] = _passivas;
+    _grid[# INFOS.XP,         _slot] = is_real(_xp) ? _xp : 0;
     item_slot_atualizar_stats(_grid, _slot);
 }
 
@@ -446,11 +528,12 @@ function item_slot_atualizar_stats(_grid, _slot) {
 /// Quantos slots da mochila (sem os de equipamento)
 function inventory_bag_slots() {
     if (instance_exists(obj_inventario)) return obj_inventario.total_slots;
-    return ds_grid_height(global.grid_itens) - 3;
+    return ds_grid_height(global.grid_itens) - 3 - HOTBAR_SLOTS; // 3 equipamentos + hotbar no fim da grid
 }
 
 /// @desc Adiciona um item pelo ID. Retorna true se coube tudo.
-function inventory_add(_id, _qtd = 1, _nivel = 1, _passivas = undefined) {
+/// Equipamento novo (sem _passivas) nasce com 0..3 passivas sorteadas (passivas_sortear).
+function inventory_add(_id, _qtd = 1, _nivel = 1, _passivas = undefined, _xp = 0) {
     var _d = item_db(_id);
     if (is_undefined(_d) || _qtd <= 0) return false;
     var _grid = global.grid_itens;
@@ -464,6 +547,15 @@ function inventory_add(_id, _qtd = 1, _nivel = 1, _passivas = undefined) {
                 return true;
             }
         }
+        // a pilha pode estar na hotbar (consumível arrastado para lá)
+        for (var _h = 0; _h < HOTBAR_SLOTS; _h++) {
+            var _hs = hotbar_slot(_h);
+            if (_hs < ds_grid_height(_grid) && _grid[# INFOS.ITEM, _hs] == _id) {
+                _grid[# INFOS.QUANTIDADE, _hs] += _qtd;
+                inventory_pos_mudanca();
+                return true;
+            }
+        }
         var _vazio = inventory_find_empty_slot();
         if (_vazio == -1) { global.inventario_cheio = true; inventory_msg("Mochila cheia!", c_red); return false; }
         item_slot_preencher(_grid, _vazio, _id, _qtd, 1, []);
@@ -471,9 +563,9 @@ function inventory_add(_id, _qtd = 1, _nivel = 1, _passivas = undefined) {
         repeat (_qtd) {
             var _vazio = inventory_find_empty_slot();
             if (_vazio == -1) { global.inventario_cheio = true; inventory_msg("Mochila cheia!", c_red); return false; }
-            var _pas = is_array(_passivas) ? array_create(array_length(_passivas)) : [];
+            var _pas = is_array(_passivas) ? array_create(array_length(_passivas)) : passivas_sortear(_d.tipo, _d.inata);
             if (is_array(_passivas)) array_copy(_pas, 0, _passivas, 0, array_length(_passivas));
-            item_slot_preencher(_grid, _vazio, _id, 1, _nivel, _pas);
+            item_slot_preencher(_grid, _vazio, _id, 1, _nivel, _pas, _xp);
         }
     }
     inventory_pos_mudanca();
@@ -535,7 +627,8 @@ function inventory_pegar_instancia(_inst) {
     if (!is_undefined(item_db(_id))) {
         var _nv  = variable_instance_exists(_inst, "nivel") ? _inst.nivel : 1;
         var _pas = variable_instance_exists(_inst, "passivas") ? _inst.passivas : [];
-        return inventory_add(_id, max(1, _inst.quantidade), _nv, _pas);
+        var _xpi = variable_instance_exists(_inst, "xp_item") ? _inst.xp_item : 0;
+        return inventory_add(_id, max(1, _inst.quantidade), _nv, _pas, _xpi);
     }
     return adicionar_item_invent(_inst.image_index, _inst.quantidade, _inst.sprite_index, _inst.nome, _inst.descricao, _inst.sala_x, _inst.sala_y, _inst.pos_x, _inst.pos_y, _inst.dano, _inst.armadura, _inst.velocidade, _inst.cura, _inst.tipo, _inst.ind, _inst.preco);
 }
@@ -573,20 +666,21 @@ function comprar_item_loja(_slot_index) {
 #region ---------- DROPS NO MUNDO ----------
 
 /// Cria o obj_item no mundo já configurado e salvo na sala
-function item_criar_no_mundo(_x, _y, _id, _qtd, _nivel = 1, _passivas = undefined, _prof = undefined) {
+function item_criar_no_mundo(_x, _y, _id, _qtd, _nivel = 1, _passivas = undefined, _prof = undefined, _xp = 0) {
     var _d = item_db(_id);
     if (is_undefined(_d)) return noone;
     var _inst = layer_exists("Instances_itens")
         ? instance_create_layer(_x, _y, "Instances_itens", obj_item)
         : instance_create_depth(_x, _y, -_y, obj_item);
 
-    var _pas = [];
+    var _pas = is_array(_passivas) ? [] : passivas_sortear(_d.tipo, _d.inata); // item novo: passivas sorteadas
     if (is_array(_passivas)) { _pas = array_create(array_length(_passivas)); array_copy(_pas, 0, _passivas, 0, array_length(_passivas)); }
 
     with (_inst) {
         item_id      = _id;
         nivel        = _nivel;
         passivas     = _pas;
+        xp_item      = _xp;
         sprite_index = _d.spr;
         image_index  = _d.img;
         image_speed  = 0;
@@ -617,14 +711,7 @@ function item_sortear_extras(_id) {
     var _r = { nivel: 1, passivas: [] };
     if (is_undefined(_d) || !item_tipo_e_equipamento(_d.tipo)) return _r;
     if (random(1) < 0.15) _r.nivel = 2;
-    if (random(1) < ITEM_CHANCE_PASSIVA_DROP) {
-        var _ops = [];
-        for (var _i = 0; _i < array_length(global.passivas_ordem); _i++) {
-            var _p = global.passivas_ordem[_i];
-            if (_p != "fantasma" && _p != _d.inata) array_push(_ops, _p);
-        }
-        array_push(_r.passivas, _ops[irandom(array_length(_ops) - 1)]);
-    }
+    _r.passivas = passivas_sortear(_d.tipo, _d.inata); // 0..3 passivas aleatórias
     return _r;
 }
 
@@ -696,6 +783,7 @@ function salvar_item(_sala_x, _sala_y, _pos_x, _pos_y, _inst) {
     var _id  = variable_instance_exists(_inst, "item_id")  ? _inst.item_id  : "";
     var _nv  = variable_instance_exists(_inst, "nivel")    ? _inst.nivel    : 1;
     var _pas = variable_instance_exists(_inst, "passivas") ? _inst.passivas : [];
+    var _xpi = variable_instance_exists(_inst, "xp_item")  ? _inst.xp_item  : 0;
     ds_list_add(_lista, [
         _pos_x, _pos_y,
         _inst.sprite_index, _inst.image_index,
@@ -705,7 +793,8 @@ function salvar_item(_sala_x, _sala_y, _pos_x, _pos_y, _inst) {
         _inst.sala_x, _inst.sala_y,
         _inst.pos_x, _inst.pos_y,
         _inst.profundidade, _inst.preco,
-        _id, _nv, _pas                       // [19] id  [20] nível  [21] passivas
+        _id, _nv, _pas,                      // [19] id  [20] nível  [21] passivas
+        _xpi                                 // [22] XP do item
     ]);
 }
 
@@ -726,6 +815,7 @@ function recriar_item_dropado(_sala_x, _sala_y) {
             profundidade = _d[17]; depth       = _d[17];
             preco        = _d[18];
             if (array_length(_d) > 21) { item_id = _d[19]; nivel = _d[20]; passivas = _d[21]; }
+            xp_item = (array_length(_d) > 22) ? _d[22] : 0;
         }
     }
 }
@@ -1207,7 +1297,7 @@ function bau_ui_step() {
 
     // fecha se o player se afastar (ex.: empurrado) ou apertar E / Esc / Tab / I
     var _longe = !instance_exists(obj_player) || point_distance(obj_player.x, obj_player.y, _bau.x, _bau.y) > BAU_DIST_ABRIR + 120;
-    if (_longe || keyboard_check_pressed(vk_escape) || keyboard_check_pressed(vk_tab) || keyboard_check_pressed(ord("I"))) {
+    if (_longe || keyboard_check_pressed(vk_escape) || keyboard_check_pressed(vk_tab) || tecla_apertou("inventario")) {
         bau_fechar();
         return;
     }

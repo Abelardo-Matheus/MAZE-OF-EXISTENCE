@@ -5,7 +5,7 @@
   "isCompatibility": false,
   "isDnD": false,
   "parent": {
-    "name": "GLOBAL_VARIAVEIS",
-    "path": "folders/Scripts/GLOBAL_VARIAVEIS.yy",
+    "name": "SISTEMA",
+    "path": "folders/Scripts/SISTEMA.yy",
   },
 }

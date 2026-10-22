@@ -11,8 +11,8 @@
   "managed": true,
   "overriddenProperties": [],
   "parent": {
-    "name": "CONTROLES",
-    "path": "folders/Objects/FASE_BEBE_ALL/CONTROLES.yy",
+    "name": "INIMIGOS",
+    "path": "folders/Objects/INIMIGOS.yy",
   },
   "parentObjectId": null,
   "persistent": false,

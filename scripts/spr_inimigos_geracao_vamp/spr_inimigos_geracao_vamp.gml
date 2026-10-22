@@ -145,6 +145,7 @@ function spawn_night_enemy(_spec) {
             escala   = escala * _m.esc;
             veloc_perse = veloc_perse * _m.spd;
             xp_ronda = round(HORDE_XP_BASE * _m.xp); // lido no Step do obj_par_inimigos ao morrer
+            forca_ronda = _m.hp * (_m.elite ? 2 : 1); // cor vermelha pela força (IA_INIMIGOS -> inimigo_poder)
             dist_aggro    = 2000;
             dist_desaggro = 2000;
             id_inimigo = _enemy_id;

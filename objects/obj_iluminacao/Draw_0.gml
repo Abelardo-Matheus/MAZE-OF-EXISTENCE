@@ -15,7 +15,7 @@ surface_set_target(sombra_surface);
 	draw_set_alpha(1);
 
   // Definir o raio da visão ao redor do jogador
-    var _raio_visao = global.raio_lanterna;
+    var _raio_visao = global.raio_lanterna + (variable_global_exists("luz_item_raio") ? global.luz_item_raio * 0.5 : 0); // luz da hotbar
 
     // Pegar as coordenadas do jogador na tela (ajustar de acordo com a câmera)
     var _x_jogador_gui = obj_player.x ;

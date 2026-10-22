@@ -225,19 +225,61 @@ function scr_dialogs()
         // TUTORIAL MECÂNICAS
         // ============================================================
         case "Tuto_Move":
-            dialog_add("Guia", spr_retrato1_fada, 1, "Bem-vindo ao Labirinto da Existência! Use as teclas WASD ou Setas para se mover.");
+            dialog_add("Fada", spr_retrato1_fada, 1, "Bem-vindo ao Labirinto da Existência! Esta é a sua casa. Use WASD ou as setas para andar.");
+            dialog_add("Fada", spr_retrato2_fada, 1, "Aperte E para passar as falas. No canto de cima ficam sua VIDA, SANIDADE e a barra de XP.");
+            break;
+        case "Tuto_Run":
+            dialog_add("Fada", spr_retrato1_fada, 1, "Isso! Agora segure SHIFT enquanto anda para CORRER.");
+            dialog_add("Fada", spr_retrato2_fada, 1, "Correr gasta ESTAMINA. Ela volta sozinha quando você para de correr, então use com calma.");
             break;
         case "Tuto_Interact":
-            dialog_add("Guia", spr_retrato1_fada, 1, "Muito bem! Agora, chegue perto da Fada e pressione 'F' para falar com ela.");
+            dialog_add("Fada", spr_retrato1_fada, 1, "Muito bem! Venha até a sala e fale comigo: chegue perto e aperte F.");
+            dialog_add("Fada", spr_retrato2_fada, 1, "O F também serve para abrir armários e baús que você encontrar pelo mundo.");
+            break;
+        case "Tuto_Pronto":
+            dialog_add("Fada", spr_retrato1_fada, 1, "Quando estiver pronto para aprender a lutar, fale comigo de novo (F) e diga que está pronto.");
             break;
         case "Tuto_Combat":
-            dialog_add("Guia", spr_retrato1_fada, 1, "Cuidado! Uma Amoeba apareceu. Use o Botão Esquerdo do Mouse para atacar com sua espada.");
+            dialog_add("Fada", spr_retrato1_fada, 1, "Cuidado! Uma Amoeba! Clique com o botão ESQUERDO do mouse para atacar com sua espada.");
+            dialog_add("Fada", spr_retrato2_fada, 1, "Você ataca na direção do mouse. Inimigos que encostam em você tiram vida.");
             break;
         case "Tuto_Dash":
-            dialog_add("Guia", spr_retrato1_fada, 1, "Rápido! Use o Botão Direito do Mouse para dar um Dash e escapar do perigo.");
+            dialog_add("Fada", spr_retrato1_fada, 1, "Agora o DASH: clique com o botão DIREITO do mouse para dar um impulso rápido na direção do mouse.");
+            dialog_add("Fada", spr_retrato2_fada, 1, "O dash gasta estamina. Use para fugir quando os inimigos te cercarem!");
             break;
         case "Tuto_Weapon":
-            dialog_add("Guia", spr_retrato1_fada, 1, "Você também tem um arco! Use a Roda do Mouse para trocar de arma.");
+            dialog_add("Fada", spr_retrato1_fada, 1, "Você também tem um ARCO! Gire a roda do mouse para trocar entre espada e arco.");
+            dialog_add("Fada", spr_retrato2_fada, 1, "Com o arco, segure o botão esquerdo para mirar e solte para atirar de longe.");
+            break;
+        case "Tuto_XP":
+            dialog_add("Fada", spr_retrato1_fada, 1, "Destranquei a PORTA DUPLA no fim do corredor: a sala de brinquedos está aberta!");
+            dialog_add("Fada", spr_retrato2_fada, 1, "Inimigos derrotados soltam CRISTAIS DE XP. Pegue os cristais que deixei lá para encher a barra de XP.");
+            dialog_add("Fada", spr_retrato1_fada, 1, "Quando a barra enche você SOBE DE NÍVEL: o jogo pausa e mostra cartas de poderes. Escolha uma clicando nela!");
+            break;
+        case "Tuto_Cartas":
+            dialog_add("Fada", spr_retrato1_fada, 1, "Ótima escolha! Existem dois tipos de cartas:");
+            dialog_add("Fada", spr_retrato2_fada, 1, "ATIVOS atacam sozinhos sempre que um inimigo chega perto. PASSIVOS melhoram TODOS os seus poderes (área, dano, recarga...).");
+            dialog_add("Fada", spr_retrato1_fada, 1, "Você pode ter 4 ativos e 4 passivos diferentes. Depois disso, as cartas só melhoram o que você já tem.");
+            dialog_add("Fada", spr_retrato2_fada, 1, "Não gostou das cartas? O botão SORTEAR DE NOVO troca todas, mas só pode ser usado 3 vezes por partida.");
+            dialog_add("Fada", spr_retrato1_fada, 1, "E os PETS (sapo, gato, cachorro...) são especiais: você só pode escolher UM, mas ele se multiplica quando sobe de nível!");
+            break;
+        case "Tuto_Cartas_Presente":
+            dialog_add("Fada", spr_retrato1_fada, 1, "Você escolheu um PASSIVO! Eles melhoram todos os seus poderes, mas sozinhos não atacam...");
+            dialog_add("Fada", spr_retrato2_fada, 1, "Tome, um ESTILINGUE de presente para o treino! Poderes ATIVOS como ele atacam sozinhos quando um inimigo chega perto.");
+            dialog_add("Fada", spr_retrato1_fada, 1, "Você pode ter 4 ativos e 4 passivos diferentes. Depois disso, as cartas só melhoram o que você já tem.");
+            dialog_add("Fada", spr_retrato2_fada, 1, "Não gostou das cartas? O botão SORTEAR DE NOVO troca todas, mas só pode ser usado 3 vezes por partida.");
+            dialog_add("Fada", spr_retrato1_fada, 1, "E os PETS (sapo, gato, cachorro...) são especiais: você só pode escolher UM, mas ele se multiplica quando sobe de nível!");
+            break;
+        case "Tuto_Auto":
+            dialog_add("Fada", spr_retrato1_fada, 1, "Hora do treino! Algumas amoebas vão aparecer.");
+            dialog_add("Fada", spr_retrato2_fada, 1, "Seus poderes atacam sozinhos quando um inimigo chega perto. Ande, desvie e deixe eles trabalharem!");
+            break;
+        case "Tuto_Resumo":
+            dialog_add("Fada", spr_retrato1_fada, 1, "Incrível! Você está pronto. Só mais algumas dicas antes de partir:");
+            dialog_add("Fada", spr_retrato2_fada, 1, "Lá fora o dia passa. Quando a NOITE chega, uma HORDA de inimigos aparece. Fique forte durante o dia!");
+            dialog_add("Fada", spr_retrato1_fada, 1, "Aperte I (ou TAB) para abrir o INVENTÁRIO e equipar o que encontrar em baús e armários.");
+            dialog_add("Fada", spr_retrato2_fada, 1, "Quebre árvores e pedras para conseguir materiais. Com eles você CRAFTA itens no inventário.");
+            dialog_add("Fada", spr_retrato1_fada, 1, "Quando quiser começar a aventura, fale comigo (F).");
             break;
         case "Tuto_End":
             dialog_add("Fada", spr_retrato1_fada, 1, "Você está pronto. Deseja sair do tutorial e enfrentar o mundo real agora?");
@@ -246,12 +288,14 @@ function scr_dialogs()
             break;
 
         case "Sair_Tutorial":
-            // Prepara a transição para a Fase Vamp
+            // Prepara a transição para a Fase Vamp (zera XP/nível ganhos no tutorial)
+            tutorial_resetar_progresso();
             global.fase = 1;
             global.map_vamp = true;
-            global.map_bebe = false;
+
             
-            // Destrói o diálogo para evitar erro de grid vazia
+            // Destrói o diálogo (o Step do obj_dialogo para logo depois) e libera o jogador
+            global.dialogo = false;
             instance_destroy(); 
             if (room_exists(Fase_vamp)) {
                 room_goto(Fase_vamp);

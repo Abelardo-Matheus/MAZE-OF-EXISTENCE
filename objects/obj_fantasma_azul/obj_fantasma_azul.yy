@@ -13,8 +13,8 @@
   "managed": true,
   "overriddenProperties": [],
   "parent": {
-    "name": "FANTASMA AZUL",
-    "path": "folders/Objects/FASE_BEBE_ALL/INIMIGOS/FANTASMA AZUL.yy",
+    "name": "FANTASMAS",
+    "path": "folders/Objects/INIMIGOS/FANTASMAS.yy",
   },
   "parentObjectId": {
     "name": "obj_par_inimigos",

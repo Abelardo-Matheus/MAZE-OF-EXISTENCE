@@ -39,10 +39,10 @@ function scr_adagas_velozes(_row_index)
     if (!variable_global_exists(_timer_var)) variable_global_set(_timer_var, 0);
     var _timer = variable_global_get(_timer_var);
     
-    var _cd_mod = (variable_global_exists("player_cooldown_mod") ? global.player_cooldown_mod : 1);
+    // Recarga, área, dano e quantidade já vêm com os bônus das passivas (mods_aplicar_stats)
     _timer += delta_time / 1000; 
 
-    if (_timer >= (_stats.cooldown * _cd_mod)) 
+    if (_timer >= _stats.cooldown) 
     {
         _timer = 0; // reseta o cooldown (antes era sobrescrito no fim da função)
         
@@ -56,8 +56,6 @@ function scr_adagas_velozes(_row_index)
             }
         }
         
-        var _area_mod = (variable_global_exists("player_area_mod") ? global.player_area_mod : 1);
-        
         for (var _i = 0; _i < _stats.quantity; _i++) {
             var _angle = _base_dir + random_range(-_stats.spread, _stats.spread);
             var _dagger = instance_create_layer(obj_player.x, obj_player.y, "Instances", asset_get_index("obj_skill_projectile"));
@@ -66,9 +64,13 @@ function scr_adagas_velozes(_row_index)
             _dagger.veloc = _stats.speed;
             _dagger.direction = _angle;
             _dagger.image_angle = _angle;
-            _dagger.sprite_index = spr_flecha;
-            _dagger.image_xscale = _stats.size * _area_mod;
-            _dagger.image_yscale = _stats.size * _area_mod;
+            // Antes usava spr_flecha (12x11 px) -> flechinhas minúsculas.
+            // Agora usa o sprite próprio da adaga com ~26px de comprimento na tela.
+            _dagger.sprite_index = spr_adaga;
+            _dagger.image_speed = 1;
+            var _esc = skill_escala_px(spr_adaga, 26, _stats.size / 0.8);
+            _dagger.image_xscale = _esc;
+            _dagger.image_yscale = _esc;
         }
     }
     variable_global_set(_timer_var, _timer);
