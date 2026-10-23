@@ -6,6 +6,11 @@
 // Zoom máximo (largura da câmera). Era 1280 * 4 = 5120: com a tela tão aberta o jogo
 // desenhava e simulava área demais e o FPS caía. 2560 = 2x a visão base.
 #macro CAMERA_ZOOM_MAX_W        2560
+// Zoom padrão ao entrar na fase: a largura da view da room é dividida por isto.
+// 1 = como está na room; 1.25 = 25% mais perto. Maior = mais perto.
+#macro CAMERA_ZOOM_PADRAO       0.65
+// Zoom mais perto possível com Ctrl + roda (largura mínima da câmera)
+#macro CAMERA_ZOOM_MIN_W        600
 // Quadrado fixo (centrado na câmera) onde os inimigos da noite nascem e "teleportam".
 // O lado é SEMPRE maior que o zoom máximo, então o spawn nunca aparece dentro da tela,
 // e não muda quando o jogador mexe no zoom.
@@ -46,7 +51,7 @@ function zoom() {
     var _aspect_ratio = 1080 / 1920; 
     
     // Limites de Tamanho
-    var _min_w = 740;
+    var _min_w = CAMERA_ZOOM_MIN_W; // antes 740
     var _max_w = CAMERA_ZOOM_MAX_W; // antes: 1280 * 4 (FPS caía no zoom máximo)
 	
     var _debug_max_w = 1280 * 10; // Limite absurdo só para o modo Debug
