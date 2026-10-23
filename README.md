@@ -230,6 +230,69 @@ powershell -ExecutionPolicy Bypass -File tools\publicar_release.ps1 -Versao v1.1
 Requires the [GitHub CLI](https://cli.github.com) (`winget install --id GitHub.cli`, then `gh auth login`). From then on, the commands above install that version.
 </details>
 
+### 🐧 How to Install (Linux)
+
+**Option 1 — one command.** Open a terminal and paste:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/Abelardo-Matheus/MAZE-OF-EXISTENCE/main/install.sh | bash
+```
+
+It downloads the latest version from [Releases](https://github.com/Abelardo-Matheus/MAZE-OF-EXISTENCE/releases), installs it to `~/.local/share/MazeOfExistence`, adds **Maze of Existence** to your applications menu, creates the `maze-of-existence` terminal command and opens the game. Run the same command again to **update**.
+
+> The game is currently published as a **Windows build**, so on Linux it runs through **[Wine](https://www.winehq.org)** (any distro). Install Wine first:
+>
+> | Distro | Command |
+> |---|---|
+> | Ubuntu / Debian / Mint / Pop!_OS | `sudo apt install wine` |
+> | Fedora | `sudo dnf install wine` |
+> | Arch / Manjaro | `sudo pacman -S wine` |
+> | openSUSE | `sudo zypper install wine` |
+>
+> When a native Linux build is published in a release (a file with `linux` or `ubuntu` in the name), the same command installs it instead — no Wine needed. The installer also needs `curl` (or `wget`) and `unzip`.
+
+**Option 2 — clone the repository and install:**
+
+```bash
+git clone --depth 1 https://github.com/Abelardo-Matheus/MAZE-OF-EXISTENCE.git
+cd MAZE-OF-EXISTENCE
+chmod +x install.sh
+./install.sh
+```
+
+Extra options: `./install.sh --version v1.1.0` (a specific version), `./install.sh --no-launch` (don't open after installing), `./install.sh --uninstall` (removes the game, the menu entry and the command; your saves are kept), `./install.sh --uninstall --purge` (also deletes the saves).
+
+**Option 3 — manual (Wine):** download [MazeOfExistence-Windows.zip](https://github.com/Abelardo-Matheus/MAZE-OF-EXISTENCE/releases/latest/download/MazeOfExistence-Windows.zip), extract it and run inside the extracted folder:
+
+```bash
+wine "MAZE OF EXISTENCE.exe"
+```
+
+<details>
+<summary>Uninstall without the cloned repository</summary>
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/Abelardo-Matheus/MAZE-OF-EXISTENCE/main/install.sh | bash -s -- --uninstall
+```
+</details>
+
+<details>
+<summary>Steam Deck / Steam (Proton)</summary>
+
+In Desktop Mode, download and extract the Windows zip, then in Steam: **Games → Add a Non-Steam Game** → pick `MAZE OF EXISTENCE.exe` → right-click the game → **Properties → Compatibility** → check **Force the use of a specific Steam Play compatibility tool** (Proton).
+</details>
+
+<details>
+<summary>For the maintainer: publishing a native Linux build</summary>
+
+1. In GameMaker: **Ubuntu** target → **Build → Create Executable → Package as Zip**.
+2. Rename the file to `MazeOfExistence-Linux.zip` and attach it to the same release as the Windows zip:
+```bash
+gh release upload v1.1.0 MazeOfExistence-Linux.zip
+```
+From then on `install.sh` installs the native build automatically (no Wine).
+</details>
+
 > Old Beta 1.0 demo: [Google Drive](https://drive.google.com/file/d/13MptVvlLx8gzgrO_MtDW82ynJM82T_KS/view?usp=sharing).
 
 ### 🤝 How to Contribute
@@ -473,6 +536,69 @@ Isso abre o projeto no [GameMaker](https://gamemaker.io) (precisa estar instalad
 powershell -ExecutionPolicy Bypass -File tools\publicar_release.ps1 -Versao v1.1.0 -Build "C:\caminho\MAZE OF EXISTENCE.zip"
 ```
 Requer o [GitHub CLI](https://cli.github.com) (`winget install --id GitHub.cli` e depois `gh auth login`). A partir daí, os comandos acima instalam essa versão.
+</details>
+
+### 🐧 Como Instalar (Linux)
+
+**Opção 1 — um comando só.** Abra um terminal e cole:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/Abelardo-Matheus/MAZE-OF-EXISTENCE/main/install.sh | bash
+```
+
+Ele baixa a versão mais recente das [Releases](https://github.com/Abelardo-Matheus/MAZE-OF-EXISTENCE/releases), instala em `~/.local/share/MazeOfExistence`, coloca o **Maze of Existence** no menu de aplicativos, cria o comando `maze-of-existence` no terminal e abre o jogo. Rode o mesmo comando de novo para **atualizar**.
+
+> Por enquanto o jogo é publicado como **build de Windows**, então no Linux ele roda pelo **[Wine](https://www.winehq.org)** (qualquer distro). Instale o Wine antes:
+>
+> | Distro | Comando |
+> |---|---|
+> | Ubuntu / Debian / Mint / Pop!_OS | `sudo apt install wine` |
+> | Fedora | `sudo dnf install wine` |
+> | Arch / Manjaro | `sudo pacman -S wine` |
+> | openSUSE | `sudo zypper install wine` |
+>
+> Quando uma release tiver um build nativo de Linux (arquivo com `linux` ou `ubuntu` no nome), o mesmo comando instala ele — sem precisar de Wine. O instalador também precisa do `curl` (ou `wget`) e do `unzip`.
+
+**Opção 2 — clonar o repositório e instalar:**
+
+```bash
+git clone --depth 1 https://github.com/Abelardo-Matheus/MAZE-OF-EXISTENCE.git
+cd MAZE-OF-EXISTENCE
+chmod +x install.sh
+./install.sh
+```
+
+Opções extras: `./install.sh --version v1.1.0` (uma versão específica), `./install.sh --no-launch` (não abre o jogo ao terminar), `./install.sh --uninstall` (remove o jogo, o atalho do menu e o comando; seus saves são mantidos), `./install.sh --uninstall --purge` (apaga também os saves).
+
+**Opção 3 — manual (Wine):** baixe o [MazeOfExistence-Windows.zip](https://github.com/Abelardo-Matheus/MAZE-OF-EXISTENCE/releases/latest/download/MazeOfExistence-Windows.zip), extraia e rode dentro da pasta extraída:
+
+```bash
+wine "MAZE OF EXISTENCE.exe"
+```
+
+<details>
+<summary>Desinstalar sem o repositório clonado</summary>
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/Abelardo-Matheus/MAZE-OF-EXISTENCE/main/install.sh | bash -s -- --uninstall
+```
+</details>
+
+<details>
+<summary>Steam Deck / Steam (Proton)</summary>
+
+No Modo Desktop, baixe e extraia o zip de Windows; depois, na Steam: **Jogos → Adicionar um jogo não-Steam** → escolha `MAZE OF EXISTENCE.exe` → clique com o botão direito no jogo → **Propriedades → Compatibilidade** → marque **Forçar o uso de uma ferramenta de compatibilidade do Steam Play** (Proton).
+</details>
+
+<details>
+<summary>Para o desenvolvedor: publicar um build nativo de Linux</summary>
+
+1. No GameMaker: alvo **Ubuntu** → **Build → Create Executable → Package as Zip**.
+2. Renomeie o arquivo para `MazeOfExistence-Linux.zip` e anexe na mesma release do zip de Windows:
+```bash
+gh release upload v1.1.0 MazeOfExistence-Linux.zip
+```
+A partir daí o `install.sh` instala o build nativo sozinho (sem Wine).
 </details>
 
 > Demo antiga (Beta 1.0): [Google Drive](https://drive.google.com/file/d/13MptVvlLx8gzgrO_MtDW82ynJM82T_KS/view?usp=sharing).
