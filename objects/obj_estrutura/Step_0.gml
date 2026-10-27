@@ -9,16 +9,13 @@ depth = -y;
 if (instance_exists(obj_player)) 
 {
     // ==========================================
-    // INTERAÇÃO DE ENTRADA (F)
+    // INTERAÇÃO DE ENTRADA — na porta, escolhida pelo scr_interacao
     // ==========================================
-    if (point_distance(x, y, obj_player.x, obj_player.y) <= 400) 
+    obj_player.proximo_de_estrutura = (variable_global_exists("interacao_alvo") && global.interacao_alvo == id);
     {
-        // Marca que o jogador está na porta
-        obj_player.proximo_de_estrutura = true;
-        
-        // Verifica o botão de ação
-        if (keyboard_check_pressed(ord("F"))) 
+        if (interacao_pedida()) 
         {
+            sono_ao_entrar_casa(id); // casa principal = onde dá para dormir (scr_sono)
             global.pos_x_map = x;
             global.pos_y_map = y;
             global.seed_atual = seed; // Passa a seed desta casa para o gerador de salas ler!

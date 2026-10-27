@@ -11,7 +11,7 @@
 draw_sprite_ext(spr_sombra, 0, x, y + 15, 0.8, 0.8, 0, c_white, 1);
 
 // 2. Player (sprites de ataque refeitos em 64x64 usam o fator de ajuste)
-var _aj = sprite_ajuste(sprite_index);
+var _aj = sprite_ajuste(sprite_index); // (o desenho usa idade_draw_player: sprite da idade, scr_idade)
 
 // Efeito de dano (player_sinal_dano): flash de cor nos 8 primeiros frames, depois pisca
 var _cor = c_white;
@@ -23,6 +23,6 @@ if (dano_visual > 0) {
     else _alfa = ((_passou div 5) mod 2 == 0) ? 1 : 0.3;
     dano_visual--;
 }
-draw_sprite_ext(sprite_index, image_index, x, y, image_xscale * _aj, image_yscale * _aj, image_angle, _cor, _alfa);
+idade_draw_player(_cor, _alfa); // criança / adolescente / adulto / idoso (scr_idade)
 
 // 3 e 4 (arma e botão de interação) ficam no Draw End: sempre por cima dos móveis

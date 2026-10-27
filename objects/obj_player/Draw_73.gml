@@ -18,8 +18,8 @@ if (desenha_arma)
     }
 }
 
-// 4. Botão de Interação (Prompt)
-if (desenha_botao) 
+// 4. Botão de Interação (Prompt) — com texto do alvo (scr_interacao); senão o botão antigo
+if (!interacao_desenhar_prompt() && desenha_botao) 
 {
     // Configurações de texto
     draw_set_font(fnt_status);

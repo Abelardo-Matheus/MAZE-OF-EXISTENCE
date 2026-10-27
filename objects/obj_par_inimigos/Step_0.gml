@@ -1,5 +1,7 @@
 // feather disable GM2017
 depth = profundidade_pe(bbox_bottom); // mesma regra do player e dos móveis
+// Nível da área, força e XP por tipo — 1x, depois de todos os Creates (scr_progressao)
+if (!variable_instance_exists(id, "prog_aplicado")) progressao_inimigo_aplicar();
 // Vida acima do máximo (nível, ronda, sala restaurada): o máximo acompanha, senão a barra estoura
 if (variable_instance_exists(id, "max_vida") && vida > max_vida) max_vida = vida;
 // HITBOX: a máscara fica fixa no sprite de andar. Antes ela trocava junto com a animação
@@ -26,7 +28,7 @@ if (vida <= 0) {
 	remover_inimigo_por_id(global.current_sala, inimigo_id);
 	// XP: vai para o pool de gemas do obj_horde (sem instância, junta com gemas próximas).
 	// Sem obj_horde na sala (outras fases), cai como obj_xp_um normal.
-	var _xp_valor = variable_instance_exists(id, "xp_ronda") ? xp_ronda : 19; // 19 = xp_ganho padrão do obj_xp_um
+	var _xp_valor = variable_instance_exists(id, "xp_valor") ? xp_valor : PROG_XP_PADRAO; // XP por tipo e nível (scr_progressao)
 	if (!horde_xp_drop(x, y, _xp_valor)) {
 		var _xp = instance_create_layer(x, y, "instances", obj_xp_um);
 		_xp.xp_ganho = _xp_valor;

@@ -1,6 +1,8 @@
 // feather disable GM2017
 /// @description Lógica Principal (Step) ORGANIZADA
 depth = profundidade_pe(bbox_bottom); // pé do player: passa atrás/na frente dos móveis (scr_casa_moveis)
+// --- Dormindo (scr_sono): tela escura, pula para a manhã; aviso da noite ---
+if (sono_tick()) exit;
 // ========================================================
 // 1. INPUTS DE SISTEMA (Abrir/Fechar Menus)
 // ========================================================
@@ -28,6 +30,10 @@ if (instance_exists(global.bau_aberto)) {
     image_speed = 0;
     exit;
 }
+
+// --- Missões (scr_missoes): spawn do NPC, diálogo e entregas ---
+missoes_tick();
+if (missoes_dialogo_aberto()) { image_speed = 0; exit; } // congela o player enquanto conversa
 
 // ========================================================
 // 2. SISTEMA DE PAUSA E CONGELAMENTO
@@ -140,24 +146,11 @@ if (desenha_arma) {
         desenha_arma = false; 
     } 
 }
-// --- Coletar Itens e NPC ---
-var _item_perto = instance_nearest(x, y, obj_item);
+// --- Interação (scr_interacao): só o alvo mais perto recebe a tecla Interagir ---
+// (itens, NPCs, baú, cama, móveis, escada, porta das casas...)
+interacao_tick();
 var _npc = instance_nearest(x, y, obj_par_npc_vendedor_um);
-desenha_botao = false; // Reseta a cada frame
-
-if (_item_perto != noone && distance_to_object(_item_perto) <= 25) {
-    desenha_botao = true;
-    if (tecla_apertou("interagir")) {
-        // Coleta pelo sistema novo de itens (ID, nível e adesivos vêm junto)
-        if (inventory_pegar_instancia(_item_perto)) {
-            coletar_item(_item_perto.pos_x, _item_perto.pos_y, global.current_sala);
-            instance_destroy(_item_perto);
-        }
-        desenha_botao = false;
-    }
-}
-else if (_npc != noone && distance_to_object(_npc) <= 50) {
-    desenha_botao = true;
+if (_npc != noone && distance_to_object(_npc) <= 50) {
     if (keyboard_check_pressed(ord("P")) && !global.dialogo) {
         andar = true;
         var _dialogo = instance_create_layer(x, y, "Instances_dialogo", obj_dialogo);

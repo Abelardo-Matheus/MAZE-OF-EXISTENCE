@@ -55,365 +55,524 @@ function draw_clock_hand(_x, _y, _angle, _len, _color) {
     draw_vertex_color(_p2_x, _p2_y, c_black, 1);   // Lado B
     draw_primitive_end();
 }
+// ============================================================================
+//  MINIMAPA DO MUNDO ABERTO (mini_mapa_vamp)
+//  Pequeno no canto inferior direito; [M] abre o mapa grande.
+//  No mapa grande: botão direito marca/desmarca um destino (obj_seta).
+//  Ícones vetoriais (casa, inimigos, boss, vendedor, poste, missão, destino),
+//  tudo em coordenadas da GUI e escalado pela altura da tela (_k), igual ao inventário.
+// ============================================================================
+
+#macro MINIMAPA_ESCALA_PEQ    0.021   // px da GUI por px do mundo (× _k) no mapa pequeno
+#macro MINIMAPA_ESCALA_GRANDE 0.0075  // idem no mapa grande
+#macro MINIMAPA_POSTES        true    // desenhar postes (pontinhos amarelos)
+
+function minimapa_nome_bioma(_b) {
+    switch (_b) {
+        case "floresta":       return "Floresta";
+        case "cidade":         return "Cidade";
+        case "vazia":          return "Terra Vazia";
+        case "floresta_negra": return "Floresta Negra";
+        case "deserto":        return "Deserto";
+        case "neve":           return "Neve";
+        case "pantano":        return "Pântano";
+        case "vulcanico":      return "Vulcânico";
+        case "prado":          return "Prado";
+        case "cristalino":     return "Cristalino";
+    }
+    return string(_b);
+}
+
+/// Tipo de ícone de uma entrada de global.posicoes_estruturas / posicoes_grupos_inimigos
+function minimapa_tipo_entidade(_data) {
+    if (array_length(_data) <= 5) return "inimigos";
+    switch (_data[5]) {
+        case "Casa":           return "casa";
+        case "Poste":          return "poste";
+        case "Grupo Inimigos": return "inimigos";
+        case "Vendedor":       return "vendedor";
+        case "BOSS":           return "boss";
+    }
+    return "outro";
+}
+
+function minimapa_nome_tipo(_tipo) {
+    switch (_tipo) {
+        case "casa":     return "Casa";
+        case "poste":    return "Poste";
+        case "inimigos": return "Grupo de inimigos";
+        case "vendedor": return "Vendedor";
+        case "boss":     return "Chefe";
+    }
+    return "Lugar";
+}
+
+/// Texto pequeno centralizado (ícones)
+function minimapa_letra(_x, _y, _txt, _cor, _px, _contorno) {
+    draw_set_font(fnt_descricao);
+    var _fh = max(1, string_height("Ag"));
+    draw_set_halign(fa_center); draw_set_valign(fa_middle);
+    ui_text(_x, _y, _txt, _cor, _px / _fh, _contorno);
+}
+
+/// Desenha um ícone vetorial de tamanho _r (raio em px da GUI)
+function minimapa_icone(_tipo, _x, _y, _r, _a = 1) {
+    var _esc = ui_cor("escuro");
+    var _b = max(1, _r * 0.28);              // espessura da borda
+    draw_set_alpha(_a);
+    switch (_tipo) {
+        case "casa":
+            draw_set_color(_esc);
+            draw_rectangle(_x - _r * 0.72 - _b, _y - _r * 0.05 - _b, _x + _r * 0.72 + _b, _y + _r * 0.85 + _b, false);
+            draw_triangle(_x - _r - _b * 1.4, _y + _b * 0.4, _x + _r + _b * 1.4, _y + _b * 0.4, _x, _y - _r - _b * 1.4, false);
+            draw_set_color(make_color_rgb(250, 241, 224));
+            draw_rectangle(_x - _r * 0.72, _y - _r * 0.05, _x + _r * 0.72, _y + _r * 0.85, false);
+            draw_set_color(make_color_rgb(214, 80, 58));
+            draw_triangle(_x - _r, _y, _x + _r, _y, _x, _y - _r, false);
+            draw_set_color(make_color_rgb(122, 74, 46));
+            draw_rectangle(_x - _r * 0.18, _y + _r * 0.35, _x + _r * 0.18, _y + _r * 0.85, false);   // porta
+            break;
+
+        case "poste":
+            draw_set_color(_esc);
+            draw_circle(_x, _y, _r * 0.5 + _b * 0.6, false);
+            draw_set_color(make_color_rgb(255, 226, 120));
+            draw_circle(_x, _y, _r * 0.5, false);
+            break;
+
+        case "inimigos":
+            var _p = 1 + 0.12 * sin(current_time / 170);
+            var _rr = _r * _p;
+            draw_set_color(_esc);
+            draw_circle(_x, _y, _rr + _b, false);
+            draw_set_color(make_color_rgb(214, 58, 58));
+            draw_circle(_x, _y, _rr, false);
+            draw_set_color(c_white);                                    // olhinhos bravos
+            draw_circle(_x - _rr * 0.38, _y - _rr * 0.08, max(1, _rr * 0.24), false);
+            draw_circle(_x + _rr * 0.38, _y - _rr * 0.08, max(1, _rr * 0.24), false);
+            draw_set_color(_esc);
+            draw_circle(_x - _rr * 0.38, _y - _rr * 0.02, max(0.5, _rr * 0.11), false);
+            draw_circle(_x + _rr * 0.38, _y - _rr * 0.02, max(0.5, _rr * 0.11), false);
+            break;
+
+        case "boss":
+            var _p = 1 + 0.1 * sin(current_time / 140);
+            var _rr = _r * _p;
+            draw_set_alpha(_a * 0.35);
+            draw_set_color(make_color_rgb(170, 60, 220));
+            draw_circle(_x, _y, _rr * 1.6, false);                      // aura
+            draw_set_alpha(_a);
+            draw_set_color(_esc);
+            draw_circle(_x, _y, _rr + _b, false);
+            draw_set_color(make_color_rgb(120, 50, 170));
+            draw_circle(_x, _y, _rr, false);
+            draw_set_color(make_color_rgb(255, 200, 58));               // coroa
+            var _cy = _y + _rr * 0.15, _cw = _rr * 0.62;
+            draw_rectangle(_x - _cw, _cy, _x + _cw, _cy + _rr * 0.3, false);
+            draw_triangle(_x - _cw, _cy, _x - _cw * 0.4, _cy, _x - _cw, _cy - _rr * 0.5, false);
+            draw_triangle(_x - _cw * 0.4, _cy, _x + _cw * 0.4, _cy, _x, _cy - _rr * 0.62, false);
+            draw_triangle(_x + _cw * 0.4, _cy, _x + _cw, _cy, _x + _cw, _cy - _rr * 0.5, false);
+            break;
+
+        case "vendedor":
+            draw_set_color(_esc);
+            draw_circle(_x, _y, _r + _b, false);
+            draw_set_color(make_color_rgb(255, 200, 58));
+            draw_circle(_x, _y, _r, false);
+            draw_set_alpha(1);
+            minimapa_letra(_x, _y, "$", ui_cor("texto"), _r * 1.5, make_color_rgb(255, 200, 58));
+            break;
+
+        case "destino":
+            var _sobe = abs(sin(current_time / 260)) * _r * 0.35;
+            var _py = _y - _sobe;
+            draw_set_color(_esc);
+            draw_triangle(_x - _r * 0.75 - _b, _py - _r * 0.2, _x + _r * 0.75 + _b, _py - _r * 0.2, _x, _py + _r * 1.25 + _b, false);
+            draw_circle(_x, _py - _r * 0.55, _r * 0.8 + _b, false);
+            draw_set_color(make_color_rgb(230, 60, 70));
+            draw_triangle(_x - _r * 0.75, _py - _r * 0.2, _x + _r * 0.75, _py - _r * 0.2, _x, _py + _r * 1.25, false);
+            draw_circle(_x, _py - _r * 0.55, _r * 0.8, false);
+            draw_set_color(c_white);
+            draw_circle(_x, _py - _r * 0.55, _r * 0.32, false);
+            break;
+
+        default:
+            draw_set_color(_esc);
+            draw_circle(_x, _y, _r * 0.6 + _b, false);
+            draw_set_color(make_color_rgb(200, 190, 180));
+            draw_circle(_x, _y, _r * 0.6, false);
+            break;
+    }
+    draw_set_alpha(1);
+    draw_set_color(c_white);
+}
+
+/// Marcador da missão: círculo com "?" (não aceita) ou "!" (aceita) + anel pulsando
+function minimapa_icone_missao(_x, _y, _r, _simb, _cor) {
+    var _t = (current_time mod 1200) / 1200;                     // anel que se expande
+    draw_set_alpha((1 - _t) * 0.8);
+    draw_set_color(_cor);
+    draw_circle(_x, _y, _r * (1 + _t * 1.3), true);
+    draw_circle(_x, _y, _r * (1 + _t * 1.3) + 1, true);
+    draw_set_alpha(1);
+    draw_set_color(ui_cor("escuro"));
+    draw_circle(_x, _y, _r + max(1.5, _r * 0.3), false);
+    draw_set_color(_cor);
+    draw_circle(_x, _y, _r, false);
+    minimapa_letra(_x, _y, _simb, ui_cor("texto"), _r * 1.7, _cor);
+}
+
+/// Seta do jogador (aponta para onde ele está andando)
+function minimapa_icone_jogador(_x, _y, _r, _ang) {
+    var _ax = _x + lengthdir_x(_r * 1.25, _ang),        _ay = _y + lengthdir_y(_r * 1.25, _ang);
+    var _bx = _x + lengthdir_x(_r, _ang + 140),         _by = _y + lengthdir_y(_r, _ang + 140);
+    var _cx = _x + lengthdir_x(_r * 0.45, _ang + 180),  _cy = _y + lengthdir_y(_r * 0.45, _ang + 180);
+    var _dx = _x + lengthdir_x(_r, _ang - 140),         _dy = _y + lengthdir_y(_r, _ang - 140);
+    var _o = max(1.5, _r * 0.3);
+    var _oax = _x + lengthdir_x(_r * 1.25 + _o * 1.6, _ang), _oay = _y + lengthdir_y(_r * 1.25 + _o * 1.6, _ang);
+    var _obx = _x + lengthdir_x(_r + _o, _ang + 140),        _oby = _y + lengthdir_y(_r + _o, _ang + 140);
+    var _odx = _x + lengthdir_x(_r + _o, _ang - 140),        _ody = _y + lengthdir_y(_r + _o, _ang - 140);
+    var _ocx = _x + lengthdir_x(_r * 0.45 + _o, _ang + 180), _ocy = _y + lengthdir_y(_r * 0.45 + _o, _ang + 180);
+    draw_set_color(ui_cor("escuro"));
+    draw_triangle(_oax, _oay, _obx, _oby, _ocx, _ocy, false);
+    draw_triangle(_oax, _oay, _odx, _ody, _ocx, _ocy, false);
+    draw_set_color(c_white);
+    draw_triangle(_ax, _ay, _bx, _by, _cx, _cy, false);
+    draw_triangle(_ax, _ay, _dx, _dy, _cx, _cy, false);
+    draw_set_color(make_color_rgb(70, 140, 222));
+    draw_triangle(_ax, _ay, _bx, _by, _cx, _cy, false);
+    draw_set_color(c_white);
+}
+
+/// Camada de desenho de cada tipo (mesma ordem de _camadas em mini_mapa_vamp)
+function minimapa_camada(_tipo) {
+    switch (_tipo) {
+        case "poste": return 0; case "casa": return 1; case "inimigos": return 2;
+        case "vendedor": return 3; case "boss": return 4;
+    }
+    return -1;
+}
+
 function mini_mapa_vamp() {
-    // --- Input (Idealmente mover para o Step Event, mas mantido aqui para portabilidade) ---
-    if (tecla_apertou("mapa")) {
-        global.minimap_expandido = !global.minimap_expandido;
-    }
+    static _ang_jog = 90;          // direção da seta do jogador
+    static _ult_x = undefined;
+    static _ult_y = undefined;
+    if (tecla_apertou("mapa")) global.minimap_expandido = !global.minimap_expandido;
+    if (!instance_exists(obj_player)) return;
 
-    // --- Configuração Dinâmica ---
-    var _w, _h, _map_x, _map_y, _scale, _max_dist;
-    var _gw = display_get_width();
-    var _gh = display_get_height();
+    var _gw = display_get_gui_width(), _gh = display_get_gui_height();
+    var _k  = max(1, _gh / 360);
+    var _big = global.minimap_expandido;
+    var _pxw = obj_player.x, _pyw = obj_player.y;
 
-    if (global.minimap_expandido) {
-        _w = 1000; _h = 800;
-        _map_x = (_gw - _w) / 2;
-        _map_y = (_gh - _h) / 2;
-        _scale = 0.05;
-        _max_dist = 90000;
+    // --- Moldura e área do mapa ---
+    var _w, _h, _x1, _y1, _sc;
+    if (_big) {
+        _w = min(_gw - 40 * _k, 540 * _k);
+        _h = min(_gh - 70 * _k, 300 * _k);
+        _x1 = (_gw - _w) / 2;
+        _y1 = (_gh - _h) / 2 + 6 * _k;
+        _sc = MINIMAPA_ESCALA_GRANDE * _k;
     } else {
-        _w = 220; _h = 200;
-        _map_x = _gw - _w - 40;
-        _map_y = _gh - _h - 40;
-        _scale = 0.05;
-        _max_dist = 90000;
+        _w = 100 * _k;
+        _h = 100 * _k;
+        _x1 = _gw - _w - 12 * _k;
+        _y1 = _gh - _h - 24 * _k;
+        _sc = MINIMAPA_ESCALA_PEQ * _k;
     }
+    var _x2 = _x1 + _w, _y2 = _y1 + _h;
+    var _cx = (_x1 + _x2) / 2, _cy = (_y1 + _y2) / 2;
+    var _bw = max(2, round(2 * _k));
 
-    // --- Renderização do Fundo Base ---
-    var _c_border = c_black;
-    var _c_bg = make_color_rgb(174, 91, 28); // Marrom (Fundo padrão onde não tem bioma)
-    
-    draw_set_color(_c_border);
-    draw_rectangle(_map_x - 4, _map_y - 4, _map_x + _w + 4, _map_y + _h + 4, false);
-    
-    draw_set_color(_c_bg);
-    draw_rectangle(_map_x, _map_y, _map_x + _w, _map_y + _h, false);
+    if (_big) {                                              // escurece o jogo atrás
+        draw_set_alpha(0.45); draw_set_color(c_black);
+        draw_rectangle(0, 0, _gw, _gh, false);
+        draw_set_alpha(1);
+    }
+    ui_card(_x1 - 5 * _k, _y1 - 5 * _k, _x2 + 5 * _k, _y2 + 5 * _k, 9 * _k, ui_cor("papel"), ui_cor("borda"), _bw);
+    ui_rrect(_x1 - _bw, _y1 - _bw, _x2 + _bw, _y2 + _bw, 4 * _k, ui_cor("escuro"));
+    draw_set_color(make_color_rgb(58, 44, 38));             // fundo "não explorado"
+    draw_rectangle(_x1, _y1, _x2, _y2, false);
 
-    var _center_x = _map_x + _w / 2;
-    var _center_y = _map_y + _h / 2;
+    // mundo -> mapa
+    var _hw = (_w / 2) / _sc, _hh = (_h / 2) / _sc;
 
-    // ========================================================
-    // NOVO: PINTANDO OS BIOMAS NO MINIMAPA
-    // ========================================================
-    // Descobre quais blocos estão visíveis no raio do minimapa agora
-    var _start_bx = floor((obj_player.x - _max_dist) / global.tamanho_bloco);
-    var _end_bx = ceil((obj_player.x + _max_dist) / global.tamanho_bloco);
-    var _start_by = floor((obj_player.y - _max_dist) / global.tamanho_bloco);
-    var _end_by = ceil((obj_player.y + _max_dist) / global.tamanho_bloco);
-
-    // Variável para checar o mapa
-    var _mapa_valido = variable_global_exists("mapa_biomas") && (global.mapa_biomas != undefined);
-
-    if (_mapa_valido) {
-        for (var _bx = _start_bx; _bx <= _end_bx; _bx++) {
-            for (var _by = _start_by; _by <= _end_by; _by++) {
-                
-                var _bloco_id = string(_bx) + "," + string(_by);
-                var _bioma = global.mapa_biomas[? _bloco_id];
-
-                if (!is_undefined(_bioma)) {
-                    // Define as cores para cada bioma (Ajuste como preferir!)
-                    // Cor de cada bioma vem do script TERRENO (inclui os biomas novos)
-                    var _cor_bioma = terreno_cor_minimapa(_bioma);
-
-                    // Calcula onde o bloco começa e termina no mundo real
-                    var _wx1 = _bx * global.tamanho_bloco;
-                    var _wy1 = _by * global.tamanho_bloco;
-                    var _wx2 = _wx1 + global.tamanho_bloco;
-                    var _wy2 = _wy1 + global.tamanho_bloco;
-
-                    // Projeta isso para as coordenadas da tela (Minimapa)
-                    var _dx1 = _center_x + (_wx1 - obj_player.x) * _scale;
-                    var _dy1 = _center_y + (_wy1 - obj_player.y) * _scale;
-                    var _dx2 = _center_x + (_wx2 - obj_player.x) * _scale;
-                    var _dy2 = _center_y + (_wy2 - obj_player.y) * _scale;
-
-                    // Clampa (corta) os cantos para não desenhar fora da caixinha preta do minimapa
-                    _dx1 = clamp(_dx1, _map_x, _map_x + _w);
-                    _dy1 = clamp(_dy1, _map_y, _map_y + _h);
-                    _dx2 = clamp(_dx2, _map_x, _map_x + _w);
-                    _dy2 = clamp(_dy2, _map_y, _map_y + _h);
-
-                    // Desenha o quadrado colorido se ele for visível
-                    if (_dx2 > _dx1 && _dy2 > _dy1) {
-                        draw_set_color(_cor_bioma);
-                        draw_rectangle(_dx1, _dy1, _dx2, _dy2, false);
-                    }
-                }
+    // --- Biomas (só os blocos que aparecem) ---
+    if (variable_global_exists("mapa_biomas") && !is_undefined(global.mapa_biomas) && variable_global_exists("tamanho_bloco")) {
+        var _tb = global.tamanho_bloco;
+        var _bx0 = floor((_pxw - _hw) / _tb), _bx1 = floor((_pxw + _hw) / _tb);
+        var _by0 = floor((_pyw - _hh) / _tb), _by1 = floor((_pyw + _hh) / _tb);
+        for (var _bx = _bx0; _bx <= _bx1; _bx++) {
+            for (var _by = _by0; _by <= _by1; _by++) {
+                var _bioma = global.mapa_biomas[? string(_bx) + "," + string(_by)];
+                if (is_undefined(_bioma)) continue;
+                var _cor = merge_color(terreno_cor_minimapa(_bioma), c_white, 0.08);
+                var _dx1 = clamp(_cx + (_bx * _tb - _pxw) * _sc, _x1, _x2);
+                var _dy1 = clamp(_cy + (_by * _tb - _pyw) * _sc, _y1, _y2);
+                var _dx2 = clamp(_cx + ((_bx + 1) * _tb - _pxw) * _sc, _x1, _x2);
+                var _dy2 = clamp(_cy + ((_by + 1) * _tb - _pyw) * _sc, _y1, _y2);
+                if (_dx2 <= _dx1 || _dy2 <= _dy1) continue;
+                draw_set_color(_cor);
+                draw_rectangle(_dx1, _dy1, _dx2, _dy2, false);
             }
         }
+        // grade suave (a cada meio bloco) para dar noção de distância
+        var _passo = _tb / 2;
+        draw_set_alpha(0.12); draw_set_color(c_black);
+        for (var _gx = ceil((_pxw - _hw) / _passo) * _passo; _gx <= _pxw + _hw; _gx += _passo) {
+            var _lx = _cx + (_gx - _pxw) * _sc;
+            draw_line(_lx, _y1, _lx, _y2);
+        }
+        for (var _gy = ceil((_pyw - _hh) / _passo) * _passo; _gy <= _pyw + _hh; _gy += _passo) {
+            var _ly = _cy + (_gy - _pyw) * _sc;
+            draw_line(_x1, _ly, _x2, _ly);
+        }
+        draw_set_alpha(1);
     }
-    // ========================================================
 
-    // --- Renderização do Player (Centro) ---
-    draw_set_color(c_blue);
-    draw_circle(_center_x, _center_y, 3, false);
+    // --- Área da câmera (retângulo branco fininho) ---
+    var _cam = view_camera[0];
+    var _vx = camera_get_view_x(_cam), _vy = camera_get_view_y(_cam);
+    var _vw = camera_get_view_width(_cam), _vh = camera_get_view_height(_cam);
+    draw_set_alpha(0.45); draw_set_color(c_white);
+    draw_rectangle(clamp(_cx + (_vx - _pxw) * _sc, _x1, _x2), clamp(_cy + (_vy - _pyw) * _sc, _y1, _y2),
+                   clamp(_cx + (_vx + _vw - _pxw) * _sc, _x1, _x2), clamp(_cy + (_vy + _vh - _pyw) * _sc, _y1, _y2), true);
+    draw_set_alpha(1);
 
-    // --- Loop de Entidades ---
-    var _mx = device_mouse_x_to_gui(0);
-    var _my = device_mouse_y_to_gui(0);
-    var _hover_text = undefined;
-    
-    // Array de listas para iterar
-    var _lists_to_check = [global.posicoes_estruturas, global.posicoes_grupos_inimigos];
+    // --- Entidades (desenhadas por camada: postes < casas < inimigos < vendedor < boss) ---
+    var _mx = device_mouse_x_to_gui(0), _my = device_mouse_y_to_gui(0);
+    var _hover = undefined, _hover_d = 999999;
+    var _tam = _big ? 0.85 : 1;                              // ícones um pouco menores no mapa grande
+    var _camadas = ["poste", "casa", "inimigos", "vendedor", "boss"];
+    var _raios   = [1.7, 3.4, 3.0, 4.0, 5.0];
+    var _listas  = [global.posicoes_estruturas, global.posicoes_grupos_inimigos];
 
-    for (var _l = 0; _l < array_length(_lists_to_check); _l++) {
-        var _list = _lists_to_check[_l];
-        var _size = ds_list_size(_list);
-
-        for (var _i = 0; _i < _size; _i++) {
-            var _data = _list[| _i]; 
-            
-            // Dados da entidade (Básicos)
-            var _ent_x = _data[0];
-            var _ent_y = _data[1];
-            
-            // Variáveis seguras (Iniciadas com valores padrão caso seja a lista de inimigos)
-            var _sprite = noone;
-            var _name = "Inimigos";
-            var _custom_scale = 1; // NOVA VARIÁVEL: Escala padrão é 1
-
-            // ========================================================
-            // VERIFICA SE É A LISTA DE ESTRUTURAS (QUE TEM MAIS DADOS)
-            // ========================================================
-            if (array_length(_data) > 3) {
-                _sprite = _data[4];
-                _name   = _data[5];
-                _custom_scale = _data[6]; // Extrai a escala do metadado
-            } else {
-                // Se for grupo de inimigos (array curta), força a usar a sprite de inimigo
-                _sprite = spr_grupoini_mini_map;
+    var _vis = [[], [], [], [], []];                         // 1 passada: separa os visíveis por camada
+    for (var _l = 0; _l < array_length(_listas); _l++) {
+        var _list = _listas[_l];
+        if (!ds_exists(_list, ds_type_list)) continue;
+        var _n = ds_list_size(_list);
+        for (var _i = 0; _i < _n; _i++) {
+            var _data = _list[| _i];
+            var _tipo = (_l == 1) ? "inimigos" : minimapa_tipo_entidade(_data);
+            if (_tipo == "outro") _tipo = "casa";
+            var _c = minimapa_camada(_tipo);
+            if (_c < 0 || (_tipo == "poste" && !MINIMAPA_POSTES)) continue;
+            var _r = _raios[_c] * _k * _tam;
+            var _ex = _cx + (_data[0] - _pxw) * _sc;
+            var _ey = _cy + (_data[1] - _pyw) * _sc;
+            if (_ex < _x1 + _r || _ex > _x2 - _r || _ey < _y1 + _r || _ey > _y2 - _r) {
+                if (_tipo != "boss") continue;                    // o chefe fica preso na borda (direção)
+                _ex = clamp(_ex, _x1 + _r, _x2 - _r);
+                _ey = clamp(_ey, _y1 + _r, _y2 - _r);
             }
-
-            // Verifica distância
-            var _dist = point_distance(_ent_x, _ent_y, obj_player.x, obj_player.y);
-            
-            if (_dist <= _max_dist) {
-                // Projeção no minimapa
-                var _draw_x = _center_x + (_ent_x - obj_player.x) * _scale;
-                var _draw_y = _center_y + (_ent_y - obj_player.y) * _scale;
-
-                // Clamp para não desenhar fora do quadrado
-                _draw_x = clamp(_draw_x, _map_x, _map_x + _w);
-                _draw_y = clamp(_draw_y, _map_y, _map_y + _h);
-
-                // Escala visual baseada na distância
-                var _size_factor = clamp(1 - (_dist / _max_dist), 0.6, 1);
-                
-                // ========================================================
-                // APLICA A ESCALA CUSTOMIZADA NO RAIO FINAL DO DESENHO
-                // ========================================================
-                var _radius = 1 * _size_factor * _custom_scale; 
-
-                // Garante que a área clicável do mouse seja de pelo menos 20 pixels
-                var _area_hover = max(10, _radius * 10);
-
-                // Verifica Hover
-                if (point_distance(_mx, _my, _draw_x, _draw_y) < _area_hover) {
-                    _hover_text = _name;
-                    
-                    // Se o ícone for muito pequeno (ex: Boss com 0.1), ele cresce bem mais no hover
-                    if (_custom_scale < 1) {
-                        _radius *= 3;   
-                    } else {
-                        _radius *= 2.5; // Comportamento normal para o resto
-                    }
-                }
-
-                // Desenha Sprite ou Ponto
-                if (_sprite != noone) {
-                    draw_sprite_ext(_sprite, 0, _draw_x, _draw_y, _radius, _radius, 0, c_white, 0.8);
-                } else {
-                    var _blink = 0.5 + 0.5 * sin(current_time / 200);
-                    draw_set_color(c_red);
-                    draw_set_alpha(_blink);
-                    draw_circle(_draw_x, _draw_y, 6 * _custom_scale, false); 
-                    draw_set_alpha(1);
-                }
+            array_push(_vis[_c], [_ex, _ey, _data]);
+        }
+    }
+    for (var _c = 0; _c < array_length(_camadas); _c++) {
+        var _tipo = _camadas[_c];
+        var _r = _raios[_c] * _k * _tam;
+        var _arr = _vis[_c];
+        for (var _i = 0; _i < array_length(_arr); _i++) {
+            var _ex = _arr[_i][0], _ey = _arr[_i][1], _data = _arr[_i][2];
+            minimapa_icone(_tipo, _ex, _ey, _r);
+            var _dm = point_distance(_mx, _my, _ex, _ey);
+            if (_dm < max(_r * 1.6, 6 * _k) && _dm < _hover_d) {
+                _hover_d = _dm;
+                _hover = (_tipo == "casa" && array_length(_data) > 5) ? string(_data[5]) : minimapa_nome_tipo(_tipo);
             }
         }
     }
 
-    // ========================================================
-    // --- RENDERIZAÇÃO DO MARCADOR (spr_locate) ---
-    // ========================================================
+    // --- Destino marcado (obj_seta) ---
     if (instance_exists(obj_seta)) {
-        var _alvo_x = obj_seta.alvo_x;
-        var _alvo_y = obj_seta.alvo_y;
-        var _dist_alvo = point_distance(_alvo_x, _alvo_y, obj_player.x, obj_player.y);
-        
-        if (_dist_alvo <= _max_dist) {
-            var _draw_alvo_x = _center_x + (_alvo_x - obj_player.x) * _scale;
-            var _draw_alvo_y = _center_y + (_alvo_y - obj_player.y) * _scale;
-
-            _draw_alvo_x = clamp(_draw_alvo_x, _map_x, _map_x + _w);
-            _draw_alvo_y = clamp(_draw_alvo_y, _map_y, _map_y + _h);
-
-            var _blink_alvo = 0.7 + 0.3 * sin(current_time / 150);
-            
-            draw_sprite_ext(spr_locate, 0, _draw_alvo_x, _draw_alvo_y, 0.04, 0.04, 0, c_white, _blink_alvo);
-
-            if (point_distance(_mx, _my, _draw_alvo_x, _draw_alvo_y) < 20) {
-                _hover_text = "Destino Marcado";
-            }
-        }
+        var _r = 4 * _k;
+        var _ax = clamp(_cx + (obj_seta.alvo_x - _pxw) * _sc, _x1 + _r, _x2 - _r);
+        var _ay = clamp(_cy + (obj_seta.alvo_y - _pyw) * _sc, _y1 + _r * 2, _y2 - _r);
+        minimapa_icone("destino", _ax, _ay, _r);
+        if (point_distance(_mx, _my, _ax, _ay) < 8 * _k) _hover = "Destino marcado  (" + string(floor(point_distance(_pxw, _pyw, obj_seta.alvo_x, obj_seta.alvo_y) / 32)) + "m)";
     }
 
-    // ========================================================
-    // --- SISTEMA DE MARCAÇÃO (WAYPOINT) COM DIREITO ---
-    // ========================================================
-    if (global.minimap_expandido) {
-        if (mouse_check_button_pressed(mb_right) && point_in_rectangle(_mx, _my, _map_x, _map_y, _map_x + _w, _map_y + _h)) {
-            
-            var _clicou_no_marcador = false;
+    // --- Casa principal (scr_sono): sempre aparece; ao anoitecer fica grande e presa na borda ---
+    var _ck = sono_marcador_casa();
+    var _cr = (_ck.grande ? 7.5 : 4) * _k * (_ck.grande ? (1 + 0.12 * sin(current_time / 160)) : 1);
+    var _chx = _cx + (_ck.x - _pxw) * _sc, _chy = _cy + (_ck.y - _pyw) * _sc;
+    var _fora = (_chx < _x1 + _cr || _chx > _x2 - _cr || _chy < _y1 + _cr || _chy > _y2 - _cr);
+    if (!_fora || _ck.grande) {
+        _chx = clamp(_chx, _x1 + _cr + 2 * _k, _x2 - _cr - 2 * _k);
+        _chy = clamp(_chy, _y1 + _cr + 2 * _k, _y2 - _cr - 2 * _k);
+        if (_ck.grande) {
+            draw_set_alpha(0.35 + 0.25 * sin(current_time / 160));
+            draw_set_color(make_color_rgb(110, 150, 230));
+            draw_circle(_chx, _chy, _cr * 1.7, false);
+            draw_set_alpha(1);
+        }
+        minimapa_icone("casa", _chx, _chy, _cr);
+        if (point_distance(_mx, _my, _chx, _chy) < max(_cr * 1.5, 8 * _k)) _hover = _ck.texto + "  (" + string(floor(point_distance(_pxw, _pyw, _ck.x, _ck.y) / 32)) + "m)";
+    }
 
-            // 1. Verifica se a seta existe e se o clique foi em cima dela
-            if (instance_exists(obj_seta)) {
-                var _draw_alvo_x = _center_x + (obj_seta.alvo_x - obj_player.x) * _scale;
-                var _draw_alvo_y = _center_y + (obj_seta.alvo_y - obj_player.y) * _scale;
-                _draw_alvo_x = clamp(_draw_alvo_x, _map_x, _map_x + _w);
-                _draw_alvo_y = clamp(_draw_alvo_y, _map_y, _map_y + _h);
+    // --- Missão (scr_missoes): "?" = ainda não aceita, "!" = aceita ---
+    var _mk = missoes_marcador();
+    if (!is_undefined(_mk)) {
+        var _r = 5 * _k;
+        var _qx = clamp(_cx + (_mk.x - _pxw) * _sc, _x1 + _r + 2 * _k, _x2 - _r - 2 * _k);
+        var _qy = clamp(_cy + (_mk.y - _pyw) * _sc, _y1 + _r + 2 * _k, _y2 - _r - 2 * _k);
+        minimapa_icone_missao(_qx, _qy, _r, _mk.simb, _mk.cor);
+        if (point_distance(_mx, _my, _qx, _qy) < 9 * _k) _hover = _mk.texto + "  (" + string(floor(point_distance(_pxw, _pyw, _mk.x, _mk.y) / 32)) + "m)";
+    }
 
-                // Se a distância for menor que 20, destrói!
-                if (point_distance(_mx, _my, _draw_alvo_x, _draw_alvo_y) < 20) {
-                    instance_destroy(obj_seta);
-                    _clicou_no_marcador = true;
-                    _hover_text = undefined;
-                }
+    // --- Jogador (seta no centro, aponta para onde anda) ---
+    if (!is_undefined(_ult_x) && point_distance(_ult_x, _ult_y, _pxw, _pyw) > 0.5) _ang_jog = point_direction(_ult_x, _ult_y, _pxw, _pyw);
+    _ult_x = _pxw; _ult_y = _pyw;
+    minimapa_icone_jogador(_cx, _cy, 4.5 * _k, _ang_jog);
+
+    // --- Bússola ---
+    minimapa_letra(_cx, _y1 + 6 * _k, "N", c_white, 7 * _k, ui_cor("escuro"));
+
+    // --- Textos da moldura ---
+    var _bioma_aqui = minimapa_nome_bioma(terreno_bioma_em(_pxw, _pyw));
+    draw_set_font(fnt_descricao);
+    var _fh = max(1, string_height("Ag"));
+    if (_big) {
+        draw_set_halign(fa_left); draw_set_valign(fa_middle);
+        ui_text(_x1, _y1 - 14 * _k, "MAPA  -  " + _bioma_aqui, ui_cor("ouro"), (10 * _k) / _fh, ui_cor("escuro"));
+        draw_set_halign(fa_right);
+        ui_text(_x2, _y1 - 14 * _k, "[" + tecla_nome(tecla("mapa")) + "] fechar   Botão direito: marcar destino", c_white, (7 * _k) / _fh, ui_cor("escuro"));
+        // Legenda
+        var _leg = [["casa", "Casa"], ["inimigos", "Inimigos"], ["vendedor", "Vendedor"], ["boss", "Chefe"], ["destino", "Destino"]];
+        var _lx = _x1, _ly = _y2 + 14 * _k;
+        draw_set_halign(fa_left); draw_set_valign(fa_middle);
+        for (var _i = 0; _i < array_length(_leg); _i++) {
+            minimapa_icone(_leg[_i][0], _lx + 5 * _k, _ly, 3.6 * _k);
+            draw_set_font(fnt_descricao); draw_set_halign(fa_left); draw_set_valign(fa_middle);
+            ui_text(_lx + 12 * _k, _ly, _leg[_i][1], c_white, (7 * _k) / _fh, ui_cor("escuro"));
+            _lx += 22 * _k + string_width(_leg[_i][1]) * (7 * _k) / _fh;
+        }
+        minimapa_icone_missao(_lx + 5 * _k, _ly, 3.6 * _k, "?", make_color_rgb(255, 200, 58));
+        draw_set_font(fnt_descricao); draw_set_halign(fa_left); draw_set_valign(fa_middle);
+        ui_text(_lx + 12 * _k, _ly, "Missão nova", c_white, (7 * _k) / _fh, ui_cor("escuro"));
+        _lx += 22 * _k + string_width("Missão nova") * (7 * _k) / _fh;
+        minimapa_icone_missao(_lx + 5 * _k, _ly, 3.6 * _k, "!", make_color_rgb(255, 140, 40));
+        draw_set_font(fnt_descricao); draw_set_halign(fa_left); draw_set_valign(fa_middle);
+        ui_text(_lx + 12 * _k, _ly, "Missão aceita", c_white, (7 * _k) / _fh, ui_cor("escuro"));
+    } else {
+        draw_set_halign(fa_center); draw_set_valign(fa_middle);
+        ui_text_fit(_cx, _y2 + 12 * _k, _bioma_aqui, c_white, (8 * _k) / _fh, _w);
+        draw_set_halign(fa_right); draw_set_valign(fa_bottom);
+        ui_text(_x2 - 2 * _k, _y2 - 2 * _k, "[" + tecla_nome(tecla("mapa")) + "]", c_white, (6 * _k) / _fh, ui_cor("escuro"));
+    }
+
+    // --- Marcar destino com o botão direito (mapa grande) ---
+    if (_big && mouse_check_button_pressed(mb_right) && point_in_rectangle(_mx, _my, _x1, _y1, _x2, _y2)) {
+        var _clicou_no_marcador = false;
+        if (instance_exists(obj_seta)) {
+            var _sx = clamp(_cx + (obj_seta.alvo_x - _pxw) * _sc, _x1, _x2);
+            var _sy = clamp(_cy + (obj_seta.alvo_y - _pyw) * _sc, _y1, _y2);
+            if (point_distance(_mx, _my, _sx, _sy) < 10 * _k) {
+                instance_destroy(obj_seta);
+                _clicou_no_marcador = true;
+                _hover = undefined;
             }
-
-            // 2. Se NÃO clicou no marcador, cria ou move para o novo lugar
-            if (!_clicou_no_marcador) {
-                var _mundo_x = ((_mx - _center_x) / _scale) + obj_player.x;
-                var _mundo_y = ((_my - _center_y) / _scale) + obj_player.y;
-
-                if (instance_exists(obj_seta)) {
-                    obj_seta.alvo_x = _mundo_x;
-                    obj_seta.alvo_y = _mundo_y;
-                } else {
-                    var _seta = instance_create_layer(obj_player.x, obj_player.y, "Instances", obj_seta);
-                    _seta.alvo_x = _mundo_x;
-                    _seta.alvo_y = _mundo_y;
-                }
+        }
+        if (!_clicou_no_marcador) {
+            var _mundo_x = ((_mx - _cx) / _sc) + _pxw;
+            var _mundo_y = ((_my - _cy) / _sc) + _pyw;
+            if (instance_exists(obj_seta)) {
+                obj_seta.alvo_x = _mundo_x;
+                obj_seta.alvo_y = _mundo_y;
+            } else {
+                var _seta = instance_create_layer(_pxw, _pyw, "Instances", obj_seta);
+                _seta.alvo_x = _mundo_x;
+                _seta.alvo_y = _mundo_y;
             }
         }
     }
 
     // --- Tooltip ---
-    if (_hover_text != undefined) {
-        draw_set_color(c_white);
-        draw_text(_mx + 10, _my, _hover_text);
+    if (!is_undefined(_hover)) {
+        draw_set_font(fnt_descricao);
+        var _ts = (7.5 * _k) / _fh;
+        var _tw = string_width(_hover) * _ts + 10 * _k, _th = 13 * _k;
+        var _tx = clamp(_mx + 10 * _k, 4 * _k, _gw - _tw - 4 * _k);
+        var _ty = clamp(_my - _th - 6 * _k, 4 * _k, _gh - _th - 4 * _k);
+        ui_card(_tx, _ty, _tx + _tw, _ty + _th, 5 * _k, ui_cor("papel"), ui_cor("borda"), max(1, round(1.5 * _k)), true);
+        draw_set_halign(fa_left); draw_set_valign(fa_middle);
+        draw_set_color(ui_cor("texto"));
+        draw_text_transformed(_tx + 5 * _k, _ty + _th / 2, _hover, _ts, _ts, 0);
     }
-    
-    // Reset final de segurança
-    draw_set_color(c_white);
+
+    draw_set_halign(fa_left); draw_set_valign(fa_top);
+    draw_set_alpha(1); draw_set_color(c_white);
 }
+
+// ============================================================================
+//  MINIMAPA DAS SALAS (fase bebê) — mesma moldura do mapa do mundo
+// ============================================================================
 function mini_mapa_bebe() {
-    // --- Configuração ---
-    var _map_w = 220;
-    var _map_h = 200;
-    var _cell_size = 25;
-    var _sprite_base_size = 64; 
-    var _scale_factor = _cell_size / _sprite_base_size;
-    
-    // Posição na tela (Canto Inferior Direito)
-    var _start_x = display_get_width() - _map_w - 40;
-    var _start_y = display_get_height() - _map_h - 40;
-    
-    // Centro do Minimapa
-    var _center_x = _start_x + _map_w / 2;
-    var _center_y = _start_y + _map_h / 2;
+    var _gw = display_get_gui_width(), _gh = display_get_gui_height();
+    var _k  = max(1, _gh / 360);
+    var _cell = 15 * _k;
+    var _w = 100 * _k, _h = 100 * _k;
+    var _x1 = _gw - _w - 12 * _k, _y1 = _gh - _h - 24 * _k;
+    var _x2 = _x1 + _w, _y2 = _y1 + _h;
+    var _cx = (_x1 + _x2) / 2, _cy = (_y1 + _y2) / 2;
+    var _bw = max(2, round(2 * _k));
 
-    // Limites de Visibilidade (em células)
-    var _limit_x = (_map_w div _cell_size) / 2;
-    var _limit_y = (_map_h div _cell_size) / 2;
+    ui_card(_x1 - 5 * _k, _y1 - 5 * _k, _x2 + 5 * _k, _y2 + 5 * _k, 9 * _k, ui_cor("papel"), ui_cor("borda"), _bw);
+    ui_rrect(_x1 - _bw, _y1 - _bw, _x2 + _bw, _y2 + _bw, 4 * _k, ui_cor("escuro"));
+    draw_set_color(make_color_rgb(58, 44, 38));
+    draw_rectangle(_x1, _y1, _x2, _y2, false);
 
-    // --- Fundo ---
-    draw_set_alpha(0.7);
-    draw_set_color(c_black);
-    draw_rectangle(_start_x, _start_y, _start_x + _map_w, _start_y + _map_h, false);
-    draw_set_alpha(1);
+    if (!variable_global_exists("salas_geradas") || !variable_global_exists("current_sala")) return;
+    var _lim_x = floor((_w / 2) / _cell - 0.5), _lim_y = floor((_h / 2) / _cell - 0.5);
+    var _esc = (_cell - 2 * _k) / 64;                        // spr_salas tem 64 px
 
-    // --- Loop de Salas ---
-    var _total_rooms = array_length(global.salas_geradas);
-    
-    for (var _i = 0; _i < _total_rooms; _i++) {
-        var _room_data = global.salas_geradas[_i];
-        
-        if (!is_array(_room_data)) continue;
-
-        var _rx = _room_data[0]; // Room X Grid Coordinate
-        var _ry = _room_data[1]; // Room Y Grid Coordinate
-
-        // Distância relativa à sala atual do player
+    for (var _i = 0; _i < array_length(global.salas_geradas); _i++) {
+        var _sala = global.salas_geradas[_i];
+        if (!is_array(_sala)) continue;
+        var _rx = _sala[0], _ry = _sala[1];
         var _dx = _rx - global.current_sala[0];
         var _dy = _ry - global.current_sala[1];
+        if (abs(_dx) > _lim_x || abs(_dy) > _lim_y) continue;
+        var _sx = _cx + _dx * _cell, _sy = _cy - _dy * _cell;   // Y invertido (grid cartesiano)
 
-        // Só desenha se estiver dentro da área visível do minimapa
-        if (abs(_dx) <= _limit_x && abs(_dy) <= _limit_y) {
-            
-            // Posição visual final
-            var _draw_x = _center_x + (_dx * _cell_size);
-            var _draw_y = _center_y - (_dy * _cell_size); // Y invertido para grid cartesiano visual
-
-            // --- Lógica do Tipo de Sala (Ícone) ---
-            var _subimg = 0; // 0 = Padrão
-
-            // Verifica Templos
-            if (variable_global_exists("templos_salas_pos") && global.templos_salas_pos != undefined) {
-                var _len_t = array_length(global.templos_salas_pos);
-                for (var _j = 0; _j < _len_t; _j++) {
-                    var _t_pos = global.templos_salas_pos[_j];
-                    if (_t_pos[0] == _rx && _t_pos[1] == _ry) {
-                        _subimg = 1;
-                        break;
-                    }
+        // Tipo: 0 normal, 1 templo, 2 jardim (boss)
+        var _sub = 0;
+        if (variable_global_exists("templos_salas_pos") && is_array(global.templos_salas_pos)) {
+            for (var _j = 0; _j < array_length(global.templos_salas_pos); _j++) {
+                var _t = global.templos_salas_pos[_j];
+                if (_t[0] == _rx && _t[1] == _ry) { _sub = 1; break; }
+            }
+        }
+        if (variable_global_exists("sala_jardim") && is_array(global.sala_jardim) && array_length(global.sala_jardim) > 0) {
+            if (!is_array(global.sala_jardim[0])) {
+                if (global.sala_jardim[0] == _rx && global.sala_jardim[1] == _ry) _sub = 2;
+            } else {
+                for (var _j = 0; _j < array_length(global.sala_jardim); _j++) {
+                    var _b = global.sala_jardim[_j];
+                    if (_b[0] == _rx && _b[1] == _ry) { _sub = 2; break; }
                 }
             }
+        }
 
-            // Verifica Boss (Jardim)
-            // Assumindo que global.sala_jardim pode ser uma coordenada [x,y] ou array de coordenadas
-            if (variable_global_exists("sala_jardim") && is_array(global.sala_jardim)) {
-                 // Verifica se é array de coordenadas ou apenas uma coordenada
-                 if (array_length(global.sala_jardim) > 0) {
-                     // Checagem simplificada: Se sala_jardim for apenas [x, y]
-                     if (!is_array(global.sala_jardim[0])) {
-                         if (global.sala_jardim[0] == _rx && global.sala_jardim[1] == _ry) {
-                             _subimg = 2;
-                         }
-                     } else {
-                         // Se for array de arrays [[x,y], [x,y]]
-                         var _len_b = array_length(global.sala_jardim);
-                         for (var _k = 0; _k < _len_b; _k++) {
-                             var _b_pos = global.sala_jardim[_k];
-                             if (_b_pos[0] == _rx && _b_pos[1] == _ry) {
-                                 _subimg = 2;
-                                 break;
-                             }
-                         }
-                     }
-                 }
-            }
-
-            // --- Desenho da Sala ---
-            // Desenha Sprite da Sala
-            draw_sprite_ext(spr_salas, _subimg, _draw_x + _cell_size/2, _draw_y + _cell_size/2, _scale_factor, _scale_factor, 0, c_white, 1);
-
-            // Destaque para Sala Atual
-            if (_dx == 0 && _dy == 0) {
-                draw_set_color(c_red);
-                draw_set_alpha(0.6);
-                // Borda interna leve
-                draw_rectangle(_draw_x + 4, _draw_y + 4, _draw_x + _cell_size - 5, _draw_y + _cell_size - 5, false);
-                draw_set_alpha(1);
-            }
+        draw_sprite_ext(spr_salas, _sub, _sx, _sy, _esc, _esc, 0, c_white, 1);
+        if (_dx == 0 && _dy == 0) {                              // sala atual: borda dourada pulsando
+            var _p = 0.6 + 0.4 * sin(current_time / 200);
+            draw_set_alpha(_p);
+            draw_set_color(ui_cor("ouro"));
+            var _m = _cell / 2;
+            for (var _e = 0; _e < max(2, round(1.5 * _k)); _e++) draw_rectangle(_sx - _m + _e, _sy - _m + _e, _sx + _m - _e, _sy + _m - _e, true);
+            draw_set_alpha(1);
         }
     }
 
-    // Reset final
+    draw_set_font(fnt_descricao);
+    var _fh = max(1, string_height("Ag"));
+    draw_set_halign(fa_center); draw_set_valign(fa_middle);
+    ui_text(_cx, _y2 + 12 * _k, "Salas", c_white, (8 * _k) / _fh, ui_cor("escuro"));
+    draw_set_halign(fa_left); draw_set_valign(fa_top);
     draw_set_color(c_white);
-    draw_set_font(fnt_menu_op); // Restaura fonte se necessário
+    draw_set_font(fnt_menu_op);
 }
 /// @desc Função de debug interativo para posições X e Y na tela.
 /// @param {real} _base_x A posição X base (ex: _card_x)

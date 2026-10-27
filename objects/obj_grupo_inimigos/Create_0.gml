@@ -2,7 +2,8 @@
 if (!variable_instance_exists(id, "seed")) seed = random(999999);
 if (!variable_instance_exists(id, "grupo_id")) grupo_id = irandom(99999);
 
-var _resultado = grupo_inimigo_configurar(seed);
+nivel_area = progressao_nivel_area(x, y); // scr_progressao
+var _resultado = grupo_inimigo_configurar(seed, nivel_area);
 
 dificuldade = _resultado[0];
 quantidade_total = _resultado[1];

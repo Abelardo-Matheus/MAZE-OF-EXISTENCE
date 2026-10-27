@@ -11,9 +11,9 @@ function gerar_monstros_para_bloco(_bx, _by, _bioma_atual, _dist_minima)
     var _centro_x = (_bx + 0.5) * global.tamanho_bloco;
     var _centro_y = (_by + 0.5) * global.tamanho_bloco;
 
-    var _distancia_da_origem = point_distance(0, 0, _centro_x, _centro_y);
-    var _distancia_por_level = 8000; 
-    var _level_da_area = 1 + floor(_distancia_da_origem / _distancia_por_level);
+    // Nível da área = maior entre o perigo do bioma e a distância do início (scr_progressao)
+    var _level_da_area = progressao_nivel_area(_centro_x, _centro_y, _bioma_atual);
+    var _seguro = progressao_dist_origem(_centro_x, _centro_y) < PROG_RAIO_SEGURO;
 
     var _qtd_base = 0;
     var _obj_monstro = noone; 
@@ -82,10 +82,15 @@ function gerar_monstros_para_bloco(_bx, _by, _bioma_atual, _dist_minima)
     if (_obj_monstro == noone) return;
 
     var _quantidade_final = _qtd_base + floor(_level_da_area / 2);
-    var _escala_monstro = 1 + (_level_da_area * 0.15); 
-    
-    var _hp_calculado = 50 * _level_da_area;
-    var _dano_calculado = 5 * _level_da_area;
+    if (_seguro) {                       // perto do início: só os fracos e em menor número
+        _obj_monstro = progressao_inimigo_seguro();
+        _quantidade_final = max(1, round(_quantidade_final * PROG_SEGURO_QTD_MULT));
+        _level_da_area = 1;
+    }
+    // escala/vida/dano reais por nível: progressao_inimigo_aplicar (1º Step do inimigo)
+    var _escala_monstro = 1;
+    var _hp_calculado = 0;
+    var _dano_calculado = 0;
 
     var _gerados = 0;
     var _tentativas = 0;

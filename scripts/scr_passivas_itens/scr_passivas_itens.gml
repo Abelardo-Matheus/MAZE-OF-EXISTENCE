@@ -161,6 +161,7 @@ function item_ao_matar(_x, _y) {
         _mult += _e.xp_item / 100;
     }
     item_xp_ganhar(ITEM_XP_POR_ABATE * _mult);
+    missoes_evento("abate"); // objetivos de abate (scr_missoes)
 }
 
 /// Dá XP para os itens equipados (cabeça, armadura, bota e o item na mão)

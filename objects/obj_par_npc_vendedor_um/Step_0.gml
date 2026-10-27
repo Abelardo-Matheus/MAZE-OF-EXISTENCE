@@ -3,10 +3,12 @@
 var _dist = point_distance(x, y, obj_player.x, obj_player.y);
 
 // Se o jogador estiver próximo e apertar F
-if ((_dist < distancia_interacao and keyboard_check_pressed(ord("F")) or abrir_venda)) {
+if ((_dist < distancia_interacao and interacao_pedida()) or abrir_venda) { // tecla Interagir (scr_interacao)
     venda_aberta = !venda_aberta; // abre/fecha a loja
 	abrir_venda = false;
 }
+// Afastou do vendedor: fecha a loja
+if (venda_aberta && _dist > distancia_interacao * 1.5) venda_aberta = false;
 
 
 switch dig{

@@ -1,5 +1,6 @@
 // feather disable GM2017
-function grupo_inimigo_configurar(_seed) {
+/// _nivel_area: nível da área onde o grupo está (scr_progressao) — sobe a dificuldade
+function grupo_inimigo_configurar(_seed, _nivel_area = 1) {
     random_set_seed(_seed);
 
     // Distribuição de _dificuldade (probabilidades aproximadas)
@@ -17,6 +18,9 @@ function grupo_inimigo_configurar(_seed) {
     } else {
         _dificuldade = 5; // 5%
     }
+
+    _dificuldade = progressao_dificuldade_grupo(_dificuldade, _nivel_area);
+    randomize(); // devolve o random normal do jogo (random_set_seed acima)
 
     // Parâmetros por _dificuldade
     var _qtd_min = [2, 3, 4, 5, 6];

@@ -13,7 +13,7 @@
 // ---------------------------------------------------------------------------
 // ESCALONAMENTO (por minuto de noite acumulado)
 // ---------------------------------------------------------------------------
-#macro RONDA_VIDA_POR_MIN       0.30   // +30% de vida por minuto
+#macro RONDA_VIDA_POR_MIN       0.20   // +20% de vida por minuto (era 0.30; scr_progressao)
 #macro RONDA_DANO_POR_MIN       0.10   // +10% de dano por minuto
 #macro RONDA_XP_POR_MIN         0.20   // +20% de XP por minuto
 #macro RONDA_ESCALA_POR_MIN     0.025  // +2.5% de tamanho por minuto...
@@ -245,7 +245,8 @@ function rondas_iniciar(_idx) {
 function rondas_evento(_ev) {
     switch (_ev.tipo) {
         case "anel":
-            var _spec = rondas_spec(_ev.obj, _ev.qtd, false);
+            var _qtd_anel = (global.ronda_noite_idx == 0) ? max(1, round(_ev.qtd * PROG_NOITE1_ANEL_MULT)) : _ev.qtd; // 1ª noite mais leve
+            var _spec = rondas_spec(_ev.obj, _qtd_anel, false);
             if (!horde_spawn_anel(_spec)) spawn_night_enemy(_spec); // instâncias: nascem no quadrado
             break;
         case "elite":
@@ -270,6 +271,7 @@ function process_night_waves() {
     if (_c.is_day) {
         if (global.night_started) {
             global.night_started = false;
+            missoes_evento("noite"); // sobreviveu à noite (objetivos de missão)
             global.ronda_idx = -1;
             global.current_wave_idx = -1;
             show_debug_message("DIA AMANHECEU!");
@@ -288,6 +290,7 @@ function process_night_waves() {
     // 3. Troca de ronda
     var _t = rondas_tempo_na_noite();
     var _idx = rondas_indice_no_tempo(_t);
+    if (global.ronda_noite_idx == 0) _idx = min(_idx, PROG_NOITE1_RONDA_MAX); // 1ª noite: só as rondas fáceis
     if (_idx != global.ronda_idx) rondas_iniciar(_idx);
 
     var _r = global.rondas[global.ronda_idx];

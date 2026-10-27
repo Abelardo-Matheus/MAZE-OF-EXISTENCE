@@ -1,0 +1,620 @@
+==============================================================================
+  MAZE OF EXISTENCE — LISTA DE MISSÕES (texto para o scr_missoes)
+==============================================================================
+
+COMO USAR ESTE ARQUIVO
+  - Cada missão é um bloco que começa com "### MISSAO" e termina com "### FIM".
+  - Para criar uma missão nova: copie o MODELO (logo abaixo), cole no fim da
+    seção "MISSÕES NOVAS" e preencha. Depois peça ao Claude: "implementa as
+    missões novas do MISSOES.txt". Ele converte cada bloco em _missao(...).
+  - Escreva normal, em português. Não precisa saber GML.
+  - Campos marcados (opcional) podem ficar vazios ou ser apagados.
+  - Para mudar uma missão que já existe, edite o bloco dela e marque
+    STATUS: alterar.
+
+REGRAS DOS CAMPOS
+  ID ............ nome interno, minúsculo, sem espaço e sem acento (ex.: gato_perdido).
+                  Não pode repetir.
+  STATUS ........ implementada | nova | alterar | remover
+  TIER .......... 0 = tutorial (ordem fixa, na ordem do arquivo), 1, 2, 3...
+                  Um tier só começa quando todas as missões do anterior acabam.
+                  Dentro dos tiers 1+ a ordem é sorteada a cada jogo.
+  HISTORIA ...... sim | nao — "sim" dá um Fragmento de Memória (capítulo da história).
+                  Padrão: tutorial = nao, resto = sim.
+  TITULO ........ nome que aparece no painel da missão.
+  NPC_NOME ...... nome que aparece no diálogo.
+  NPC_VISUAL .... um dos visuais da tabela "VISUAIS DE NPC" (pode repetir entre missões).
+  BIOMA ......... onde o NPC prefere nascer: cidade | floresta_negra | vazia |
+                  deserto | neve | pantano | qualquer
+  REQUER ........ (opcional) IDs de missões que precisam estar concluídas antes.
+                  Vazio = pode aparecer em qualquer posição do sorteio.
+  OBJETIVOS ..... uma linha por objetivo, começando com "-":
+                    - item: <id_do_item> x<quantidade>
+                    - item: <id_do_item> x<quantidade> (espalhar <n>)
+                        -> <n> unidades caem no chão perto do NPC quando a
+                           missão é aceita (o resto o jogador consegue como sempre)
+                    - abate: x<quantidade>      (derrotar monstros após aceitar)
+                    - craft: x<quantidade>      (criar itens na oficina; "craft: graveto x1" = item específico)
+                    - noite: x<quantidade>      (sobreviver noites até o amanhecer)
+                    - outro: <descreva livremente>
+                        -> tipo novo; o Claude cria o tipo de objetivo
+  RECOMPENSA .... MOEDAS, XP e ITENS (ITENS no formato id x quantidade, separados por vírgula).
+  FALAS ......... INTRO   = quando o jogador fala com ele pela 1ª vez (antes de aceitar)
+                  LEMBRETE = quando volta sem ter tudo
+                  FIM     = quando entrega
+                  Uma fala por linha, começando com "-".
+                  Fala de outra pessoa: "- [Você] texto" ou "- [Nome] texto".
+                  Teclas: {interagir} {inventario} {mapa} {habilidade} viram o nome da tecla.
+  NOTAS ......... (opcional) ideias extras, comportamento especial, etc.
+
+  Observação: a ordem dentro de cada tier é sorteada a cada jogo novo. Por isso
+  a história NÃO deve depender de uma missão específica; ela fica na seção
+  "HISTÓRIA" no fim deste arquivo, por posição (1º fragmento, 2º, ...).
+
+  GUIA DE RECOMPENSAS (curva de scr_progressao):
+    tier 0: 10-40 moedas, 20-60 XP, ferramentas básicas
+    tier 1: 50-60 moedas, 70-80 XP
+    tier 2: 80-100 moedas, 150-170 XP
+    tier 3: 160-200 moedas, 300-350 XP
+    (XP para subir: nv1 40, nv5 447, nv10 1265)
+
+VISUAIS DE NPC (NPC_VISUAL)
+  0 vendedora   1 executivo   2 vovo      3 carteiro   4 padeiro
+  5 jardineira  6 lenhador    7 florista  8 vovozinho
+  (Se quiser um visual novo, escreva "novo: <descrição>" e o Claude avisa
+   o que precisa de sprite.)
+
+IDS DE ITENS DISPONÍVEIS (os mais úteis para missões)
+  Materiais : madeira, pedra, erva, frasco, ferro, couro, ouro, la, botao, giz,
+              gude, pena, po_estrela, pilha, papel, vela, diamante
+  Comida/uso: batata, maca, banana, uva, vitamina, leite, biscoito, sanduiche,
+              pirulito, chocolate, algodao, curativo, pocao_coragem, bala_goma
+  Armas     : graveto, vassoura, espada_plastico, espada_madeira, espada_dourada,
+              mata_fantasma, regua, guarda_chuva, martelo, varinha, espada_lapis,
+              lanca_bolhas, espada_pirulito, espada_ferro, espada_cristal,
+              adaga_brinquedo, taco_beisebol, machadinha, espada_laser
+  Arcos     : arco_madeira, arco_galho, arco_ventosa, besta_brinquedo,
+              arco_triplo, arco_arco_iris
+  Luzes     : lampada, tocha, lanterna, lampiao, pote_vagalumes
+  Coleta    : machado_madeira/ferro/diamante, picareta_madeira/ferro/diamante,
+              pa_madeira/ferro/diamante
+  Armadura  : cobertor, papelao, toalha, capa_chuva, casaco, travesseiro,
+              super_capa, pijama_dino, cavaleiro, astronauta
+  Cabeça    : bone, chapeu_pirata, coroa_papel, capacete_bike, gorro_la,
+              capacete_panela, orelhas_gato, chapeu_bruxa, tiara_unicornio,
+              capuz_dino, capacete_astronauta, coroa_dourada
+  Calçados  : sapato_velho, tenis_rasgado, patins, skate, tenis_corrida,
+              sapato_social, meias_novas, meias_sorte, pantufa, galocha,
+              tenis_luz, botas_mola
+  Baús      : bau_madeira, bau_ferro, bau_ouro, bau_lendario
+  (Item que não existe? Escreva "novo: <nome> — <descrição>" e o Claude
+   cria no catálogo ou avisa o que falta.)
+
+
+==============================================================================
+  MODELO (copie daqui até "### FIM")
+==============================================================================
+
+### MISSAO
+ID:
+STATUS: nova
+TIER: 1
+HISTORIA: sim
+TITULO:
+NPC_NOME:
+NPC_VISUAL:
+BIOMA: qualquer
+REQUER:
+OBJETIVOS:
+  - item: madeira x5
+RECOMPENSA:
+  MOEDAS: 0
+  XP: 0
+  ITENS:
+FALAS:
+  INTRO:
+    -
+  LEMBRETE:
+    -
+  FIM:
+    -
+NOTAS:
+### FIM
+
+
+==============================================================================
+  TUTORIAL (tier 0 — ordem fixa, todas com o Tio Beto, visual 6 lenhador)
+==============================================================================
+
+### MISSAO
+ID: tut_primeiros_passos
+STATUS: implementada
+TIER: 0
+HISTORIA: nao
+TITULO: Primeiros Passos
+NPC_NOME: Tio Beto
+NPC_VISUAL: 6 lenhador
+BIOMA: qualquer
+OBJETIVOS:
+  - abate: x3
+RECOMPENSA:
+  MOEDAS: 10
+  XP: 20
+  ITENS: machado_madeira x1
+FALAS:
+  INTRO:
+    - Ei, você aí! Acordou no meio do Labirinto, né? Eu sou o Tio Beto.
+    - Primeiro de tudo: aprenda a se defender. Os bichinhos daqui atacam quem chega.
+    - Derrote 3 monstros com a sua espada e volte para falar comigo.
+  LEMBRETE:
+    - Chegue perto e ataque. Se a vida ficar baixa, se afaste um pouco!
+  FIM:
+    - Muito bem! Você tem jeito para a coisa.
+    - Tome este machado. Abra a mochila [{inventario}], arraste ele para a hotbar e bata nas árvores.
+NOTAS: Ensina combate. A abertura da história aparece antes desta conversa.
+### FIM
+
+### MISSAO
+ID: tut_lenha
+STATUS: implementada
+TIER: 0
+HISTORIA: nao
+TITULO: Madeira para Começar
+NPC_NOME: Tio Beto
+NPC_VISUAL: 6 lenhador
+BIOMA: qualquer
+OBJETIVOS:
+  - item: madeira x5
+RECOMPENSA:
+  MOEDAS: 15
+  XP: 25
+  ITENS: picareta_madeira x1
+FALAS:
+  INTRO:
+    - Aqui tudo começa com madeira.
+    - Use o machado nas árvores e me traga 5 madeiras.
+  LEMBRETE:
+    - Árvore boa é árvore grossa. Bate com vontade!
+  FIM:
+    - Isso! Com madeira você já consegue fazer muita coisa.
+    - Esta picareta quebra pedras. Às vezes sai até ferro delas!
+NOTAS: Ensina coleta com machado. Pegar madeira libera as primeiras receitas.
+### FIM
+
+### MISSAO
+ID: tut_pedras
+STATUS: implementada
+TIER: 0
+HISTORIA: nao
+TITULO: Pedras no Caminho
+NPC_NOME: Tio Beto
+NPC_VISUAL: 6 lenhador
+BIOMA: qualquer
+OBJETIVOS:
+  - item: pedra x4
+RECOMPENSA:
+  MOEDAS: 20
+  XP: 30
+  ITENS: pa_madeira x1, biscoito x3
+FALAS:
+  INTRO:
+    - Agora, pedras. Bata nelas com a picareta.
+    - Me traga 4 pedras.
+  LEMBRETE:
+    - As pedras grandes dão mais coisa.
+  FIM:
+    - Ótimo! Fique com esta pá.
+    - Os montinhos de terra escondem tesouros. E coma um biscoito se a vida cair.
+NOTAS:
+### FIM
+
+### MISSAO
+ID: tut_oficina
+STATUS: implementada
+TIER: 0
+HISTORIA: nao
+TITULO: Mãos à Obra
+NPC_NOME: Tio Beto
+NPC_VISUAL: 6 lenhador
+BIOMA: qualquer
+OBJETIVOS:
+  - craft: x1
+RECOMPENSA:
+  MOEDAS: 20
+  XP: 35
+  ITENS: arco_madeira x1
+FALAS:
+  INTRO:
+    - Abra a mochila com [{inventario}]. Lá dentro fica a oficina.
+    - Cada material novo que você pega libera receitas novas.
+    - Crie qualquer coisa. Um Graveto já serve!
+  LEMBRETE:
+    - Mochila, oficina, clique na receita. Fácil!
+  FIM:
+    - Você é um pequeno inventor!
+    - Leve este arco. Ele acerta os monstros de longe.
+NOTAS: Qualquer receita conta.
+### FIM
+
+### MISSAO
+ID: tut_primeira_noite
+STATUS: implementada
+TIER: 0
+HISTORIA: nao
+TITULO: A Primeira Noite
+NPC_NOME: Tio Beto
+NPC_VISUAL: 6 lenhador
+BIOMA: qualquer
+OBJETIVOS:
+  - noite: x1
+RECOMPENSA:
+  MOEDAS: 40
+  XP: 60
+  ITENS: curativo x2, biscoito x3
+FALAS:
+  INTRO:
+    - Quando escurece, os monstros vêm em bando.
+    - Sobreviva até o amanhecer e volte aqui. Fique perto de uma luz se puder.
+  LEMBRETE:
+    - A noite ainda não passou... aguente firme!
+  FIM:
+    - Você sobreviveu! Agora já sabe se virar sozinho.
+    - O povo da cidade precisa de ajuda. Siga a seta, ou o ? no mapa [{mapa}].
+NOTAS: A 1ª noite é mais leve (scr_progressao). Conta no amanhecer.
+### FIM
+
+
+==============================================================================
+  MISSÕES DA HISTÓRIA (10) — tier 1: bolo, cartas, banca, buquê | tier 2: jardim, novelos, lenha, óculos | tier 3: escritório, céu
+==============================================================================
+
+### MISSAO
+ID: bolo_padaria
+STATUS: implementada
+TIER: 1
+HISTORIA: sim
+TITULO: O Bolo da Padaria
+NPC_NOME: Seu Joaquim
+NPC_VISUAL: 4 padeiro
+BIOMA: cidade
+REQUER:
+OBJETIVOS:
+  - item: madeira x6
+  - item: leite x2
+RECOMPENSA:
+  MOEDAS: 50
+  XP: 70
+  ITENS: biscoito x5
+FALAS:
+  INTRO:
+    - Ah, pequeno! Que bom que você apareceu!
+    - Meu forno apagou e o bolo da festa da cidade não fica pronto sem lenha.
+    - E o leite acabou também... Você me ajuda?
+  LEMBRETE:
+    - O forno está esfriando... depressa!
+  FIM:
+    - Que cheirinho! O bolo vai ficar perfeito.
+    - Leve uns biscoitos fresquinhos para a viagem.
+NOTAS:
+### FIM
+
+### MISSAO
+ID: cartas_vento
+STATUS: implementada
+TIER: 1
+HISTORIA: sim
+TITULO: Cartas ao Vento
+NPC_NOME: Seu Valdir, o carteiro
+NPC_VISUAL: 3 carteiro
+BIOMA: cidade
+REQUER:
+OBJETIVOS:
+  - item: papel x5 (espalhar 5)
+RECOMPENSA:
+  MOEDAS: 50
+  XP: 70
+  ITENS: tenis_corrida x1
+FALAS:
+  INTRO:
+    - Uma ventania levou todas as minhas cartas!
+    - Elas viraram papéis coloridos espalhados por aí. Junta 5 para mim?
+  LEMBRETE:
+    - Cada carta é o recado de alguém que sente saudade.
+  FIM:
+    - Todas aqui! Agora cada um vai receber seu recado.
+    - Fique com estes tênis. Carteiro que se preza corre muito!
+NOTAS: Os 5 papéis caem no chão perto do NPC quando a missão é aceita.
+### FIM
+
+### MISSAO
+ID: jardim_sem_cor
+STATUS: implementada
+TIER: 2
+HISTORIA: sim
+TITULO: O Jardim sem Cor
+NPC_NOME: Dona Rosa
+NPC_VISUAL: 5 jardineira
+BIOMA: qualquer
+REQUER:
+OBJETIVOS:
+  - item: erva x6
+  - item: giz x3
+RECOMPENSA:
+  MOEDAS: 90
+  XP: 150
+  ITENS: vitamina x2
+FALAS:
+  INTRO:
+    - Meu jardim perdeu a cor de um dia para o outro...
+    - Preciso de ervas vermelhas para replantar.
+    - E de giz de cera para pintar as plaquinhas dos canteiros.
+  LEMBRETE:
+    - As flores ficam tristes sem cor, sabia?
+  FIM:
+    - Olha só! Vermelho, azul, amarelo... o jardim acordou!
+    - Tome esta vitamina. Quem cuida das plantas também precisa se cuidar.
+NOTAS:
+### FIM
+
+### MISSAO
+ID: lenha_inverno
+STATUS: implementada
+TIER: 2
+HISTORIA: sim
+TITULO: Lenha para o Inverno
+NPC_NOME: Seu Bento, o lenhador
+NPC_VISUAL: 6 lenhador
+BIOMA: qualquer
+REQUER:
+OBJETIVOS:
+  - item: madeira x12
+  - item: pedra x5
+RECOMPENSA:
+  MOEDAS: 80
+  XP: 160
+  ITENS: machado_ferro x1
+FALAS:
+  INTRO:
+    - O inverno está chegando e minha cabana está sem lenha.
+    - Preciso de bastante madeira e de umas pedras para a lareira.
+  LEMBRETE:
+    - Árvore boa é árvore grossa. Bate com vontade!
+  FIM:
+    - Agora sim, vou passar o inverno quentinho.
+    - Este machado de ferro era do meu avô. Agora é seu.
+NOTAS:
+### FIM
+
+### MISSAO
+ID: novelo_vovo
+STATUS: implementada
+TIER: 2
+HISTORIA: sim
+TITULO: Os Novelos da Vovó
+NPC_NOME: Vó Cida
+NPC_VISUAL: 2 vovo
+BIOMA: qualquer
+REQUER:
+OBJETIVOS:
+  - item: la x3 (espalhar 3)
+  - item: botao x4
+RECOMPENSA:
+  MOEDAS: 90
+  XP: 150
+  ITENS: gorro_la x1
+FALAS:
+  INTRO:
+    - Você viu meu gato por aí? Ele brincou com meus novelos e espalhou tudo!
+    - Traz de volta os novelos de lã e uns botões coloridos?
+    - Quero terminar um gorrinho antes do frio.
+  LEMBRETE:
+    - Os novelos rolaram para longe, procure bem.
+  FIM:
+    - Meus novelos! Você é um anjo.
+    - O gorrinho ficou pronto... e ficou do seu tamanho!
+NOTAS: Os 3 novelos caem no chão perto do NPC quando a missão é aceita.
+### FIM
+
+### MISSAO
+ID: buque_festa
+STATUS: implementada
+TIER: 1
+HISTORIA: sim
+TITULO: Buquê para a Festa
+NPC_NOME: Lia, a florista
+NPC_VISUAL: 7 florista
+BIOMA: cidade
+REQUER:
+OBJETIVOS:
+  - item: erva x4
+  - item: pena x3
+  - item: papel x3
+RECOMPENSA:
+  MOEDAS: 50
+  XP: 80
+  ITENS: pirulito x3
+FALAS:
+  INTRO:
+    - Tem casamento hoje e eu ainda não montei o buquê!
+    - Preciso de ervas, penas macias e papel colorido para embrulhar.
+  LEMBRETE:
+    - A noiva já está chegando... socorro!
+  FIM:
+    - Ficou lindo! O mais bonito que eu já fiz.
+    - Pirulitos da festa, pode pegar!
+NOTAS:
+### FIM
+
+### MISSAO
+ID: reuniao_importante
+STATUS: implementada
+TIER: 3
+HISTORIA: sim
+TITULO: Monstros no Escritório
+NPC_NOME: Dr. Otávio
+NPC_VISUAL: 1 executivo
+BIOMA: cidade
+REQUER:
+OBJETIVOS:
+  - item: pilha x3
+  - abate: x20
+RECOMPENSA:
+  MOEDAS: 160
+  XP: 300
+  ITENS: lanterna x1
+FALAS:
+  INTRO:
+    - Tenho a reunião mais importante da minha vida e a luz acabou!
+    - Preciso de pilhas para a lanterna...
+    - E tem monstros rondando o escritório. Espanta uns 20 para mim?
+  LEMBRETE:
+    - Meus clientes não gostam de monstros. Nem eu.
+  FIM:
+    - Reunião salva! Você daria um ótimo sócio.
+    - Fique com a lanterna. A noite aqui é escura.
+NOTAS: Só contam os monstros derrotados depois de aceitar a missão.
+### FIM
+
+### MISSAO
+ID: estoque_vendedora
+STATUS: implementada
+TIER: 1
+HISTORIA: sim
+TITULO: A Banca Vazia
+NPC_NOME: Dona Marli
+NPC_VISUAL: 0 vendedora
+BIOMA: cidade
+REQUER:
+OBJETIVOS:
+  - item: maca x5
+  - item: banana x3
+  - item: uva x3
+RECOMPENSA:
+  MOEDAS: 60
+  XP: 80
+  ITENS: bau_madeira x1
+FALAS:
+  INTRO:
+    - Minha banca de frutas está vazia!
+    - Se você me trouxer maçãs, bananas e uvas, eu te pago direitinho.
+  LEMBRETE:
+    - Fruta fresca vende sozinha. Só falta ter fruta!
+  FIM:
+    - Banca cheia de novo! Obrigada, freguês.
+    - Leve este baú para guardar suas coisas.
+NOTAS:
+### FIM
+
+### MISSAO
+ID: oculos_vovo
+STATUS: implementada
+TIER: 2
+HISTORIA: sim
+TITULO: Os Óculos do Vovô
+NPC_NOME: Vô Tonico
+NPC_VISUAL: 8 vovozinho
+BIOMA: qualquer
+REQUER:
+OBJETIVOS:
+  - item: gude x3 (espalhar 3)
+  - item: frasco x2
+RECOMPENSA:
+  MOEDAS: 100
+  XP: 170
+  ITENS: curativo x3
+FALAS:
+  INTRO:
+    - Hã? Quem está aí? Não enxergo nada sem meus óculos...
+    - Eles caíram e as lentes rolaram. Pareciam bolinhas de gude!
+    - Traga também dois frascos vazios, que eu guardo as lentes neles.
+  LEMBRETE:
+    - Ainda vejo tudo embaçado, meu neto.
+  FIM:
+    - Ah, agora eu te vejo! Que criança corajosa.
+    - Tome uns curativos. No meu tempo a gente ralava muito o joelho.
+NOTAS: As 3 bolinhas de gude caem no chão perto do NPC quando a missão é aceita.
+### FIM
+
+### MISSAO
+ID: po_estrelas
+STATUS: implementada
+TIER: 3
+HISTORIA: sim
+TITULO: O Céu Apagado
+NPC_NOME: Seu Astolfo, o astrônomo
+NPC_VISUAL: 1 executivo
+BIOMA: qualquer
+REQUER:
+OBJETIVOS:
+  - item: po_estrela x2
+  - item: vela x3
+  - item: ouro x1
+RECOMPENSA:
+  MOEDAS: 200
+  XP: 350
+  ITENS: pote_vagalumes x1
+FALAS:
+  INTRO:
+    - As estrelas estão sumindo do céu, uma por uma.
+    - Com pó de estrela, velas e um pouco de ouro eu monto um farol para chamá-las.
+  LEMBRETE:
+    - Olhe para cima... ainda faltam estrelas.
+  FIM:
+    - Veja! Elas voltaram a brilhar.
+    - Leve este pote de vaga-lumes. É um pedacinho do céu.
+NOTAS:
+### FIM
+
+
+==============================================================================
+  MISSÕES NOVAS (cole aqui os blocos novos, com STATUS: nova)
+==============================================================================
+
+
+
+==============================================================================
+  HISTÓRIA (por posição — vale para qualquer ordem de missões)
+==============================================================================
+  Falas sem colchetes são do narrador ("Voz do Labirinto").
+  Para adicionar capítulos (quando houver mais de 10 missões), crie
+  "CAPITULO 11:", "CAPITULO 12:"... Missões além dos capítulos usam o EXTRA.
+
+ABERTURA: (aparece na primeira conversa com o primeiro NPC)
+  - Este lugar parece uma cidade... mas é feito das suas lembranças.
+  - As pessoas daqui perderam pedaços de si. Cada ajuda devolve um Fragmento de Memória.
+  - Junte todos e talvez você encontre a saída do Labirinto.
+
+CAPITULO 1:
+  - Um Fragmento de Memória brilha: o cheiro de bolo saindo do forno. Alguém cantava na cozinha.
+CAPITULO 2:
+  - Outro fragmento: mãos grandes segurando as suas. Seus primeiros passos, tropeçando e rindo.
+CAPITULO 3:
+  - Você se lembra de uma bicicleta vermelha. E de alguém soltando o banco sem avisar.
+CAPITULO 4:
+  - Uma noite de tempestade. Você tinha medo do escuro, e uma luz ficou acesa no corredor.
+CAPITULO 5:
+  - Um amigo que só você enxergava. Ele morava debaixo da cama e contava piadas ruins.
+CAPITULO 6:
+  - O primeiro dia de escola. A mochila era maior que você, e você não quis soltar a mão.
+CAPITULO 7:
+  - Um joelho ralado, um curativo de dinossauro e um beijo para sarar mais rápido.
+CAPITULO 8:
+  - Um aniversário com velas que não apagavam. Todo mundo riu, até você.
+CAPITULO 9:
+  - Uma despedida na rodoviária. Alguém prometeu escrever cartas... e escreveu.
+CAPITULO 10:
+  - O último fragmento é um espelho. A criança do reflexo é você, só que um pouco maior.
+
+EXTRA: (capítulo usado quando há mais missões do que capítulos)
+  - Mais um Fragmento de Memória brilha no seu bolso.
+
+FINAL: (depois que todas as missões forem concluídas)
+  - Todos os fragmentos se juntam num só.
+  - O Labirinto não era um lugar para fugir. Era um lugar para crescer.
+  - [Você] ...eu lembro agora. Eu lembro de tudo.
+  - As pessoas da cidade acenam. Elas sempre estiveram aqui, dentro de você.
+
+RECOMPENSA FINAL:
+  MOEDAS: 300
+  XP: 500
+  ITENS: coroa_dourada x1

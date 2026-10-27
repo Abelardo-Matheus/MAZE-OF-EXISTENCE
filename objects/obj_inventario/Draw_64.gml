@@ -8,6 +8,9 @@ if (instance_exists(global.bau_aberto)) {
 
 if (!is_open) {
     hotbar_desenhar(false); // hotbar pequena na esquerda (inventario.gml)
+    missoes_desenhar_gui(); // painel, seta e diálogo das missões (scr_missoes)
+    sono_desenhar_gui();    // aviso da noite, seta da casa e tela de dormir (scr_sono)
+    idade_desenhar_gui();   // "Você cresceu!" (scr_idade)
     // Mensagem rápida aparece mesmo com o inventário fechado (ex.: "Mochila cheia!")
     if (msg_timer > 0 && msg_texto != "") {
         draw_set_font(fnt_descricao); draw_set_halign(fa_center); draw_set_valign(fa_top);

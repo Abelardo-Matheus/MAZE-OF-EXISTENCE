@@ -317,6 +317,7 @@ function equip_calcular_bonus() {
             _equip_somar(_e, global.buffs_ativos[_b].stat, global.buffs_ativos[_b].valor);
         }
     }
+    idade_somar_bonus(_e); // bônus da fase da vida (scr_idade)
     global.equip_stats = _e;
     return _e;
 }
@@ -437,6 +438,7 @@ function atualizar_crafts_disponiveis() {
         var _n = array_length(global.receitas_craft);
         var _resto = [];
         for (var _i = 0; _i < _n; _i++) {
+            if (!receita_visivel(global.receitas_craft[_i])) continue; // só depois de pegar um ingrediente (scr_progressao)
             if (player_has_all_ingredients(global.receitas_craft[_i])) { ds_list_add(crafts_disponiveis, _i); array_push(craft_ordem, _i); }
             else array_push(_resto, _i);
         }
@@ -459,6 +461,7 @@ function craft_fazer(_i) {
         inventory_remove_item(_rec.ingredientes[_j].item, _rec.ingredientes[_j].qtd);
     }
     inventory_add(_rec.resultado, _rec.qtd_resultado);
+    missoes_evento("craft", 1, _rec.resultado); // objetivos de craft (scr_missoes)
     inventory_msg("Criou " + _d.nome + (_rec.qtd_resultado > 1 ? " x" + string(_rec.qtd_resultado) : "") + "!", item_raridade(_d.raridade).cor);
     return true;
 }

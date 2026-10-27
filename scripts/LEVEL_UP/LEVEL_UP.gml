@@ -5,14 +5,14 @@
 // --- Status Básicos ---
 global.level_player = 1;
 global.xp = 0;
-global.max_xp = 100; // XP inicial para o primeiro nível
+global.max_xp = progressao_xp_prox(1); // curva em scr_progressao
 global.level_up = false;
 
 // --- Tabelas de Crescimento (Stats por Nível) ---
 // Inicializa arrays para evitar erro de "index out of bounds"
-global.vida_max_calc[1] = 100;
-global.max_estamina_calc[1] = 50;
-global.dano_base[1] = 6;
+global.vida_max_calc[1]     = progressao_vida(1);      // scr_progressao
+global.max_estamina_calc[1] = progressao_estamina(1);
+global.dano_base[1]         = progressao_dano(1);
 
 // Define valores atuais baseados no nível 1
 global.vida_max = global.vida_max_calc[1];
@@ -241,11 +241,15 @@ function aplicar_status_level() {
     var _curr_lvl = global.level_player;
 
     // Garante que os arrays de cálculo cresçam
-    if (_curr_lvl >= array_length(global.vida_max_calc)) {
-        global.vida_max_calc[_curr_lvl]     = global.vida_max_calc[_prev_lvl] + (_curr_lvl * 0.8);
-        global.max_estamina_calc[_curr_lvl] = global.max_estamina_calc[_prev_lvl] + 5;
-        global.dano_base[_curr_lvl]         = global.dano_base[_prev_lvl] * 1.1;
+    // Curvas em scr_progressao (vida e dano lineares por nível)
+    for (var _n = 1; _n <= _curr_lvl; _n++) {
+        if (_n >= array_length(global.vida_max_calc) || !is_real(global.vida_max_calc[_n]) || global.vida_max_calc[_n] <= 0) {
+            global.vida_max_calc[_n]     = progressao_vida(_n);
+            global.max_estamina_calc[_n] = progressao_estamina(_n);
+            global.dano_base[_n]         = progressao_dano(_n);
+        }
     }
+    var _vida_antes = global.vida_max;
 
     global.max_estamina = global.max_estamina_calc[_curr_lvl];
     
@@ -257,6 +261,7 @@ function aplicar_status_level() {
     }
     // Ataque = base do nível + equipamentos/adesivos (scripts/inventario)
     player_stats_recalcular();
+    if (PROG_CURA_AO_UPAR && global.vida_max > _vida_antes) global.vida = min(global.vida_max, global.vida + (global.vida_max - _vida_antes));
 }
 
 
@@ -267,8 +272,8 @@ function ganhar_xp(_xp_amount)
 {
     global.xp += _xp_amount * mods_get().xp; // Estrelinha Dourada
     
-    // Calcula o max_xp baseado no level atual
-    global.max_xp = global.level_player * 100;
+    // XP para o próximo nível (scr_progressao)
+    global.max_xp = progressao_xp_prox(global.level_player);
     
     // 1. Verifica quantos níveis foram subidos e acumula na fila
     while (global.xp >= global.max_xp) 
@@ -277,7 +282,7 @@ function ganhar_xp(_xp_amount)
         global.level_player += 1;
         
         // Recalcula o max_xp pro PRÓXIMO nível dentro do loop
-        global.max_xp = global.level_player * 100; 
+        global.max_xp = progressao_xp_prox(global.level_player);
         
         // Acumula na fila de upgrades pendentes
         global.levels_pendentes += 1;

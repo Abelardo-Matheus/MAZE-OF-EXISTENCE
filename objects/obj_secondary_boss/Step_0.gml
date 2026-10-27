@@ -9,8 +9,8 @@ if (!boss_invocado && instance_exists(obj_player))
     // 3. Checa se o jogador está perto o suficiente
     if (_dist <= distancia_interacao) 
     {
-        // 4. Checa se o jogador apertou a tecla 'F'
-        if (keyboard_check_pressed(ord("F"))) 
+        // 4. O jogador escolheu o altar (tecla Interagir, scr_interacao)
+        if (interacao_pedida()) 
         {
             // Marca que o boss foi invocado para travar esse código
             boss_invocado = true;
@@ -36,8 +36,5 @@ if (!boss_invocado && instance_exists(obj_player))
     }
 }
 
-var _inst = instance_nearest(x,y,obj_player);
-	if(distance_to_point(_inst.x,_inst.y)<= 100){
-    obj_player.desenha_botao = true;
-} 
+// o botão "[F] Invocar o chefe" vem do scr_interacao
 

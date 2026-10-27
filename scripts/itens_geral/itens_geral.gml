@@ -536,6 +536,7 @@ function inventory_bag_slots() {
 function inventory_add(_id, _qtd = 1, _nivel = 1, _passivas = undefined, _xp = 0) {
     var _d = item_db(_id);
     if (is_undefined(_d) || _qtd <= 0) return false;
+    item_descobrir(_id); // libera receitas que usam este item (scr_progressao)
     var _grid = global.grid_itens;
     var _bag  = inventory_bag_slots();
 

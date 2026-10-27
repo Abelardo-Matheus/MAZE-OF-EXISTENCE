@@ -7,4 +7,4 @@ sprite_parado = spr_amoeba_azul_parada;
 vida=15;
 state = scr_escolher_state_amoeba;
 sombra_sprite = spr_sombra;
-lvl = 1;
+// lvl: vem da área / do spawn (scr_progressao)

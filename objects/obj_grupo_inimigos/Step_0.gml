@@ -15,7 +15,7 @@ if (_distancia_player < distancia_criar) { // só spawna se o player estiver a m
             var _px = x + lengthdir_x(_raio, _angulo);
             var _py = y + lengthdir_y(_raio, _angulo);
 
-            var _inimigo = instance_create_depth(_px, _py, 0, obj_amoeba);
+            var _inimigo = instance_create_depth(_px, _py, 0, obj_amoeba, { lvl: nivel_area }); // força da área (scr_progressao)
 			_inimigo.grupo_id = grupo_id;
 
         }

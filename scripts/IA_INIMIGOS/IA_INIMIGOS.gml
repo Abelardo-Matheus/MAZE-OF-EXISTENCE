@@ -235,10 +235,8 @@ function inimigo_ia_nivel() {
     var _lvl = 1;
     if (variable_instance_exists(id, "lvl") && is_real(lvl) && lvl > 0) _lvl = lvl;
     lvl_inimigo = _lvl;
-    vida = round(vida * (1 + (_lvl - 1) * 0.5));
+    // vida, dano, XP e tamanho por nível agora vêm de scr_progressao (progressao_inimigo_aplicar, 1º Step)
     max_vida = vida;
-    dano = dano + (_lvl - 1) * 2;
-    escala = escala * (1 + (_lvl - 1) * 0.08);
     image_xscale = escala;
     image_yscale = escala;
     sprite_index = sprite_parado;

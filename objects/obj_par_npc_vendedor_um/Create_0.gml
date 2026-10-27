@@ -15,6 +15,11 @@ dig = 0;
 nome = 0;
 
 global.item_selecionado_venda = -1;
+// Interface da loja (Draw GUI)
+loja_comprar   = false;   // pedido de compra (botão COMPRAR ou botão direito no item)
+loja_msg       = "";
+loja_msg_cor   = c_white;
+loja_msg_timer = 0;
 
 
 

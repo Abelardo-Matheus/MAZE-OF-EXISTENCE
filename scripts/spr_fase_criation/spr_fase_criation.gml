@@ -1383,18 +1383,16 @@ function create_escada_porao_em_fundos(_salas_geradas) {
 /// @desc End Step do obj_escada_porao: com o player PERTO da escada, mostra o botão e entra apertando E.
 ///       "Perto" = pé do player a até ESCADA_ALCANCE px do retângulo da escada (na frente ou em cima dela).
 #macro ESCADA_ALCANCE 56
-function escada_porao_checar(_escada) {
-    if (!instance_exists(obj_player)) return;
-    var _p = obj_player;
+/// true se o pé do player está perto da escada (scr_interacao usa para "[F] Usar escada")
+function escada_porao_perto(_escada, _p) {
     var _l = _escada.x - ESCADA_LARGURA / 2, _r = _escada.x + ESCADA_LARGURA / 2;
     var _t = _escada.y, _b = _escada.y + ESCADA_ALTURA;
     var _pe = _p.bbox_bottom;
-    var _dist = point_distance(_p.x, _pe, clamp(_p.x, _l, _r), clamp(_pe, _t, _b));
-    if (_dist > ESCADA_ALCANCE) return;
-    _p.desenha_botao = true;                                  // aviso acima da cabeça...
-    _p.botao_frame = 0;                                       // ...com a tecla E (spr_botoes frame 0)
-    if (keyboard_check_pressed(ord("E"))) escada_porao_usar(_escada);
+    return point_distance(_p.x, _pe, clamp(_p.x, _l, _r), clamp(_pe, _t, _b)) <= ESCADA_ALCANCE;
 }
+
+/// (antigo) A escada agora usa o sistema de interação (scr_interacao). Mantido para o End Step.
+function escada_porao_checar(_escada) {}
 
 /// @desc Usa a escada: carrega a sala do outro lado e coloca o player na frente da escada de lá
 function escada_porao_usar(_escada) {

@@ -300,6 +300,8 @@ function jogo_salvar() {
         armamento:    global.armamento,
         timer:        variable_global_exists("timer") ? global.timer : 0,
         inventario:   [],
+        missoes:      missoes_save_dados(),   // scr_missoes
+        progressao:   progressao_save_dados(), // receitas descobertas (scr_progressao)
     };
 
     // Mochila + equipamentos: só o que precisa para recriar o slot (item_slot_preencher)
@@ -345,7 +347,7 @@ function jogo_aplicar_save(_d) {
         global.level_player += 1;
         aplicar_status_level();
     }
-    global.max_xp = global.level_player * 100;
+    global.max_xp = progressao_xp_prox(global.level_player);
     global.xp     = _save_campo(_d, "xp", 0);
     global.levels_pendentes = 0;
     global.level_up = false;
@@ -368,13 +370,18 @@ function jogo_aplicar_save(_d) {
     global.moedas    = _save_campo(_d, "moedas", global.moedas);
     global.armamento = _save_campo(_d, "armamento", ARMAMENTOS.ESPADA);
     global.timer     = _save_campo(_d, "timer", 0);
+
+    // 4. Missões (ordem sorteada, progresso, história)
+    missoes_load_dados(_save_campo(_d, "missoes", undefined));
+    progressao_load_dados(_save_campo(_d, "progressao", undefined));
+    idade_sincronizar(); // a idade vem do relógio salvo: sem aviso ao carregar (scr_idade)
 }
 
 /// Volta o progresso para o começo (usado ao voltar para o Menu principal)
 function jogo_resetar_progresso() {
     global.level_player     = 1;
     global.xp               = 0;
-    global.max_xp           = 100;
+    global.max_xp           = progressao_xp_prox(1);
     global.levels_pendentes = 0;
     global.level_up         = false;
     global.vida_max     = (variable_global_exists("vida_max_calc")) ? global.vida_max_calc[1] : 100;
@@ -395,6 +402,9 @@ function jogo_resetar_progresso() {
     global.colocando_bau  = { ativo: false };
     global.dialogo        = false;
     if (ds_exists(global.active_upgrades, ds_type_list)) ds_list_clear(global.active_upgrades);
+    missoes_resetar(); // novo jogo = nova ordem de missões
+    progressao_resetar(); // receitas voltam a ficar escondidas
+    idade_sincronizar();  // volta a ser criança
 }
 
 #endregion

@@ -142,9 +142,9 @@ criar_lista_itens_padronizados();
 
 // ========================================================
 // 6. ITENS INICIAIS (teste do craft / upgrade / adesivos)
-//    Coloque false para começar com a mochila vazia.
+//    Jogo normal: mochila vazia (scr_progressao). true = itens de teste.
 // ========================================================
-itens_iniciais_teste = true;
+itens_iniciais_teste = false;
 if (itens_iniciais_teste) {
     inventory_add("madeira", 6);
     inventory_add("pedra", 4);
@@ -161,16 +161,12 @@ if (itens_iniciais_teste) {
 }
 
 // ========================================================
-// 7. HOTBAR INICIAL: espada de madeira (1) e arco de madeira (2); 3 e 4 vazios
+// 7. HOTBAR INICIAL: só a espada de madeira (1). Arco e ferramentas vêm das missões tutorial
 // ========================================================
-// já nascem com 0..3 passivas sorteadas (scr_passivas_itens)
-item_slot_preencher(global.grid_itens, slot_index_hotbar + 0, "espada_madeira", 1, 1, passivas_sortear("arma", item_db("espada_madeira").inata));
-item_slot_preencher(global.grid_itens, slot_index_hotbar + 1, "arco_madeira",   1, 1, passivas_sortear("arco", item_db("arco_madeira").inata));
+// já nasce com 0..3 passivas sorteadas (scr_passivas_itens)
+item_slot_preencher(global.grid_itens, slot_index_hotbar + 0, PROG_ARMA_INICIAL, 1, 1, passivas_sortear("arma", item_db(PROG_ARMA_INICIAL).inata));
 item_ativo_init(); // recarga da habilidade X + efeitos
-// Ferramentas de coleta de madeira na mochila (árvore = machado, pedra = picareta, terra = pá)
-inventory_add("machado_madeira", 1);
-inventory_add("picareta_madeira", 1);
-inventory_add("pa_madeira", 1);
+item_descobrir(PROG_ARMA_INICIAL, false); // receitas por descoberta (scr_progressao)
 global.hotbar_ativo = 0;
 global.hotbar_aviso = 0;
 

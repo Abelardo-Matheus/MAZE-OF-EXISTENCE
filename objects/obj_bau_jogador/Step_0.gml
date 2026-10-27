@@ -11,10 +11,9 @@ if (instance_exists(obj_inventario) && obj_inventario.is_open) exit;
 perto = (distance_to_object(obj_player) <= BAU_DIST_ABRIR)
      && (instance_nearest(obj_player.x, obj_player.y, obj_bau_jogador) == id);
 
-if (keyboard_check_pressed(ord("E"))) {
-    if (aberto) {
-        bau_fechar();
-    } else if (perto && !instance_exists(global.bau_aberto)) {
-        bau_abrir(id);
-    }
+// Abrir: tecla Interagir escolhida pelo scr_interacao. Fechar: Interagir (ou E, como antes).
+if (aberto) {
+    if (tecla_apertou("interagir") || keyboard_check_pressed(ord("E"))) bau_fechar();
+} else if (interacao_pedida() && !instance_exists(global.bau_aberto)) {
+    bau_abrir(id);
 }
